@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<project name="quickstart" default="war">
+  <property name="final.name" value="cheesr" />
+  <property name="src.main.dir" value="${basedir}/src" />
+  <property name="src.webapp.dir" value="${basedir}/webapp" />
+  <property name="lib.dir" value="${basedir}/lib" />
+  <property name="build.dir" value="${basedir}/build" />
+  <property name="build.main.classes" value="${build.dir}/classes" />
+
+  <property name="junit.version" value="4.4"/>
+  <property name="jetty.version" value="6.1.9"/>
+  <property name="wicket.version" value="1.3.2"/>
+  <property name="slf4j.version" value="1.5.0"/>
+  <property name="env.JUNIT_HOME" location="${basedir}/lib/junit-${junit.version}"/>
+  <property name="env.JETTY_HOME" location="${basedir}/lib/jetty-${jetty.version}"/>
+  <property name="env.WICKET_HOME" location="${basedir}/lib/wicket-${wicket.version}"/>
+  <property name="env.SLF4J_HOME" location="${basedir}/lib/slf4j-${slf4j.version}"/>
+
+  <path id="build.classpath">
+    <fileset file="${env.JUNIT_HOME}/junit-${junit.version}.jar" />
+    <fileset dir="${env.JETTY_HOME}/lib">
+      <include name="jetty-${jetty.version}.jar" />
+      <include name="jetty-util-${jetty.version}.jar" />
+      <include name="servlet-api-2.5-${jetty.version}.jar" />
+    </fileset>
+    <fileset dir="${env.WICKET_HOME}/lib">
+      <include name="wicket-${wicket.version}.jar" />
+    </fileset>
+    <fileset dir="${env.SLF4J_HOME}">
+      <include name="slf4j-api-${slf4j.version}.jar" />
+      <include name="slf4j-simple-${slf4j.version}.jar" />
+    </fileset>
+    <pathelement path="${build.main.classes}" />
+  </path>
+
+  <target name="clean">
+    <delete dir="build" quiet="true" />
+  </target>
+
+  <target name="init">
+    <mkdir dir="${build.main.classes}" />
+  </target>
+
+  <target name="compile" depends="init">
+    <javac destdir="${build.main.classes}" debug="true" deprecation="true" optimize="false" excludes="**/package.html" srcdir="${src.main.dir}" classpathref="build.classpath" />
+    <copy todir="${build.main.classes}">
+      <fileset dir="${src.main.dir}">
+        <include name="**/*.*" />
+        <exclude name="**/*.java" />
+      </fileset>
+      <fileset dir="${src.webapp.dir}">
+        <include name="**/*.*" />
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="war" depends="compile">
+    <war destfile="${build.dir}/${final.name}.war" webxml="${src.webapp.dir}/WEB-INF/web.xml">
+      <lib dir="${env.JETTY_HOME}/lib">
+        <include name="jetty-${jetty.version}.jar" />
+        <include name="jetty-util-${jetty.version}.jar" />
+        <include name="servlet-api-2.5-${jetty.version}.jar" />
+      </lib>
+      <lib dir="${env.WICKET_HOME}/lib">
+        <include name="wicket-${wicket.version}.jar" />
+      </lib>
+      <lib dir="${env.SLF4J_HOME}">
+        <include name="slf4j-api-${slf4j.version}.jar" />
+        <include name="slf4j-simple-${slf4j.version}.jar" />
+      </lib>
+      <classes dir="${build.main.classes}" />
+      <fileset dir="${src.webapp.dir}" excludes="**/web.xml" />
+    </war>
+  </target>
+
+  <target name="run" depends="compile">
+    <java classpathref="build.classpath" classname="com.cheesr.Start" fork="true" />
+  </target>
+</project>

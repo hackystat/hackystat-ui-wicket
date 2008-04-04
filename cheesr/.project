@@ -1,0 +1,17 @@
+<projectDescription>
+  <name>cheesr</name>
+  <comment>Online example cheese store for the book Wicket in Action.</comment>
+  <projects/>
+  <buildSpec>
+    <buildCommand>
+      <name>org.eclipse.jdt.core.javabuilder</name>
+    </buildCommand>
+    <buildCommand>
+      <name>wicketbench.associatedMarkupAuditor</name>
+    </buildCommand>
+  </buildSpec>
+  <natures>
+    <nature>org.eclipse.jdt.core.javanature</nature>
+    <nature>wicketbench.wicketnature</nature>
+  </natures>
+</projectDescription>
