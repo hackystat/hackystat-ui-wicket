@@ -10,8 +10,7 @@ import com.cheesr.store.objects.Cheese;
 
 public class Index extends CheesrPage {
 	public Index() {
-		PageableListView cheeses = new PageableListView("cheeses",
-				getCheeses(), 5) {
+		PageableListView cheeses = new PageableListView("cheeses", getCheeses(), 5) {
 			@Override
 			protected void populateItem(ListItem item) {
 				Cheese cheese = (Cheese) item.getModelObject();
