@@ -1,23 +1,61 @@
-<html>
-<title>ProjectBrowser</title>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
 <head>
-  <link rel="stylesheet" type="text/css" href="style/style.css"/>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Hackystat ProjectBrowser</title>
+  <link rel="stylesheet" href="style/boilerplate/screen.css" type="text/css" media="screen" charset="utf-8">
+  <link rel="stylesheet" href="style/boilerplate/print.css" type="text/css" media="print" charset="utf-8">
+  <!--[if lte IE 6]><link rel="stylesheet" href="style/boilerplate/lib/ie.css" type="text/css" media="screen" charset="utf-8"><![endif]-->
 </head>
 
 <body>
-<img src="style/hackystat.gif"/>
+<div id="page">
+ <div id="header">
+ <h3>Hackystat DataBrowser</h3>
+ <hr>
+ </div>
 
-<p>
-<div id="login">
-  <form wicket:id="signInForm">
-    <table>
-     <tr><td>User:</td><td><input type="text" wicket:id="user" /></td></tr>
-     <tr><td>Password:</td><td><input type="password" wicket:id="password" /></td></tr> 
-     <tr><td colspan="2"><input type="submit" value="sign in" /></td></tr>
-    </table>
-  </form>
-  <span wicket:id="feedback" />
-</div>
+  <div id="body" class="wrapper">
+
+    <div id="signin">
+      <form wicket:id="signinForm" class="hform">
+        <fieldset>
+          <legend>Sign in</legend>
+          <p>Enter your SensorBase username and password below to login to this project browser:</p>
+          <p><label>User</label> <input type="text" wicket:id="user" /></p>
+          <p><label>Password</label> <input type="password" wicket:id="password" /></p>
+          <p><input type="submit" name="Signin" value="Signin" class="button"></p>
+	</fieldset>
+      </form>
+      <p><span wicket:id="signinFeedback" /></p>
+    </div>
+
+    <div id="register">
+      <form wicket:id="registerForm" class="hform">
+        <fieldset>
+        <legend>Register/Forgotten password</legend>
+          <p>Enter your email address to register with the SensorBase.
+             Your password will be sent to you via email.
+             You can also use this form to have your current password re-sent to you via email. </p>
+          <p><label>Email</label> <input type="text" wicket:id="email" /></p>
+        <p><input type="submit" name="Register" value="Register" class="button"></p>
+	</fieldset>
+      </form>
+      <p><span wicket:id="registerFeedback" /></p>
+    </div>
+
+   </div>
+
+   <div id="footerLeft">
+    <p><span wicket:id="serviceInfo">[Service info]</span></p>
+   </div>
+   <div id="footerRight">
+    <p>version 8.1.403</p>
+   </div>
+
+ </div>
 
 </body>
 </html>

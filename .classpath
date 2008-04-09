@@ -9,6 +9,8 @@
 	<classpathentry kind="var" path="JETTY_HOME/lib/servlet-api-2.5-6.1.9.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="var" path="HACKYSTAT_SENSORBASE_HOME/sensorbaseclient.jar"/>
+	<classpathentry kind="var" path="HACKYSTAT_SENSORBASE_HOME/sensorbase.jar"/>
+	<classpathentry kind="var" path="HACKYSTAT_DAILYPROJECTDATA_HOME/dailyprojectdata.lib.jar"/>
+	<classpathentry kind="var" path="HACKYSTAT_TELEMETRY_HOME/telemetry.lib.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

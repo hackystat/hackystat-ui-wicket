@@ -1,93 +1,54 @@
 package org.hackystat.projectbrowser.authentication;
 
 import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.markup.html.form.PasswordTextField;
-import org.apache.wicket.markup.html.form.StatelessForm;
-import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.markup.html.panel.FeedbackPanel;
-import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.PropertyModel;
+import org.hackystat.dailyprojectdata.client.DailyProjectDataClient;
+import org.hackystat.projectbrowser.ProjectBrowserApplication;
+import org.hackystat.projectbrowser.ProjectBrowserProperties;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
+import org.hackystat.sensorbase.client.SensorBaseClient;
+import org.hackystat.telemetry.service.client.TelemetryClient;
 
 /**
- * Provides a signin page for providing sensorbase user and password information.
+ * Provides a signin page for either logging in with a previous username and password, or 
+ * else registering with the system. 
  * 
  * @author Philip Johnson
  */
 public class SigninPage extends WebPage {
+  /** Support serialization. */
+  private static final long serialVersionUID = 1L;
+
   /**
-   * The form for providing user and password details.
-   * 
-   * @author Philip Johnson
+   * Create the SigninPage. 
    */
-  private static class SignInForm extends StatelessForm {
-    /** The serialization id. */
-    private static final long serialVersionUID = 1L;
-    /** The sensorbase user. */
-    private String user;
-    /** The sensorbase password. */
-    private String password;
-
-    /**
-     * Provide the ID for this form.
-     * 
-     * @param id The ID.
-     */
-    public SignInForm(final String id) {
-      super(id);
-      setModel(new CompoundPropertyModel(this));
-      add(new TextField("user"));
-      add(new PasswordTextField("password"));
-    }
-
-    /**
-     * Returns the password.
-     * 
-     * @return The password.
-     */
-    public String getPassword() {
-      return password;
-    }
-
-    /**
-     * Returns the user.
-     * 
-     * @return The user.
-     */
-    public String getUser() {
-      return user;
-    }
-
-    /**
-     * What to do when the user presses the submit button to login.
-     */
-    @Override
-    public final void onSubmit() {
-      if (signIn(user, password)) {
-        if (!continueToOriginalDestination()) {
-          setResponsePage(getApplication().getHomePage());
-        }
-      }
-      else {
-        error("Unknown user / password");
-      }
-    }
-
-    public void setPassword(String password) {
-      this.password = password;
-    }
-
-    public void setUser(String username) {
-      this.user = username;
-    }
-
-    private boolean signIn(String username, String password) {
-      ProjectBrowserSession.get().setCredentials(user, password);
-      return true;
-    }
-  }
-
   public SigninPage() {
-    add(new SignInForm("signInForm"));
-    add(new FeedbackPanel("feedback"));
+    add(new SigninForm("signinForm"));
+    add(new Label("signinFeedback", new PropertyModel(ProjectBrowserSession.get(), "signinFeedback")));
+    add(new RegisterForm("registerForm"));
+    add(new Label("registerFeedback", new PropertyModel(ProjectBrowserSession.get(), "registerFeedback")));
+    ProjectBrowserApplication app = (ProjectBrowserApplication)getApplication();
+    String sensorbase = app.getProjectBrowserProperty(ProjectBrowserProperties.SENSORBASE_HOST_KEY);
+    boolean sensorbaseOk = SensorBaseClient.isHost(sensorbase);
+    String dpd = app.getProjectBrowserProperty(ProjectBrowserProperties.DAILYPROJECTDATA_HOST_KEY);
+    boolean dpdOk = DailyProjectDataClient.isHost(dpd);
+    String telemetry = app.getProjectBrowserProperty(ProjectBrowserProperties.TELEMETRY_HOST_KEY);
+    boolean telemetryOk = TelemetryClient.isHost(telemetry);
+    
+    StringBuffer serviceInfo = new StringBuffer();
+    if (sensorbaseOk || dpdOk || telemetryOk) {
+      serviceInfo.append("Contacted: ");
+      serviceInfo.append(sensorbaseOk ? sensorbase + " " : "");
+      serviceInfo.append(dpdOk ? dpd + " " : "");
+      serviceInfo.append(telemetryOk ? telemetry + " " : "");
+    }
+    if (!sensorbaseOk || !dpdOk || !telemetryOk) {
+      serviceInfo.append("Failed to contact: ");
+      serviceInfo.append(!sensorbaseOk ? sensorbase + " ": "");
+      serviceInfo.append(!dpdOk ? dpd + " " : "");
+      serviceInfo.append(!telemetryOk ? telemetry + " " : "");
+    }
+    add(new Label("serviceInfo", serviceInfo.toString()));
   }
 }

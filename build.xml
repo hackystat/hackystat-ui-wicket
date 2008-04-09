@@ -36,6 +36,14 @@
   <available file="${env.HACKYSTAT_SENSORBASE_HOME}/sensorbase.jar" type="file" property="hackystat.sensorbase.available" />
   <fail message="${env.HACKYSTAT_SENSORBASE_HOME}/sensorbase.jar. This package requires the Hackystat SensorBase to be installed and HACKYSTAT_SENSORBASE_HOME defined" unless="hackystat.sensorbase.available" />
 
+  <!-- Make sure that Hackystat DPD library is available . -->
+  <available file="${env.HACKYSTAT_DAILYPROJECTDATA_HOME}/dailyprojectdata.jar" type="file" property="hackystat.dailyprojectdata.available" />
+  <fail message="${env.HACKYSTAT_DAILYPROJECTDATA_HOME}/dailyprojectdata.jar. This package requires the Hackystat DPD to be installed and HACKYSTAT_DAILYPROJECTDATA_HOME defined" unless="hackystat.dailyprojectdata.available" />
+
+  <!-- Make sure that Hackystat Telemetry library is available . -->
+  <available file="${env.HACKYSTAT_TELEMETRY_HOME}/telemetry.jar" type="file" property="hackystat.telemetry.available" />
+  <fail message="${env.HACKYSTAT_TELEMETRY_HOME}/telemetry.jar. This package requires the Hackystat Telemetry to be installed and HACKYSTAT_TELEMETRY_HOME defined" unless="hackystat.telemetry.available" />
+
   <!-- Make sure that Jetty is available . -->
   <property name="jetty.version" value="6.1.9" />
   <available file="${env.JETTY_HOME}/lib/jetty-${jetty.version}.jar" type="file" property="jetty.available" />
@@ -81,6 +89,7 @@
     <!-- Get Utilities, Restlet, Derby, etc. by including full sensorbase.jar. -->
     <fileset file="${env.HACKYSTAT_SENSORBASE_HOME}/sensorbase.jar" />
     <fileset file="${env.HACKYSTAT_DAILYPROJECTDATA_HOME}/dailyprojectdata.lib.jar" />
+    <fileset file="${env.HACKYSTAT_TELEMETRY_HOME}/telemetry.jar" />
     <fileset file="${env.JUNIT_HOME}/junit-${junit.version}.jar" />
     <fileset file="${env.FINDBUGS_HOME}/lib/annotations.jar" />
     <fileset file="${env.WICKET_HOME}/lib/wicket-${wicket.version}.jar" />
