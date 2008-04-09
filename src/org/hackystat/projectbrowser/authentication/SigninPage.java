@@ -25,9 +25,20 @@ public class SigninPage extends WebPage {
    */
   public SigninPage() {
     add(new SigninForm("signinForm"));
-    add(new Label("signinFeedback", new PropertyModel(ProjectBrowserSession.get(), "signinFeedback")));
+    add(new Label("signinFeedback", 
+        new PropertyModel(ProjectBrowserSession.get(), "signinFeedback")));
     add(new RegisterForm("registerForm"));
-    add(new Label("registerFeedback", new PropertyModel(ProjectBrowserSession.get(), "registerFeedback")));
+    add(new Label("registerFeedback", 
+        new PropertyModel(ProjectBrowserSession.get(), "registerFeedback")));
+   
+    add(new Label("serviceInfo", getServiceInfo()));
+  }
+  
+  /**
+   * Returns a string indicating which services are available. 
+   * @return A string indicating service availability. 
+   */
+  private String getServiceInfo() {
     ProjectBrowserApplication app = (ProjectBrowserApplication)getApplication();
     String sensorbase = app.getProjectBrowserProperty(ProjectBrowserProperties.SENSORBASE_HOST_KEY);
     boolean sensorbaseOk = SensorBaseClient.isHost(sensorbase);
@@ -49,6 +60,6 @@ public class SigninPage extends WebPage {
       serviceInfo.append(!dpdOk ? dpd + " " : "");
       serviceInfo.append(!telemetryOk ? telemetry + " " : "");
     }
-    add(new Label("serviceInfo", serviceInfo.toString()));
+    return serviceInfo.toString();
   }
 }

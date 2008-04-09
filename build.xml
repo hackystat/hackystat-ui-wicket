@@ -65,6 +65,7 @@
   <property name="minorVersionNumber" value="x" />
   <tstamp>
     <format property="DAYSTAMP" pattern="Mdd" />
+    <format property="TSTAMP" pattern="HH:mm:ss" />
   </tstamp>
   <property name="version" value="${majorVersionNumber}.${minorVersionNumber}.${DAYSTAMP}" />
 
@@ -119,7 +120,9 @@
       <compilerarg value="-Werror" />
     </javac>
     <!-- Copy html markup and static files from webapp directory to build.classes.dir -->
-    <copy todir="${build.classes.dir}">
+    <filter token="version" value="${version}"/>
+    <filter token="tstamp" value="${TSTAMP}"/>
+    <copy todir="${build.classes.dir}" filtering="true" overwrite="true">
       <fileset dir="${src.dir}">
         <include name="**/*.*" />
         <exclude name="**/*.java" />
