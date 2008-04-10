@@ -40,25 +40,29 @@ hr { color : #3366CC; background-color : #3366CC; height : 2px; }
 #register { float:right;  width: 400px;  }
 
 
-#introduction { float: left; width: 480px; margin-right: 130px; }
-
-#resources { float: left; width: 230px; }
-#resources h3 { color: #3366CC; }
-#resources ul, #resources ol { color: #3366CC; }
-#resources ul a { color: #3366CC; }
+#twolinefeedbackarea { min-height: 30px; }
 
 
 /* Footer
 -------------------------------------------------------------- */
-#footer { border-top: 1px solid #eee; margin-top: 10px; }
+#footer { border-top: 1px solid #eee; margin-top: 1px; }
 
 #footer .tabs { width: 405px; border-top: 3px solid  #E5ECF9; }
 #footer .tabs a { padding: 10px 30px 10px 0; color: #3366CC; text-decoration: none; }
 
 #footer p.quiet { color: #3366CC; }
 
-#footerLeft { float: left; border-top: 1px solid #eee; margin-top: 20px; width: 400px}
-#footerRight { float: right; text-align: right; border-top: 1px solid #eee; margin-top: 20px; width: 400px}
+#footerLeft { float: left; border-top: 1px solid #eee; margin-top: 1px; width: 70%}
+#footerRight { float: right; text-align: right; border-top: 1px solid #eee; margin-top: 1px; width: 25%}
+
+/* Example layout from the boilerplate system.
+----------------------------------------------------------------*/
+
+#introduction { float: left; width: 480px; margin-right: 130px; }
+#resources { float: left; width: 230px; }
+#resources h3 { color: #3366CC; }
+#resources ul, #resources ol { color: #3366CC; }
+#resources ul a { color: #3366CC; }
 
 
 

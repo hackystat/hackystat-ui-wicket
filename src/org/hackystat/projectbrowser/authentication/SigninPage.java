@@ -2,11 +2,8 @@ package org.hackystat.projectbrowser.authentication;
 
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.PropertyModel;
 import org.hackystat.dailyprojectdata.client.DailyProjectDataClient;
 import org.hackystat.projectbrowser.ProjectBrowserApplication;
-import org.hackystat.projectbrowser.ProjectBrowserProperties;
-import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.sensorbase.client.SensorBaseClient;
 import org.hackystat.telemetry.service.client.TelemetryClient;
 
@@ -25,12 +22,7 @@ public class SigninPage extends WebPage {
    */
   public SigninPage() {
     add(new SigninForm("signinForm"));
-    add(new Label("signinFeedback", 
-        new PropertyModel(ProjectBrowserSession.get(), "signinFeedback")));
     add(new RegisterForm("registerForm"));
-    add(new Label("registerFeedback", 
-        new PropertyModel(ProjectBrowserSession.get(), "registerFeedback")));
-   
     add(new Label("serviceInfo", getServiceInfo()));
   }
   
@@ -40,11 +32,11 @@ public class SigninPage extends WebPage {
    */
   private String getServiceInfo() {
     ProjectBrowserApplication app = (ProjectBrowserApplication)getApplication();
-    String sensorbase = app.getProjectBrowserProperty(ProjectBrowserProperties.SENSORBASE_HOST_KEY);
+    String sensorbase = app.getSensorBaseHost();
     boolean sensorbaseOk = SensorBaseClient.isHost(sensorbase);
-    String dpd = app.getProjectBrowserProperty(ProjectBrowserProperties.DAILYPROJECTDATA_HOST_KEY);
+    String dpd = app.getDailyProjectDataHost();
     boolean dpdOk = DailyProjectDataClient.isHost(dpd);
-    String telemetry = app.getProjectBrowserProperty(ProjectBrowserProperties.TELEMETRY_HOST_KEY);
+    String telemetry = app.getTelemetryHost();
     boolean telemetryOk = TelemetryClient.isHost(telemetry);
     
     StringBuffer serviceInfo = new StringBuffer();

@@ -1,9 +1,14 @@
 package org.hackystat.projectbrowser.authentication;
 
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.StatelessForm;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.model.PropertyModel;
+import org.hackystat.projectbrowser.ProjectBrowserApplication;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
+import org.hackystat.sensorbase.client.SensorBaseClient;
+import org.hackystat.sensorbase.client.SensorBaseClientException;
 
 /**
  * The form for providing an email for registration purposes. 
@@ -26,11 +31,37 @@ class RegisterForm extends StatelessForm {
     super(id);
     setModel(new CompoundPropertyModel(this));
     add(new TextField("email"));
+    add(new Label("registerFeedback", 
+        new PropertyModel(ProjectBrowserSession.get(), "registerFeedback")));
+
   }
   
   @Override
   public void onSubmit() {
-    ProjectBrowserSession.get().setRegisterFeedback("User has registered.");
+    // Make sure there's an email address supplied.
+    if ((email == null) || "".equals(email)) {
+      ProjectBrowserSession.get().setRegisterFeedback("No email supplied");
+      return;
+    }
+    // Make sure the sensorbase can be contacted.
+    ProjectBrowserApplication app = (ProjectBrowserApplication)getApplication();
+    String sensorbase = app.getSensorBaseHost();
+    if (!SensorBaseClient.isHost(sensorbase)) {
+      ProjectBrowserSession.get().setRegisterFeedback(sensorbase + " not available.");
+      return;
+    }
+    // OK, so register. 
+    String msg;
+    try {
+      SensorBaseClient.registerUser(sensorbase, email);
+      msg = "Registration succeeded. Please check your email for password information";
+      ProjectBrowserSession.get().setRegisterFeedback(msg);
+      return;
+    }
+    catch (SensorBaseClientException e) {
+      msg = "Registration failed: " + e.getMessage() + " Contact your Hackystat admin for details.";
+    }
+    
   }
 
   /**

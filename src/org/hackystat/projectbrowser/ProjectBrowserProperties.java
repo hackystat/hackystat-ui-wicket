@@ -21,6 +21,10 @@ public class ProjectBrowserProperties {
   public static final String LOGGING_LEVEL_KEY =  "projectbrowser.logging.level";
   /** The SMTP host key. */
   public static final String SMTP_HOST_KEY =  "projectbrowser.smtp.host";
+  /** The admin email key. */
+  public static final String ADMIN_EMAIL_KEY =  "projectbrowser.admin.email";
+  /** The test install host key. */
+  public static final String TEST_INSTALL_KEY =  "projectbrowser.test.install";
   
   // Not sure yet if we need the following.
   /** The projectbrowser hostname key. */
@@ -63,6 +67,8 @@ public class ProjectBrowserProperties {
     properties.setProperty(TELEMETRY_HOST_KEY, "http://localhost:9878/telemetry");
     properties.setProperty(LOGGING_LEVEL_KEY, "INFO");
     properties.setProperty(SMTP_HOST_KEY, "mail.hackystat.org");
+    properties.setProperty(ADMIN_EMAIL_KEY, "johnson@hackystat.org");
+    properties.setProperty(TEST_INSTALL_KEY, "false");
 
     FileInputStream stream = null;
     try {
@@ -113,6 +119,8 @@ public class ProjectBrowserProperties {
       pad + DAILYPROJECTDATA_HOST_KEY  + eq + get(DAILYPROJECTDATA_HOST_KEY) + cr +
       pad + TELEMETRY_HOST_KEY          + eq + get(TELEMETRY_HOST_KEY) + cr +
       pad + LOGGING_LEVEL_KEY   + eq + get(LOGGING_LEVEL_KEY) + cr +
+      pad + ADMIN_EMAIL_KEY   + eq + get(ADMIN_EMAIL_KEY) + cr +
+      pad + TEST_INSTALL_KEY   + eq + get(TEST_INSTALL_KEY) + cr +
       pad + SMTP_HOST_KEY + eq + get(SMTP_HOST_KEY);
   }
   

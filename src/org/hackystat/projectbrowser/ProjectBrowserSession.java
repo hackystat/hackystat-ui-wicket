@@ -18,11 +18,15 @@ public class ProjectBrowserSession extends WebSession {
   /** The password for the SensorBase. */
   private String password = null;
   /** The SensorBase client for this user. */
-  private SensorBaseClient client = null; 
+  // Need to make this class serializable if we want to keep it in the session and not
+  // make a new one each request. 
+  //private SensorBaseClient client = null; 
   /** The current signinFeedback message to display. */
   private String signinFeedback = "";
   /** The current registerFeedback message to display. */
   private String registerFeedback = "";
+  /** If this user has been authenticated against the Sensorbase during this session. */
+  private boolean isAuthenticated = false;
   
   /**
    * Provide a constructor that initializes WebSession.
@@ -45,7 +49,7 @@ public class ProjectBrowserSession extends WebSession {
    * @return True if the user has supplied a valid email and password for this sensorbase.
    */
   public boolean isAuthenticated() {
-    return (client != null);
+    return this.isAuthenticated;
   }
   
   /**
@@ -81,5 +85,29 @@ public class ProjectBrowserSession extends WebSession {
   public String getRegisterFeedback() {
     return this.registerFeedback;
   }
-
+  
+  public boolean signin(String email, String password) {
+    try {
+      String host = ((ProjectBrowserApplication)getApplication()).getSensorBaseHost();
+      SensorBaseClient client = new SensorBaseClient(host, email, password);
+      client.authenticate();
+      this.email = email;
+      this.password = password;
+      this.isAuthenticated = true;
+      return true;
+    }
+    catch (Exception e) {
+      this.isAuthenticated = false;
+      return false;
+    }
+  }
+  
+  public SensorBaseClient getSensorBaseClient() {
+    String host = ((ProjectBrowserApplication)getApplication()).getSensorBaseHost();
+    return new SensorBaseClient(host, this.email, this.password);
+  }
+  
+  public String getUserEmail() {
+    return this.email;
+  }
 }

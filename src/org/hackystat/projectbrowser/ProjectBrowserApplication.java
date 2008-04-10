@@ -8,6 +8,11 @@ import org.apache.wicket.Response;
 import org.apache.wicket.Session;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.hackystat.projectbrowser.authentication.SigninPage;
+import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
+import org.hackystat.projectbrowser.page.dailyprojectdata.DailyProjectDataPage;
+import org.hackystat.projectbrowser.page.projects.ProjectsPage;
+import org.hackystat.projectbrowser.page.sensordata.SensorDataPage;
+import org.hackystat.projectbrowser.page.telemetry.TelemetryPage;
 import org.hackystat.utilities.logger.HackystatLogger;
 
 /**
@@ -48,6 +53,11 @@ public class ProjectBrowserApplication extends WebApplication {
   public void init() {
     this.properties = new ProjectBrowserProperties();
     this.logger = HackystatLogger.getLogger("org.hackystat.projectbrowser", "projectbrowser");
+    mountBookmarkablePage("sensordata", SensorDataPage.class);
+    mountBookmarkablePage("projects", ProjectsPage.class);
+    mountBookmarkablePage("dailyprojectdata", DailyProjectDataPage.class);
+    mountBookmarkablePage("telemetry", TelemetryPage.class);
+
   }
   
   /**
@@ -75,4 +85,29 @@ public class ProjectBrowserApplication extends WebApplication {
   public Logger getLogger() {
     return this.logger;
   }
+  
+  /**
+   * Returns the DPD host.
+   * @return The DPD host. 
+   */
+  public String getDailyProjectDataHost() {
+    return getProjectBrowserProperty(ProjectBrowserProperties.DAILYPROJECTDATA_HOST_KEY);
+  }
+
+  /**
+   * Returns the sensorbase host.
+   * @return The sensorbase host. 
+   */
+  public String getSensorBaseHost() {
+    return getProjectBrowserProperty(ProjectBrowserProperties.SENSORBASE_HOST_KEY);
+  }
+
+  /**
+   * Returns the telemetry host.
+   * @return The telemetry host. 
+   */
+  public String getTelemetryHost() {
+    return getProjectBrowserProperty(ProjectBrowserProperties.TELEMETRY_HOST_KEY);
+  }
+
 }

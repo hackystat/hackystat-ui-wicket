@@ -1,10 +1,13 @@
 package org.hackystat.projectbrowser.authentication;
 
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.model.PropertyModel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
+import org.hackystat.projectbrowser.page.sensordata.SensorDataPage;
 
 /**
  * The form for providing credentials to sign in to the Sensorbase. 
@@ -30,11 +33,19 @@ class SigninForm extends Form {
     setModel(new CompoundPropertyModel(this));
     add(new TextField("user"));
     add(new PasswordTextField("password"));
+    add(new Label("signinFeedback", 
+        new PropertyModel(ProjectBrowserSession.get(), "signinFeedback")));
   }
   
   @Override
   public void onSubmit() {
-    ProjectBrowserSession.get().setSigninFeedback("User has signed in.");
+    boolean signinSuccessful = ProjectBrowserSession.get().signin(user, password);
+    if (signinSuccessful) {
+      setResponsePage(new SensorDataPage());
+    }
+    else {
+      ProjectBrowserSession.get().setSigninFeedback("User/Password not correct.");
+    }
   }
 
   /**

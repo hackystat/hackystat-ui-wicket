@@ -27,9 +27,10 @@
           <p><label>User</label> <input type="text" wicket:id="user" /></p>
           <p><label>Password</label> <input type="password" wicket:id="password" /></p>
           <p><input type="submit" name="Signin" value="Signin" class="button"></p>
+          <div id="twolinefeedbackarea"><span wicket:id="signinFeedback">[Signin Feedback]</span></div>
 	</fieldset>
       </form>
-      <p><span wicket:id="signinFeedback" /></p>
+
     </div>
 
     <div id="register">
@@ -40,10 +41,10 @@
              Your password will be sent to you via email.
              You can also use this form to have your current password re-sent to you via email. </p>
           <p><label>Email</label> <input type="text" wicket:id="email" /></p>
-        <p><input type="submit" name="Register" value="Register" class="button"></p>
+          <p><input type="submit" name="Register" value="Register" class="button"></p>
+          <div id="twolinefeedbackarea"><span wicket:id="registerFeedback">[Register Feedback]</span></div>
 	</fieldset>
       </form>
-      <p><span wicket:id="registerFeedback" /></p>
     </div>
 
    </div>
