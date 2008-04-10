@@ -36,6 +36,9 @@ class RegisterForm extends StatelessForm {
 
   }
   
+  /**
+   * Performs the registration action upon submittal.
+   */
   @Override
   public void onSubmit() {
     // Make sure there's an email address supplied.
@@ -50,18 +53,17 @@ class RegisterForm extends StatelessForm {
       ProjectBrowserSession.get().setRegisterFeedback(sensorbase + " not available.");
       return;
     }
-    // OK, so register. 
+    // SensorBase is available, so register using it. 
     String msg;
     try {
       SensorBaseClient.registerUser(sensorbase, email);
-      msg = "Registration succeeded. Please check your email for password information";
+      msg = "Registration attempted. Please check your email for password information";
       ProjectBrowserSession.get().setRegisterFeedback(msg);
-      return;
     }
     catch (SensorBaseClientException e) {
       msg = "Registration failed: " + e.getMessage() + " Contact your Hackystat admin for details.";
+      ProjectBrowserSession.get().setRegisterFeedback(msg);
     }
-    
   }
 
   /**
@@ -73,6 +75,10 @@ class RegisterForm extends StatelessForm {
     return email;
   }
 
+  /**
+   * Sets the user. 
+   * @param email The user email.
+   */
   public void setEmail(String email) {
     this.email = email;
   }

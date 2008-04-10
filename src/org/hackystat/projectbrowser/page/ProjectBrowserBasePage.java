@@ -1,17 +1,11 @@
 package org.hackystat.projectbrowser.page;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.RestartResponseAtInterceptPageException;
-import org.apache.wicket.authorization.Action;
-import org.apache.wicket.authorization.IAuthorizationStrategy;
-import org.apache.wicket.authorization.IUnauthorizedComponentInstantiationListener;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.PropertyModel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
-import org.hackystat.projectbrowser.authentication.SigninPage;
 import org.hackystat.projectbrowser.page.dailyprojectdata.DailyProjectDataPage;
 import org.hackystat.projectbrowser.page.projects.ProjectsPage;
 import org.hackystat.projectbrowser.page.sensordata.SensorDataPage;
@@ -24,8 +18,8 @@ import org.hackystat.projectbrowser.page.telemetry.TelemetryPage;
  * 
  * @author Philip Johnson
  */
-public class ProjectBrowserBasePage extends WebPage implements IAuthorizationStrategy,
-    IUnauthorizedComponentInstantiationListener {
+public class ProjectBrowserBasePage extends WebPage {
+  
   /** Support serialization. */
   private static final long serialVersionUID = 1L;
 
@@ -38,9 +32,9 @@ public class ProjectBrowserBasePage extends WebPage implements IAuthorizationStr
     add(new BookmarkablePageLink("DailyProjectDataPageLink", DailyProjectDataPage.class));
     add(new BookmarkablePageLink("TelemetryPageLink", TelemetryPage.class));
     add(new Link("LogoutLink") {
+      /** Support serialization. */
       private static final long serialVersionUID = 1L;
-
-      /** Go to the SensorDataPage. */
+      /** Go to the home page after invalidating the session. */
       @Override
       public void onClick() {
         getSession().invalidate();
@@ -48,24 +42,5 @@ public class ProjectBrowserBasePage extends WebPage implements IAuthorizationStr
       }
     });
     add(new Label("UserEmail", new PropertyModel(ProjectBrowserSession.get(), "userEmail")));
-  }
-
-  public boolean isActionAuthorized(Component arg0, Action arg1) {
-    System.out.println("Calling action-level authorization");
-    return true;
-  }
-
-  public boolean isInstantiationAuthorized(Class componentClass) {
-    System.out.println("calling authorization");
-    if (ProjectBrowserBasePage.class.isAssignableFrom(componentClass)) {
-      System.out.println("calling isAuthenticated from session");
-      return ProjectBrowserSession.get().isAuthenticated();
-    }
-    return true;
-  }
-
-  public void onUnauthorizedInstantiation(Component componentClass) {
-    throw new RestartResponseAtInterceptPageException(getApplication().getHomePage());
-
   }
 }

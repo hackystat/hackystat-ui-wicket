@@ -39,8 +39,7 @@ hr { color : #3366CC; background-color : #3366CC; height : 2px; }
 #signin { float: left; width: 400px; }
 #register { float:right;  width: 400px;  }
 
-
-#twolinefeedbackarea { min-height: 30px; }
+#feedback { min-height: 30px; color : #ff3366 }
 
 
 /* Footer

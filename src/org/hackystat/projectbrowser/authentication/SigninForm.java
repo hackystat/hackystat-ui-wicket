@@ -1,8 +1,8 @@
 package org.hackystat.projectbrowser.authentication;
 
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.PasswordTextField;
+import org.apache.wicket.markup.html.form.StatelessForm;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.PropertyModel;
@@ -14,7 +14,7 @@ import org.hackystat.projectbrowser.page.sensordata.SensorDataPage;
  * 
  * @author Philip Johnson
  */
-class SigninForm extends Form {
+class SigninForm extends StatelessForm {
 
   /** Support serialization. */
   private static final long serialVersionUID = 1L;
@@ -37,11 +37,17 @@ class SigninForm extends Form {
         new PropertyModel(ProjectBrowserSession.get(), "signinFeedback")));
   }
   
+  /**
+   * Process the user action after submitting a username/password.  Note that they will go 
+   * to the page they requested if it was not the home page. 
+   */
   @Override
   public void onSubmit() {
     boolean signinSuccessful = ProjectBrowserSession.get().signin(user, password);
     if (signinSuccessful) {
-      setResponsePage(new SensorDataPage());
+      if (!continueToOriginalDestination()) {
+        setResponsePage(new SensorDataPage());
+      }
     }
     else {
       ProjectBrowserSession.get().setSigninFeedback("User/Password not correct.");
@@ -66,11 +72,19 @@ class SigninForm extends Form {
     return user;
   }
 
+  /**
+   * Sets the password. 
+   * @param password The password. 
+   */
   public void setPassword(String password) {
     this.password = password;
   }
 
-  public void setUser(String username) {
-    this.user = username;
+  /**
+   * Sets the user. 
+   * @param user The user. 
+   */
+  public void setUser(String user) {
+    this.user = user;
   }
 }

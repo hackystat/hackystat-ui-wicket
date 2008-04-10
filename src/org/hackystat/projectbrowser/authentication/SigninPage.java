@@ -14,6 +14,7 @@ import org.hackystat.telemetry.service.client.TelemetryClient;
  * @author Philip Johnson
  */
 public class SigninPage extends WebPage {
+  
   /** Support serialization. */
   private static final long serialVersionUID = 1L;
 
@@ -48,9 +49,9 @@ public class SigninPage extends WebPage {
     }
     if (!sensorbaseOk || !dpdOk || !telemetryOk) {
       serviceInfo.append("Failed to contact: ");
-      serviceInfo.append(!sensorbaseOk ? sensorbase + " ": "");
-      serviceInfo.append(!dpdOk ? dpd + " " : "");
-      serviceInfo.append(!telemetryOk ? telemetry + " " : "");
+      serviceInfo.append(sensorbaseOk ? "" : sensorbase + " ");
+      serviceInfo.append(dpdOk ? "" : dpd + " ");
+      serviceInfo.append(telemetryOk ? "" : telemetry + " ");
     }
     return serviceInfo.toString();
   }

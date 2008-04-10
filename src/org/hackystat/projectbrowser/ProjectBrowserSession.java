@@ -3,7 +3,9 @@ package org.hackystat.projectbrowser;
 import org.apache.wicket.Request;
 import org.apache.wicket.Session;
 import org.apache.wicket.protocol.http.WebSession;
+import org.hackystat.dailyprojectdata.client.DailyProjectDataClient;
 import org.hackystat.sensorbase.client.SensorBaseClient;
+import org.hackystat.telemetry.service.client.TelemetryClient;
 
 /**
  * Provides a session instance that holds authentication credentials.
@@ -70,10 +72,18 @@ public class ProjectBrowserSession extends WebSession {
     return this.signinFeedback;
   }
   
+  /**
+   * Allows other components to set the feedback string for the signin form.
+   * @param signinFeedback The message to be displayed.
+   */
   public void setSigninFeedback(String signinFeedback) {
     this.signinFeedback = signinFeedback;
   }
   
+  /**
+   * Allows other components to set the feedback string for the register form.
+   * @param registerFeedback The message to be displayed.
+   */
   public void setRegisterFeedback(String registerFeedback) {
     this.registerFeedback = registerFeedback;
   }
@@ -86,6 +96,12 @@ public class ProjectBrowserSession extends WebSession {
     return this.registerFeedback;
   }
   
+  /**
+   * Returns true if this email/password combination is valid for this sensorbase. 
+   * @param email The email. 
+   * @param password The password.
+   * @return True if valid for this sensorbase. 
+   */
   public boolean signin(String email, String password) {
     try {
       String host = ((ProjectBrowserApplication)getApplication()).getSensorBaseHost();
@@ -102,11 +118,37 @@ public class ProjectBrowserSession extends WebSession {
     }
   }
   
+  /**
+   * Returns a SensorBaseClient instance for this user and session. 
+   * @return The SensorBaseClient instance. 
+   */
   public SensorBaseClient getSensorBaseClient() {
     String host = ((ProjectBrowserApplication)getApplication()).getSensorBaseHost();
     return new SensorBaseClient(host, this.email, this.password);
   }
   
+  /**
+   * Returns a TelemetryClient instance for this user and session.
+   * @return The TelemetryClient instance. 
+   */
+  public TelemetryClient getTelemetryClient() {
+    String host = ((ProjectBrowserApplication)getApplication()).getTelemetryHost();
+    return new TelemetryClient(host, this.email, this.password);
+  }
+  
+  /**
+   * Returns a DailyProjectDataClient instance for this user and session.
+   * @return The DailyProjectDataClient instance. 
+   */
+  public DailyProjectDataClient getDailyProjectDataClient() {
+    String host = ((ProjectBrowserApplication)getApplication()).getDailyProjectDataHost();
+    return new DailyProjectDataClient(host, this.email, this.password);
+  }
+  
+  /**
+   * Gets the user's email associated with this session. 
+   * @return The user.
+   */
   public String getUserEmail() {
     return this.email;
   }

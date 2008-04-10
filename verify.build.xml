@@ -18,7 +18,6 @@
   <import file="checkstyle.build.xml"/>
   <import file="junit.build.xml"/>
   <import file="emma.build.xml"/>
-  <import file="validateXml.build.xml"/>
   <!-- make the jar target available so you can do 'ant -f verify.build.xml verify jar' -->
   <import file="jar.build.xml"/>
   <import file="sclc.build.xml"/>
@@ -30,13 +29,11 @@
       Ant version:     ${ant.version}
       Checkstyle Home: ${env.CHECKSTYLE_HOME}
       Emma Home:       ${env.EMMA_HOME}
-      Derby Home:      ${env.DERBY_HOME}
       FindBugs Home:   ${env.FINDBUGS_HOME} 
       Java version:    ${java.version}
       JavaMail Home:   ${env.JAVAMAIL_HOME} 
       JUnit Home:      ${env.JUNIT_HOME}
       PMD  Home:       ${env.PMD_HOME}
-      Restlet Home:    ${env.RESTLET_HOME}
     
     This task fails the build unless all of the following are true:
       * System compiles without warnings or errors.
@@ -50,7 +47,7 @@
   </echo>
       
   <target name="verify" 
-     depends="clean, compile, checkstyle,  junit, javadoc, findbugs, emma, pmd, sclc, emma.echo" 
+     depends="clean, compile, checkstyle, junit, javadoc, findbugs, emma, pmd, emma.echo" 
      description="Invoke analyzers, fail if any errors found.">
        <fail message="FindBugs reported warnings." if="findbugs.warningsfound"/>
    </target>

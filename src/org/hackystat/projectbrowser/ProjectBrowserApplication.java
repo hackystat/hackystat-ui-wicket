@@ -8,7 +8,7 @@ import org.apache.wicket.Response;
 import org.apache.wicket.Session;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.hackystat.projectbrowser.authentication.SigninPage;
-import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
+import org.hackystat.projectbrowser.page.ProjectBrowserPageAuthentication;
 import org.hackystat.projectbrowser.page.dailyprojectdata.DailyProjectDataPage;
 import org.hackystat.projectbrowser.page.projects.ProjectsPage;
 import org.hackystat.projectbrowser.page.sensordata.SensorDataPage;
@@ -29,6 +29,7 @@ public class ProjectBrowserApplication extends WebApplication {
 
   /**
    * Returns the home page for this application (SigninPage).
+   * @return The home page. 
    */
   @Override
   public Class<? extends Page> getHomePage() {
@@ -39,7 +40,8 @@ public class ProjectBrowserApplication extends WebApplication {
   /**
    * Defines ProjectBrowserSession as the session instance created in this app. 
    * @param request The request. 
-   * @param response The response. 
+   * @param response The response.
+   * @return The current ProjectBrowserSession instance. 
    */
   @Override
   public Session newSession(Request request, Response response) {
@@ -57,6 +59,8 @@ public class ProjectBrowserApplication extends WebApplication {
     mountBookmarkablePage("projects", ProjectsPage.class);
     mountBookmarkablePage("dailyprojectdata", DailyProjectDataPage.class);
     mountBookmarkablePage("telemetry", TelemetryPage.class);
+    getSecuritySettings().setAuthorizationStrategy(new ProjectBrowserPageAuthentication());
+    super.init();
 
   }
   
