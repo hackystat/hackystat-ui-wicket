@@ -1,5 +1,6 @@
 package org.hackystat.projectbrowser;
 
+import java.util.Properties;
 import java.util.logging.Logger;
 
 import org.apache.wicket.Page;
@@ -21,10 +22,34 @@ import org.hackystat.utilities.logger.HackystatLogger;
  */
 public class ProjectBrowserApplication extends WebApplication {
   
-  /** Holds the properties read in from ~/.hackystat/projectbrowser/projectbrowser.properties. */
+  /** 
+   * Project properties are read from ~/.hackystat/projectbrowser/projectbrowser.properties, 
+   * however some of those values (i.e. the locations of the hackystat services) can be 
+   * overridden for testing purposes. 
+   */
   private ProjectBrowserProperties properties;
+  
   /** Holds the HackystatLogger for this Service. */
-  private Logger logger; 
+  private Logger logger;
+  
+  /**
+   * Creates a ProjectBrowserApplication, obtaining all ProjectBrowserProperties 
+   * from the properties file.
+   */
+  public ProjectBrowserApplication() {
+    this(null);
+  }
+  
+  /**
+   * Creates a ProjectBrowserApplication, in which the passed properties override the entries
+   * in the properties file.  
+   * @param properties
+   */
+  public ProjectBrowserApplication(Properties properties) {
+    this.logger = HackystatLogger.getLogger("org.hackystat.projectbrowser", "projectbrowser");
+    this.properties = new ProjectBrowserProperties(properties);
+    this.logger.info(this.properties.echoProperties());
+  }
   
 
   /**
@@ -53,8 +78,6 @@ public class ProjectBrowserApplication extends WebApplication {
    */
   @Override
   public void init() {
-    this.properties = new ProjectBrowserProperties();
-    this.logger = HackystatLogger.getLogger("org.hackystat.projectbrowser", "projectbrowser");
     mountBookmarkablePage("sensordata", SensorDataPage.class);
     mountBookmarkablePage("projects", ProjectsPage.class);
     mountBookmarkablePage("dailyprojectdata", DailyProjectDataPage.class);

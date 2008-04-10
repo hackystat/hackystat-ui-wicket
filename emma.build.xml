@@ -38,11 +38,13 @@
       <classpath path="${build.dir}/classes;${java.class.path}">
         <path refid="emma.lib.dir" />
         <path refid="compile.classpath" />
-        <pathelement location="${lib.dir}/uricache" />
+        <fileset file="${env.JAVAMAIL_HOME}/mail.jar"/> 
       </classpath>
       <sysproperty key="emma.coverage.out.file" value="${build.dir}/emma/coverage.emma" />
       <sysproperty key="emma.coverage.out.merge" value="true" />
       <sysproperty key="user.dir" value="${basedir}" />
+      <sysproperty key="HACKYSTAT_SENSORBASE_HOME" value="${env.HACKYSTAT_SENSORBASE_HOME}" />
+      <sysproperty key="HACKYSTAT_TELEMETRY_HOME" value="${env.HACKYSTAT_TELEMETRY_HOME}" />
       <formatter type="xml" />
       <batchtest todir="${junit.dir}">
         <fileset dir="${src.dir}">
@@ -64,7 +66,6 @@
     </emma>
     <!-- Now delete the instrumented .class files, and re-jar them -->
     <delete dir="${build.dir}/classes" />
-    <ant antfile="jar.build.xml"/> 
   </target>
 
   <target name="emma.report" unless="emma.disabled" description="Generates XML and HTML reports.">

@@ -1,75 +1,57 @@
 <project name="jar" default="jar">
   <description>
-  Provides the target for building a jar file of the SensorBase.
+  Provides the target for building a jar file of the ProjectBrowser.
   </description>
 
   <import file="build.xml"/>
   <property name="tmp.dir" location="${basedir}/tmp" />
   <property name="tmp.lib.dir" location="${basedir}/tmp-lib" />
  
-  <target name="jar" depends="jar-standalone, jar-lib"/>   
-
-  <target name="jar-standalone" depends="compile" 
-    description="Create sensorbase.jar">
+  <target name="jar" depends="compile" 
+    description="Create projectbrowser.jar">
     <!-- Define the directories and distribution name -->
     <delete dir="${tmp.dir}" quiet="yes"/>
     <mkdir dir="${tmp.dir}" />
+    
+    <!-- Copy the projectbrowser files over. -->
     <copy todir="${tmp.dir}">
       <fileset dir="${basedir}/build/classes"/>
     </copy>
-  
-    <!-- First build sensorbaseclient.jar, which is everything but derby. --> 
-    <unjar src="${env.HACKYSTAT_UTILITIES_HOME}/hackystatlogger.lib.jar" dest="${tmp.dir}"/>
-    <unjar src="${env.HACKYSTAT_UTILITIES_HOME}/stacktrace.lib.jar" dest="${tmp.dir}"/>
-    <unjar src="${env.HACKYSTAT_UTILITIES_HOME}/tstamp.lib.jar" dest="${tmp.dir}"/>
-    <unjar src="${env.HACKYSTAT_UTILITIES_HOME}/uricache.lib.jar" dest="${tmp.dir}"/>
-    <unjar src="${env.HACKYSTAT_UTILITIES_HOME}/time.lib.jar" dest="${tmp.dir}"/>
-    <unjar src="${env.HACKYSTAT_UTILITIES_HOME}/hackystatuserhome.lib.jar" dest="${tmp.dir}"/>
-    <unjar src="${env.RESTLET_HOME}/lib/org.simpleframework_3.1/org.simpleframework.jar" dest="${tmp.dir}"/>
-    <unjar src="${env.RESTLET_HOME}/lib/org.restlet.jar" dest="${tmp.dir}"/>
-    <unjar src="${env.RESTLET_HOME}/lib/com.noelios.restlet.jar" dest="${tmp.dir}"/>
-    <unjar src="${env.RESTLET_HOME}/lib/com.noelios.restlet.ext.net.jar" dest="${tmp.dir}"/>
-    <unjar src="${env.RESTLET_HOME}/lib/com.noelios.restlet.ext.simple_3.1.jar" dest="${tmp.dir}"/>
-
-    <!-- No main class, this jar file is a library and cannot be run from the command line. -->
-    <jar destfile="${basedir}/sensorbaseclient.jar" basedir="${tmp.dir}">
-      <manifest>
-        <attribute name="Implementation-Title" value="Hackystat SensorBaseClient"/>
-        <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="Collaborative Software Development Laboratory, University of Hawaii"/>
-      </manifest>
-    </jar>
     
-    <!-- Now add derby and jar up sensorbase.jar. -->
-    <unjar src="${env.DERBY_HOME}/lib/derby.jar" dest="${tmp.dir}"/>
-    <jar destfile="${basedir}/sensorbase.jar" basedir="${tmp.dir}">
+    <!-- Copy the webapp dir over -->
+    <copy todir="${tmp.dir}">
+      <fileset dir="${basedir}/webapp"/>
+    </copy>
+    
+    <!-- Copy over all of the required libraries. --> 
+    <unjar dest="${tmp.dir}">
+      <fileset file="${env.HACKYSTAT_SENSORBASE_HOME}/sensorbase.jar" />
+      <fileset file="${env.HACKYSTAT_DAILYPROJECTDATA_HOME}/dailyprojectdata.lib.jar" />
+      <fileset file="${env.HACKYSTAT_TELEMETRY_HOME}/telemetry.jar" />
+      <fileset file="${env.WICKET_HOME}/lib/wicket-${wicket.version}.jar" />
+      <fileset dir="${env.JETTY_HOME}/lib">
+         <include name="jetty-${jetty.version}.jar" />
+         <include name="jetty-util-${jetty.version}.jar" />
+         <include name="servlet-api-2.5-${jetty.version}.jar" />
+       </fileset>
+       <fileset dir="${env.SLF4J_HOME}">
+         <include name="slf4j-api-${slf4j.version}.jar" />
+         <include name="slf4j-simple-${slf4j.version}.jar" />
+       </fileset>
+    </unjar>
+
+    <jar destfile="${basedir}/projectbrowser.jar" basedir="${tmp.dir}">
        <manifest>
-         <attribute name="Main-Class" value="org.hackystat.sensorbase.server.Server"/>
-         <attribute name="Implementation-Title" value="Hackystat SensorBase-UH"/>
+         <attribute name="Main-Class" value="org.hackystat.projectbrowser.Start"/>
+         <attribute name="Implementation-Title" value="Hackystat ProjectBrowser"/>
          <attribute name="Implementation-Version" value="${version}"/>
          <attribute name="Implementation-Vendor" value="Collaborative Software Development Laboratory, University of Hawaii"/>
        </manifest>
      </jar>
 
-    <delete dir="${tmp.dir}" />
-  </target> 
-  
-  <target name="jar-lib" depends="compile" 
-     description="Create sensorbase.lib.jar, containing just org.hackystat.sensorbase code.">
-     <!-- Define the directories and distribution name -->
-     <mkdir dir="${tmp.lib.dir}" />
-     <copy todir="${tmp.lib.dir}">
-       <fileset dir="${basedir}/build/classes"/>
-     </copy>
-   
-     <jar destfile="${basedir}/sensorbase.lib.jar" basedir="${tmp.lib.dir}">
-       <manifest>
-         <attribute name="Implementation-Title" value="Hackystat SensorBase-UH"/>
-         <attribute name="Implementation-Version" value="${version}"/>
-         <attribute name="Implementation-Vendor" value="Collaborative Software Development Laboratory, University of Hawaii"/>
-       </manifest>
-     </jar>
-     <delete dir="${tmp.lib.dir}" />
-   </target>    
+    <!-- 
+      <delete dir="${tmp.dir}" />
+      --> 
+  </target>     
 </project>
 
