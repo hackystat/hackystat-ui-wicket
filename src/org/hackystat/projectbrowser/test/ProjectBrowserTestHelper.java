@@ -35,8 +35,10 @@ public class ProjectBrowserTestHelper {
   @BeforeClass 
   public static void setupServer() throws Exception {
     // Create testing versions of the Sensorbase, DPD, and Telemetry servers.
-    ProjectBrowserTestHelper.sensorbaseServer = org.hackystat.sensorbase.server.Server.newTestInstance();
-    ProjectBrowserTestHelper.dpdServer = org.hackystat.dailyprojectdata.server.Server.newTestInstance(); 
+    ProjectBrowserTestHelper.sensorbaseServer = 
+      org.hackystat.sensorbase.server.Server.newTestInstance();
+    ProjectBrowserTestHelper.dpdServer = 
+      org.hackystat.dailyprojectdata.server.Server.newTestInstance(); 
     ProjectBrowserTestHelper.telemetryServer = 
       org.hackystat.telemetry.service.server.Server.newTestInstance();
   }

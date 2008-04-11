@@ -96,7 +96,7 @@ public class ProjectBrowserProperties {
     }
     trimProperties(properties);
     String wicketConfig = properties.getProperty(WICKET_CONFIGURATION_KEY);
-    if (wicketConfig == null) {
+    if (wicketConfig != null) {
       System.out.println("Setting wicket.configuration to: " + wicketConfig);
       System.setProperty("wicket.configuration", wicketConfig);
     }

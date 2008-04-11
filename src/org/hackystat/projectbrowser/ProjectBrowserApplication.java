@@ -43,7 +43,8 @@ public class ProjectBrowserApplication extends WebApplication {
   /**
    * Creates a ProjectBrowserApplication, in which the passed properties override the entries
    * in the properties file.  
-   * @param properties
+   * @param properties A properties instance, the contents of which will override any other 
+   * property settings. 
    */
   public ProjectBrowserApplication(Properties properties) {
     this.logger = HackystatLogger.getLogger("org.hackystat.projectbrowser", "projectbrowser");

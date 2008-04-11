@@ -18,7 +18,7 @@ public class TestSensorDataPage extends ProjectBrowserTestHelper {
    * get there. 
    */
   @Test 
-  public void testSensorDataPage() {
+  public void testSensorDataPage() {  //NOPMD WicketTester has its own assert classes.
     WicketTester tester = new WicketTester(new ProjectBrowserApplication(getTestProperties()));
     tester.startPage(SigninPage.class); 
     // Let's sign in.
