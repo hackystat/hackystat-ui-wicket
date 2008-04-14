@@ -23,6 +23,10 @@ public class ProjectBrowserProperties {
   public static final String ADMIN_EMAIL_KEY =  "projectbrowser.admin.email";
   /** How to control wicket development vs. deployment mode. */
   public static final String WICKET_CONFIGURATION_KEY =  "projectbrowser.wicket.configuration";
+  /** Application logo URL. */
+  public static final String APPLICATION_LOGO_KEY =  "projectbrowser.application.logo";
+  /** Optional name. */
+  public static final String APPLICATION_NAME_KEY =  "projectbrowser.application.name";
   
   // Not sure yet if we need the following.
   /** The projectbrowser hostname key. */
@@ -73,6 +77,8 @@ public class ProjectBrowserProperties {
     properties.setProperty(TELEMETRY_HOST_KEY, "http://localhost:9878/telemetry");
     properties.setProperty(LOGGING_LEVEL_KEY, "INFO");
     properties.setProperty(ADMIN_EMAIL_KEY, "johnson@hackystat.org");
+    properties.setProperty(APPLICATION_LOGO_KEY, "");
+    properties.setProperty(APPLICATION_NAME_KEY, "ProjectBrowser");
 
     // Now read in the properties file, and override the defaults if supplied. 
     FileInputStream stream = null;
@@ -125,6 +131,8 @@ public class ProjectBrowserProperties {
       pad + TELEMETRY_HOST_KEY          + eq + get(TELEMETRY_HOST_KEY) + cr +
       pad + LOGGING_LEVEL_KEY   + eq + get(LOGGING_LEVEL_KEY) + cr +
       pad + WICKET_CONFIGURATION_KEY   + eq + get(WICKET_CONFIGURATION_KEY) + cr +
+      pad + APPLICATION_LOGO_KEY   + eq + get(APPLICATION_LOGO_KEY) + cr +
+      pad + APPLICATION_NAME_KEY   + eq + get(APPLICATION_NAME_KEY) + cr +
       pad + ADMIN_EMAIL_KEY   + eq + get(ADMIN_EMAIL_KEY);
   }
   
