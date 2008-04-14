@@ -137,5 +137,21 @@ public class ProjectBrowserApplication extends WebApplication {
   public String getTelemetryHost() {
     return getProjectBrowserProperty(ProjectBrowserProperties.TELEMETRY_HOST_KEY);
   }
+  
+  /**
+   * Returns the application name.
+   * @return The application name.
+   */
+  public String getApplicationName() {
+    return getProjectBrowserProperty(ProjectBrowserProperties.APPLICATION_NAME_KEY);
+  }
+  
+  /**
+   * Returns the application logo.
+   * @return The application logo.
+   */
+  public String getApplicationLogo() {
+    return getProjectBrowserProperty(ProjectBrowserProperties.APPLICATION_LOGO_KEY);
+  }
 
 }

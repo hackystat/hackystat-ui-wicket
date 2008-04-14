@@ -13,7 +13,7 @@
 <body>
 <div id="page">
  <div id="header">
- <h3>Hackystat ProjectBrowser</h3>
+    <h2><img wicket:id="application-logo" src="http://xenia.ics.hawaii.edu/hackyDevSite/images/hackystat.gif"/><span wicket:id="application-name">[Application Name]</span></h2>
  <hr>
  </div>
 
@@ -23,7 +23,7 @@
       <form wicket:id="signinForm" class="hform">
         <fieldset>
           <legend>Sign in</legend>
-          <p>Enter your SensorBase username and password below to login to this project browser:</p>
+          <p>Enter your SensorBase username and password below to login:</p>
           <p><label>User</label> <input type="text" wicket:id="user" /></p>
           <p><label>Password</label> <input type="password" wicket:id="password" /></p>
           <p><input type="submit" name="Signin" value="Signin" class="button"></p>
@@ -37,7 +37,7 @@
       <form wicket:id="registerForm" class="hform">
         <fieldset>
         <legend>Register/Forgotten password</legend>
-          <p>Enter your email address to register with the SensorBase.
+          <p>Enter your email address to register.
              Your password will be sent to you via email.
              You can also use this form to have your current password re-sent to you via email. </p>
           <p><label>Email</label> <input type="text" wicket:id="email" /></p>

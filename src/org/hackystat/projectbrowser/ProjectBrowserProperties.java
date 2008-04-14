@@ -78,7 +78,7 @@ public class ProjectBrowserProperties {
     properties.setProperty(LOGGING_LEVEL_KEY, "INFO");
     properties.setProperty(ADMIN_EMAIL_KEY, "johnson@hackystat.org");
     properties.setProperty(APPLICATION_LOGO_KEY, "");
-    properties.setProperty(APPLICATION_NAME_KEY, "ProjectBrowser");
+    properties.setProperty(APPLICATION_NAME_KEY, "Hackystat ProjectBrowser");
 
     // Now read in the properties file, and override the defaults if supplied. 
     FileInputStream stream = null;

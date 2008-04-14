@@ -4,6 +4,7 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.hackystat.dailyprojectdata.client.DailyProjectDataClient;
 import org.hackystat.projectbrowser.ProjectBrowserApplication;
+import org.hackystat.projectbrowser.imageurl.ImageUrl;
 import org.hackystat.sensorbase.client.SensorBaseClient;
 import org.hackystat.telemetry.service.client.TelemetryClient;
 
@@ -22,6 +23,9 @@ public class SigninPage extends WebPage {
    * Create the SigninPage. 
    */
   public SigninPage() {
+    ProjectBrowserApplication app = (ProjectBrowserApplication)getApplication();
+    add(new ImageUrl("application-logo", app.getApplicationLogo()));
+    add(new Label("application-name", app.getApplicationName()));
     add(new SigninForm("signinForm"));
     add(new RegisterForm("registerForm"));
     add(new Label("serviceInfo", getServiceInfo()));
