@@ -218,11 +218,11 @@ public class ProjectBrowserSession extends WebSession {
    * Return the project that associated with the given id.
    * Id is usually the project name. In case of projects with the same name, the id will become
    * projectName - projectOwner
-   * @param id the given id
+   * @param projectNameId the given id
    * @return the result project, null if not found.
    */
-  public Project getProject(String id) {
-    return this.projectMap.get(id);
+  public Project getProjectByNameId(String projectNameId) {
+    return this.projectMap.get(projectNameId);
   }
 
 }
