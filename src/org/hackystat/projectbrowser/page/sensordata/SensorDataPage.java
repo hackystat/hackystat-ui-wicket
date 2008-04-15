@@ -15,11 +15,6 @@ public class SensorDataPage extends ProjectBrowserBasePage {
    * Creates this page. 
    */
   public SensorDataPage() {
-//    DateTextField dateTextField = new DateTextField("dateTextField", new PropertyModel(this,
-//    "date"), new StyleDateConverter("S-", true));
-//    
-//    DatePicker sDatePicker = new DatePicker();
-
-    
+    add(new SensorDataForm("sensorDataForm"));
   }
 }

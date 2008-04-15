@@ -19,7 +19,7 @@
     <mkdir dir="${findbugs.dir}" />
     <findbugs home="${env.FINDBUGS_HOME}" failOnError="${findbugs.failOnError}" warningsProperty="findbugs.warningsfound" output="xml:withMessages" outputFile="${findbugs.dir}/findbugs.xml" excludeFilter="${basedir}/lib/findbugs/hackystat.findbugs.exclude.xml">
       <auxClasspath>
-        <path refid="compile.classpath" />
+        <path refid="run.classpath" />
       </auxClasspath>
       <sourcePath>
         <fileset dir="${src.dir}">

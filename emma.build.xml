@@ -37,7 +37,7 @@
     <junit printsummary="withOutAndErr" fork="yes">
       <classpath path="${build.dir}/classes;${java.class.path}">
         <path refid="emma.lib.dir" />
-        <path refid="compile.classpath" />
+        <path refid="run.classpath" />
         <fileset file="${env.JAVAMAIL_HOME}/mail.jar"/> 
       </classpath>
       <sysproperty key="emma.coverage.out.file" value="${build.dir}/emma/coverage.emma" />

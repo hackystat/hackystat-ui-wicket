@@ -1,5 +1,8 @@
 package org.hackystat.projectbrowser;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.wicket.Request;
 import org.apache.wicket.Session;
 import org.apache.wicket.protocol.http.WebSession;
@@ -151,5 +154,16 @@ public class ProjectBrowserSession extends WebSession {
    */
   public String getUserEmail() {
     return this.email;
+  }
+  
+  /**
+   * Returns the list of project names associated with this user.
+   * This method will probably change to a list of Project instances in the future.  
+   * @return The list of project names. 
+   */
+  public List<String> getProjectNames() {
+    List<String> projectNames = new ArrayList<String>();
+    projectNames.add("Default");
+    return projectNames;
   }
 }

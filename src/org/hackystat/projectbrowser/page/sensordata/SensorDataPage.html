@@ -4,10 +4,10 @@
 <wicket:extend>
 
     <div id="sensordata-left">
-      <form>
+      <form wicket:id="sensorDataForm">
         <table width="100%">
-          <tr><td>Date:</td><td><input type="text"/></td></tr>
-          <tr><td>Project:</td><td><select>
+          <tr><td>Date:</td><td><input style="width: 5em" wicket:id="dateTextField" type="text"/></td></tr>
+          <tr><td>Project:</td><td><select wicket:id="projectMenu">
                                      <option value="Default">Default</option>
                                    </select>
                           </td></tr>

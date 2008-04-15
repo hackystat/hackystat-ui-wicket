@@ -17,8 +17,7 @@
     <!-- Note that emma is forking in its JUnit as well. -->
     <junit printsummary="withOutAndErr" haltonfailure="${junit.haltonfailure}" fork="yes" failureproperty="junit.failed">
       <classpath>
-        <pathelement location="${build.dir}/classes" />
-        <path refid="compile.classpath" />
+        <path refid="run.classpath" />
         <fileset file="${env.JAVAMAIL_HOME}/mail.jar"/> 
       </classpath>
       <sysproperty key="user.dir" value="${basedir}" />

@@ -49,10 +49,15 @@
   <available file="${env.JETTY_HOME}/lib/jetty-${jetty.version}.jar" type="file" property="jetty.available" />
   <fail message="This package requires ${env.JETTY_HOME}/lib/jetty-${jetty.version}.jar to be installed and JETTY_HOME defined" unless="jetty.available" />
 
-  <!-- Make sure that Wicket and its supplemental libraries are available . -->
+  <!-- Make sure that Wicket is available . -->
   <property name="wicket.version" value="1.3.2" />
   <available file="${env.WICKET_HOME}/lib/wicket-${wicket.version}.jar" type="file" property="wicket.available" />
   <fail message="This package requires ${env.WICKET_HOME}/wicket-${wicket.version}.jar to be installed and WICKET_HOME defined" unless="wicket.available" />
+  
+  <!-- Make sure that Joda Time (for DateTimePicker) is available . -->
+  <property name="jodatime.version" value="1.5.2" />
+  <available file="${env.JODATIME_HOME}/joda-time-${jodatime.version}.jar" type="file" property="jodatime.available" />
+  <fail message="This package requires ${env.JODATIME_HOME}/joda-time-${jodatime.version}.jar to be installed and JODATIME_HOME defined" unless="jodatime.available" />
   
   <!-- Make sure that SLF4J is available . -->
   <property name="slf4j.version" value="1.5.0" />
@@ -93,11 +98,9 @@
     <fileset file="${env.HACKYSTAT_TELEMETRY_HOME}/telemetry.jar" />
     <fileset file="${env.JUNIT_HOME}/junit-${junit.version}.jar" />
     <fileset file="${env.FINDBUGS_HOME}/lib/annotations.jar" />
-    <fileset file="${env.WICKET_HOME}/lib/wicket-${wicket.version}.jar" />
     <fileset dir="${env.WICKET_HOME}/lib">
       <include name="wicket-${wicket.version}.jar" />
       <include name="wicket-datetime-${wicket.version}.jar" />
-      <include name="wicket-extensions-${wicket.version}.jar" />
     </fileset>
     <fileset dir="${env.JETTY_HOME}/lib">
       <include name="jetty-${jetty.version}.jar" />
@@ -113,6 +116,7 @@
   <path id="run.classpath">
     <path refid="compile.classpath"/>
     <pathelement path="${build.classes.dir}" />
+    <pathelement path="${env.JODATIME_HOME}/joda-time-1.5.2.jar"/>
   </path>
     
 
