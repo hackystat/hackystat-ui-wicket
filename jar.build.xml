@@ -28,7 +28,11 @@
       <fileset file="${env.HACKYSTAT_SENSORBASE_HOME}/sensorbase.jar" />
       <fileset file="${env.HACKYSTAT_DAILYPROJECTDATA_HOME}/dailyprojectdata.lib.jar" />
       <fileset file="${env.HACKYSTAT_TELEMETRY_HOME}/telemetry.jar" />
-      <fileset file="${env.WICKET_HOME}/lib/wicket-${wicket.version}.jar" />
+      <fileset dir="${env.WICKET_HOME}/lib">
+        <include name="wicket-${wicket.version}.jar" />
+        <include name="wicket-datetime-${wicket.version}.jar" />
+        <include name="wicket-extensions-${wicket.version}.jar" />
+      </fileset>
       <fileset dir="${env.JETTY_HOME}/lib">
          <include name="jetty-${jetty.version}.jar" />
          <include name="jetty-util-${jetty.version}.jar" />
@@ -48,10 +52,7 @@
          <attribute name="Implementation-Vendor" value="Collaborative Software Development Laboratory, University of Hawaii"/>
        </manifest>
      </jar>
-
-    <!-- 
       <delete dir="${tmp.dir}" />
-      --> 
   </target>     
 </project>
 
