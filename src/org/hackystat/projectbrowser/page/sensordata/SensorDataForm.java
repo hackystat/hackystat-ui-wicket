@@ -2,8 +2,7 @@ package org.hackystat.projectbrowser.page.sensordata;
 
 import java.util.Date;
 
-import org.apache.wicket.datetime.StyleDateConverter;
-import org.apache.wicket.datetime.markup.html.form.DateTextField;
+import org.apache.wicket.extensions.markup.html.form.DateTextField;
 import org.apache.wicket.extensions.yui.calendar.DatePicker;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
@@ -26,6 +25,9 @@ public class SensorDataForm extends Form {
   /** The project name. */
   private String projectName = "Default";
   
+  /** Date format used in date field input. */
+  public static final String DATA_FORMAT = "yyyy-MM-dd";
+  
   
   /**
    * Create this form, supplying the wicket:id.
@@ -36,8 +38,8 @@ public class SensorDataForm extends Form {
     super(id);
     setModel(new CompoundPropertyModel(this));
     // Create the date field.
-    DateTextField dateTextField = new DateTextField("dateTextField", new PropertyModel(this,
-    "date"), new StyleDateConverter("S-", true));
+    DateTextField dateTextField = new DateTextField("dateTextField", new PropertyModel(this, "date"),
+        DATA_FORMAT);
     dateTextField.add(new DatePicker());
     add(dateTextField);
     // Need to add the datepicker thingy.
