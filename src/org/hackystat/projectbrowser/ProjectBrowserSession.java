@@ -173,7 +173,8 @@ public class ProjectBrowserSession extends WebSession {
   public List<String> getProjectNames() {
     List<String> projectNames = new ArrayList<String>();
     for (Project project : getProjects()) {
-      projectNames.add(project.getName() + ":" + project.getOwner());
+      // Add (the other) owner if project name is a duplicate. 
+      projectNames.add(project.getName());
     }
     return projectNames;
   }
