@@ -43,4 +43,11 @@ public class ProjectBrowserBasePage extends WebPage {
     });
     add(new Label("UserEmail", new PropertyModel(ProjectBrowserSession.get(), "userEmail")));
   }
+  
+  /**
+   * The action to be performed when the user has set the Project and Date fields. 
+   */
+  public void onProjectDateSubmit() {
+    // do nothing in default case. 
+  }
 }
