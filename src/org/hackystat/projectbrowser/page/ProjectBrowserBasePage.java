@@ -17,6 +17,7 @@ import org.hackystat.projectbrowser.page.dailyprojectdata.DailyProjectDataPage;
 import org.hackystat.projectbrowser.page.projects.ProjectsPage;
 import org.hackystat.projectbrowser.page.sensordata.SensorDataPage;
 import org.hackystat.projectbrowser.page.telemetry.TelemetryPage;
+import org.hackystat.sensorbase.resource.projects.jaxb.Project;
 import org.hackystat.utilities.tstamp.Tstamp;
 
 /**
@@ -35,11 +36,15 @@ public class ProjectBrowserBasePage extends WebPage {
   protected String projectName = "";
   
   /** The date this user has selected in the ProjectDate form. */
-  protected Date date = getDateToday();
+  private Date date = getDateToday();
+
+  /** The project name this user has selected. */
+  private Project project = null;
   
   /** Displays text at the bottom of the screen for user information. */
   protected String footerFeedback = "";
 
+  
   /**
    * Create the ProjectBrowserBasePage.
    */
@@ -85,5 +90,33 @@ public class ProjectBrowserBasePage extends WebPage {
     XMLGregorianCalendar time = Tstamp.makeTimestamp();
     time.setTime(0, 0, 0);
     return time.toGregorianCalendar().getTime();
+  }
+
+  /**
+   * @param project the project to set
+   */
+  public void setProject(Project project) {
+    this.project = project;
+  }
+
+  /**
+   * @return the project
+   */
+  public Project getProject() {
+    return project;
+  }
+
+  /**
+   * @param date the date to set
+   */
+  public void setDate(Date date) {
+    this.date = date;
+  }
+
+  /**
+   * @return the date
+   */
+  public Date getDate() {
+    return date;
   }
 }
