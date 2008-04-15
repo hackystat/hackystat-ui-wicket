@@ -101,6 +101,7 @@
     <fileset dir="${env.WICKET_HOME}/lib">
       <include name="wicket-${wicket.version}.jar" />
       <include name="wicket-datetime-${wicket.version}.jar" />
+      <include name="wicket-extensions-${wicket.version}.jar" />
     </fileset>
     <fileset dir="${env.JETTY_HOME}/lib">
       <include name="jetty-${jetty.version}.jar" />
