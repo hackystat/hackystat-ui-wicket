@@ -1,0 +1,28 @@
+<html xmlns:wicket>
+  <wicket:panel>
+    <span wicket:id="feedback">Feedback</span>
+    <form wicket:id="projectDateForm">
+      <table width="100%">
+        <tr>
+          <td>Date:</td>
+          <td>
+            <input style="width: 6em" wicket:id="dateTextField" type="text" />
+          </td>
+        </tr>
+        <tr>
+          <td>Project:</td>
+          <td>
+            <select style="width: 10em" wicket:id="projectMenu">
+              <option value="Default">Default</option>
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" style="text-align:center">
+            <input type="submit" value="OK" />
+          </td>
+        </tr>
+      </table>
+    </form>
+  </wicket:panel>
+</html>
