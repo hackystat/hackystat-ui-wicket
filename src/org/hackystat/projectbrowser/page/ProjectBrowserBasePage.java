@@ -36,7 +36,7 @@ public class ProjectBrowserBasePage extends WebPage {
   protected String projectName = "";
   
   /** The date this user has selected in the ProjectDate form. */
-  private Date date = getDateToday();
+  protected Date date = getDateToday();
 
   /** The project name this user has selected. */
   private Project project = null;
