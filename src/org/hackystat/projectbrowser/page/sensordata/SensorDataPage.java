@@ -31,19 +31,4 @@ public class SensorDataPage extends ProjectBrowserBasePage {
     System.out.println("Display table: " + this.date + " " + this.projectName);
   }
   
-//  public Date getDate() {
-//    return this.date;
-//  }
-//  
-//  public void setDate(Date date) {
-//    this.date = date; 
-//  }
-//  
-//  public String getProjectName() {
-//    return this.projectName;
-//  }
-//  
-//  public void setProjectName(String projectName) {
-//    this.projectName = projectName;
-//  }
 }

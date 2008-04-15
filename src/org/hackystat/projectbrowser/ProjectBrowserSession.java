@@ -182,9 +182,9 @@ public class ProjectBrowserSession extends WebSession {
   }
   
   /**
-   * Return the list of projects associated with this user.  If the list has not yet been
-   * built, get it from the SensorBase and cache it. 
-   * @return The list of Project instances. 
+   * Return a map of project names to project instances associated with this user.  
+   * If the map has not yet been built, get it from the SensorBase and cache it. 
+   * @return The map of Project instances. 
    */
   public Map<String, Project> getProjects() {
     if (this.projectMap == null) {
@@ -215,7 +215,7 @@ public class ProjectBrowserSession extends WebSession {
   }
   
   /**
-   * Return the project that associated with the given id.
+   * Return the project associated with the given id.
    * Id is usually the project name. In case of projects with the same name, the id will become
    * projectName - projectOwner
    * @param projectNameId the given id

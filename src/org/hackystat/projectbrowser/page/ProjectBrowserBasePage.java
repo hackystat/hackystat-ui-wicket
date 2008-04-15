@@ -5,7 +5,9 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.PropertyModel;
+import org.hackystat.projectbrowser.ProjectBrowserApplication;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
+import org.hackystat.projectbrowser.imageurl.ImageUrl;
 import org.hackystat.projectbrowser.page.dailyprojectdata.DailyProjectDataPage;
 import org.hackystat.projectbrowser.page.projects.ProjectsPage;
 import org.hackystat.projectbrowser.page.sensordata.SensorDataPage;
@@ -27,6 +29,9 @@ public class ProjectBrowserBasePage extends WebPage {
    * Create the ProjectBrowserBasePage.
    */
   public ProjectBrowserBasePage() {
+    ProjectBrowserApplication app = (ProjectBrowserApplication)getApplication();
+    add(new ImageUrl("application-logo", app.getApplicationLogo()));
+    add(new Label("application-name", app.getApplicationName()));
     add(new BookmarkablePageLink("SensorDataPageLink", SensorDataPage.class));
     add(new BookmarkablePageLink("ProjectsPageLink", ProjectsPage.class));
     add(new BookmarkablePageLink("DailyProjectDataPageLink", DailyProjectDataPage.class));
