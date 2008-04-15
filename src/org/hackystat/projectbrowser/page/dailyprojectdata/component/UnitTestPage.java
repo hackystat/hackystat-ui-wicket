@@ -33,9 +33,9 @@ public class UnitTestPage extends DailyProjectDataPage {
   public UnitTestPage(PageParameters parameters) {
     super(parameters);
     this.setModel(new CompoundPropertyModel(this));
-    add(new Label("projectName"));
-    add(new Label("projectOwner"));
-    add(new Label("date"));
+    add(new Label("projectName", this.getProject().getName()));
+    add(new Label("projectOwner", this.getProject().getOwner()));
+    add(new Label("date", this.getDate().toString()));
     PageableListView memberDataListView = new PageableListView("memberDataList",
         getUnitTestMemberDataList(), MEMBERDATA_PER_PAGE) {
       /** Support serialization. */
@@ -68,7 +68,7 @@ public class UnitTestPage extends DailyProjectDataPage {
     DailyProjectDataClient dpdClient = ProjectBrowserSession.get().getDailyProjectDataClient();
     List<MemberData> memberDataList = new ArrayList<MemberData>();
     try {
-      memberDataList = dpdClient.getUnitTest(this.getProjectOwner(), this.getProjectName(),
+      memberDataList = dpdClient.getUnitTest(getProject().getOwner(), getProject().getName(),
           Tstamp.makeTimestamp(this.getDate().getTime())).getMemberData();
     }
     catch (DailyProjectDataClientException e) {
