@@ -1,7 +1,12 @@
 package org.hackystat.projectbrowser;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.logging.Logger;
 
 import org.apache.wicket.Request;
@@ -38,8 +43,8 @@ public class ProjectBrowserSession extends WebSession {
   private String registerFeedback = "";
   /** If this user has been authenticated against the Sensorbase during this session. */
   private boolean isAuthenticated = false;
-  /** The list of Projects that this user has. */
-  private List<Project> projects = null;
+  /** The collection of Projects that this user has. */
+  private Map<String, Project> projectMap = null;
   
   
   /**
@@ -167,15 +172,12 @@ public class ProjectBrowserSession extends WebSession {
   
   /**
    * Returns the list of project names associated with this user.
-   * The project names are identified by '[name]:[owner]'. 
    * @return The list of project names. 
    */
   public List<String> getProjectNames() {
     List<String> projectNames = new ArrayList<String>();
-    for (Project project : getProjects()) {
-      // Add (the other) owner if project name is a duplicate. 
-      projectNames.add(project.getName() + ":" + project.getOwner());
-    }
+    projectNames.addAll(getProjects().keySet());
+    Collections.sort(projectNames);
     return projectNames;
   }
   
@@ -184,15 +186,24 @@ public class ProjectBrowserSession extends WebSession {
    * built, get it from the SensorBase and cache it. 
    * @return The list of Project instances. 
    */
-  public List<Project> getProjects() {
-    if (this.projects == null) {
-      this.projects= new ArrayList<Project>();
+  public Map<String, Project> getProjects() {
+    if (this.projectMap == null) {
+      this.projectMap= new HashMap<String, Project>();
       try {
         SensorBaseClient sensorBaseClient = ProjectBrowserSession.get().getSensorBaseClient();
         ProjectIndex projectIndex = sensorBaseClient.getProjectIndex(this.email);
+        Set<String> duplicatedProjectNames = new TreeSet<String>();
         for (ProjectRef projectRef : projectIndex.getProjectRef()) {
           Project project = sensorBaseClient.getProject(projectRef);
-          projects.add(project);
+          Project temp = projectMap.put(project.getName(), project);
+          if (temp != null) {
+            duplicatedProjectNames.add(project.getName());
+            projectMap.put(temp.getName() + " - " + temp.getOwner(), temp);
+            projectMap.put(project.getName() + " - " + project.getOwner(), project);
+          }
+        }
+        for (String duplicatedProjectName : duplicatedProjectNames) {
+          projectMap.remove(duplicatedProjectName);
         }
       }
       catch (SensorBaseClientException e) {
@@ -200,6 +211,18 @@ public class ProjectBrowserSession extends WebSession {
         logger.warning("Error getting projects for " + this.email + StackTrace.toString(e));
       }
     }
-    return this.projects;
+    return this.projectMap;
   }
+  
+  /**
+   * Return the project that associated with the given id.
+   * Id is usually the project name. In case of projects with the same name, the id will become
+   * projectName - projectOwner
+   * @param id the given id
+   * @return the result project, null if not found.
+   */
+  public Project getProject(String id) {
+    return this.projectMap.get(id);
+  }
+
 }
