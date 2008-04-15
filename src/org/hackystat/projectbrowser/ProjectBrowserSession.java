@@ -174,7 +174,7 @@ public class ProjectBrowserSession extends WebSession {
     List<String> projectNames = new ArrayList<String>();
     for (Project project : getProjects()) {
       // Add (the other) owner if project name is a duplicate. 
-      projectNames.add(project.getName());
+      projectNames.add(project.getName() + ":" + project.getOwner());
     }
     return projectNames;
   }
