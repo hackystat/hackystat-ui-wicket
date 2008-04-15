@@ -2,13 +2,19 @@ package org.hackystat.projectbrowser;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.apache.wicket.Request;
 import org.apache.wicket.Session;
 import org.apache.wicket.protocol.http.WebSession;
 import org.hackystat.dailyprojectdata.client.DailyProjectDataClient;
 import org.hackystat.sensorbase.client.SensorBaseClient;
+import org.hackystat.sensorbase.client.SensorBaseClientException;
+import org.hackystat.sensorbase.resource.projects.jaxb.Project;
+import org.hackystat.sensorbase.resource.projects.jaxb.ProjectIndex;
+import org.hackystat.sensorbase.resource.projects.jaxb.ProjectRef;
 import org.hackystat.telemetry.service.client.TelemetryClient;
+import org.hackystat.utilities.stacktrace.StackTrace;
 
 /**
  * Provides a session instance that holds authentication credentials.
@@ -32,6 +38,9 @@ public class ProjectBrowserSession extends WebSession {
   private String registerFeedback = "";
   /** If this user has been authenticated against the Sensorbase during this session. */
   private boolean isAuthenticated = false;
+  /** The list of Projects that this user has. */
+  private List<Project> projects = null;
+  
   
   /**
    * Provide a constructor that initializes WebSession.
@@ -158,12 +167,38 @@ public class ProjectBrowserSession extends WebSession {
   
   /**
    * Returns the list of project names associated with this user.
-   * This method will probably change to a list of Project instances in the future.  
+   * The project names are identified by '[name]:[owner]'. 
    * @return The list of project names. 
    */
   public List<String> getProjectNames() {
     List<String> projectNames = new ArrayList<String>();
-    projectNames.add("Default");
+    for (Project project : getProjects()) {
+      projectNames.add(project.getName() + ":" + project.getOwner());
+    }
     return projectNames;
+  }
+  
+  /**
+   * Return the list of projects associated with this user.  If the list has not yet been
+   * built, get it from the SensorBase and cache it. 
+   * @return The list of Project instances. 
+   */
+  public List<Project> getProjects() {
+    if (this.projects == null) {
+      this.projects= new ArrayList<Project>();
+      try {
+        SensorBaseClient sensorBaseClient = ProjectBrowserSession.get().getSensorBaseClient();
+        ProjectIndex projectIndex = sensorBaseClient.getProjectIndex(this.email);
+        for (ProjectRef projectRef : projectIndex.getProjectRef()) {
+          Project project = sensorBaseClient.getProject(projectRef);
+          projects.add(project);
+        }
+      }
+      catch (SensorBaseClientException e) {
+        Logger logger = ((ProjectBrowserApplication)getApplication()).getLogger();
+        logger.warning("Error getting projects for " + this.email + StackTrace.toString(e));
+      }
+    }
+    return this.projects;
   }
 }
