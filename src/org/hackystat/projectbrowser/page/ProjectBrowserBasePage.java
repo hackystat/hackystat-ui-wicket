@@ -1,5 +1,8 @@
 package org.hackystat.projectbrowser.page;
 
+import java.util.Date;
+import java.util.List;
+
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
@@ -24,6 +27,12 @@ public class ProjectBrowserBasePage extends WebPage {
   
   /** Support serialization. */
   private static final long serialVersionUID = 1L;
+  
+  /** The project name this user has selected in the ProjectDate form. */
+  protected String projectName = "";
+  
+  /** The date this user has selected in the ProjectDate form. */
+  protected Date date = new Date();
 
   /**
    * Create the ProjectBrowserBasePage.
@@ -32,6 +41,11 @@ public class ProjectBrowserBasePage extends WebPage {
     ProjectBrowserApplication app = (ProjectBrowserApplication)getApplication();
     add(new ImageUrl("application-logo", app.getApplicationLogo()));
     add(new Label("application-name", app.getApplicationName()));
+    // Provide a default value for the projectName field.
+    List<String> projectNames = ProjectBrowserSession.get().getProjectNames();
+    if ((projectNames != null) && !projectNames.isEmpty()) {
+      this.projectName = projectNames.get(0);
+    }
     add(new BookmarkablePageLink("SensorDataPageLink", SensorDataPage.class));
     add(new BookmarkablePageLink("ProjectsPageLink", ProjectsPage.class));
     add(new BookmarkablePageLink("DailyProjectDataPageLink", DailyProjectDataPage.class));

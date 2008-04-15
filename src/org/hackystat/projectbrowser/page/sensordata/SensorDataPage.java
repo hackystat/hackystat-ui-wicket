@@ -1,7 +1,5 @@
 package org.hackystat.projectbrowser.page.sensordata;
 
-import java.util.Date;
-
 import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
 
 /**
@@ -12,12 +10,6 @@ public class SensorDataPage extends ProjectBrowserBasePage {
 
   /** Support serialization. */
   private static final long serialVersionUID = 1L;
-  
-  /** The project name this user has selected. */
-  private String projectName = "";
-  
-  /** The date this user has selected. */
-  private Date date = null;
   
   /**
    * Creates this page. 
