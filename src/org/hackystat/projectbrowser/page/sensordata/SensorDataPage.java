@@ -1,6 +1,10 @@
 package org.hackystat.projectbrowser.page.sensordata;
 
+import java.util.Date;
+
 import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
+import org.hackystat.projectbrowser.ProjectBrowserSession;
+import org.hackystat.sensorbase.resource.projects.jaxb.Project;
 
 /**
  * Provides a page with information about SensorData. 
@@ -20,7 +24,11 @@ public class SensorDataPage extends ProjectBrowserBasePage {
   
   @Override
   public void onProjectDateSubmit() {
-    System.out.println("Display table: " + this.date + " " + this.projectName);
+    Date date = this.date;
+    String projectName = this.projectName;
+    Project project = ProjectBrowserSession.get().getProjectByNameId(this.projectName);
+    this.footerFeedback = "Got project: " + project;    
+
   }
   
 }

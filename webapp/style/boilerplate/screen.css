@@ -54,6 +54,7 @@ hr { color : #3366CC; background-color : #3366CC; height : 2px; }
 
 /* Footer
 -------------------------------------------------------------- */
+
 #footer { border-top: 1px solid #eee; margin-top: 1px; }
 
 #footer .tabs { width: 405px; border-top: 3px solid  #E5ECF9; }
@@ -61,6 +62,7 @@ hr { color : #3366CC; background-color : #3366CC; height : 2px; }
 
 #footer p.quiet { color: #3366CC; }
 
+#footerFeedback { color : #ff3366; }
 #footerLeft { float: left; border-top: 1px solid #eee; margin-top: 1px; width: 70%}
 #footerRight { float: right; text-align: right; border-top: 1px solid #eee; margin-top: 1px; width: 25%}
 

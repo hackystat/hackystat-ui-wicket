@@ -36,6 +36,9 @@ public class ProjectBrowserBasePage extends WebPage {
   
   /** The date this user has selected in the ProjectDate form. */
   protected Date date = getDateToday();
+  
+  /** Displays text at the bottom of the screen for user information. */
+  protected String footerFeedback = "";
 
   /**
    * Create the ProjectBrowserBasePage.
@@ -63,6 +66,7 @@ public class ProjectBrowserBasePage extends WebPage {
         setResponsePage(getApplication().getHomePage());
       }
     });
+    add(new Label("FooterFeedback", new PropertyModel(this, "footerFeedback")));
     add(new Label("UserEmail", new PropertyModel(ProjectBrowserSession.get(), "userEmail")));
   }
   
