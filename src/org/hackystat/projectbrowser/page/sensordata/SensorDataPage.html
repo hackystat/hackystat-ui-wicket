@@ -2,13 +2,41 @@
 <head></head>
 <body>
 <wicket:extend>
-  <span wicket:id="PageContents">This page will provide a variety of perspectives on your sensor data.</span>
-<p>I am envisioning at least the following:</p>
-<ul>
-  <li> Select a project (including Default), and a day, and it will use the Project Summary to display a table of all the kinds of sensor data that were collected on this day.  The table will include a "view" column so that you can see, for any given type of data (or the entire lot), the actual sensor data instances.</li>
-  <li> Some kind of comparison mode so you can see how today's data counts compare to yesterday, last week, etc.</li>
-</ul>
 
+    <div id="sensordata-left">
+      <form>
+        <table width="100%">
+          <tr><td>Date:</td><td><input type="text"/></td></tr>
+          <tr><td>Project:</td><td><select>
+                                     <option value="Default">Default</option>
+                                   </select>
+                          </td></tr>
+          <tr><td colspan="2" style="text-align:center"><input type="submit" value="submit"/></td></tr>
+         </table>
+      </form>
+
+
+      <table width="100%">
+        <tr><th>Type</th>     <th>Count</th>  <th>View</th></tr>
+        <tr><td>DevEvent</td> <td align="right">24</td>     <td><a href="#">view</a></td></tr> 
+        <tr><td>Commit</td>   <td align="right">36</td>     <td><a href="#">view</a></td></tr> 
+        <tr><td>Total</td>    <td align="right">70</td>     <td><a href="#">view</a></td></tr> 
+      </table>
+
+
+    </div>
+
+    <div id="sensordata-right">
+    
+
+      <table>
+        <tr><th>Timestamp</th>  <th>Runtime</th>  <th>SDT</th>   <th>Resource</th>  <th>Owner</th> <th>Tool</th> <th>Properties</th></tr>
+        <tr><td>2008-04-04T11:38:47</td> <td>2008-04-04T11:38:47</td>   <td>DevEvent</td> <td>foo/bar/baz.txt</td> <td>johnson@hawaii.edu</td>   <td>Eclipse</td>  <td>Subtype:File Close, Window: Main</td>     </tr> 
+
+      </table>
+
+
+    </div>
 </wicket:extend>
 </body>
 </html>

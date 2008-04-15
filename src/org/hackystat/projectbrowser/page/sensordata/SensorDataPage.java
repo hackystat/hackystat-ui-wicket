@@ -1,6 +1,5 @@
 package org.hackystat.projectbrowser.page.sensordata;
 
-import org.apache.wicket.markup.html.basic.Label;
 import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
 
 /**
@@ -16,6 +15,11 @@ public class SensorDataPage extends ProjectBrowserBasePage {
    * Creates this page. 
    */
   public SensorDataPage() {
-    add(new Label("PageContents", "SensorData Page contents here."));
+//    DateTextField dateTextField = new DateTextField("dateTextField", new PropertyModel(this,
+//    "date"), new StyleDateConverter("S-", true));
+//    
+//    DatePicker sDatePicker = new DatePicker();
+
+    
   }
 }
