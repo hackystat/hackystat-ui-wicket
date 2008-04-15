@@ -3,6 +3,8 @@ package org.hackystat.projectbrowser.page;
 import java.util.Date;
 import java.util.List;
 
+import javax.xml.datatype.XMLGregorianCalendar;
+
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
@@ -15,6 +17,7 @@ import org.hackystat.projectbrowser.page.dailyprojectdata.DailyProjectDataPage;
 import org.hackystat.projectbrowser.page.projects.ProjectsPage;
 import org.hackystat.projectbrowser.page.sensordata.SensorDataPage;
 import org.hackystat.projectbrowser.page.telemetry.TelemetryPage;
+import org.hackystat.utilities.tstamp.Tstamp;
 
 /**
  * Provides a base class with associated markup that all ProjectBrowser pages (except for signin)
@@ -32,7 +35,7 @@ public class ProjectBrowserBasePage extends WebPage {
   protected String projectName = "";
   
   /** The date this user has selected in the ProjectDate form. */
-  protected Date date = new Date();
+  protected Date date = getDateToday();
 
   /**
    * Create the ProjectBrowserBasePage.
@@ -68,5 +71,15 @@ public class ProjectBrowserBasePage extends WebPage {
    */
   public void onProjectDateSubmit() {
     // do nothing in default case. 
+  }
+  
+  /**
+   * make a Date that represent today, at 0:00:00.
+   * @return the Date object.
+   */
+  public final Date getDateToday() {
+    XMLGregorianCalendar time = Tstamp.makeTimestamp();
+    time.setTime(0, 0, 0);
+    return time.toGregorianCalendar().getTime();
   }
 }
