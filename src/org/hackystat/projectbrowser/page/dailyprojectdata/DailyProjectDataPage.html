@@ -2,8 +2,30 @@
 <head></head>
 <body>
 <wicket:extend>
-  <span wicket:id="PageContents">[Wicket supplied content]</span>
+  <h4 wicket:id="PageContents">[Wicket supplied content]</h4>
+  <span wicket:id="feedback">Feedback</span>
+  <form wicket:id="projectSelectForm">
+    Project:
+    <select wicket:id="projectChoice">
+      <option>Choose a project</option>
+    </select>
+    Date:
+    <input type="text" wicket:id="dateField"></input>
+    <input type="submit" value="OK"/>
+  </form>
 
+  <div id="dpd.body" class="wrapper">
+  <h3>
+  <br/>
+    <ul class="tabs">
+      <li><a wicket:id="UnitTestPageLink"        href="#">Unit Test</a></li>
+    </ul>
+  </h3>
+    <wicket:child/>
+  </div>
+
+  <br/>
+  <br/>
   <p>When completed, this page should contain a set of controls that allow a user to select a date, a project, and a kind of daily analysis to display.  The resulting display could provide things like the following:</p>
 <ul>
   <li> A 'snapshot' of the project with respect to that daily analysis on that day.</li>

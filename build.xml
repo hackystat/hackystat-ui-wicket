@@ -94,6 +94,11 @@
     <fileset file="${env.JUNIT_HOME}/junit-${junit.version}.jar" />
     <fileset file="${env.FINDBUGS_HOME}/lib/annotations.jar" />
     <fileset file="${env.WICKET_HOME}/lib/wicket-${wicket.version}.jar" />
+    <fileset dir="${env.WICKET_HOME}/lib">
+      <include name="wicket-${wicket.version}.jar" />
+      <include name="wicket-datetime-${wicket.version}.jar" />
+      <include name="wicket-extensions-${wicket.version}.jar" />
+    </fileset>
     <fileset dir="${env.JETTY_HOME}/lib">
       <include name="jetty-${jetty.version}.jar" />
       <include name="jetty-util-${jetty.version}.jar" />

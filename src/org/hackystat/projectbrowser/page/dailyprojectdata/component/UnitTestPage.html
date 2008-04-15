@@ -1,0 +1,22 @@
+<html xmlns:wicket>
+<wicket:extend>
+  <h4>
+    Project Name: <span wicket:id="projectName"/><br/>
+    Project Owner: <span wicket:id="projectOwner"/><br>
+    Date: <span wicket:id="date"/>
+  </h4>
+  <table width="100%" border="1" wicket:id="memberDataList">
+  	<tr>
+      <td>Name</td>
+      <td>Success Test</td>
+      <td>Failure Test</td>
+    </tr>
+    <tr>
+      <td wicket:id="name"/>
+      <td wicket:id="testSuccessCount"/>
+      <td wicket:id="testFailureCount"/>
+    </tr>
+  </table>
+
+</wicket:extend>
+</html>
