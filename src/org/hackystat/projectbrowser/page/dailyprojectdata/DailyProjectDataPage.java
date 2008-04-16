@@ -8,7 +8,7 @@ import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
-import org.hackystat.projectbrowser.page.dailyprojectdata.component.UnitTestPage;
+import org.hackystat.projectbrowser.page.dailyprojectdata.unittest.UnitTestPage;
 import org.hackystat.projectbrowser.page.projectdatepanel.ProjectDateForm;
 import org.hackystat.projectbrowser.page.projectdatepanel.ProjectDatePanel;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;

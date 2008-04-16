@@ -10,7 +10,7 @@ import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
 import org.hackystat.projectbrowser.ProjectBrowserApplication;
 import org.hackystat.projectbrowser.authentication.SigninPage;
-import org.hackystat.projectbrowser.page.dailyprojectdata.component.UnitTestPage;
+import org.hackystat.projectbrowser.page.dailyprojectdata.unittest.UnitTestPage;
 import org.hackystat.projectbrowser.test.ProjectBrowserTestHelper;
 import org.hackystat.utilities.tstamp.Tstamp;
 import org.junit.Test;

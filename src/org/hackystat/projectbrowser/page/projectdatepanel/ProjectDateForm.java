@@ -1,15 +1,12 @@
 package org.hackystat.projectbrowser.page.projectdatepanel;
 
 import java.util.Date;
-import java.util.List;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.wicket.extensions.markup.html.form.DateTextField;
 import org.apache.wicket.extensions.yui.calendar.DatePicker;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.PropertyModel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
@@ -27,9 +24,6 @@ public class ProjectDateForm extends Form {
 
   /** Date format used in date field input. */
   public static final String DATA_FORMAT = "yyyy-MM-dd";
-  
-  /** The project name. */
-  private String projectNameId = null;
 
   /** The page containing this form. */
   ProjectBrowserBasePage page = null;
