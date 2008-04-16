@@ -1,6 +1,7 @@
 package org.hackystat.projectbrowser.page.sensordata;
 
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -44,7 +45,7 @@ public class SdtSummaryPanel extends Panel {
         SdtSummary summary = (SdtSummary) item.getModelObject();
         item.add(new Label("sdtName", summary.getSdtName()));
         item.add(new Label("tool", summary.getTool()));
-        item.add(new Label("count", String.valueOf(summary.getCount())));
+        item.add(new SdtSummaryPanelLink("link", String.valueOf(summary.getCount())));
       }
     });
   }
