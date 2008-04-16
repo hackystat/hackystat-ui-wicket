@@ -1,15 +1,19 @@
 package org.hackystat.projectbrowser.page.projectdatepanel;
 
 import java.util.Date;
+import java.util.List;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.wicket.extensions.markup.html.form.DateTextField;
 import org.apache.wicket.extensions.yui.calendar.DatePicker;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.PropertyModel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
+import org.hackystat.sensorbase.resource.projects.jaxb.Project;
 import org.hackystat.utilities.tstamp.Tstamp;
 
 /**
@@ -38,7 +42,8 @@ public class ProjectDateForm extends Form {
    */
   public ProjectDateForm(final String id, ProjectBrowserBasePage page) {
     super(id);
-    setModel(new CompoundPropertyModel(this));
+    this.page = page;
+    //setModel(new CompoundPropertyModel(this));
     // Create the date field.
     if (page.getDate() == null) {
       page.setDate(getDateToday());
@@ -51,10 +56,33 @@ public class ProjectDateForm extends Form {
     // Need to add the datepicker thingy.
     
     // Now create the drop-down menu for projects. 
+    ChoiceRenderer renderer = new ChoiceRenderer() {
+      /** Support serialization. */
+      private static final long serialVersionUID = 1L;
+      @Override
+      public Object getDisplayValue(Object object) {
+        int duplicateCount = 0;
+        Project targetProject = (Project) object;
+        for (Project project : ProjectBrowserSession.get().getProjectList()) {
+          if (targetProject.getName().equals(project.getName())) {
+            duplicateCount++;
+          }
+        }
+        String view;
+        if (duplicateCount > 1) {
+          view = targetProject.getName() + " - " + targetProject.getOwner();
+        }
+        else {
+          view = targetProject.getName();
+        }
+        return view;
+      }
+    };
     DropDownChoice projectMenu = 
       new DropDownChoice ("projectMenu", 
-          new PropertyModel(this, "projectNameId"),
-          new PropertyModel(ProjectBrowserSession.get(), "projectNames"));
+          new PropertyModel(page, "project"),
+          new PropertyModel(ProjectBrowserSession.get(), "projectList"),
+          renderer) ;
     projectMenu.setRequired(true);
     add(projectMenu);
   }
@@ -63,8 +91,8 @@ public class ProjectDateForm extends Form {
    */
   @Override
   public void onSubmit() {
-    ProjectBrowserSession.get().getProjectByNameId(this.projectNameId);
     page.onProjectDateSubmit();
+    
   }
 
   /**

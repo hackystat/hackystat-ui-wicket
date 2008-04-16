@@ -45,7 +45,7 @@ public class ProjectBrowserSession extends WebSession {
   private boolean isAuthenticated = false;
   /** The collection of Projects that this user has. */
   private Map<String, Project> projectMap = null;
-  
+  private List<Project> projectList = null;
   
   /**
    * Provide a constructor that initializes WebSession.
@@ -224,5 +224,22 @@ public class ProjectBrowserSession extends WebSession {
   public Project getProjectByNameId(String projectNameId) {
     return this.projectMap.get(projectNameId);
   }
-
+  
+  public List<Project> getProjectList() {
+    if (this.projectList == null) {
+      projectList = new ArrayList<Project>();
+      try {
+        SensorBaseClient sensorBaseClient = ProjectBrowserSession.get().getSensorBaseClient();
+        ProjectIndex projectIndex = sensorBaseClient.getProjectIndex(this.email);
+        for (ProjectRef projectRef : projectIndex.getProjectRef()) {
+          projectList.add(sensorBaseClient.getProject(projectRef));
+        }
+      }
+      catch (SensorBaseClientException e) {
+        Logger logger = ((ProjectBrowserApplication)getApplication()).getLogger();
+        logger.warning("Error getting projects for " + this.email + StackTrace.toString(e));
+      }
+    }
+    return projectList;
+  }
 }

@@ -23,8 +23,6 @@ import org.hackystat.utilities.tstamp.Tstamp;
 public class UnitTestPage extends DailyProjectDataPage {
   /** Support serialization. */
   private static final long serialVersionUID = 1L;
-  /** Max number of items per page. */
-  private static final int MEMBERDATA_PER_PAGE = 50;
 
   /**
    * create the UnitTestPage
@@ -33,8 +31,14 @@ public class UnitTestPage extends DailyProjectDataPage {
   public UnitTestPage(PageParameters parameters) {
     super(parameters);
     this.setModel(new CompoundPropertyModel(this));
-    add(new Label("projectName", this.getProject().getName()));
-    add(new Label("projectOwner", this.getProject().getOwner()));
+    if (this.getProject() == null) {
+      add(new Label("projectName", ""));
+      add(new Label("projectOwner", ""));
+    }
+    else {
+      add(new Label("projectName", this.getProject().getName()));
+      add(new Label("projectOwner", this.getProject().getOwner()));
+    }
     add(new Label("date", this.getDate().toString()));
     PageableListView memberDataListView = new PageableListView("memberDataList",
         getUnitTestMemberDataList(), MEMBERDATA_PER_PAGE) {
@@ -64,16 +68,29 @@ public class UnitTestPage extends DailyProjectDataPage {
    * Retrieve project members' unit test data of the project.
    * @return a List of MemberData that contain unit test data of each member of the project.
    */
-  private List<MemberData> getUnitTestMemberDataList() {
+  protected List<MemberData> getUnitTestMemberDataList() {
     DailyProjectDataClient dpdClient = ProjectBrowserSession.get().getDailyProjectDataClient();
     List<MemberData> memberDataList = new ArrayList<MemberData>();
+    if (this.getProject() == null) {
+      this.footerFeedback = "You did not selected a project to display.";
+      return memberDataList;
+    }
     try {
       memberDataList = dpdClient.getUnitTest(getProject().getOwner(), getProject().getName(),
           Tstamp.makeTimestamp(this.getDate().getTime())).getMemberData();
     }
     catch (DailyProjectDataClientException e) {
-      e.printStackTrace();
+      this.footerFeedback = "No unit test data of project " + getProject().getName() + " found on "
+       + getDate();
     }
     return memberDataList;
+  }
+  
+  /**
+   * The action to be performed when the user has set the Project and Date fields. 
+   */
+  @Override
+  public void onProjectDateSubmit() {
+    super.onProjectDateSubmit();
   }
 }

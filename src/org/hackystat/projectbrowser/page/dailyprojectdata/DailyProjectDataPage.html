@@ -1,30 +1,33 @@
 <html>
-<head></head>
-<body>
-<wicket:extend>
-  <h4 wicket:id="PageContents">[Wicket supplied content]</h4>
+  <head>
+  </head>
+  <body>
+    <wicket:extend>
+    <div id="sensordata-left">
       <span wicket:id="projectDatePanel">ProjectDatePanel</span>
+      <table>
+        <tr><td>
+          <a href="#">Build</a>
+        </td></tr>
+        <tr><td>
+          <a wicket:id="UnitTestPageLink" href="#">Unit Test</a>
+        </td></tr>
+        <tr><td>
+          <a href="#">Coverage</a>
+        </td></tr>
+        <tr><td>
+          <a href="#">Complexity</a>
+        </td></tr>
+        <tr><td>
+          <a href="#">Coupling</a>
+        </td></tr>
+      </table>
+    </div>
 
-  <div id="dpd.body" class="wrapper">
-  <h3>
-  <br/>
-    <ul class="tabs">
-      <li><a wicket:id="UnitTestPageLink"        href="#">Unit Test</a></li>
-    </ul>
-  </h3>
-    <wicket:child/>
-  </div>
-
-  <br/>
-  <br/>
-  <p>When completed, this page should contain a set of controls that allow a user to select a date, a project, and a kind of daily analysis to display.  The resulting display could provide things like the following:</p>
-<ul>
-  <li> A 'snapshot' of the project with respect to that daily analysis on that day.</li>
-  <li> A comparison of that data to the state of the project yesterday, last week, or last month.</li>
-  <li> A 'table' and 'graph' checkbox, which enables the user to see the data in tabular or graphical form (using, for example google charts.)</li>
-</ul>
-
-</wicket:extend>
+    <div id="sensordata-right">
+      <wicket:child />
+    </div>
+  </wicket:extend>
 </body>
 </html>
 
