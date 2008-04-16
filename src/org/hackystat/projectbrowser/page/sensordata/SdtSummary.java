@@ -10,15 +10,18 @@ public class SdtSummary implements Serializable {
   
   private static final long serialVersionUID = 1L;
   private String sdtName;
-  private int count; 
+  private String tool;
+  private long count; 
 
   /**
    * Construct this instance. 
    * @param sdtName The SDT name. 
-   * @param count The number of instances of this type. 
+   * @param tool The tool that generated instances with this SDT.
+   * @param count The number of instances of this type and tool.
    */
-  public SdtSummary(String sdtName, int count) {
+  public SdtSummary(String sdtName, String tool, long count) {
     this.sdtName = sdtName;
+    this.tool = tool;
     this.count = count;
   }
   
@@ -34,7 +37,15 @@ public class SdtSummary implements Serializable {
    * Get the number of times it occurred. 
    * @return The count of sdt instances of this type. 
    */
-  public int getCount () {
+  public long getCount () {
     return this.count;
+  }
+ 
+  /**
+   * The tool responsible for generating these instances. 
+   * @return The tool that generated these instances. 
+   */
+  public String getTool() {
+    return this.tool;
   }
 }

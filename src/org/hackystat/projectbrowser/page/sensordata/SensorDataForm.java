@@ -6,7 +6,6 @@ import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.PropertyModel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
-import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
 
 /**
  * Provides the form that specifies a Date and Project name for the SensorData page.  
@@ -18,10 +17,10 @@ public class SensorDataForm extends Form {
   private static final long serialVersionUID = 1L;
   
   /** Date format used in date field input. */
-  public static final String DATA_FORMAT = "yyyy-MM-dd";
+  private static final String DATA_FORMAT = "yyyy-MM-dd";
   
-  /** The page containing this form. */
-  ProjectBrowserBasePage page = null;
+  /** The page that instantiated this form. */
+  private SensorDataPage page; 
   
   /**
    * Create this form, supplying the wicket:id and the page. 
@@ -29,18 +28,19 @@ public class SensorDataForm extends Form {
    * @param id The wicket:id.
    * @param page The page using this form. 
    */
-  public SensorDataForm(String id, ProjectBrowserBasePage page) {
+  public SensorDataForm(String id, SensorDataPage page) {
     super(id);
-    this.page = page;
+    SensorDataSession session = ProjectBrowserSession.get().getSensorDataSession();
+    this.page = page; 
     // Create the date field.
     DateTextField dateTextField = 
-      new DateTextField("dateTextField", new PropertyModel(page, "date"), DATA_FORMAT);
+      new DateTextField("dateTextField", new PropertyModel(session, "date"), DATA_FORMAT);
     dateTextField.add(new DatePicker());
     add(dateTextField);
     // Now create the drop-down menu for projects. 
     DropDownChoice projectMenu = 
       new DropDownChoice ("projectMenu", 
-          new PropertyModel(page, "projectName"),
+          new PropertyModel(session, "projectName"),
           new PropertyModel(ProjectBrowserSession.get(), "projectNames"));
     add(projectMenu);
   }

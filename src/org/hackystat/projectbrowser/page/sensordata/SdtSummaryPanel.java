@@ -4,8 +4,8 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.hackystat.projectbrowser.ProjectBrowserSession;
 
 /**
  * A panel for holding the SDT summary information. 
@@ -15,20 +15,23 @@ public class SdtSummaryPanel extends Panel {
 
   /** For serialization */
   private static final long serialVersionUID = 1L;
-
-  @SuppressWarnings("unused")
-  private SdtSummaryModel summaryModel = null;
+  
+  //private SensorDataPage page = null;
 
   /**
    * Creates a panel to display summary information. 
    * @param id The wicket ID. 
-   * @param summaryModel The model that this panel will display. 
+   * @param page The page associated with this panel.
    */
-  public SdtSummaryPanel(String id, SdtSummaryModel summaryModel) {
+  public SdtSummaryPanel(String id, SensorDataPage page) {
     super(id);
-    this.summaryModel = summaryModel;
+    //this.page = page;
+    SensorDataSession session = ProjectBrowserSession.get().getSensorDataSession();
+    SdtSummaryModel model = session.getSdtSummaryModel();
     // Set up the table
-    add(new ListView("SdtSummary", new PropertyModel(this, "summaryModel.getList")) {
+    add(new Label("projectName", new PropertyModel(session, "projectName")));
+    add(new Label("dateString", new PropertyModel(session, "dateString")));
+    add(new ListView("SdtSummaryList", new PropertyModel(model, "SdtList")) {
       /** For serialization */
       private static final long serialVersionUID = 1L;
 
@@ -40,21 +43,20 @@ public class SdtSummaryPanel extends Panel {
       protected void populateItem(ListItem item) {
         SdtSummary summary = (SdtSummary) item.getModelObject();
         item.add(new Label("sdtName", summary.getSdtName()));
+        item.add(new Label("tool", summary.getTool()));
         item.add(new Label("count", String.valueOf(summary.getCount())));
       }
     });
-    add(new Label("total", new Model() {
-      /** for serialization. */
-      private static final long serialVersionUID = 1L;
+  }
 
-      /**
-       * Gets the total field. 
-       * @return the Total.
-       */
-      @Override
-      public Object getObject() {
-        return null;
-      }
-    }));
+  /**
+   * Display this panel only if the SdtSummaryModel contains information. 
+   * @return True if this panel should be displayed.
+   */
+  @Override
+  public boolean isVisible() {
+    SensorDataSession session = ProjectBrowserSession.get().getSensorDataSession();
+    SdtSummaryModel model = session.getSdtSummaryModel();
+    return !model.isEmpty();
   }
 }

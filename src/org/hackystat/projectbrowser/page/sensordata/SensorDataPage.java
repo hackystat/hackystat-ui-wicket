@@ -1,5 +1,7 @@
 package org.hackystat.projectbrowser.page.sensordata;
 
+import java.util.Date;
+
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
@@ -26,6 +28,7 @@ public class SensorDataPage extends ProjectBrowserBasePage {
    */
   public SensorDataPage() {
     add(new SensorDataForm("sensorDataForm", this));
+    add(new SdtSummaryPanel("sdtSummaryPanel", this));
   }
   
   /**
@@ -35,14 +38,18 @@ public class SensorDataPage extends ProjectBrowserBasePage {
   public void onProjectDateSubmit() {
     try {
       // Start by getting the project summary.
-      Project project = ProjectBrowserSession.get().getProjectByNameId(this.projectName);
+      SensorDataSession session = ProjectBrowserSession.get().getSensorDataSession();
+      String projectName = session.getProjectName();
+      Project project = ProjectBrowserSession.get().getProjectByNameId(projectName);
       SensorBaseClient client = ProjectBrowserSession.get().getSensorBaseClient();
-      XMLGregorianCalendar startTime = Tstamp.makeTimestamp(this.date);
+      Date date = session.getDate();
+      XMLGregorianCalendar startTime = Tstamp.makeTimestamp(date.getTime());
       XMLGregorianCalendar endTime = Tstamp.incrementDays(startTime, 1);
       ProjectSummary summary = 
-        client.getProjectSummary(project.getName(), project.getOwner(), startTime, endTime);
-      // Now create the summary model from the ProjectSummary.
-      this.sdtSummaryModel = new SdtSummaryModel(summary);
+        client.getProjectSummary(project.getOwner(), project.getName(), startTime, endTime);
+      // Now create the summary model from the ProjectSummary and save it in this page's session.
+      SdtSummaryModel model = session.getSdtSummaryModel();
+      model.setModel(summary, date, projectName);
       
     }
     catch (Exception e) {
