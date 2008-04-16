@@ -37,7 +37,7 @@ public class SdtSummaryModel implements Serializable {
    * Updates the SdtModel with the project summary instance. 
    * @param summary The summary instance. 
    */
-  public void setList(ProjectSummary summary) {
+  public final void setList(ProjectSummary summary) {
     total = 0;
     sdtSummaryList.clear();
     List<SensorDataSummary> summaries = summary.getSensorDataSummaries().getSensorDataSummary();

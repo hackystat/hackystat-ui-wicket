@@ -188,7 +188,7 @@ public class ProjectBrowserSession extends WebSession {
    */
   public Map<String, Project> getProjects() {
     if (this.projectMap == null) {
-      this.projectMap= new HashMap<String, Project>();
+      this.projectMap = new HashMap<String, Project>();
       try {
         SensorBaseClient sensorBaseClient = ProjectBrowserSession.get().getSensorBaseClient();
         ProjectIndex projectIndex = sensorBaseClient.getProjectIndex(this.email);
@@ -225,6 +225,10 @@ public class ProjectBrowserSession extends WebSession {
     return this.projectMap.get(projectNameId);
   }
   
+  /**
+   * Returns the list of Projects associated with this user. 
+   * @return The list of Projects. 
+   */
   public List<Project> getProjectList() {
     if (this.projectList == null) {
       projectList = new ArrayList<Project>();

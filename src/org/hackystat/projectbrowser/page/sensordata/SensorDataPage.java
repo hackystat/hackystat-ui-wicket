@@ -28,13 +28,16 @@ public class SensorDataPage extends ProjectBrowserBasePage {
     add(new SensorDataForm("sensorDataForm", this));
   }
   
+  /**
+   * What to do when the user selects a project and date. 
+   */
   @Override
   public void onProjectDateSubmit() {
     try {
       // Start by getting the project summary.
       Project project = ProjectBrowserSession.get().getProjectByNameId(this.projectName);
       SensorBaseClient client = ProjectBrowserSession.get().getSensorBaseClient();
-      XMLGregorianCalendar startTime = Tstamp.makeTimestamp(this.date.getTime());
+      XMLGregorianCalendar startTime = Tstamp.makeTimestamp(this.date);
       XMLGregorianCalendar endTime = Tstamp.incrementDays(startTime, 1);
       ProjectSummary summary = 
         client.getProjectSummary(project.getName(), project.getOwner(), startTime, endTime);

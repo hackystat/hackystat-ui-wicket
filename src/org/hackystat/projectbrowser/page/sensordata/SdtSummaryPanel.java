@@ -19,6 +19,11 @@ public class SdtSummaryPanel extends Panel {
   @SuppressWarnings("unused")
   private SdtSummaryModel summaryModel = null;
 
+  /**
+   * Creates a panel to display summary information. 
+   * @param id The wicket ID. 
+   * @param summaryModel The model that this panel will display. 
+   */
   public SdtSummaryPanel(String id, SdtSummaryModel summaryModel) {
     super(id);
     this.summaryModel = summaryModel;

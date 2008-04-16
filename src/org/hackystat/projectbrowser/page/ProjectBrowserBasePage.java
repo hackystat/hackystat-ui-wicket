@@ -36,7 +36,7 @@ public class ProjectBrowserBasePage extends WebPage {
   protected String projectName = "";
   
   /** The date this user has selected in the ProjectDate form. */
-  protected Date date = getDateToday();
+  protected long date = getDateToday().getTime();
 
   /** The project name this user has selected. */
   private Project project = null;
@@ -110,13 +110,13 @@ public class ProjectBrowserBasePage extends WebPage {
    * @param date the date to set
    */
   public void setDate(Date date) {
-    this.date = date;
+    this.date = date.getTime();
   }
 
   /**
    * @return the date
    */
   public Date getDate() {
-    return date;
+    return new Date();
   }
 }
