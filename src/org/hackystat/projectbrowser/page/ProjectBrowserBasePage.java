@@ -51,8 +51,9 @@ public class ProjectBrowserBasePage extends WebPage {
    */
   public ProjectBrowserBasePage() {
     ProjectBrowserApplication app = (ProjectBrowserApplication)getApplication();
+    add(new Label("title", app.getApplicationName()));
     add(new ImageUrl("application-logo", app.getApplicationLogo()));
-    add(new Label("application-name", app.getApplicationName()));
+    add(new Label("application-name", (app.hasApplicationLogo() ? "" : app.getApplicationName())));
     // Provide a default value for the projectName field.
     List<String> projectNames = ProjectBrowserSession.get().getProjectNames();
     if ((projectNames != null) && !projectNames.isEmpty()) {

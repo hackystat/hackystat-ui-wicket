@@ -155,5 +155,13 @@ public class ProjectBrowserApplication extends WebApplication {
   public String getApplicationLogo() {
     return getProjectBrowserProperty(ProjectBrowserProperties.APPLICATION_LOGO_KEY);
   }
+  
+  /**
+   * Returns true if the user has supplied an application logo.
+   * @return True if application logo exists. 
+   */
+  public boolean hasApplicationLogo() {
+    return this.properties.hasApplicationLogo();
+  }
 
 }

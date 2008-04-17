@@ -24,8 +24,9 @@ public class SigninPage extends WebPage {
    */
   public SigninPage() {
     ProjectBrowserApplication app = (ProjectBrowserApplication)getApplication();
+    add(new Label("title", app.getApplicationName()));
     add(new ImageUrl("application-logo", app.getApplicationLogo()));
-    add(new Label("application-name", app.getApplicationName()));
+    add(new Label("application-name", (app.hasApplicationLogo() ? "" : app.getApplicationName())));
     add(new SigninForm("signinForm"));
     add(new RegisterForm("registerForm"));
     add(new Label("serviceInfo", getServiceInfo()));

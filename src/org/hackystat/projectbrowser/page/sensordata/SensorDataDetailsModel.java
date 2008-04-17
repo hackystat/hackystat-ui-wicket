@@ -45,6 +45,7 @@ public class SensorDataDetailsModel implements Serializable {
    * @param tool The tool for the SDTs.
    */
   public void setSensorDetailsModel(String sdtName, String tool) {
+    detailsList.clear();
     SensorBaseClient client = ProjectBrowserSession.get().getSensorBaseClient();
     SensorDataSession session = ProjectBrowserSession.get().getSensorDataSession();
     String projectName = session.getProjectName();
@@ -63,7 +64,7 @@ public class SensorDataDetailsModel implements Serializable {
       for (SensorDataRef ref : index.getSensorDataRef()) {
         SensorData data = client.getSensorData(ref);
         // HACK.  Replace above call to get an index with just the tool's sensor data. 
-        if (tool.equals(data.getTool())) {
+        if ("All".equals(tool) || tool.equals(data.getTool())) {
           detailsList.add(new SensorDataDetails(data));
         }
       }

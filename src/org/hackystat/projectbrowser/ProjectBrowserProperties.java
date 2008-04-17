@@ -157,4 +157,12 @@ public class ProjectBrowserProperties {
       properties.setProperty(propName, properties.getProperty(propName).trim());
     }
   }
+  
+  /**
+   * Returns true if the user has supplied an application logo URL. 
+   * @return True if the application logo URL was supplied. 
+   */
+  public boolean hasApplicationLogo() {
+    return !"".equals(get(APPLICATION_LOGO_KEY));
+  }
 }
