@@ -53,6 +53,7 @@ public class DailyProjectDataPage extends ProjectBrowserBasePage {
   /**
    * The action to be performed when the user has set the Project and Date fields. 
    */
+  @Override
   public void onProjectDateSubmit() {
     session.setDataModel(null);
     this.replace(getDataPanel(WICKET_PANEL_ID));

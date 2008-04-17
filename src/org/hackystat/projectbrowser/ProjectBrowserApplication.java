@@ -10,6 +10,7 @@ import org.apache.wicket.Session;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.hackystat.projectbrowser.authentication.SigninPage;
 import org.hackystat.projectbrowser.page.ProjectBrowserPageAuthentication;
+import org.hackystat.projectbrowser.page.crap.CrapPage;
 import org.hackystat.projectbrowser.page.dailyprojectdata.DailyProjectDataPage;
 import org.hackystat.projectbrowser.page.projects.ProjectsPage;
 import org.hackystat.projectbrowser.page.sensordata.SensorDataPage;
@@ -83,6 +84,7 @@ public class ProjectBrowserApplication extends WebApplication {
     mountBookmarkablePage("projects", ProjectsPage.class);
     mountBookmarkablePage("dailyprojectdata", DailyProjectDataPage.class);
     mountBookmarkablePage("telemetry", TelemetryPage.class);
+    mountBookmarkablePage("crap", CrapPage.class);
     getSecuritySettings().setAuthorizationStrategy(new ProjectBrowserPageAuthentication());
     super.init();
 

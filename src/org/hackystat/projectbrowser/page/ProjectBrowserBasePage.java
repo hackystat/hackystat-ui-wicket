@@ -13,6 +13,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.hackystat.projectbrowser.ProjectBrowserApplication;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.imageurl.ImageUrl;
+import org.hackystat.projectbrowser.page.crap.CrapPage;
 import org.hackystat.projectbrowser.page.dailyprojectdata.DailyProjectDataPage;
 import org.hackystat.projectbrowser.page.projects.ProjectsPage;
 import org.hackystat.projectbrowser.page.sensordata.SensorDataPage;
@@ -61,6 +62,7 @@ public class ProjectBrowserBasePage extends WebPage {
     add(new BookmarkablePageLink("ProjectsPageLink", ProjectsPage.class));
     add(new BookmarkablePageLink("DailyProjectDataPageLink", DailyProjectDataPage.class));
     add(new BookmarkablePageLink("TelemetryPageLink", TelemetryPage.class));
+    add(new BookmarkablePageLink("CrapPageLink", CrapPage.class));
     add(new Link("LogoutLink") {
       /** Support serialization. */
       private static final long serialVersionUID = 1L;
