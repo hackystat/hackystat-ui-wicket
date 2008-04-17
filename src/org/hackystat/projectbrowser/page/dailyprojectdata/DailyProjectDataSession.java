@@ -43,11 +43,11 @@ public class DailyProjectDataSession implements Serializable {
    * Initialize this session, initialize the analysis list.
    */
   public DailyProjectDataSession() {
-    analysisList.add("Build");
+    //analysisList.add("Build");
     analysisList.add("Unit Test");
     analysisList.add("Coverage");
-    analysisList.add("Complexity");
-    analysisList.add("Coupling");
+    //analysisList.add("Complexity");
+    //analysisList.add("Coupling");
   }
 
   /**

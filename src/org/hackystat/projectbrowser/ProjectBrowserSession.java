@@ -47,7 +47,10 @@ public class ProjectBrowserSession extends WebSession {
   private boolean isAuthenticated = false;
   /** The collection of Projects that this user has. */
   private Map<String, Project> projectMap = null;
+  /** The collection of Projects that this user has. */
   private List<Project> projectList = null;
+  /** The analysis list. */
+  public List<String> analysisList = new ArrayList<String>();
   
   private DailyProjectDataSession dailyProjectDataSession = new DailyProjectDataSession();
   
@@ -59,6 +62,11 @@ public class ProjectBrowserSession extends WebSession {
    */
   public ProjectBrowserSession(Request request) {
     super(request);
+    //analysisList.add("Build");
+    analysisList.add("Unit Test");
+    analysisList.add("Coverage");
+    //analysisList.add("Complexity");
+    //analysisList.add("Coupling");
   }
 
   /**

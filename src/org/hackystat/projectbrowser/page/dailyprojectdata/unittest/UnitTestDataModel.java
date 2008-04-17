@@ -9,7 +9,7 @@ import org.hackystat.projectbrowser.page.dailyprojectdata.DailyProjectDataModel;
  * Data model for unit test panel.
  * @author Shaoxuan Zhang
  */
-public class UnitTestModel extends DailyProjectDataModel {
+public class UnitTestDataModel extends DailyProjectDataModel {
   /** Support serialization. */
   private static final long serialVersionUID = 1L;
   /** the member data list. */

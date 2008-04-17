@@ -5,6 +5,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
+import org.hackystat.projectbrowser.page.dailyprojectdata.coverage.CoveragePanel;
 import org.hackystat.projectbrowser.page.dailyprojectdata.unittest.UnitTestPanel;
 import org.hackystat.projectbrowser.page.projectdatepanel.ProjectDatePanel;
 
@@ -23,16 +24,6 @@ public class DailyProjectDataPage extends ProjectBrowserBasePage {
   /** the wicket id for the data panel. */
   private static final String WICKET_PANEL_ID = "dataPanel";
   /**
-   * Creates the DPD page. 
-   * @param parameters parameters to configure the page.
-   */
-  public DailyProjectDataPage(PageParameters parameters) {
-    add(new ProjectDatePanel("projectDatePanel", this));
-    add(getDataPanel(WICKET_PANEL_ID));
-    this.get("FooterFeedback").setModel(new PropertyModel(session, "feedback"));
-  }
-
-  /**
    * Return a panel according the analysis field in DailyProjectDataSession.
    * @param id the wicket id.
    * @return the panel
@@ -43,11 +34,24 @@ public class DailyProjectDataPage extends ProjectBrowserBasePage {
     if ("Unit Test".equals(analysis)) {
       panel = new UnitTestPanel(id);
     }
+    else if ("Coverage".equals(analysis)) {
+      panel = new CoveragePanel(id);
+    }
     else {
       panel = new Panel(id);
       panel.setVisible(false);
     }
     return panel;
+  }
+
+  /**
+   * Creates the DPD page. 
+   * @param parameters parameters to configure the page.
+   */
+  public DailyProjectDataPage(PageParameters parameters) {
+    add(new ProjectDatePanel("projectDatePanel", this));
+    add(getDataPanel(WICKET_PANEL_ID));
+    this.get("FooterFeedback").setModel(new PropertyModel(session, "feedback"));
   }
 
   /**

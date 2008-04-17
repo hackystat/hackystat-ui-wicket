@@ -40,7 +40,7 @@ public class UnitTestPanel extends Panel {
       add(new Label("projectOwner", session.getProject().getOwner()));
     }
     add(new Label("date", new PropertyModel(session, "dateString")));
-    UnitTestModel dataModel = (UnitTestModel) session.getDataModel();
+    UnitTestDataModel dataModel = (UnitTestDataModel) session.getDataModel();
     if (dataModel == null) {
       dataModel = getUnitTestModel();
       session.setDataModel(dataModel);
@@ -69,8 +69,8 @@ public class UnitTestPanel extends Panel {
    * Return a unit test model that represent the newest data.
    * @return the unit test model.
    */
-  private UnitTestModel getUnitTestModel() {
-    UnitTestModel unitTestModel = new UnitTestModel();
+  private UnitTestDataModel getUnitTestModel() {
+    UnitTestDataModel unitTestModel = new UnitTestDataModel();
     unitTestModel.setMemberDataList(getUnitTestMemberDataList());
     return unitTestModel;
   }
@@ -93,7 +93,7 @@ public class UnitTestPanel extends Panel {
           Tstamp.makeTimestamp(session.getDate().getTime())).getMemberData();
     }
     catch (DailyProjectDataClientException e) {
-      session.setFeedback(e.getMessage());
+      session.setFeedback("Exception when getting unit test data: " + e.getMessage());
     }
     return memberDataList;
   }

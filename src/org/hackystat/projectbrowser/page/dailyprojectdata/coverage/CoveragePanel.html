@@ -1,0 +1,28 @@
+<html xmlns:wicket>
+<wicket:panel>
+  <h3>Unit Test</h3>
+  <h4>
+    Project Name: <span wicket:id="projectName"/><br/>
+    Project Owner: <span wicket:id="projectOwner"/><br>
+    Date: <span wicket:id="date"/>
+  </h4>
+  <h4>
+    Class coverage: <span wicket:id="classCoverage"/> %
+  </h4>
+  <table border="1">
+  	<tr>
+      <th>Name</th>
+      <th>Method Coverage</th>
+      <th>Line Coverage</th>
+      <th>Block Coverage</th>
+    </tr>
+    <tr wicket:id="memberDataList">
+      <td wicket:id="name"/>
+      <td wicket:id="methodCoverage"/>
+      <td wicket:id="lineCoverage"/>
+      <td wicket:id="blockCoverage"/>
+    </tr>
+  </table>
+
+</wicket:panel>
+</html>
