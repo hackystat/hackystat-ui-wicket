@@ -5,25 +5,29 @@
       <span wicket:id="tool">[dateString]</span>
     </h4>
 
-    <table width="100%">
+    <table>
       <tr>
         <th>Timestamp</th>
         <th>Runtime</th>
         <th>SDT</th>
-        <th>Resource</th>
         <th>Owner</th>
         <th>Tool</th>
-        <th>Properties</th>
+        <th>Resource</th>
       </tr>
-      <tr wicket:id="sensorDataDetailsList">
-        <td wicket:id="timestamp">2008-04-04T11:38:47</td>
-        <td wicket:id="runtime">2008-04-04T11:38:47</td>
-        <td wicket:id="sdtName">DevEvent</td>
-        <td wicket:id="resource">foo/bar/baz.txt</td>
-        <td wicket:id="owner">johnson@hawaii.edu</td>
-        <td wicket:id="tool">Eclipse</td>
-        <td wicket:id="properties">Subtype:File Close, Window: Main</td>
+      <div wicket:id="sensorDataDetailsList">
+      <tr>
+        <td style="border-bottom: none" wicket:id="timestamp">2008-04-04T11:38:47</td>
+        <td style="border-bottom: none" wicket:id="runtime">2008-04-04T11:38:47</td>
+        <td style="border-bottom: none" wicket:id="sdtName">DevEvent</td>
+        <td style="border-bottom: none" wicket:id="owner">johnson@hawaii.edu</td>
+        <td style="border-bottom: none" wicket:id="tool">Eclipse</td>
+        <td style="border-bottom: none" wicket:id="resource">foo/bar/baz.txt</td>
       </tr>
+      <tr>
+        <td style="padding-top: 0"></td>
+        <td style="padding-top: 0" colspan="5">Properties: <span wicket:id="properties">Subtype:File Close, Window: Main</span></td>
+      </tr>
+      </div>
     </table>
   </wicket:panel>
 </html>
