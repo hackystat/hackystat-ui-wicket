@@ -1,26 +1,45 @@
 <html xmlns:wicket>
 <wicket:panel>
-  <h3>Unit Test</h3>
+  <h3>Coverage</h3>
   <h4>
     Project Name: <span wicket:id="projectName"/><br/>
     Project Owner: <span wicket:id="projectOwner"/><br>
     Date: <span wicket:id="date"/>
   </h4>
-  <h4>
-    Class coverage: <span wicket:id="classCoverage"/> %
-  </h4>
-  <table border="1">
+
+  <h4>Overall coverage summary</h4>
+  <table width="100%" border="1">
+    <tr>
+      <th>Name</th>
+      <th>class, %</th>
+      <th>method, %</th>
+      <th>block, %</th>
+      <th>line, %</th>
+    </tr>
+    <tr>
+      <td> All classes </td>
+      <td wicket:id="classCoverage"/>
+      <td wicket:id="methodCoverage"/>
+      <td wicket:id="blockCoverage"/>
+      <td wicket:id="lineCoverage"/>
+    </tr>
+  </table>
+  <br/>
+  <h4>Coverage by package</h4>
+  <table width="100%" border="1">
   	<tr>
       <th>Name</th>
-      <th>Method Coverage</th>
-      <th>Line Coverage</th>
-      <th>Block Coverage</th>
+      <th>class, %</th>
+      <th>method, %</th>
+      <th>block, %</th>
+      <th>line, %</th>
     </tr>
     <tr wicket:id="memberDataList">
       <td wicket:id="name"/>
+      <td wicket:id="classCoverage"/>
       <td wicket:id="methodCoverage"/>
-      <td wicket:id="lineCoverage"/>
       <td wicket:id="blockCoverage"/>
+      <td wicket:id="lineCoverage"/>
     </tr>
   </table>
 

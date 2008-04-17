@@ -29,22 +29,44 @@ public class CoverageData implements Serializable {
   
   /**
    * Return the formatted string of this coverage data. 
-   * Formatted as coverage%(covered/total)
    * @param granularity granularity of the returning data.
    * @return the formatted string
    */
   public String getDisplayString(String granularity) {
-    return (int)(this.getCoverage(granularity) * 100) + "% (" +  this.getNumCovered(granularity) + 
-    "/" + (this.getNumCovered(granularity) + this.getNumUncovered(granularity)) + ")";
+    return convertToFormattedDisplayString(this.getNumCovered(granularity), 
+                                           this.getNumUncovered(granularity));
   }
   
   /**
-   * Add coverage data with the given granularity.
+   * Convert the given coverage data into formatted display string.
+   * Formatted as coverage%(covered/total)
+   * @param numCovered covered number of the coverage data.
+   * @param numUncovered uncovered number of the coverage data.
+   * @return the formatted string
+   */
+  public static String convertToFormattedDisplayString(int numCovered, int numUncovered) {
+    return (int)((double)numCovered / (numCovered + numUncovered) * 100) + "% (" + 
+    numCovered + "/" + (numCovered + numUncovered) + ")";
+  }
+  
+  /**
+   * Retrieve the coverage value from the given formatted string
+   * @param string the given string.
+   * @return the coverage value in percent.
+   */
+  public static int getCoverageFromFormattedDisplayString(String string) {
+    int index = string.indexOf('%');
+    String coverageString = string.substring(0, index);
+    return Integer.valueOf(coverageString);
+  }
+  
+  /**
+   * Set coverage data with the given granularity.
    * @param granularity string of the granularity.
    * @param numCovered number of covered entries.
    * @param numUncovered number of uncovered entries.
    */
-  public void addCoverage(String granularity, Integer numCovered, Integer numUncovered) {
+  public void setCoverage(String granularity, Integer numCovered, Integer numUncovered) {
     this.numCovered.put(granularity, numCovered);
     this.numUncovered.put(granularity, numUncovered);
   }
@@ -86,5 +108,27 @@ public class CoverageData implements Serializable {
    */
   public String getName() {
     return name;
+  }
+
+  /**
+   * Add coverage data to the specified granularity.
+   * @param granularity the granularity
+   * @param numCovered number of covered entries.
+   * @param numUncovered number of uncovered entries.
+   */
+  public void addCoverage(String granularity, Integer numCovered, Integer numUncovered) {
+    if (this.numCovered.get(granularity) == null) {
+      this.numCovered.put(granularity, numCovered);
+    }
+    else {
+      this.numCovered.put(granularity, numCovered + this.numCovered.get(granularity));
+    }
+    if (this.numUncovered.get(granularity) == null) {
+      this.numUncovered.put(granularity, numUncovered);
+    }
+    else {
+      this.numUncovered.put(granularity, numUncovered + this.numUncovered.get(granularity));
+    }
+    
   }
 }

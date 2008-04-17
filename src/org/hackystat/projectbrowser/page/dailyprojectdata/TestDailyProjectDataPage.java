@@ -1,11 +1,17 @@
 package org.hackystat.projectbrowser.page.dailyprojectdata;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import javax.xml.datatype.XMLGregorianCalendar;
+import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
 import org.hackystat.projectbrowser.ProjectBrowserApplication;
 import org.hackystat.projectbrowser.authentication.SigninPage;
 import org.hackystat.projectbrowser.test.ProjectBrowserTestHelper;
+import org.hackystat.sensorbase.resource.projects.jaxb.Project;
 import org.hackystat.utilities.tstamp.Tstamp;
 import org.junit.Test;
 
@@ -32,41 +38,40 @@ public class TestDailyProjectDataPage extends ProjectBrowserTestHelper {
     //first, go to daily project data page.
     tester.clickLink("DailyProjectDataPageLink");
     tester.assertRenderedPage(DailyProjectDataPage.class);
-    /*
-    FormTester projectForm = tester.newFormTester("projectDateForm");
+    FormTester projectForm = tester.newFormTester("projectDatePanel:projectDateForm");
     //checkt the date field.
-    assertEquals("The date field should be set to today.", getDateToday(), 
-        projectForm.getTextComponentValue("dateField"));
+    assertEquals("The date field should be set to today.", getDateTodayAsString(), 
+        projectForm.getTextComponentValue("dateTextField"));
     //checkt the project list content. 
-    Component component = projectForm.getForm().get("projectChoice");
+    Component component = projectForm.getForm().get("projectMenu");
     assertTrue("Check project select field", component instanceof DropDownChoice);
     DropDownChoice projectChoice = (DropDownChoice) component;
     boolean pass = false;
-    for (Object value : projectChoice.getChoices()) {
-      if (((String)value).contains("Default -")) {
+    int index = 0;
+    for (int i = 0; i < projectChoice.getChoices().size(); i++) {
+      Project project = (Project)projectChoice.getChoices().get(i);
+      if ("Default".equals(project.getName())) {
+        index = i;
         pass = true;
       }
     }
     if (!pass) {
       fail("Default project not found in project list.");
     }
-    //retrieve the project name of first choice.
-    String projectName = (String)projectChoice.getChoices().get(0);
-    projectName = projectName.substring(0, projectName.indexOf('-')).trim();
     //select that choice.
-    projectForm.select("projectChoice", 0);
+    projectForm.select("projectMenu", index);
     projectForm.select("analysisMenu", 1);
     projectForm.submit();
     //check the result.
-    tester.assertContains("Unit Test");
-    */
+    tester.assertLabel("dataPanel:projectName", "Default");
+    tester.assertLabel("dataPanel:date", getDateTodayAsString());
   }
   
   /**
    * return a String that represent the date of today.
    * @return a String represent today.
    */
-  public String getDateToday() {
+  public String getDateTodayAsString() {
     XMLGregorianCalendar time = Tstamp.makeTimestamp();
     String timeString = time.getYear() + "-";
     timeString += (time.getMonth() >= 10) ? time.getMonth() : "0" + time.getMonth();

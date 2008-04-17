@@ -1,10 +1,12 @@
 package org.hackystat.projectbrowser.page.dailyprojectdata.coverage;
 
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.hackystat.dailyprojectdata.client.DailyProjectDataClient;
 import org.hackystat.dailyprojectdata.client.DailyProjectDataClientException;
@@ -22,7 +24,8 @@ import org.hackystat.utilities.tstamp.Tstamp;
 public class CoveragePanel extends Panel {
   /** Support serialization. */
   private static final long serialVersionUID = 1L;
-  
+  /** the threshold for coverage in percent, below which will make the number red. */
+  private int coverageThreshold = 80;
   /** collection of granularities. */
   private String[] granularities = {"class", "method", "line", "block"};
 
@@ -33,6 +36,7 @@ public class CoveragePanel extends Panel {
     super(id);
     DailyProjectDataSession session = ProjectBrowserSession.get().getDailyProjectDataSession();
     this.setModel(new CompoundPropertyModel(this));
+    //display project information
     if (session.getProject() == null) {
       add(new Label("projectName", ""));
       add(new Label("projectOwner", ""));
@@ -42,12 +46,18 @@ public class CoveragePanel extends Panel {
       add(new Label("projectOwner", session.getProject().getOwner()));
     }
     add(new Label("date", new PropertyModel(session, "dateString")));
+    //prepare the data model.
     CoverageDataModel dataModel = (CoverageDataModel) session.getDataModel();
     if (dataModel == null) {
       dataModel = getCoverageDataModel();
       session.setDataModel(dataModel);
     }
-    add(new Label("classCoverage", new PropertyModel(dataModel, "classCoverage")));
+    //display overall coverage
+    add(new CoverageLabel("classCoverage", dataModel.getCoverageDisplayString("class")));
+    add(new CoverageLabel("methodCoverage", dataModel.getCoverageDisplayString("method")));
+    add(new CoverageLabel("lineCoverage", dataModel.getCoverageDisplayString("line")));
+    add(new CoverageLabel("blockCoverage", dataModel.getCoverageDisplayString("block")));
+    //display coverage by package
     ListView memberDataListView = 
       new ListView("memberDataList", new PropertyModel(dataModel, "coverageDataList")) {
       /** Support serialization. */
@@ -56,11 +66,11 @@ public class CoveragePanel extends Panel {
       protected void populateItem(ListItem item) {
         CoverageData coverageData = (CoverageData) item.getModelObject();
         item.add(new Label("name", getEmailFromUri(coverageData.getName())));
-        item.add(new Label("methodCoverage", coverageData.getDisplayString("method")));
-        item.add(new Label("lineCoverage", coverageData.getDisplayString("line")));
-        item.add(new Label("blockCoverage", coverageData.getDisplayString("block")));
+        item.add(new CoverageLabel("classCoverage", coverageData.getDisplayString("class")));
+        item.add(new CoverageLabel("methodCoverage", coverageData.getDisplayString("method")));
+        item.add(new CoverageLabel("lineCoverage", coverageData.getDisplayString("line")));
+        item.add(new CoverageLabel("blockCoverage", coverageData.getDisplayString("block")));
       }
-
       private String getEmailFromUri(String memberUri) {
         int index = memberUri.lastIndexOf('/');
         return memberUri.substring(index + 1);
@@ -90,7 +100,30 @@ public class CoveragePanel extends Panel {
         session.setFeedback("Exception when getting coverage data: " + e.getMessage());
       }
     }
+    coverageDataModel.mergeIntoPackage();
     return coverageDataModel;
   }
 
+  /**
+   * Label for coverage number.
+   * the content will get red if the coverage is lower than the coverageThreshold.
+   * @author Shaoxuan Zhang
+   */
+  private class CoverageLabel extends Label {
+    /** Support serialization. */
+    private static final long serialVersionUID = 1L;
+    /**
+     * @param id the wicket component id.
+     * @param label the content of this label.
+     */
+    public CoverageLabel(String id, String label) {
+      super(id, label);
+      int coverage = CoverageData.getCoverageFromFormattedDisplayString(label);
+      if (coverage < coverageThreshold) {
+        this.add(new AttributeModifier("style", true, new Model("color:red")));
+      }
+    }
+  }
+  
+  
 }
