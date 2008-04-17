@@ -13,6 +13,7 @@ import org.apache.wicket.Request;
 import org.apache.wicket.Session;
 import org.apache.wicket.protocol.http.WebSession;
 import org.hackystat.dailyprojectdata.client.DailyProjectDataClient;
+import org.hackystat.projectbrowser.page.dailyprojectdata.DailyProjectDataSession;
 import org.hackystat.projectbrowser.page.sensordata.SensorDataSession;
 import org.hackystat.sensorbase.client.SensorBaseClient;
 import org.hackystat.sensorbase.client.SensorBaseClientException;
@@ -47,6 +48,8 @@ public class ProjectBrowserSession extends WebSession {
   /** The collection of Projects that this user has. */
   private Map<String, Project> projectMap = null;
   private List<Project> projectList = null;
+  
+  private DailyProjectDataSession dailyProjectDataSession = new DailyProjectDataSession();
   
   private SensorDataSession sensorDataSession = new SensorDataSession();
   
@@ -257,5 +260,19 @@ public class ProjectBrowserSession extends WebSession {
    */
   public SensorDataSession getSensorDataSession() {
     return this.sensorDataSession;
+  }
+
+  /**
+   * @param dailyProjectDataSession the dailyProjectDataSession to set
+   */
+  public void setDailyProjectDataSession(DailyProjectDataSession dailyProjectDataSession) {
+    this.dailyProjectDataSession = dailyProjectDataSession;
+  }
+
+  /**
+   * @return the dailyProjectDataSession
+   */
+  public DailyProjectDataSession getDailyProjectDataSession() {
+    return dailyProjectDataSession;
   }
 }

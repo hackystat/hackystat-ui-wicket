@@ -5,27 +5,10 @@
     <wicket:extend>
     <div id="sensordata-left">
       <span wicket:id="projectDatePanel">ProjectDatePanel</span>
-      <table>
-        <tr><td>
-          <a href="#">Build</a>
-        </td></tr>
-        <tr><td>
-          <a wicket:id="UnitTestPageLink" href="#">Unit Test</a>
-        </td></tr>
-        <tr><td>
-          <a href="#">Coverage</a>
-        </td></tr>
-        <tr><td>
-          <a href="#">Complexity</a>
-        </td></tr>
-        <tr><td>
-          <a href="#">Coupling</a>
-        </td></tr>
-      </table>
     </div>
 
     <div id="sensordata-right">
-      <wicket:child />
+      <span wicket:id="dataPanel" />
     </div>
   </wicket:extend>
 </body>

@@ -86,7 +86,7 @@ public class ProjectBrowserBasePage extends WebPage {
    * make a Date that represent today, at 0:00:00.
    * @return the Date object.
    */
-  public final Date getDateToday() {
+  public static final Date getDateToday() {
     XMLGregorianCalendar time = Tstamp.makeTimestamp();
     time.setTime(0, 0, 0);
     return time.toGregorianCalendar().getTime();

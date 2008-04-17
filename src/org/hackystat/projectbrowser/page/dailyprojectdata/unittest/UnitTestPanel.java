@@ -2,47 +2,53 @@ package org.hackystat.projectbrowser.page.dailyprojectdata.unittest;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
-import org.apache.wicket.markup.html.list.PageableListView;
+import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.model.PropertyModel;
 import org.hackystat.dailyprojectdata.client.DailyProjectDataClient;
 import org.hackystat.dailyprojectdata.client.DailyProjectDataClientException;
 import org.hackystat.dailyprojectdata.resource.unittest.jaxb.MemberData;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
-import org.hackystat.projectbrowser.page.dailyprojectdata.DailyProjectDataPage;
+import org.hackystat.projectbrowser.page.dailyprojectdata.DailyProjectDataSession;
 import org.hackystat.utilities.tstamp.Tstamp;
 
 /**
  * Page to show daily unit test data of the project.
  * @author Shaoxuan Zhang
  */
-public class UnitTestPage extends DailyProjectDataPage {
+public class UnitTestPanel extends Panel {
   /** Support serialization. */
   private static final long serialVersionUID = 1L;
 
   /**
    * create the UnitTestPage
-   * @param parameters the parameters to configure the page.
+   * @param id wicket component id.
    */
-  public UnitTestPage(PageParameters parameters) {
-    super(parameters);
+  public UnitTestPanel(final String id) {
+    super(id);
+    DailyProjectDataSession session = ProjectBrowserSession.get().getDailyProjectDataSession();
     this.setModel(new CompoundPropertyModel(this));
-    if (this.getProject() == null) {
+    if (session.getProject() == null) {
       add(new Label("projectName", ""));
       add(new Label("projectOwner", ""));
     }
     else {
-      add(new Label("projectName", this.getProject().getName()));
-      add(new Label("projectOwner", this.getProject().getOwner()));
+      add(new Label("projectName", session.getProject().getName()));
+      add(new Label("projectOwner", session.getProject().getOwner()));
     }
-    add(new Label("date", this.getDate().toString()));
-    PageableListView memberDataListView = new PageableListView("memberDataList",
-        getUnitTestMemberDataList(), MEMBERDATA_PER_PAGE) {
+    add(new Label("date", new PropertyModel(session, "dateString")));
+    UnitTestModel dataModel = (UnitTestModel) session.getDataModel();
+    if (dataModel == null) {
+      dataModel = getUnitTestModel();
+      session.setDataModel(dataModel);
+    }
+    ListView memberDataListView = 
+      new ListView("memberDataList", new PropertyModel(dataModel, "memberDataList")) {
       /** Support serialization. */
       private static final long serialVersionUID = 1L;
-
       @Override
       protected void populateItem(ListItem item) {
         MemberData memberData = (MemberData) item.getModelObject();
@@ -60,32 +66,35 @@ public class UnitTestPage extends DailyProjectDataPage {
   }
 
   /**
+   * Return a unit test model that represent the newest data.
+   * @return the unit test model.
+   */
+  private UnitTestModel getUnitTestModel() {
+    UnitTestModel unitTestModel = new UnitTestModel();
+    unitTestModel.setMemberDataList(getUnitTestMemberDataList());
+    return unitTestModel;
+  }
+
+  /**
    * Retrieve project members' unit test data of the project.
    * @return a List of MemberData that contain unit test data of each member of the project.
    */
-  protected List<MemberData> getUnitTestMemberDataList() {
+  private List<MemberData> getUnitTestMemberDataList() {
+    DailyProjectDataSession session = ProjectBrowserSession.get().getDailyProjectDataSession();
     DailyProjectDataClient dpdClient = ProjectBrowserSession.get().getDailyProjectDataClient();
     List<MemberData> memberDataList = new ArrayList<MemberData>();
-    if (this.getProject() == null) {
-      this.footerFeedback = "You did not selected a project to display.";
+    if (session.getProject() == null) {
+      session.setFeedback("You did not selected a project to display.");
       return memberDataList;
     }
     try {
-      memberDataList = dpdClient.getUnitTest(getProject().getOwner(), getProject().getName(),
-          Tstamp.makeTimestamp(this.getDate().getTime())).getMemberData();
+      memberDataList = dpdClient.getUnitTest(session.getProject().getOwner(), 
+          session.getProject().getName(),
+          Tstamp.makeTimestamp(session.getDate().getTime())).getMemberData();
     }
     catch (DailyProjectDataClientException e) {
-      this.footerFeedback = e.getMessage() + " No unit test data of project " + getProject().getName() + " found on "
-       + getDate();
+      session.setFeedback(e.getMessage());
     }
     return memberDataList;
-  }
-  
-  /**
-   * The action to be performed when the user has set the Project and Date fields. 
-   */
-  @Override
-  public void onProjectDateSubmit() {
-    super.onProjectDateSubmit();
   }
 }
