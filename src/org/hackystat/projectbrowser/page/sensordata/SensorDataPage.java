@@ -29,6 +29,7 @@ public class SensorDataPage extends ProjectBrowserBasePage {
   public SensorDataPage() {
     add(new SensorDataForm("sensorDataForm", this));
     add(new SdtSummaryPanel("sdtSummaryPanel", this));
+    add(new SensorDataDetailsPanel("sensorDataDetailsPanel"));
   }
   
   /**

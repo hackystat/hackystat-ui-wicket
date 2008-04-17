@@ -1,0 +1,29 @@
+<html xmlns:wicket>
+  <wicket:panel wicket:id="SdtSummary">
+    <h4>
+      <span wicket:id="sdtName">[projectName]</span>
+      <span wicket:id="tool">[dateString]</span>
+    </h4>
+
+    <table width="100%">
+      <tr>
+        <th>Timestamp</th>
+        <th>Runtime</th>
+        <th>SDT</th>
+        <th>Resource</th>
+        <th>Owner</th>
+        <th>Tool</th>
+        <th>Properties</th>
+      </tr>
+      <tr wicket:id="sensorDataDetailsList">
+        <td wicket:id="timestamp">2008-04-04T11:38:47</td>
+        <td wicket:id="runtime">2008-04-04T11:38:47</td>
+        <td wicket:id="sdtName">DevEvent</td>
+        <td wicket:id="resource">foo/bar/baz.txt</td>
+        <td wicket:id="owner">johnson@hawaii.edu</td>
+        <td wicket:id="tool">Eclipse</td>
+        <td wicket:id="properties">Subtype:File Close, Window: Main</td>
+      </tr>
+    </table>
+  </wicket:panel>
+</html>

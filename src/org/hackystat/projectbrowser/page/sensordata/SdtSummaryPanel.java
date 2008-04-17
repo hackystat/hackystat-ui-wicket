@@ -42,9 +42,22 @@ public class SdtSummaryPanel extends Panel {
       @Override
       protected void populateItem(ListItem item) {
         SdtSummary summary = (SdtSummary) item.getModelObject();
-        item.add(new Label("sdtName", summary.getSdtName()));
-        item.add(new Label("tool", summary.getTool()));
-        item.add(new SdtSummaryPanelLink("link", String.valueOf(summary.getCount())));
+        String sdtName = summary.getSdtName();
+        String tool = summary.getTool();
+        String count = String.valueOf(summary.getCount());
+        item.add(new Label("sdtName", sdtName));
+        item.add(new Label("tool", tool));
+        item.add(new SdtSummaryPanelLink("link", count, sdtName, tool) {
+          /** For serialization. */
+          private static final long serialVersionUID = 1L;
+          @Override
+          public void onClick() {
+            SensorDataSession session = ProjectBrowserSession.get().getSensorDataSession();
+            session.getSensorDataDetailsModel().setSensorDetailsModel(sdtName, tool);
+            session.setSdtName(sdtName);
+            session.setTool(tool);
+          }
+        });
       }
     });
   }
