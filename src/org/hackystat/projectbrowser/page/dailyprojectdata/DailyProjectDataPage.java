@@ -1,6 +1,5 @@
 package org.hackystat.projectbrowser.page.dailyprojectdata;
 
-import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
@@ -18,7 +17,7 @@ public class DailyProjectDataPage extends ProjectBrowserBasePage {
 
   /** Support serialization. */
   private static final long serialVersionUID = 1L;
-  /** Daily project data session to hold up the data. */
+  /** Daily project data session to hold up the state. */
   private DailyProjectDataSession session = 
     ProjectBrowserSession.get().getDailyProjectDataSession();
   /** the wicket id for the data panel. */
@@ -46,9 +45,8 @@ public class DailyProjectDataPage extends ProjectBrowserBasePage {
 
   /**
    * Creates the DPD page. 
-   * @param parameters parameters to configure the page.
    */
-  public DailyProjectDataPage(PageParameters parameters) {
+  public DailyProjectDataPage() {
     add(new ProjectDatePanel("projectDatePanel", this));
     add(getDataPanel(WICKET_PANEL_ID));
     this.get("FooterFeedback").setModel(new PropertyModel(session, "feedback"));

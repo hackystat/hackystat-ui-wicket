@@ -56,6 +56,9 @@ public class CoverageData implements Serializable {
    */
   public static int getCoverageFromFormattedDisplayString(String string) {
     int index = string.indexOf('%');
+    if (index < 0) {
+      return 0;
+    }
     String coverageString = string.substring(0, index);
     return Integer.valueOf(coverageString);
   }

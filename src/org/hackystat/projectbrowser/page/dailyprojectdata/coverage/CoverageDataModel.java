@@ -19,6 +19,7 @@ public class CoverageDataModel extends DailyProjectDataModel {
   /** collection of granularities. */
   private String[] granularities = {"class", "method", "line", "block"};
   
+  /** Holds the coverage data.*/
   private List<CoverageData> coverageDataList = new ArrayList<CoverageData>();
 
   /**

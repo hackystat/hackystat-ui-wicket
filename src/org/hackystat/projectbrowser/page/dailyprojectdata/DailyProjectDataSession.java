@@ -18,8 +18,6 @@ public class DailyProjectDataSession implements Serializable {
 
   /** Support serialization. */
   private static final long serialVersionUID = 1L;
-  /** Max number of items per page. */
-  public static final int MEMBERDATA_PER_PAGE = 50;
 
   /** The date this user has selected in the ProjectDate form. */
   private long date = ProjectBrowserBasePage.getDateToday().getTime();

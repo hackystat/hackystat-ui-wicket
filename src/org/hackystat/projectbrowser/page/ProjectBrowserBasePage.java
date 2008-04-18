@@ -96,6 +96,17 @@ public class ProjectBrowserBasePage extends WebPage {
   }
 
   /**
+   * make a Date that represent 7 days ago, at 0:00:00.
+   * @return the Date object.
+   */
+  public static final Date getDateLastWeek() {
+    XMLGregorianCalendar time = Tstamp.makeTimestamp();
+    time = Tstamp.incrementDays(time, -7);
+    time.setTime(0, 0, 0);
+    return time.toGregorianCalendar().getTime();
+  }
+  
+  /**
    * @param project the project to set
    */
   public void setProject(Project project) {

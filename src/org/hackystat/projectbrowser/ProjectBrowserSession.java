@@ -15,6 +15,7 @@ import org.apache.wicket.protocol.http.WebSession;
 import org.hackystat.dailyprojectdata.client.DailyProjectDataClient;
 import org.hackystat.projectbrowser.page.dailyprojectdata.DailyProjectDataSession;
 import org.hackystat.projectbrowser.page.sensordata.SensorDataSession;
+import org.hackystat.projectbrowser.page.telemetry.TelemetrySession;
 import org.hackystat.sensorbase.client.SensorBaseClient;
 import org.hackystat.sensorbase.client.SensorBaseClientException;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
@@ -52,10 +53,11 @@ public class ProjectBrowserSession extends WebSession {
   /** The analysis list. */
   public List<String> analysisList = new ArrayList<String>();
   
+  private SensorDataSession sensorDataSession = new SensorDataSession();
+
   private DailyProjectDataSession dailyProjectDataSession = new DailyProjectDataSession();
   
-  private SensorDataSession sensorDataSession = new SensorDataSession();
-  
+  private TelemetrySession telemetrySession = new TelemetrySession();
   /**
    * Provide a constructor that initializes WebSession.
    * @param request The request object.
@@ -244,7 +246,7 @@ public class ProjectBrowserSession extends WebSession {
    * @return The list of Projects. 
    */
   public List<Project> getProjectList() {
-    if (this.projectList == null) {
+    if (this.projectList == null || this.projectList.size() <= 0) {
       projectList = new ArrayList<Project>();
       try {
         SensorBaseClient sensorBaseClient = ProjectBrowserSession.get().getSensorBaseClient();
@@ -271,16 +273,18 @@ public class ProjectBrowserSession extends WebSession {
   }
 
   /**
-   * @param dailyProjectDataSession the dailyProjectDataSession to set
+   * Returns the DailyProjectDataSession instance. 
+   * @return The session state for the daily project data page. 
    */
-  public void setDailyProjectDataSession(DailyProjectDataSession dailyProjectDataSession) {
-    this.dailyProjectDataSession = dailyProjectDataSession;
+  public DailyProjectDataSession getDailyProjectDataSession() {
+    return this.dailyProjectDataSession;
   }
 
   /**
-   * @return the dailyProjectDataSession
+   * Returns the TelemetrySession instance. 
+   * @return The session state for the telemetry page. 
    */
-  public DailyProjectDataSession getDailyProjectDataSession() {
-    return dailyProjectDataSession;
+  public TelemetrySession getTelemetrySession() {
+    return this.telemetrySession;
   }
 }

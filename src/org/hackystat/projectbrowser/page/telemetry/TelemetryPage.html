@@ -1,12 +1,16 @@
 <html>
-<head></head>
-<body>
-<wicket:extend>
-  <span wicket:id="PageContents">[Wicket supplied content]</span>
+  <head>
+  </head>
+  <body>
+    <wicket:extend>
+      <div id="sensordata-left">
+        <span wicket:id="inputPanel">InputPanel</span>
+      </div>
 
-  <p>When completed, this page should contain a set of controls similar to the current TelemetryViewer.  In addition, the controls should allow the selection of either tabular and/or graphical format.  The charts will use Google Charts. </p>
-
-</wicket:extend>
-</body>
+      <div id="sensordata-right">
+        <span wicket:id="dataPanel" />
+      </div>
+    </wicket:extend>
+  </body>
 </html>
 
