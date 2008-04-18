@@ -8,7 +8,6 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.sensorbase.client.SensorBaseClient;
-import org.hackystat.sensorbase.resource.sensordata.jaxb.SensorData;
 import org.hackystat.sensorbase.resource.sensordata.jaxb.SensorDataIndex;
 import org.hackystat.sensorbase.resource.sensordata.jaxb.SensorDataRef;
 import org.hackystat.utilities.stacktrace.StackTrace;
@@ -62,15 +61,15 @@ public class SensorDataDetailsModel implements Serializable {
         index = client.getProjectSensorData(owner, projectName, startTime, endTime, sdtName);
       }
       for (SensorDataRef ref : index.getSensorDataRef()) {
-        SensorData data = client.getSensorData(ref);
+        //SensorData data = client.getSensorData(ref);
         // HACK.  Replace above call to get an index with just the tool's sensor data. 
-        if ("All".equals(tool) || tool.equals(data.getTool())) {
-          detailsList.add(new SensorDataDetails(data));
+        if ("All".equals(tool) || tool.equals(ref.getTool())) {
+          detailsList.add(new SensorDataDetails(ref));
         }
       }
     }
     catch (Exception e) {
-      System.out.println(StackTrace.toString(e));
+      System.out.println("Error getting sensor data: " + StackTrace.toString(e));
     }
   }
   
