@@ -16,6 +16,7 @@ public class TelemetryChoiceRenderer extends ChoiceRenderer {
    * @param object the bject to display.
    * @return the display value.
    */
+  @Override
   public Object getDisplayValue(Object object) {
     return ((TelemetryChartDefinition)object).getName();
   }

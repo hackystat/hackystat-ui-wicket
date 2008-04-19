@@ -9,7 +9,7 @@ import java.util.Locale;
 import org.apache.wicket.model.IModel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
-import org.hackystat.projectbrowser.page.projectdatepanel.ProjectDateForm;
+import org.hackystat.projectbrowser.page.dailyprojectdata.projectdatepanel.ProjectDateForm;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
 import org.hackystat.telemetry.service.client.TelemetryClient;
 import org.hackystat.telemetry.service.client.TelemetryClientException;
@@ -107,7 +107,7 @@ public class TelemetrySession implements Serializable {
    * @return the telemetryList
    */
   public List<String> getTelemetryList() {
-    if (this.telemetryList == null) {
+    if (this.telemetryList == null || this.telemetryList.size() <= 0) {
       telemetryList = new ArrayList<String>();
       TelemetryClient client  = ProjectBrowserSession.get().getTelemetryClient();
       try {

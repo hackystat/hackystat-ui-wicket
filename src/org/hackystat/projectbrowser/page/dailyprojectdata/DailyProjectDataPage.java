@@ -5,8 +5,8 @@ import org.apache.wicket.model.PropertyModel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
 import org.hackystat.projectbrowser.page.dailyprojectdata.coverage.CoveragePanel;
+import org.hackystat.projectbrowser.page.dailyprojectdata.projectdatepanel.ProjectDatePanel;
 import org.hackystat.projectbrowser.page.dailyprojectdata.unittest.UnitTestPanel;
-import org.hackystat.projectbrowser.page.projectdatepanel.ProjectDatePanel;
 
 /**
  * Provides a page with DailyProjectData analysis. 

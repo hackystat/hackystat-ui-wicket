@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
-import org.hackystat.projectbrowser.page.projectdatepanel.ProjectDateForm;
+import org.hackystat.projectbrowser.page.dailyprojectdata.projectdatepanel.ProjectDateForm;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
 
 /**

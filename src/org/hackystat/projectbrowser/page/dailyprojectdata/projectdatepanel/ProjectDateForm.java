@@ -1,4 +1,4 @@
-package org.hackystat.projectbrowser.page.projectdatepanel;
+package org.hackystat.projectbrowser.page.dailyprojectdata.projectdatepanel;
 
 import org.apache.wicket.extensions.markup.html.form.DateTextField;
 import org.apache.wicket.extensions.yui.calendar.DatePicker;
@@ -34,6 +34,10 @@ public class ProjectDateForm extends Form {
     super(id);
     this.page = page;
     DailyProjectDataSession session = ProjectBrowserSession.get().getDailyProjectDataSession();
+    //set Project to Default if null
+    if (session.getProject() == null) {
+      session.setProject(ProjectBrowserSession.get().getDefaultProject());
+    }
     //setModel(new CompoundPropertyModel(this));
     DateTextField dateTextField = 
       new DateTextField("dateTextField", new PropertyModel(session, "date"), DATA_FORMAT);

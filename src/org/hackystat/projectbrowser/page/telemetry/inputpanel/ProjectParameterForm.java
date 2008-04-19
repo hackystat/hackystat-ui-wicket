@@ -15,8 +15,8 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
-import org.hackystat.projectbrowser.page.projectdatepanel.ProjectChoiceRenderer;
-import org.hackystat.projectbrowser.page.projectdatepanel.ProjectDateForm;
+import org.hackystat.projectbrowser.page.dailyprojectdata.projectdatepanel.ProjectChoiceRenderer;
+import org.hackystat.projectbrowser.page.dailyprojectdata.projectdatepanel.ProjectDateForm;
 import org.hackystat.projectbrowser.page.telemetry.TelemetrySession;
 import org.hackystat.telemetry.service.resource.chart.jaxb.ParameterDefinition;
 import org.hackystat.telemetry.service.resource.chart.jaxb.Type;
@@ -43,6 +43,10 @@ public class ProjectParameterForm extends Form {
   public ProjectParameterForm(String id, ProjectBrowserBasePage page) {
     super(id);
     this.page = page;
+    //set Project to Default if null
+    if (session.getProject() == null) {
+      session.setProject(ProjectBrowserSession.get().getDefaultProject());
+    }
     //StartDateTextField
     DateTextField startDateTextField = 
       new DateTextField("startDateTextField", new PropertyModel(session, "startDate"), 

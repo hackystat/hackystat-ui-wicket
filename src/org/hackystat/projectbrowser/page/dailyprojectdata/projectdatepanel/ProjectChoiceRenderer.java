@@ -1,4 +1,4 @@
-package org.hackystat.projectbrowser.page.projectdatepanel;
+package org.hackystat.projectbrowser.page.dailyprojectdata.projectdatepanel;
 
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.hackystat.projectbrowser.ProjectBrowserSession;

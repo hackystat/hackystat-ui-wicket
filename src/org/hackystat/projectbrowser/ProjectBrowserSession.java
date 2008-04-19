@@ -2,6 +2,7 @@ package org.hackystat.projectbrowser;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -254,6 +255,21 @@ public class ProjectBrowserSession extends WebSession {
         for (ProjectRef projectRef : projectIndex.getProjectRef()) {
           projectList.add(sensorBaseClient.getProject(projectRef));
         }
+        Collections.sort(projectList, new Comparator<Project>() {
+          public int compare(final Project project1, final Project project2) {
+            if ("Default".equals(project2.getName())) {
+              return 1;
+            }
+            if ("Default".equals(project1.getName())) {
+              return -1;
+            }
+            int result = project1.getName().compareTo(project2.getName());
+            if (result == 0) {
+              result = project1.getOwner().compareTo(project2.getOwner());
+            }
+            return result;
+          }
+        });
       }
       catch (SensorBaseClientException e) {
         Logger logger = ((ProjectBrowserApplication)getApplication()).getLogger();
@@ -264,6 +280,18 @@ public class ProjectBrowserSession extends WebSession {
   }
 
 
+  /**
+   * @return the Default project.
+   */
+  public Project getDefaultProject() {
+    for (Project project : this.getProjectList()) {
+      if ("Default".equals(project.getName())) {
+        return project;
+      }
+    }
+    return null;
+  }
+  
   /**
    * Returns the SensorDataSession instance. 
    * @return The session state for the sensor data page. 
