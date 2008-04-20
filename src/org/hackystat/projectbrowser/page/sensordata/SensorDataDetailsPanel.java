@@ -1,10 +1,12 @@
 package org.hackystat.projectbrowser.page.sensordata;
 
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.list.ListItem;
-import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.markup.html.navigation.paging.PagingNavigator;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.model.PropertyModel;
+import org.hackystat.projectbrowser.ProjectBrowserApplication;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 
 /**
@@ -23,10 +25,10 @@ public class SensorDataDetailsPanel extends Panel {
   public SensorDataDetailsPanel(String id) {
     super(id);
     SensorDataSession session = ProjectBrowserSession.get().getSensorDataSession();
-    SensorDataDetailsModel model = session.getSensorDataDetailsModel();
+    SensorDataDetailsProvider provider = session.getSensorDataDetailsProvider();
     add(new Label("sdtName", new PropertyModel(session, "sdtName")));
     add(new Label("tool", new PropertyModel(session, "tool")));
-    add(new ListView("sensorDataDetailsList", new PropertyModel(model, "details")) {
+    DataView dataView = new DataView("sensorDataDetailsList", provider) {
       /** For serialization */
       private static final long serialVersionUID = 1L;
 
@@ -35,7 +37,7 @@ public class SensorDataDetailsPanel extends Panel {
        * @param item The SensorDataDetails item.  
        */
       @Override
-      protected void populateItem(ListItem item) {
+      protected void populateItem(Item item) {
         SensorDataDetails details = (SensorDataDetails) item.getModelObject();
         item.add(new Label("timestamp", details.getTimeStamp()));
         item.add(new Label("runtime", details.getRuntime()));
@@ -45,18 +47,23 @@ public class SensorDataDetailsPanel extends Panel {
         item.add(new Label("tool", details.getTool()));
         item.add(new Label("properties", details.getProperties()));
       }
-    });
+    };
+    int itemsPerPage = ((ProjectBrowserApplication)ProjectBrowserApplication.get()).
+      getProjectBrowserProperties().getSensorDataItemsPerPage();
+    dataView.setItemsPerPage(itemsPerPage);
+    add(dataView);
+    add(new PagingNavigator("navigator", dataView));
   }
   
   /**
-   * Display this panel only if the SdtDetailsModel contains information. 
+   * Display this panel only if the SensorDataDetailsProvider contains information. 
    * @return True if this panel should be displayed.
    */
   @Override
   public boolean isVisible() {
     SensorDataSession session = ProjectBrowserSession.get().getSensorDataSession();
-    SensorDataDetailsModel model = session.getSensorDataDetailsModel();
-    return !model.isEmpty();
+    SensorDataDetailsProvider provider = session.getSensorDataDetailsProvider();
+    return !provider.isEmpty();
   }
 
 }

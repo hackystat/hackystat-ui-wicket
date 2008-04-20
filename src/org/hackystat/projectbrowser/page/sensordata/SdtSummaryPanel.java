@@ -53,7 +53,7 @@ public class SdtSummaryPanel extends Panel {
           @Override
           public void onClick() {
             SensorDataSession session = ProjectBrowserSession.get().getSensorDataSession();
-            session.getSensorDataDetailsModel().setSensorDetailsModel(sdtName, tool);
+            session.getSensorDataDetailsProvider().setSensorDataDetailsProvider(sdtName, tool);
             session.setSdtName(sdtName);
             session.setTool(tool);
           }

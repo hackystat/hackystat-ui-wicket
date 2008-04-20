@@ -52,10 +52,13 @@ hr { color : #3366CC; background-color : #3366CC; height : 2px; }
 #sensordata-right    {float: right; width: 80%}
 
 
+
 /* Footer
 -------------------------------------------------------------- */
 
-#footer { border-top: 1px solid #eee; margin-top: 1px; }
+#info { float: left; width: 100%; border-top: 1px solid #3366CC; margin-top: 1px; }
+
+#footer { border-top: 1px solid #3366CC; margin-top: 1px; }
 
 #footer .tabs { width: 405px; border-top: 3px solid  #E5ECF9; }
 #footer .tabs a { padding: 10px 30px 10px 0; color: #3366CC; text-decoration: none; }

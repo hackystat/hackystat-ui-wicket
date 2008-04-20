@@ -27,6 +27,11 @@ public class ProjectBrowserProperties {
   public static final String APPLICATION_LOGO_KEY =  "projectbrowser.application.logo";
   /** Optional name. */
   public static final String APPLICATION_NAME_KEY =  "projectbrowser.application.name";
+  /** Optional items per page */
+  public static final String SENSORDATA_ITEMSPERPAGE_KEY = "projectbrowser.sensordata.itemsperpage";
+  /** The default number of items per page. */
+  private int defaultItemsPerPage = 50;
+  
   
   // Not sure yet if we need the following.
   /** The projectbrowser hostname key. */
@@ -79,6 +84,7 @@ public class ProjectBrowserProperties {
     properties.setProperty(ADMIN_EMAIL_KEY, "johnson@hackystat.org");
     properties.setProperty(APPLICATION_LOGO_KEY, "");
     properties.setProperty(APPLICATION_NAME_KEY, "Hackystat ProjectBrowser");
+    properties.setProperty(SENSORDATA_ITEMSPERPAGE_KEY, String.valueOf(defaultItemsPerPage));
 
     // Now read in the properties file, and override the defaults if supplied. 
     FileInputStream stream = null;
@@ -133,6 +139,7 @@ public class ProjectBrowserProperties {
       pad + WICKET_CONFIGURATION_KEY   + eq + get(WICKET_CONFIGURATION_KEY) + cr +
       pad + APPLICATION_LOGO_KEY   + eq + get(APPLICATION_LOGO_KEY) + cr +
       pad + APPLICATION_NAME_KEY   + eq + get(APPLICATION_NAME_KEY) + cr +
+      pad + SENSORDATA_ITEMSPERPAGE_KEY   + eq + get(SENSORDATA_ITEMSPERPAGE_KEY) + cr +
       pad + ADMIN_EMAIL_KEY   + eq + get(ADMIN_EMAIL_KEY);
   }
   
@@ -165,4 +172,21 @@ public class ProjectBrowserProperties {
   public boolean hasApplicationLogo() {
     return !"".equals(get(APPLICATION_LOGO_KEY));
   }
+  
+  /**
+   * Returns an integer indicating the number of SensorData instances to display per page.
+   * Defaults to the default number of items per page, currently 50.
+   * @return An int with the number of sensor data items per page. 
+   */
+  public int getSensorDataItemsPerPage() {
+    int itemsperpage = defaultItemsPerPage;
+    try {
+      itemsperpage = Integer.parseInt(get(SENSORDATA_ITEMSPERPAGE_KEY));
+    }
+    catch (Exception e) {
+      itemsperpage = defaultItemsPerPage;
+    }
+    return itemsperpage;
+  }
+  
 }

@@ -30,6 +30,8 @@ public class SensorDataSession implements Serializable {
   
   /** Holds the SensorDataDetails model associated with this session. */
   private SensorDataDetailsModel sensorDataDetailsModel = new SensorDataDetailsModel();
+  /** Holds the IDataProvider for SensorDataDetails. */
+  private SensorDataDetailsProvider sensorDataDetailsProvider = new SensorDataDetailsProvider();
   
   private String sdtName = ""; 
   private String tool = "";
@@ -123,6 +125,22 @@ public class SensorDataSession implements Serializable {
    */
   public void setSensorDataDetailsModel(SensorDataDetailsModel model) {
     this.sensorDataDetailsModel = model;
+  }
+  
+  /**
+   * Return the sensor data details IDataProvider.
+   * @return The sensor data details provider.
+   */
+  public SensorDataDetailsProvider getSensorDataDetailsProvider() {
+    return this.sensorDataDetailsProvider;
+  }
+  
+  /**
+   * Set the sensor data details IDataProvider
+   * @param model The sensor data details provider
+   */
+  public void setSensorDataDetailsProvider(SensorDataDetailsProvider model) {
+    this.sensorDataDetailsProvider = model;
   }
   
   /**
