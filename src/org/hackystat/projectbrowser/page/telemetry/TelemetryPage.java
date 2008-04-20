@@ -21,7 +21,7 @@ public class TelemetryPage extends ProjectBrowserBasePage {
    */
   public TelemetryPage() {
     add(new TelemetryInputPanel("inputPanel", this));
-    add(new TelemetryDataPanel("dataPanel").setVisible(false));
+    add(new TelemetryDataPanel("dataPanel"));
     this.get("FooterFeedback").setModel(new PropertyModel(session, "feedback"));
   }
   
@@ -30,7 +30,6 @@ public class TelemetryPage extends ProjectBrowserBasePage {
    */
   @Override
   public void onProjectDateSubmit() {
-    this.session.updateChartUrl();
-    this.replace(new TelemetryDataPanel("dataPanel"));
+    //this.replace(new TelemetryDataPanel("dataPanel"));
   }
 }

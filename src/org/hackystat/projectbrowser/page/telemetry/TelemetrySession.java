@@ -3,6 +3,7 @@ package org.hackystat.projectbrowser.page.telemetry;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -29,9 +30,9 @@ public class TelemetrySession implements Serializable {
 
   /** Support serialization. */
   private static final long serialVersionUID = 1L;
-  /** The date this user has selected in the ProjectDate form. */
+  /** The start date this user has selected. */
   private long startDate = ProjectBrowserBasePage.getDateLastWeek().getTime();
-  /** The date this user has selected in the ProjectDate form. */
+  /** The end date this user has selected. */
   private long endDate = ProjectBrowserBasePage.getDateToday().getTime();
   /** The project this user has selected. */
   private Project project = null;
@@ -47,8 +48,9 @@ public class TelemetrySession implements Serializable {
   private String feedback = "";
   /** The parameters for telemetry chart. */
   private List<IModel> parameters = new ArrayList<IModel>();
-  /** The URL of google chart. */
-  private String chartUrl = "http://csdl.ics.hawaii.edu/Pictures/CSDLLogo.gif";
+  /** The data model to hold state for data panel */
+  private TelemetryChartDataModel dataModel = new TelemetryChartDataModel();
+  
   /**
    * Create the instance.
    */
@@ -126,6 +128,7 @@ public class TelemetrySession implements Serializable {
       catch (TelemetryClientException e) {
         this.feedback = "Exception when retrieving Telemetry chart definition: " + e.getMessage();
       }
+      Collections.sort(this.telemetryList);
     }
     return telemetryList;
   }
@@ -232,23 +235,18 @@ public class TelemetrySession implements Serializable {
   }
 
   /**
-   * @param chartUrl the chartUrl to set
+   * Update the data model.
    */
-  public void setChartUrl(String chartUrl) {
-    this.chartUrl = chartUrl;
+  public void updateDataModel() {
+    this.dataModel.setModel(this.getStartDate(), this.getEndDate(), project, 
+                                  this.telemetryName, this.getChartUrl());
   }
-
+  
   /**
-   * @return the chartUrl
+   * Return the google chart url that present the telemetry associated with this session.
+   * @return the URL string.
    */
   public String getChartUrl() {
-    return chartUrl;
-  }
-
-  /**
-   * Update the chart url according to data in this session.
-   */
-  public void updateChartUrl() {
     TelemetryClient client = ProjectBrowserSession.get().getTelemetryClient();
     if (this.getTelemetryName() != null && this.getProject() != null) {
       try {
@@ -266,7 +264,12 @@ public class TelemetrySession implements Serializable {
           List<Double> streamData = new ArrayList<Double>();
           for (TelemetryPoint point : stream.getTelemetryPoint()) {
             if (point.getValue() == null) {
-              streamData.add(new Double(0));
+              if (streamData.isEmpty()) {
+                streamData.add(0.0);
+              }
+              else {
+                streamData.add(streamData.get(streamData.size() - 1));
+              }
             }
             else {
               streamData.add(Double.valueOf(point.getValue()));
@@ -279,11 +282,26 @@ public class TelemetrySession implements Serializable {
         
         this.feedback = googleChart.getUrl();
         
-        this.setChartUrl(googleChart.getUrl());
+        return googleChart.getUrl();
       }
       catch (TelemetryClientException e) {
         e.printStackTrace();
       }
-    }    
+    }
+    return "";    
+  }
+
+  /**
+   * @param dataModel the dataModel to set
+   */
+  public void setDataModel(TelemetryChartDataModel dataModel) {
+    this.dataModel = dataModel;
+  }
+
+  /**
+   * @return the dataModel
+   */
+  public TelemetryChartDataModel getDataModel() {
+    return dataModel;
   }
 }

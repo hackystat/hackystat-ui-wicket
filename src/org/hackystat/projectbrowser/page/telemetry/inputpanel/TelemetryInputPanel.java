@@ -20,8 +20,8 @@ public class TelemetryInputPanel extends Panel {
   public TelemetryInputPanel(String id, ProjectBrowserBasePage page) {
     super(id);
     add(new FeedbackPanel("feedback"));
-    add(new TelemetryForm("telemetryForm"));
-    add(new ProjectParameterForm("inputForm", page));
+    //add(new TelemetryForm("telemetryForm"));
+    add(new TelemetryInputForm("inputForm", page));
   }
 
 }

@@ -26,7 +26,7 @@ import org.hackystat.telemetry.service.resource.chart.jaxb.Type;
  * @author Shaoxuan Zhang
  *
  */
-public class ProjectParameterForm extends Form {
+public class TelemetryInputForm extends Form {
 
   /** Support serialization. */
   public static final long serialVersionUID = 1L;
@@ -40,9 +40,31 @@ public class ProjectParameterForm extends Form {
    * @param id The wicket:id.
    * @param page the page this page is attached to.
    */
-  public ProjectParameterForm(String id, ProjectBrowserBasePage page) {
+  public TelemetryInputForm(String id, ProjectBrowserBasePage page) {
     super(id);
     this.page = page;
+    
+    // Create the drop-down menu for telemetry. 
+    DropDownChoice telemetryMenu = 
+      new DropDownChoice ("telemetryMenu", new PropertyModel(session, "telemetryName"),
+          new PropertyModel(session, "telemetryList")) {
+      /** Support serialization. */
+      private static final long serialVersionUID = 1L;
+      @Override
+      protected boolean wantOnSelectionChangedNotifications() {
+        return true;
+      }
+      @Override
+      protected void onSelectionChanged(java.lang.Object newSelection) {
+        session.getParameters().clear();
+      }
+    };
+    telemetryMenu.setRequired(true);
+    this.add(telemetryMenu);
+    if (session.getTelemetryName() == null) {
+      session.setTelemetryName(session.getTelemetryList().get(0));
+    }
+
     //set Project to Default if null
     if (session.getProject() == null) {
       session.setProject(ProjectBrowserSession.get().getDefaultProject());
@@ -112,16 +134,8 @@ public class ProjectParameterForm extends Form {
    */
   @Override
   public void onSubmit() {
+    ProjectBrowserSession.get().getTelemetrySession().updateDataModel();
     page.onProjectDateSubmit();
-  }
-
-  /**
-   * Determine if this panel is visible or not.
-   * @return true if this panel is visible
-   */
-  @Override
-  public boolean isVisible() {
-    return ProjectBrowserSession.get().getTelemetrySession().getTelemetryName() != null;
   }
   
   /**

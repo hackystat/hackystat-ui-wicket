@@ -48,7 +48,7 @@ public class DailyProjectDataPage extends ProjectBrowserBasePage {
    */
   public DailyProjectDataPage() {
     add(new ProjectDatePanel("projectDatePanel", this));
-    add(getDataPanel(WICKET_PANEL_ID));
+    add(new Panel(WICKET_PANEL_ID).setVisible(false));
     this.get("FooterFeedback").setModel(new PropertyModel(session, "feedback"));
   }
 

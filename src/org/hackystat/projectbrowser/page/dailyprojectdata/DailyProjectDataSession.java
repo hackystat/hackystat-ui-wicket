@@ -26,7 +26,7 @@ public class DailyProjectDataSession implements Serializable {
   private Project project = null;
 
   /** The analysis this user has selected. */
-  private String analysis = null;
+  private String analysis = "Coverage";
   
   /** The analysis list. */
   private List<String> analysisList = new ArrayList<String>();
@@ -42,8 +42,8 @@ public class DailyProjectDataSession implements Serializable {
    */
   public DailyProjectDataSession() {
     //analysisList.add("Build");
-    analysisList.add("Unit Test");
     analysisList.add("Coverage");
+    analysisList.add("Unit Test");
     //analysisList.add("Complexity");
     //analysisList.add("Coupling");
   }
