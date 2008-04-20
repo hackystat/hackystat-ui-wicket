@@ -22,8 +22,8 @@ public class SensorDataSession implements Serializable {
   /** The date for this page.  Represented as a long to avoid findbugs errors. */
   private long date = (new Date()).getTime();
   
-  /** The project name associated with this page. */
-  private String projectName = null;
+  /** The project associated with this page. */
+  private Project project = null;
 
   /** Holds the sdtSummaryModel associated with this session. */ 
   private SdtSummaryModel sdtSummaryModel = new SdtSummaryModel();
@@ -69,30 +69,22 @@ public class SensorDataSession implements Serializable {
   }
   
   /**
-   * Gets the project name associated with this page. 
-   * @return The project name for this page. 
+   * Gets the project associated with this page. 
+   * @return The project for this page. 
    */
-  public String getProjectName() {
-    if (this.projectName == null) {
-      this.projectName = ProjectBrowserSession.get().getProjectNames().get(0);
+  public Project getProject() {
+    if (this.project == null) {
+      this.setProject(ProjectBrowserSession.get().getDefaultProject());
     }
-    return this.projectName;
+    return this.project;
   }
   
   /**
    * Sets the projectName for this page. 
-   * @param projectName The project name for this page. 
+   * @param project The project for this page. 
    */
-  public void setProjectName(String projectName) {
-    this.projectName = projectName;
-  }
-  
-  /**
-   * Returns the Project instance selected by the user in this session. 
-   * @return The project instance.
-   */
-  public Project getProject() {
-    return ProjectBrowserSession.get().getProjectByNameId(getProjectName());
+  public void setProject(Project project) {
+    this.project = project;
   }
 
   /**

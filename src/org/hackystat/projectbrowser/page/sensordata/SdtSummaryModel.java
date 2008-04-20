@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hackystat.sensorbase.resource.projects.jaxb.Project;
 import org.hackystat.sensorbase.resource.projects.jaxb.ProjectSummary;
 import org.hackystat.sensorbase.resource.projects.jaxb.SensorDataSummary;
 
@@ -18,7 +19,7 @@ public class SdtSummaryModel implements Serializable {
   private List<SdtSummary> sdtSummaryList = new ArrayList<SdtSummary>();
   private long total = 0;
   private long date = 0;
-  private String projectName = "";
+  private Project project = null;
     
   /**
    * The default constructor, required by Wicket. 
@@ -44,24 +45,24 @@ public class SdtSummaryModel implements Serializable {
   }
   
   /**
-   * Return the Project name for this page. 
-   * @return The project name. 
+   * Return the Project for this page. 
+   * @return The project. 
    */
-  public String getProjectName() {
-    return this.projectName;
+  public Project getProject() {
+    return this.project;
   }
   
   /**
    * Updates the SdtModel with the project summary instance. 
    * @param summary The summary instance. 
    * @param date The date for this summary.
-   * @param projectName The project name for this summary.
+   * @param project The project for this summary.
    */
-  public final void setModel(ProjectSummary summary, Date date, String projectName) {
+  public final void setModel(ProjectSummary summary, Date date, Project project) {
     total = 0;
     sdtSummaryList.clear();
     this.date = date.getTime();
-    this.projectName = projectName;
+    this.project = project;
     List<SensorDataSummary> summaries = summary.getSensorDataSummaries().getSensorDataSummary();
     if (summaries != null) {
       for (SensorDataSummary sum : summaries) {
@@ -80,6 +81,6 @@ public class SdtSummaryModel implements Serializable {
    * @return True if this model has no data. 
    */
   public boolean isEmpty() {
-    return "".equals(this.projectName);
+    return this.project == null;
   }
 }

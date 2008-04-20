@@ -1,7 +1,6 @@
 package org.hackystat.projectbrowser.page;
 
 import java.util.Date;
-import java.util.List;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 
@@ -18,7 +17,6 @@ import org.hackystat.projectbrowser.page.dailyprojectdata.DailyProjectDataPage;
 import org.hackystat.projectbrowser.page.projects.ProjectsPage;
 import org.hackystat.projectbrowser.page.sensordata.SensorDataPage;
 import org.hackystat.projectbrowser.page.telemetry.TelemetryPage;
-import org.hackystat.sensorbase.resource.projects.jaxb.Project;
 import org.hackystat.utilities.tstamp.Tstamp;
 
 /**
@@ -34,13 +32,13 @@ public class ProjectBrowserBasePage extends WebPage {
   private static final long serialVersionUID = 1L;
   
   /** The project name this user has selected in the ProjectDate form. */
-  protected String projectName = "";
+  //protected String projectName = "";
   
   /** The date this user has selected in the ProjectDate form. */
   protected long date = getDateToday().getTime();
 
   /** The project name this user has selected. */
-  private Project project = null;
+  //private Project project = null;
   
   /** Displays text at the bottom of the screen for user information. */
   protected String footerFeedback = "";
@@ -55,10 +53,12 @@ public class ProjectBrowserBasePage extends WebPage {
     add(new ImageUrl("application-logo", app.getApplicationLogo()));
     add(new Label("application-name", (app.hasApplicationLogo() ? "" : app.getApplicationName())));
     // Provide a default value for the projectName field.
+    /* moved to each page session.
     List<String> projectNames = ProjectBrowserSession.get().getProjectNames();
     if ((projectNames != null) && !projectNames.isEmpty()) {
       this.projectName = projectNames.get(0);
     }
+    */
     add(new BookmarkablePageLink("SensorDataPageLink", SensorDataPage.class));
     add(new BookmarkablePageLink("ProjectsPageLink", ProjectsPage.class));
     add(new BookmarkablePageLink("DailyProjectDataPageLink", DailyProjectDataPage.class));
@@ -109,16 +109,19 @@ public class ProjectBrowserBasePage extends WebPage {
   /**
    * @param project the project to set
    */
+  /*
   public void setProject(Project project) {
     this.project = project;
   }
-
+  */
   /**
    * @return the project
    */
+  /*
   public Project getProject() {
     return project;
   }
+  */
 
   /**
    * @param date the date to set

@@ -3,11 +3,7 @@ package org.hackystat.projectbrowser;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.logging.Logger;
 
 import org.apache.wicket.Request;
@@ -48,7 +44,7 @@ public class ProjectBrowserSession extends WebSession {
   /** If this user has been authenticated against the Sensorbase during this session. */
   private boolean isAuthenticated = false;
   /** The collection of Projects that this user has. */
-  private Map<String, Project> projectMap = null;
+  //private Map<String, Project> projectMap = null;
   /** The collection of Projects that this user has. */
   private List<Project> projectList = null;
   /** The analysis list. */
@@ -191,18 +187,21 @@ public class ProjectBrowserSession extends WebSession {
    * Returns the list of project names associated with this user.
    * @return The list of project names. 
    */
+  /*
   public List<String> getProjectNames() {
     List<String> projectNames = new ArrayList<String>();
     projectNames.addAll(getProjects().keySet());
     Collections.sort(projectNames);
     return projectNames;
   }
+  */
   
   /**
    * Return a map of project names to project instances associated with this user.  
    * If the map has not yet been built, get it from the SensorBase and cache it. 
    * @return The map of Project instances. 
    */
+  /*
   public Map<String, Project> getProjects() {
     if (this.projectMap == null) {
       this.projectMap = new HashMap<String, Project>();
@@ -230,6 +229,7 @@ public class ProjectBrowserSession extends WebSession {
     }
     return this.projectMap;
   }
+  */
   
   /**
    * Return the project associated with the given id.
@@ -238,9 +238,11 @@ public class ProjectBrowserSession extends WebSession {
    * @param projectNameId the given id
    * @return the result project, null if not found.
    */
+  /*
   public Project getProjectByNameId(String projectNameId) {
     return this.projectMap.get(projectNameId);
   }
+  */
   
   /**
    * Returns the list of Projects associated with this user. 
@@ -257,12 +259,6 @@ public class ProjectBrowserSession extends WebSession {
         }
         Collections.sort(projectList, new Comparator<Project>() {
           public int compare(final Project project1, final Project project2) {
-            if ("Default".equals(project2.getName())) {
-              return 1;
-            }
-            if ("Default".equals(project1.getName())) {
-              return -1;
-            }
             int result = project1.getName().compareTo(project2.getName());
             if (result == 0) {
               result = project1.getOwner().compareTo(project2.getOwner());

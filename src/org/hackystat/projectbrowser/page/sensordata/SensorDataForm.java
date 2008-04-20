@@ -6,6 +6,7 @@ import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.PropertyModel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
+import org.hackystat.projectbrowser.ProjectChoiceRenderer;
 
 /**
  * Provides the form that specifies a Date and Project name for the SensorData page.  
@@ -40,8 +41,9 @@ public class SensorDataForm extends Form {
     // Now create the drop-down menu for projects. 
     DropDownChoice projectMenu = 
       new DropDownChoice ("projectMenu", 
-          new PropertyModel(session, "projectName"),
-          new PropertyModel(ProjectBrowserSession.get(), "projectNames"));
+          new PropertyModel(session, "project"),
+          new PropertyModel(ProjectBrowserSession.get(), "projectList"),
+          new ProjectChoiceRenderer());
     add(projectMenu);
   }
   /**

@@ -1,6 +1,7 @@
 package org.hackystat.projectbrowser.googlechart;
 
 import java.awt.Color;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,7 +9,9 @@ import java.util.List;
  * Chart class that represent a chart image that generated from Google Chart API.
  * @author Shaoxuan Zhang
  */
-public class GoogleChart {
+public class GoogleChart implements Serializable {
+  /** Support serialization. */
+  private static final long serialVersionUID = 1L;
   /** host of google chart service */
   public static final String GOOGLECHART_API_URL = "http://chart.apis.google.com/chart?";
   /** character that separate parameter. */

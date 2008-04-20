@@ -119,7 +119,9 @@ public class DailyProjectDataSession implements Serializable {
    * @return the feedback
    */
   public String getFeedback() {
-    return feedback;
+    String returnString = this.feedback;
+    this.feedback = "";
+    return returnString;
   }
 
   /**

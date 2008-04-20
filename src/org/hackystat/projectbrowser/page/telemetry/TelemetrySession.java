@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Locale;
 import org.apache.wicket.model.IModel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
+import org.hackystat.projectbrowser.googlechart.ChartType;
+import org.hackystat.projectbrowser.googlechart.GoogleChart;
 import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
 import org.hackystat.projectbrowser.page.dailyprojectdata.projectdatepanel.ProjectDateForm;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
@@ -15,6 +17,9 @@ import org.hackystat.telemetry.service.client.TelemetryClient;
 import org.hackystat.telemetry.service.client.TelemetryClientException;
 import org.hackystat.telemetry.service.resource.chart.jaxb.ParameterDefinition;
 import org.hackystat.telemetry.service.resource.chart.jaxb.TelemetryChartRef;
+import org.hackystat.telemetry.service.resource.chart.jaxb.TelemetryPoint;
+import org.hackystat.telemetry.service.resource.chart.jaxb.TelemetryStream;
+import org.hackystat.utilities.tstamp.Tstamp;
 
 /**
  * Session to hold state for telemetry.
@@ -42,7 +47,8 @@ public class TelemetrySession implements Serializable {
   private String feedback = "";
   /** The parameters for telemetry chart. */
   private List<IModel> parameters = new ArrayList<IModel>();
-  
+  /** The URL of google chart. */
+  private String chartUrl = "http://csdl.ics.hawaii.edu/Pictures/CSDLLogo.gif";
   /**
    * Create the instance.
    */
@@ -84,7 +90,9 @@ public class TelemetrySession implements Serializable {
    * @return the feedback
    */
   public String getFeedback() {
-    return feedback;
+    String returnString = this.feedback;
+    this.feedback = "";
+    return returnString;
   }
 
   /**
@@ -210,7 +218,9 @@ public class TelemetrySession implements Serializable {
       stringBuffer.append(',');
     }
     String param = stringBuffer.toString();
-    param = param.substring(0, param.length() - 1);
+    if (param.length() >= 1) {
+      param = param.substring(0, param.length() - 1);
+    }
     return param;
   }
 
@@ -219,5 +229,61 @@ public class TelemetrySession implements Serializable {
    */
   public List<String> getGranularityList() {
     return granularityList;
+  }
+
+  /**
+   * @param chartUrl the chartUrl to set
+   */
+  public void setChartUrl(String chartUrl) {
+    this.chartUrl = chartUrl;
+  }
+
+  /**
+   * @return the chartUrl
+   */
+  public String getChartUrl() {
+    return chartUrl;
+  }
+
+  /**
+   * Update the chart url according to data in this session.
+   */
+  public void updateChartUrl() {
+    TelemetryClient client = ProjectBrowserSession.get().getTelemetryClient();
+    if (this.getTelemetryName() != null && this.getProject() != null) {
+      try {
+        List<TelemetryStream> streams = client.getChart(this.getTelemetryName(), 
+                                        this.getProject().getOwner(), 
+                                        this.getProject().getName(), 
+                                        this.getGranularity(), 
+                                        Tstamp.makeTimestamp(this.getStartDate().getTime()), 
+                                        Tstamp.makeTimestamp(this.getEndDate().getTime()), 
+                                        this.getParameterAsString()).getTelemetryStream();
+
+        List<List<Double>> chartData = new ArrayList<List<Double>>();
+        
+        for (TelemetryStream stream : streams) {
+          List<Double> streamData = new ArrayList<Double>();
+          for (TelemetryPoint point : stream.getTelemetryPoint()) {
+            if (point.getValue() == null) {
+              streamData.add(new Double(0));
+            }
+            else {
+              streamData.add(Double.valueOf(point.getValue()));
+            }
+          }
+          chartData.add(streamData);
+        }
+        
+        GoogleChart googleChart = new GoogleChart(ChartType.LINE, 600, 300, chartData);
+        
+        this.feedback = googleChart.getUrl();
+        
+        this.setChartUrl(googleChart.getUrl());
+      }
+      catch (TelemetryClientException e) {
+        e.printStackTrace();
+      }
+    }    
   }
 }

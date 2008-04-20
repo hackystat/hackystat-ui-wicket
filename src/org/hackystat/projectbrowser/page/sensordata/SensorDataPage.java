@@ -40,8 +40,8 @@ public class SensorDataPage extends ProjectBrowserBasePage {
     try {
       // Start by getting the project summary.
       SensorDataSession session = ProjectBrowserSession.get().getSensorDataSession();
-      String projectName = session.getProjectName();
-      Project project = ProjectBrowserSession.get().getProjectByNameId(projectName);
+      //String projectName = session.getProjectName();
+      Project project = session.getProject();
       SensorBaseClient client = ProjectBrowserSession.get().getSensorBaseClient();
       Date date = session.getDate();
       XMLGregorianCalendar startTime = Tstamp.makeTimestamp(date.getTime());
@@ -50,7 +50,7 @@ public class SensorDataPage extends ProjectBrowserBasePage {
         client.getProjectSummary(project.getOwner(), project.getName(), startTime, endTime);
       // Now create the summary model from the ProjectSummary and save it in this page's session.
       SdtSummaryModel model = session.getSdtSummaryModel();
-      model.setModel(summary, date, projectName);
+      model.setModel(summary, date, project);
       
     }
     catch (Exception e) {

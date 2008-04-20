@@ -2,6 +2,8 @@ package org.hackystat.projectbrowser.page.telemetry;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
@@ -38,6 +40,9 @@ public class TelemetryDataPanel extends Panel {
     add(new Label("startDate", new PropertyModel(session, "startDateString")));
     add(new Label("endDate", new PropertyModel(session, "endDateString")));
     add(new Label("telemetryName", new PropertyModel(session, "telemetryName")));
+    WebComponent chartUrl = new WebComponent("chartUrl");
+    chartUrl.add(new AttributeModifier("src", true, new PropertyModel(session, "chartUrl")));
+    add(chartUrl);
   }
   
   /**
@@ -61,13 +66,5 @@ public class TelemetryDataPanel extends Panel {
       }
     }
     return new ArrayList<TelemetryStream>();
-  }
-  /**
-   * Determine if this panel is visible or not.
-   * @return true if this panel is visible
-   */
-  @Override
-  public boolean isVisible() {
-    return ProjectBrowserSession.get().getTelemetrySession().getProject() != null;
   }
 }

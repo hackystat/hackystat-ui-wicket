@@ -1,7 +1,6 @@
-package org.hackystat.projectbrowser.page.dailyprojectdata.projectdatepanel;
+package org.hackystat.projectbrowser;
 
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
-import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
 
 /**

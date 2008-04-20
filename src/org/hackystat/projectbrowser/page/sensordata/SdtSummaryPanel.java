@@ -29,7 +29,7 @@ public class SdtSummaryPanel extends Panel {
     SensorDataSession session = ProjectBrowserSession.get().getSensorDataSession();
     SdtSummaryModel model = session.getSdtSummaryModel();
     // Set up the table
-    add(new Label("projectName", new PropertyModel(session, "projectName")));
+    add(new Label("projectName", new PropertyModel(session.getProject(), "name")));
     add(new Label("dateString", new PropertyModel(session, "dateString")));
     add(new ListView("SdtSummaryList", new PropertyModel(model, "SdtList")) {
       /** For serialization */
