@@ -34,7 +34,8 @@ public class Start {
 		try {
 			server.start();
 			System.out.println(" ");
-			System.out.println(properties.getHost() + " is now running. Press return to stop server.");
+			System.out.println(properties.getHost() + 
+			    " is now running. Press return to stop server.");
 			while (System.in.available() == 0) {
 				Thread.sleep(5000);
 			}
