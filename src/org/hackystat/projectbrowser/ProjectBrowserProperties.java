@@ -31,15 +31,17 @@ public class ProjectBrowserProperties {
   public static final String SENSORDATA_ITEMSPERPAGE_KEY = "projectbrowser.sensordata.itemsperpage";
   /** The default number of items per page. */
   private int defaultItemsPerPage = 50;
+  /** The default port as an int. */
+  private int defaultPort = 9879;
   
   
   // Not sure yet if we need the following.
   /** The projectbrowser hostname key. */
-  //public static final String HOSTNAME_KEY = "projectbrowser.hostname";
+  public static final String HOSTNAME_KEY = "projectbrowser.hostname";
   /** The projectbrowser context root. */
-  //public static final String CONTEXT_ROOT_KEY = "projectbrowser.context.root";
+  public static final String CONTEXT_ROOT_KEY = "projectbrowser.context.root";
   /** The projectbrowser port key. */
-  //public static final String PORT_KEY = "projectbrowser.port";
+  public static final String PORT_KEY = "projectbrowser.port";
   /** The SMTP host key. */
   //public static final String SMTP_HOST_KEY =  "projectbrowser.smtp.host";
   /** The test install host key. */
@@ -63,6 +65,13 @@ public class ProjectBrowserProperties {
       System.out.println("Error initializing projectbrowser properties.");
     }
   }
+  
+  /**
+   * The default public constructor, which gets all properties from projectbrowser.properties. 
+   */
+  public ProjectBrowserProperties() {
+    this(null);
+  }
  
 
   /**
@@ -81,8 +90,12 @@ public class ProjectBrowserProperties {
     properties.setProperty(DAILYPROJECTDATA_HOST_KEY, "http://localhost:9877/dailyprojectdata");
     properties.setProperty(TELEMETRY_HOST_KEY, "http://localhost:9878/telemetry");
     properties.setProperty(LOGGING_LEVEL_KEY, "INFO");
+    properties.setProperty(HOSTNAME_KEY, "localhost");
+    properties.setProperty(CONTEXT_ROOT_KEY, "projectbrowser");
+    properties.setProperty(PORT_KEY, String.valueOf(defaultPort));
     properties.setProperty(ADMIN_EMAIL_KEY, "johnson@hackystat.org");
     properties.setProperty(APPLICATION_LOGO_KEY, "");
+    properties.setProperty(WICKET_CONFIGURATION_KEY, "development");
     properties.setProperty(APPLICATION_NAME_KEY, "Hackystat ProjectBrowser");
     properties.setProperty(SENSORDATA_ITEMSPERPAGE_KEY, String.valueOf(defaultItemsPerPage));
 
@@ -109,7 +122,6 @@ public class ProjectBrowserProperties {
     trimProperties(properties);
     String wicketConfig = properties.getProperty(WICKET_CONFIGURATION_KEY);
     if (wicketConfig != null) {
-      System.out.println("Setting wicket.configuration to: " + wicketConfig);
       System.setProperty("wicket.configuration", wicketConfig);
     }
     
@@ -139,6 +151,9 @@ public class ProjectBrowserProperties {
       pad + WICKET_CONFIGURATION_KEY   + eq + get(WICKET_CONFIGURATION_KEY) + cr +
       pad + APPLICATION_LOGO_KEY   + eq + get(APPLICATION_LOGO_KEY) + cr +
       pad + APPLICATION_NAME_KEY   + eq + get(APPLICATION_NAME_KEY) + cr +
+      pad + HOSTNAME_KEY   + eq + get(HOSTNAME_KEY) + cr +
+      pad + CONTEXT_ROOT_KEY   + eq + get(CONTEXT_ROOT_KEY) + cr +
+      pad + PORT_KEY   + eq + get(PORT_KEY) + cr +
       pad + SENSORDATA_ITEMSPERPAGE_KEY   + eq + get(SENSORDATA_ITEMSPERPAGE_KEY) + cr +
       pad + ADMIN_EMAIL_KEY   + eq + get(ADMIN_EMAIL_KEY);
   }
@@ -189,4 +204,35 @@ public class ProjectBrowserProperties {
     return itemsperpage;
   }
   
+  /**
+   * Returns the port to be used for this application.
+   * Defaults to 8080. 
+   * @return The port as an integer. 
+   */
+  public int getPort() {
+    int port = defaultPort;
+    try {
+      port = Integer.parseInt(get(PORT_KEY));
+    }
+    catch (Exception e) {
+      port = defaultPort;
+    }
+    return port;
+  }
+  
+  /**
+   * Returns the context root for this application. Defaults to "projectbrowser".
+   * @return The context root. 
+   */
+  public String getContextRoot() {
+    return get(CONTEXT_ROOT_KEY);
+  }
+  
+  /**
+   * Returns the URL to this system as defined by the project properties. 
+   * @return The URL to this system. 
+   */
+  public String getHost() {
+    return "http://" + get(HOSTNAME_KEY) + ":" + getPort() + "/" + getContextRoot(); 
+  }
 }

@@ -17,20 +17,24 @@ public class Start {
    * @throws Exception If problems occur. 
    */
 	public static void main(String[] args) throws Exception {
+	  ProjectBrowserProperties properties = new ProjectBrowserProperties();
+	  int port = properties.getPort();
+	  String contextPath = properties.getContextRoot();
 		Server server = new Server();
 		SocketConnector connector = new SocketConnector();
-		connector.setPort(8080);
+		connector.setPort(port);
 		server.setConnectors(new Connector[] { connector });
 
 		WebAppContext bb = new WebAppContext();
 		bb.setServer(server);
-		bb.setContextPath("/projectbrowser");
+		bb.setContextPath("/" + contextPath);
 		bb.setWar("webapp");
 		server.addHandler(bb);
 
 		try {
-      System.out.println(">>> STARTING EMBEDDED JETTY SERVER, PRESS ANY KEY TO STOP");
 			server.start();
+			System.out.println(" ");
+			System.out.println(properties.getHost() + " is now running. Press return to stop server.");
 			while (System.in.available() == 0) {
 				Thread.sleep(5000);
 			}
