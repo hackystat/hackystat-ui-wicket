@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.apache.wicket.behavior.HeaderContributor;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
@@ -49,6 +50,10 @@ public class ProjectBrowserBasePage extends WebPage {
    */
   public ProjectBrowserBasePage() {
     ProjectBrowserApplication app = (ProjectBrowserApplication)getApplication();
+    add(HeaderContributor.forCss(org.hackystat.projectbrowser.Start.class, 
+        "style/boilerplate/screen.css", "screen"));
+    add(HeaderContributor.forCss(org.hackystat.projectbrowser.Start.class, 
+        "style/boilerplate/print.css", "print"));
     add(new Label("title", app.getApplicationName()));
     add(new ImageUrl("application-logo", app.getApplicationLogo()));
     add(new Label("application-name", (app.hasApplicationLogo() ? "" : app.getApplicationName())));

@@ -131,9 +131,6 @@
         <include name="**/*.*" />
         <exclude name="**/*.java" />
       </fileset>
-      <fileset dir="${webapp.dir}">
-        <include name="**/*.*" />
-      </fileset>
     </copy>
   </target>
 

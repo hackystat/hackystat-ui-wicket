@@ -18,11 +18,6 @@
       <fileset dir="${basedir}/build/classes"/>
     </copy>
     
-    <!-- Copy the webapp dir over -->
-    <copy todir="${tmp.dir}">
-      <fileset dir="${basedir}/webapp"/>
-    </copy>
-    
     <!-- Copy over all of the required libraries. --> 
     <unjar dest="${tmp.dir}">
       <fileset file="${env.HACKYSTAT_SENSORBASE_HOME}/sensorbase.jar" />

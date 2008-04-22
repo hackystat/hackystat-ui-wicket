@@ -31,11 +31,11 @@ public class TelemetryDataPanel extends Panel {
    */
   public TelemetryDataPanel(String id) {
     super(id);
-    String feedback = "";
+    StringBuffer feedback = new StringBuffer();
     for (Project project : session.getSelectedProjects()) {
-      feedback += project.getName() + "-" + project.getOwner() + ", ";
+      feedback.append(project.getName()).append("-").append(project.getOwner()).append(", ");
     }
-    session.setFeedback(feedback);
+    session.setFeedback(feedback.toString());
     dataModel = session.getDataModel();
     //display project information
     add(new Label("telemetryName", new PropertyModel(dataModel, "telemetryName")));
