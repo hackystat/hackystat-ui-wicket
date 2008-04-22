@@ -33,7 +33,7 @@ public class TelemetryDataPanel extends Panel {
     super(id);
     StringBuffer feedback = new StringBuffer();
     for (Project project : session.getSelectedProjects()) {
-      feedback.append(project.getName()).append("-").append(project.getOwner()).append(", ");
+      feedback.append(project.getName()).append('-').append(project.getOwner()).append(", ");
     }
     session.setFeedback(feedback.toString());
     dataModel = session.getDataModel();
