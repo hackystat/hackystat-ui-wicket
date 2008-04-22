@@ -3,9 +3,13 @@ package org.hackystat.projectbrowser.page.telemetry;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.list.ListItem;
+import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
+import org.hackystat.sensorbase.resource.projects.jaxb.Project;
 /**
  * Panel for showing telemetry content.
  * @author Shaoxuan Zhang
@@ -24,22 +28,34 @@ public class TelemetryDataPanel extends Panel {
    */
   public TelemetryDataPanel(String id) {
     super(id);
+    String feedback = "";
+    for (Project project : session.getSelectedProjects()) {
+      feedback += project.getName() + "-" + project.getOwner() + ", ";
+    }
+    session.setFeedback(feedback);
     dataModel = session.getDataModel();
     //display project information
-    if (dataModel.getProject() == null) {
-      add(new Label("projectName", ""));
-      add(new Label("projectOwner", ""));
-    }
-    else {
-      add(new Label("projectName", dataModel.getProject().getName()));
-      add(new Label("projectOwner", dataModel.getProject().getOwner()));
-    }
-    add(new Label("startDate", new PropertyModel(dataModel, "startDateString")));
-    add(new Label("endDate", new PropertyModel(dataModel, "endDateString")));
     add(new Label("telemetryName", new PropertyModel(dataModel, "telemetryName")));
-    WebComponent chartUrl = new WebComponent("chartUrl");
-    chartUrl.add(new AttributeModifier("src", true, new PropertyModel(dataModel, "chartUrl")));
-    add(chartUrl);
+    
+    ListView projectList = 
+      new ListView("projectList", new PropertyModel(dataModel, "selectedProjects")) {
+      /** Support serialization. */
+      public static final long serialVersionUID = 1L;
+      @Override
+      protected void populateItem(ListItem item) {
+        Project project = (Project)item.getModelObject();
+        item.add(new Label("projectName", project.getName()));
+        item.add(new Label("startDate", new PropertyModel(dataModel, "startDateString")));
+        item.add(new Label("endDate", new PropertyModel(dataModel, "endDateString")));
+        WebComponent chartUrl = new WebComponent("chartUrl");
+        chartUrl.add(
+            new AttributeModifier("src", true, new Model(dataModel.getProjectChart(project))));
+        add(chartUrl);
+        item.add(chartUrl);
+      }
+    };
+    this.add(projectList);
+    
   }
   
   /**

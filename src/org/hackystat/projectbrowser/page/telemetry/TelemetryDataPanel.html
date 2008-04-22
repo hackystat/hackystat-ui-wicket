@@ -1,11 +1,14 @@
 <html xmlns:wicket>
   <wicket:panel>
     <h3>Telemetry Chart: <span wicket:id="telemetryName" /></h3>
-      <h4>
-        Project Name: <span wicket:id="projectName" /><br />
-        Project Owner: <span wicket:id="projectOwner" /><br/>
+      <span wicket:id="projectList">
+        <h4>
+        Project: <span wicket:id="projectName" /><br/>
         From <span wicket:id="startDate" /> To <span wicket:id="endDate" />
-      </h4>
-      <img wicket:id="chartUrl"/>
+        </h4>
+        <img wicket:id="chartUrl"/>
+        <br/>
+        <br/>
+      </span>
     </wicket:panel>
   </html>

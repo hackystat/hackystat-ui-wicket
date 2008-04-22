@@ -8,6 +8,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.ListMultipleChoice;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -66,8 +67,8 @@ public class TelemetryInputForm extends Form {
     }
 
     //set Project to Default if null
-    if (session.getProject() == null) {
-      session.setProject(ProjectBrowserSession.get().getDefaultProject());
+    if (session.getSelectedProjects().size() <= 0) {
+      session.getSelectedProjects().add(ProjectBrowserSession.get().getDefaultProject());
     }
     //StartDateTextField
     DateTextField startDateTextField = 
@@ -89,9 +90,9 @@ public class TelemetryInputForm extends Form {
                            session.getGranularityList()));
     
     // Now create the drop-down menu for projects. 
-    DropDownChoice projectMenu = 
-      new DropDownChoice ("projectMenu", 
-          new PropertyModel(session, "project"),
+    ListMultipleChoice projectMenu = 
+      new ListMultipleChoice ("projectMenu", 
+          new PropertyModel(session, "selectedProjects"),
           new PropertyModel(ProjectBrowserSession.get(), "projectList"),
           new ProjectChoiceRenderer()) {
       /** Support serialization. */
