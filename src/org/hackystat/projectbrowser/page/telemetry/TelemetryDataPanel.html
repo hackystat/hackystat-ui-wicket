@@ -1,14 +1,32 @@
 <html xmlns:wicket>
   <wicket:panel>
-    <h3>Telemetry Chart: <span wicket:id="telemetryName" /></h3>
-      <span wicket:id="projectList">
-        <h4>
-        Project: <span wicket:id="projectName" /><br/>
-        From <span wicket:id="startDate" /> To <span wicket:id="endDate" />
-        </h4>
-        <img wicket:id="chartUrl"/>
-        <br/>
-        <br/>
+    <h3>Telemetry Chart: <span wicket:id="telemetryName" />
+    </h3>
+    <table width="90%">
+      <th>Project</th>
+      <th>Stream</th>
+      <span wicket:id="dateList">
+        <th wicket:id="date"></th>
       </span>
-    </wicket:panel>
-  </html>
+      <tr wicket:id="projectTable">
+        <td rowspan="1" wicket:id="projectName">project name</td>
+          <tr wicket:id="projectStream">
+            <td wicket:id="streamName">stream name</td>
+            <span wicket:id="streamData">
+              <td wicket:id="data">data</td>
+            </span>
+          </tr>
+      </tr>
+    </table>
+    <span wicket:id="projectList">
+      <h4>
+        Project: <span wicket:id="projectName" />
+        <br />
+        From <span wicket:id="startDate" /> To <span wicket:id="endDate" />
+      </h4>
+      <img wicket:id="chartUrl" />
+      <br />
+      <br />
+    </span>
+  </wicket:panel>
+</html>

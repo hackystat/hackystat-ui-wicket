@@ -258,23 +258,6 @@ public class TelemetrySession implements Serializable {
   }
   
   /**
-   * @return true if session associated telemetry has cumulative parameter and it is false.
-   */
-  /*
-  private boolean isCumulativeFalse() {
-    List<ParameterDefinition> paramDefList = this.getParameterList();
-    for (int i = 0; i < paramDefList.size(); ++i) {
-      if ("cumulative".equals(paramDefList.get(i).getName())) {
-        String value = this.parameters.get(i).getObject().toString();
-        Boolean result = !Boolean.parseBoolean(value);
-        return result.booleanValue();
-      }
-    }
-    return false;
-  }
-  */
-  
-  /**
    * @param dataModel the dataModel to set
    */
   public void setDataModel(TelemetryChartDataModel dataModel) {
