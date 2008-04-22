@@ -96,12 +96,13 @@ public class ProjectBrowserBasePage extends WebPage {
   }
 
   /**
-   * make a Date that represent 7 days ago, at 0:00:00.
+   * make a Date that represent i days ago, at 0:00:00.
+   * @param i how many day before today.
    * @return the Date object.
    */
-  public static final Date getDateLastWeek() {
+  public static final Date getDateBefore(int i) {
     XMLGregorianCalendar time = Tstamp.makeTimestamp();
-    time = Tstamp.incrementDays(time, -7);
+    time = Tstamp.incrementDays(time, -i);
     time.setTime(0, 0, 0);
     return time.toGregorianCalendar().getTime();
   }

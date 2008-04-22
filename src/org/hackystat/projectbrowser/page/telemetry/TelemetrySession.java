@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import org.apache.wicket.model.IModel;
@@ -31,9 +32,9 @@ public class TelemetrySession implements Serializable {
   /** Support serialization. */
   private static final long serialVersionUID = 1L;
   /** The start date this user has selected. */
-  private long startDate = ProjectBrowserBasePage.getDateLastWeek().getTime();
+  private long startDate = ProjectBrowserBasePage.getDateBefore(7).getTime();
   /** The end date this user has selected. */
-  private long endDate = ProjectBrowserBasePage.getDateToday().getTime();
+  private long endDate = ProjectBrowserBasePage.getDateBefore(1).getTime();
   /** The project this user has selected. */
   private Project project = null;
   /** The analysis this user has selected. */
@@ -50,7 +51,10 @@ public class TelemetrySession implements Serializable {
   private List<IModel> parameters = new ArrayList<IModel>();
   /** The data model to hold state for data panel */
   private TelemetryChartDataModel dataModel = new TelemetryChartDataModel();
-  
+  /** Default color collection.*/
+  private List<String> colors = new ArrayList<String>();
+  /** collection of markers.*/
+  private List<String> markers = new ArrayList<String>();
   /**
    * Create the instance.
    */
@@ -58,6 +62,18 @@ public class TelemetrySession implements Serializable {
     granularityList.add("Day");
     granularityList.add("Week");
     granularityList.add("Month");
+    colors.add("76A4FB");
+    colors.add("FF0000");
+    colors.add("80C65A");
+    colors.add("224499");
+    colors.add("990066");
+    colors.add("FF9900");
+    colors.add("FFCC33");
+    markers.add("o");
+    markers.add("d");
+    markers.add("c");
+    markers.add("x");
+    markers.add("s");
   }
 
   /**
@@ -238,8 +254,7 @@ public class TelemetrySession implements Serializable {
    * Update the data model.
    */
   public void updateDataModel() {
-    this.dataModel.setModel(this.getStartDate(), this.getEndDate(), project, 
-                                  this.telemetryName, this.getChartUrl());
+    this.dataModel.setModel(getStartDate(), getEndDate(), project, telemetryName, getChartUrl());
   }
   
   /**
@@ -248,8 +263,11 @@ public class TelemetrySession implements Serializable {
    */
   public String getChartUrl() {
     TelemetryClient client = ProjectBrowserSession.get().getTelemetryClient();
+    
+    GoogleChart googleChart = new GoogleChart(ChartType.LINE, 800, 300);
     if (this.getTelemetryName() != null && this.getProject() != null) {
       try {
+        //retrieve data from hackystat.
         List<TelemetryStream> streams = client.getChart(this.getTelemetryName(), 
                                         this.getProject().getOwner(), 
                                         this.getProject().getName(), 
@@ -258,27 +276,47 @@ public class TelemetrySession implements Serializable {
                                         Tstamp.makeTimestamp(this.getEndDate().getTime()), 
                                         this.getParameterAsString()).getTelemetryStream();
 
-        List<List<Double>> chartData = new ArrayList<List<Double>>();
-        
+        Iterator<String> colorIterator = this.colors.iterator();
+        Iterator<String> markerIterator = this.markers.iterator();
         for (TelemetryStream stream : streams) {
           List<Double> streamData = new ArrayList<Double>();
           for (TelemetryPoint point : stream.getTelemetryPoint()) {
             if (point.getValue() == null) {
-              if (streamData.isEmpty()) {
-                streamData.add(0.0);
+              streamData.add(-1.0);
+              /*
+              if (streamData.isEmpty() || isCumulativeFalse()) {
+                streamData.add(-1.0);
               }
               else {
                 streamData.add(streamData.get(streamData.size() - 1));
               }
+            */
             }
             else {
-              streamData.add(Double.valueOf(point.getValue()));
+              Double value = Double.valueOf(point.getValue());
+              if (value.isNaN()) {
+                value = 0.0;
+              }
+              streamData.add(value);
             }
           }
-          chartData.add(streamData);
+          googleChart.getChartData().add(streamData);
+          googleChart.addColor(colorIterator.next());
+          googleChart.getChartMarker().add(markerIterator.next());
+          googleChart.getChartLegend().add(stream.getName());
         }
+        List<String> dates = new ArrayList<String>();
+        for (TelemetryPoint point : streams.get(0).getTelemetryPoint()) {
+          String month = "0" + point.getTime().getMonth();
+          month = month.substring(month.length() - 2);
+          String date = "0" + point.getTime().getDay();
+          date = date.substring(date.length() - 2);
+          String dateString = month + "-" + date;
+          dates.add(dateString);
+        }
+        googleChart.addAxisLabel("x", dates);
+        googleChart.addAxisLabel("y");
         
-        GoogleChart googleChart = new GoogleChart(ChartType.LINE, 600, 300, chartData);
         
         this.feedback = googleChart.getUrl();
         
@@ -291,6 +329,23 @@ public class TelemetrySession implements Serializable {
     return "";    
   }
 
+  /**
+   * @return true if session associated telemetry has cumulative parameter and it is false.
+   */
+  /*
+  private boolean isCumulativeFalse() {
+    List<ParameterDefinition> paramDefList = this.getParameterList();
+    for (int i = 0; i < paramDefList.size(); ++i) {
+      if ("cumulative".equals(paramDefList.get(i).getName())) {
+        String value = this.parameters.get(i).getObject().toString();
+        Boolean result = !Boolean.parseBoolean(value);
+        return result.booleanValue();
+      }
+    }
+    return false;
+  }
+  */
+  
   /**
    * @param dataModel the dataModel to set
    */

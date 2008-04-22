@@ -27,48 +27,33 @@ public class GoogleChart implements Serializable {
   /** height in pixel. */
   private int height;
   /** data to display. */
-  private List<List<Double>> chartData;
+  private List<List<Double>> chartData = new ArrayList<List<Double>>();
   /** scale of the data. */
   private List<Double> chartDataScale = null;
   /** colors of the chart. */
-  private List<Color> colors = null;
+  private List<String> colors = new ArrayList<String>();
   /** title. */
   private String title = null;
-  
+  /** Axis types. */
+  private List<String> axisTypes = new ArrayList<String>();
+  /** Axis labels. */
+  private List<List<String>> axisLabels = new ArrayList<List<String>>();
+  /** Axis max ranges. */
+  private List<Double> axisMaxRange = new ArrayList<Double>();
+  /** the markers. */
+  private List<String> chartMarker = new ArrayList<String>();
+  /** the legends. */
+  private List<String> chartLegend = new ArrayList<String>();
   /**
    * initialize the chart with indispensable parameter.
    * @param chartType type of this chart.
    * @param width width.
    * @param height height.
-   * @param chartData data.
    */
-  public GoogleChart(ChartType chartType, int width, int height, List<List<Double>> chartData) {
+  public GoogleChart(ChartType chartType, int width, int height) {
     this.chartType = chartType;
     this.width = width;
     this.height = height;
-    this.chartData = chartData;
-  }
-  
-  /**
-   * for trying.
-   * @param args for convension.
-   */
-  public static void main(String[] args) {
-    GoogleChart chart = new GoogleChart(ChartType.HORIZONTAL_SERIES_BAR, 300, 1000,
-        new ArrayList<List<Double>>());
-    List<Double> firstSeries = new ArrayList<Double>();
-    List<Double> secondSeries = new ArrayList<Double>();
-    for (int i = 1; i <= 40; i++) {
-      firstSeries.add(new Double(i));
-      secondSeries.add(new Double(i));
-    }
-    chart.getChartData().add(firstSeries);
-    chart.getChartData().add(secondSeries);
-    List<Color> colors = new ArrayList<Color>();
-    colors.add(Color.GREEN.darker());
-    colors.add(Color.RED.brighter());
-    chart.setColors(colors);
-    System.out.println(chart.getUrl());
   }
   
   /**
@@ -78,7 +63,7 @@ public class GoogleChart implements Serializable {
   public String getUrl() {
     String url = GOOGLECHART_API_URL;
     url += "chs=" + this.width + "x" + this.height;
-    url += PARAMETER_SEPARATOR + "chd=" + getDataAsString(this.chartData);
+    url += PARAMETER_SEPARATOR + "chd=t:" + getDataAsString(this.chartData);
     if (chartDataScale != null && chartDataScale.size() >= 1) {
       url += PARAMETER_SEPARATOR + "chds=" + toTextEncodingData(this.chartDataScale);
     }
@@ -87,7 +72,66 @@ public class GoogleChart implements Serializable {
       url += PARAMETER_SEPARATOR + "chtt=" + this.title;
     }
     if (colors != null && colors.size() >= 1) {
-      url += PARAMETER_SEPARATOR + "chco=" + getColorDataAsString(this.colors);
+      url += PARAMETER_SEPARATOR + "chco=" + toTextEncodingData(this.colors);
+    }
+    if (this.axisTypes.size() > 0) {
+      url += PARAMETER_SEPARATOR + "chxt=" + toTextEncodingData(this.axisTypes);
+    }
+    if (this.axisLabels.size() > 0) {
+      StringBuffer stringBuffer = new StringBuffer();
+      for (int i = 0; i < this.axisLabels.size(); ++i) {
+        if (this.axisLabels.get(i).size() > 0) {
+          stringBuffer.append((stringBuffer.length() > 0) ? '|' : "");
+          stringBuffer.append(i);
+          stringBuffer.append(':');
+          for (String label : this.axisLabels.get(i)) {
+            stringBuffer.append('|');
+            stringBuffer.append(label);
+          }
+        }
+      }
+      url += PARAMETER_SEPARATOR + "chxl=" + stringBuffer.toString();
+    }
+    if (this.axisMaxRange.size() > 0) {
+      List<List<Double>> rangeList = new ArrayList<List<Double>>();
+      for (int i = 0; i < this.axisMaxRange.size(); ++i) {
+        if (!this.axisMaxRange.get(i).isNaN()) {
+          List<Double> range = new ArrayList<Double>();
+          range.add(i + 0.0);
+          range.add(0.0);
+          range.add(this.axisMaxRange.get(i));
+          rangeList.add(range);
+        }
+      }
+      url += PARAMETER_SEPARATOR + "chxr=" + this.getDataAsString(rangeList);
+    }
+    if (this.chartMarker.size() > 0) {
+      List<List<String>> markerList = new ArrayList<List<String>>();
+      for (int i = 0; i < this.chartMarker.size(); ++i) {
+        for (int j = 0; j < this.chartData.get(i).size(); ++j) {
+          List<String> marker = new ArrayList<String>();
+          marker.add(this.chartMarker.get(i));
+          marker.add(this.colors.get(i));
+          marker.add(i + "");
+          marker.add(j + ".0");
+          marker.add("10.0");
+          markerList.add(marker);
+        }
+      }
+      url += PARAMETER_SEPARATOR + "chm=" + this.getDataAsString(markerList);
+    }
+    if (this.chartLegend.size() > 0) {
+      StringBuffer stringBuffer = new StringBuffer();
+      for (String dataItem : this.chartLegend) {
+        int index = dataItem.indexOf('<');
+        String data = dataItem.substring(0, index);
+        stringBuffer.append(data + DATASET_SEPARATOR);
+      }
+      String dataString = stringBuffer.toString();
+      if (dataString.endsWith(DATASET_SEPARATOR)) {
+        dataString = dataString.substring(0, dataString.lastIndexOf(DATASET_SEPARATOR));
+      }
+      url += PARAMETER_SEPARATOR + "chdl=" + dataString;
     }
     return url;
   }
@@ -97,6 +141,7 @@ public class GoogleChart implements Serializable {
    * @param colorList the color list to encode.
    * @return the result string.
    */
+  /*
   private String getColorDataAsString(List<Color> colorList) {
     StringBuffer buffer = new StringBuffer();
     for (Color color : colorList) {
@@ -108,13 +153,14 @@ public class GoogleChart implements Serializable {
     }
     return colorString;
   }
-
+   */
+  
   /**
    * convert a Color object to a String, with format of RRGGBB.
    * @param color the Color to be convert.
    * @return a string that represent the color.
    */
-  private String colorToString(Color color) {
+  public static String colorToString(Color color) {
     String colorString = "";
     String red = "000" + Integer.toHexString(color.getRed());
     String green = "00" + Integer.toHexString(color.getGreen());
@@ -132,10 +178,9 @@ public class GoogleChart implements Serializable {
    * @param list the list of data to be encoded.
    * @return String of the encoded data.
    */
-  private String getDataAsString(List<List<Double>> list) {
+  private String getDataAsString(List<? extends List<? extends Object>> list) {
     StringBuffer buffer = new StringBuffer();
-    buffer.append("t:");
-    for (List<Double> dataList : list) {
+    for (List<? extends Object> dataList : list) {
       buffer.append(toTextEncodingData(dataList) + DATASET_SEPARATOR);
     }
     String dataString = buffer.toString();
@@ -150,9 +195,9 @@ public class GoogleChart implements Serializable {
    * @param dataList the data list to be converted.
    * @return the string of result.
    */
-  private String toTextEncodingData(List<Double> dataList) {
+  private String toTextEncodingData(List<? extends Object> dataList) {
     StringBuffer buffer = new StringBuffer();
-    for (Double dataItem : dataList) {
+    for (Object dataItem : dataList) {
       buffer.append(dataItem + DATAITEM_SEPARATOR);
     }
     String dataString = buffer.toString();
@@ -233,19 +278,28 @@ public class GoogleChart implements Serializable {
   }
 
   /**
-   * @param colors the colors to set
+   * @return the color list.
    */
-  public void setColors(List<Color> colors) {
-    this.colors = colors;
+  public List<String> getColors() {
+    return this.colors;
+  }
+  
+  /**
+   * add the color to color list.
+   * @param color String that represent the color in format RRGGBB.
+   */
+  public void addColor(String color) {
+    this.colors.add(color);
   }
 
   /**
-   * @return the colors
+   * add the color to color list.
+   * @param color the Color to add.
    */
-  public List<Color> getColors() {
-    return colors;
+  public void addColor(Color color) {
+    this.colors.add(colorToString(color));
   }
-
+  
   /**
    * @param title the title to set
    */
@@ -259,4 +313,59 @@ public class GoogleChart implements Serializable {
   public String getTitle() {
     return title;
   }
+  
+  /**
+   * add a label with default label values.
+   * @param type axis label type, either x, t, y, or r.
+   */
+  public void addAxisLabel(String type) {
+    addAxisLabel(type, new ArrayList<String>());
+  }
+
+  /**
+   * add a label with given label values.
+   * @param type axis label type, either x, t, y, or r.
+   * @param labels the given label values.
+   */
+  public void addAxisLabel(String type, List<String> labels) {
+    this.axisTypes.add(type);
+    this.axisLabels.add(labels);
+    this.axisMaxRange.add(Double.NaN);
+  }
+
+  /**
+   * add a label with given label range.
+   * @param type axis label type, either x, t, y, or r.
+   * @param range the given range.
+   */
+  public void addAxisLabel(String type, Double range) {
+    this.axisTypes.add(type);
+    this.axisLabels.add(new ArrayList<String>());
+    this.axisMaxRange.add(range);
+  }
+  
+  /**
+   * Remove the ith axislabel.
+   * @param i the index of label to be removed.
+   */
+  public void removeAxisLabel(int i) {
+    this.axisTypes.remove(i);
+    this.axisLabels.remove(i);
+    this.axisMaxRange.remove(i);
+  }
+  
+  /**
+   * @return the chartMarker
+   */
+  public List<String> getChartMarker() {
+    return chartMarker;
+  }
+
+  /**
+   * @return the chartLegend
+   */
+  public List<String> getChartLegend() {
+    return chartLegend;
+  }
+  
 }

@@ -176,6 +176,7 @@ public class TelemetryInputForm extends Form {
         protected void onComponentTag(ComponentTag tag) { 
           tag.setName("input");
           tag.put("type", "checkbox");
+          tag.remove("style"); //need for firefox on mac.
           super.onComponentTag(tag);
         } 
       };
