@@ -93,13 +93,13 @@ public class GoogleChart implements Serializable {
       url += PARAMETER_SEPARATOR + "chxl=" + stringBuffer.toString();
     }
     if (this.axisMaxRange.size() > 0) {
-      List<List<Double>> rangeList = new ArrayList<List<Double>>();
+      List<List<String>> rangeList = new ArrayList<List<String>>();
       for (int i = 0; i < this.axisMaxRange.size(); ++i) {
         if (!this.axisMaxRange.get(i).isNaN()) {
-          List<Double> range = new ArrayList<Double>();
-          range.add(i + 0.0);
-          range.add(0.0);
-          range.add(this.axisMaxRange.get(i));
+          List<String> range = new ArrayList<String>();
+          range.add(i + "");
+          range.add(0.0 + "");
+          range.add(this.axisMaxRange.get(i) + "");
           rangeList.add(range);
         }
       }
@@ -108,15 +108,13 @@ public class GoogleChart implements Serializable {
     if (this.chartMarker.size() > 0) {
       List<List<String>> markerList = new ArrayList<List<String>>();
       for (int i = 0; i < this.chartMarker.size(); ++i) {
-        for (int j = 0; j < this.chartData.get(i).size(); ++j) {
           List<String> marker = new ArrayList<String>();
           marker.add(this.chartMarker.get(i));
           marker.add(this.colors.get(i));
           marker.add(i + "");
-          marker.add(j + ".0");
+          marker.add("-1.0");
           marker.add("10.0");
           markerList.add(marker);
-        }
       }
       url += PARAMETER_SEPARATOR + "chm=" + this.getDataAsString(markerList);
     }
@@ -198,6 +196,9 @@ public class GoogleChart implements Serializable {
   private String toTextEncodingData(List<? extends Object> dataList) {
     StringBuffer buffer = new StringBuffer();
     for (Object dataItem : dataList) {
+      if (dataItem instanceof Double) {
+        dataItem = trimDouble((Double)dataItem);
+      }
       buffer.append(dataItem + DATAITEM_SEPARATOR);
     }
     String dataString = buffer.toString();
@@ -207,6 +208,21 @@ public class GoogleChart implements Serializable {
     return dataString;
   }
   
+  /**
+   * Trim the double number. 
+   * Keep only one number after decimal point.
+   * @param dataItem the Double number.
+   * @return a string of result.
+   */
+  private String trimDouble(Double dataItem) {
+    String number = dataItem.toString();
+    int index = number.indexOf('.');
+    if (index > 0 && index + 2 < number.length()) {
+      number = number.substring(0, index + 2);
+    }
+    return number;
+  }
+
   /**
    * @param width the width to set
    */
@@ -366,6 +382,26 @@ public class GoogleChart implements Serializable {
    */
   public List<String> getChartLegend() {
     return chartLegend;
+  }
+
+  /**
+   * Rescale the data within this chart. 
+   * google chart is only support data ranged from 0 to 100. Data greater than 100 will be treated
+   * as 100.
+   * This method is to rescale the data into this 0-100 range so that this chart can show data with
+   * any range. You will need to add y axis label assoicated with the well range as well.
+   * See addAxisLabel(String type, Double range)
+   * @param maximum the maximum value this chart will present.
+   */
+  public void rescaleStream(double maximum) {
+    for (List<Double> stream : this.chartData) {
+      for (int i = 0; i < stream.size(); ++i) {
+        if (stream.get(i) >= 0) {
+          Double newValue = stream.remove(i);
+          stream.add(i, newValue * 100 / maximum);
+        }
+      }
+    }
   }
   
 }

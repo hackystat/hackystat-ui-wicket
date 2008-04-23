@@ -46,6 +46,12 @@ public class TelemetryChartDataModel implements Serializable {
   /** Store the data retrieved from telemetry service. */
   private Map<Project, List<TelemetryStream>> projectStreamData = 
                                         new HashMap<Project, List<TelemetryStream>>();
+  /** Chart with all project streams. */
+  private String overallChart = null;
+  /** the width of this chart. */
+  private int width = 1000;
+  /** the height of this chart. */
+  private int height = 300;
 
   /** The URL of google chart. */
   // private String chartUrl = "";
@@ -69,6 +75,7 @@ public class TelemetryChartDataModel implements Serializable {
     for (IModel model : parameters) {
       this.parameters.add(model.getObject().toString());
     }
+    this.overallChart = null;
     // this.chartUrl = this.getChartUrl(project);
   }
 
@@ -153,57 +160,110 @@ public class TelemetryChartDataModel implements Serializable {
    * Return the google chart url that present the telemetry associated with this session.
    * 
    * @param project project this chart will present.
-   * @return the URL string.
+   * @return the URL string of the chart.
    */
   public String getChartUrl(Project project) {
-    TelemetrySession session = ProjectBrowserSession.get().getTelemetrySession();
-
-    GoogleChart googleChart = new GoogleChart(ChartType.LINE, 800, 300);
     if (this.getTelemetryName() != null && project != null) {
       // retrieve data from hackystat.
       List<TelemetryStream> streams = this.getTelemetryStream(project);
-
-      Random random = new Random();
-      for (TelemetryStream stream : streams) {
-        List<Double> streamData = new ArrayList<Double>();
-        for (TelemetryPoint point : stream.getTelemetryPoint()) {
-          if (point.getValue() == null) {
-            streamData.add(-1.0);
-            /*
-             * if (streamData.isEmpty() || isCumulativeFalse()) { streamData.add(-1.0); } else {
-             * streamData.add(streamData.get(streamData.size() - 1)); }
-             */
-          }
-          else {
-            Double value = Double.valueOf(point.getValue());
-            if (value.isNaN()) {
-              value = 0.0;
-            }
-            streamData.add(value);
-          }
-        }
-        googleChart.getChartData().add(streamData);
-        Long longValue = Math.round(Math.random() * 0xFFFFFF);
-        String randomColor = "000000" + Long.toHexString(longValue);
-        randomColor = randomColor.substring(randomColor.length() - 6);
-        googleChart.addColor(randomColor);
-        if (!session.getMarkers().isEmpty()) {
-          int i = random.nextInt(session.getMarkers().size());
-          googleChart.getChartMarker().add(session.getMarkers().get(i));
-        }
-        googleChart.getChartLegend().add(stream.getName());
-      }
-      if (!streams.isEmpty()) {
-        googleChart.addAxisLabel("x", getDateList(streams.get(0).getTelemetryPoint()));
-      }
-      googleChart.addAxisLabel("y");
-
-      session.setFeedback(googleChart.getUrl());
-
-      return googleChart.getUrl();
-
+      return getChartUrl(null, streams);
     }
     return "";
+  }
+  
+  /**
+   * Return the google chart url that present all streams within the given list.
+   * @param namePrecedings precedings to add before stream names.
+   * @param streams the given stream list.
+   * @return the URL string of the chart.
+   */
+  public String getChartUrl(List<String> namePrecedings, List<TelemetryStream> streams) {
+    GoogleChart googleChart = new GoogleChart(ChartType.LINE, this.width, this.height);
+    double maximum = 0;
+    for (int i = 0; i < streams.size(); ++i) {
+      String namePreceding = null;
+      if (namePrecedings != null && i < namePrecedings.size()) {
+        namePreceding = namePrecedings.get(i);
+      }
+      double streamMax = this.addStreamToChart(namePreceding, streams.get(i), googleChart);
+      if (streamMax > maximum) {
+        maximum = streamMax;
+      }
+    }
+    if (!streams.isEmpty()) {
+      googleChart.addAxisLabel("x", getDateList(streams.get(0).getTelemetryPoint()));
+    }
+    if (maximum > 100 || maximum < 50) {
+      double newRange;
+      if (maximum > 100) {
+        newRange = Math.round(maximum / 50) * 50;
+      }
+      else if (maximum < 25) {
+        newRange = Math.round(maximum / 5) * 5;
+      }
+      else {
+        newRange = Math.round(maximum / 10) * 10;
+      }
+      googleChart.rescaleStream(newRange);
+      googleChart.addAxisLabel("y", newRange);
+    }
+    else {
+      googleChart.addAxisLabel("y");
+    }
+
+    //ProjectBrowserSession.get().getTelemetrySession().setFeedback(googleChart.getUrl());
+    
+    return googleChart.getUrl();
+  }
+  
+  /**
+   * Add the given stream to the google chart. And return the maximum value of the stream.
+   * @param namePreceding string that put before the name of the stream.
+   * @param stream the given stream
+   * @param googleChart the google chart
+   * @return the maximum value of the stream.
+   */
+  public double addStreamToChart(String namePreceding, TelemetryStream stream, 
+                                 GoogleChart googleChart) {
+    //prepare useful object.
+    Random random = new Random();
+    TelemetrySession session = ProjectBrowserSession.get().getTelemetrySession();
+    double maximum = -1;
+    List<Double> streamData = new ArrayList<Double>();
+    for (TelemetryPoint point : stream.getTelemetryPoint()) {
+      if (point.getValue() == null) {
+        streamData.add(-1.0);
+      }
+      else {
+        Double value = Double.valueOf(point.getValue());
+        if (value.isNaN()) {
+          value = 0.0;
+        }
+        if (value > maximum) {
+          maximum = value;
+        }
+        streamData.add(value);
+      }
+    }
+    //add the chart only if the stream is not empty.
+    if (maximum >= 0) {
+      googleChart.getChartData().add(streamData);
+      Long longValue = Math.round(Math.random() * 0xFFFFFF);
+      String randomColor = "000000" + Long.toHexString(longValue);
+      randomColor = randomColor.substring(randomColor.length() - 6);
+      googleChart.addColor(randomColor);
+      if (!session.getMarkers().isEmpty()) {
+        int i = random.nextInt(session.getMarkers().size());
+        googleChart.getChartMarker().add(session.getMarkers().get(i));
+      }
+      String name = stream.getName();
+      if (namePreceding != null && namePreceding.length() > 0) {
+        name = namePreceding + "-" + name;
+      }
+      googleChart.getChartLegend().add(name);
+      
+    }
+    return maximum;
   }
 
   /**
@@ -277,5 +337,52 @@ public class TelemetryChartDataModel implements Serializable {
       param = param.substring(0, param.length() - 1);
     }
     return param;
+  }
+
+  /**
+   * @return the overallChart
+   */
+  public String getOverallChart() {
+    if (overallChart == null) {
+      List<TelemetryStream> streams = new ArrayList<TelemetryStream>();
+      List<String> projectNames = new ArrayList<String>();
+      for (Project project : this.selectedProjects) {
+        List<TelemetryStream> streamList = this.getTelemetryStream(project);
+        for (int i = 0; i < streamList.size(); ++i) {
+          streams.add(streamList.get(i));
+          projectNames.add(project.getName());
+        }
+      }
+      overallChart = this.getChartUrl(projectNames, streams);
+    }
+    return overallChart;
+  }
+
+  /**
+   * @param width the width to set
+   */
+  public void setWidth(int width) {
+    this.width = width;
+  }
+
+  /**
+   * @return the width
+   */
+  public int getWidth() {
+    return width;
+  }
+
+  /**
+   * @param height the height to set
+   */
+  public void setHeight(int height) {
+    this.height = height;
+  }
+
+  /**
+   * @return the height
+   */
+  public int getHeight() {
+    return height;
   }
 }

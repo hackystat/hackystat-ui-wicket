@@ -7,6 +7,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
@@ -29,17 +30,13 @@ public class TelemetryDataPanel extends Panel {
    */
   public TelemetryDataPanel(String id) {
     super(id);
-    StringBuffer feedback = new StringBuffer();
-    for (Project project : session.getSelectedProjects()) {
-      feedback.append(project.getName()).append('-').append(project.getOwner()).append(", ");
-    }
-    session.setFeedback(feedback.toString());
+    IModel dataModel = new PropertyModel(session, "dataModel");
     //display project information
     add(new Label("telemetryName", 
-                  new PropertyModel(session.getDataModel(), "telemetryName")));
+                  new PropertyModel(dataModel, "telemetryName")));
 
     ListView dateList = new ListView("dateList", 
-                                     new PropertyModel(session.getDataModel(), "dateList")) {
+                                     new PropertyModel(dataModel, "dateList")) {
       /** Support serialization. */
       public static final long serialVersionUID = 1L;
       @Override
@@ -51,7 +48,7 @@ public class TelemetryDataPanel extends Panel {
     add(dateList);
     
     ListView projectTable = 
-      new ListView("projectTable", new PropertyModel(session.getDataModel(), "selectedProjects")) {
+      new ListView("projectTable", new PropertyModel(dataModel, "selectedProjects")) {
       /** Support serialization. */
       public static final long serialVersionUID = 1L;
       @Override
@@ -103,28 +100,14 @@ public class TelemetryDataPanel extends Panel {
       }
     };
     add(projectTable);
+
+    WebComponent chartUrl = new WebComponent("overallChart");
+    chartUrl.add(
+        new AttributeModifier("src", true, 
+                              new PropertyModel(dataModel, "overallChart")));
+    add(chartUrl);
     
-    ListView projectList = 
-      new ListView("projectList", new PropertyModel(session.getDataModel(), "selectedProjects")) {
-      /** Support serialization. */
-      public static final long serialVersionUID = 1L;
-      @Override
-      protected void populateItem(ListItem item) {
-        Project project = (Project)item.getModelObject();
-        item.add(new Label("projectName", project.getName()));
-        item.add(new Label("startDate", 
-                           new PropertyModel(session.getDataModel(), "startDateString")));
-        item.add(new Label("endDate", 
-                           new PropertyModel(session.getDataModel(), "endDateString")));
-        WebComponent chartUrl = new WebComponent("chartUrl");
-        chartUrl.add(
-            new AttributeModifier("src", true, 
-                                  new Model(session.getDataModel().getProjectChart(project))));
-        add(chartUrl);
-        item.add(chartUrl);
-      }
-    };
-    this.add(projectList);
+    add(new Label("overallChartUrl", new PropertyModel(dataModel, "overallChart")));
     
   }
   

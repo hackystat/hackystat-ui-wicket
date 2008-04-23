@@ -23,9 +23,9 @@ import org.hackystat.telemetry.service.resource.chart.jaxb.ParameterDefinition;
 import org.hackystat.telemetry.service.resource.chart.jaxb.Type;
 
 /**
- * 
+ * Input panel for telemetry viewer.
+ * Including telemetry name, start/end date, project, granularity and parameters.
  * @author Shaoxuan Zhang
- *
  */
 public class TelemetryInputForm extends Form {
 

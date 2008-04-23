@@ -2,6 +2,7 @@
   <wicket:panel>
     <h3>Telemetry Chart: <span wicket:id="telemetryName" />
     </h3>
+    <img wicket:id="overallChart" /><br/><br/>
     <table width="100%">
       <th>Project</th>
       <th>Stream</th>
@@ -18,15 +19,6 @@
           </tr>
       </tr>
     </table>
-    <span wicket:id="projectList">
-      <h4>
-        Project: <span wicket:id="projectName" />
-        <br />
-        From <span wicket:id="startDate" /> To <span wicket:id="endDate" />
-      </h4>
-      <img wicket:id="chartUrl" />
-      <br />
-      <br />
-    </span>
+    Overall chart URL: <span wicket:id="overallChartUrl" />
   </wicket:panel>
 </html>
