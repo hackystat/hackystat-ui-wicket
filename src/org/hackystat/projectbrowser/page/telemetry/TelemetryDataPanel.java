@@ -11,6 +11,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
+import org.hackystat.projectbrowser.page.popupwindow.PopupWindowPanel;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
 import org.hackystat.telemetry.service.resource.chart.jaxb.TelemetryPoint;
 import org.hackystat.telemetry.service.resource.chart.jaxb.TelemetryStream;
@@ -107,7 +108,12 @@ public class TelemetryDataPanel extends Panel {
                               new PropertyModel(dataModel, "overallChart")));
     add(chartUrl);
     
-    add(new Label("overallChartUrl", new PropertyModel(dataModel, "overallChart")));
+    PopupWindowPanel chartUrlWindow = new PopupWindowPanel("chartUrlWindow", "Google Chart URL");
+    
+    chartUrlWindow.getModalWindow().setContent(
+        new Label(chartUrlWindow.getModalWindow().getContentId(), 
+                  new PropertyModel(dataModel, "overallChart")));
+    add(chartUrlWindow);
     
   }
   
