@@ -13,7 +13,7 @@ import org.apache.wicket.model.IModel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.googlechart.ChartType;
 import org.hackystat.projectbrowser.googlechart.GoogleChart;
-import org.hackystat.projectbrowser.page.dailyprojectdata.projectdatepanel.ProjectDateForm;
+import org.hackystat.projectbrowser.page.dailyprojectdata.inputpanel.DpdInputForm;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
 import org.hackystat.telemetry.service.client.TelemetryClient;
 import org.hackystat.telemetry.service.client.TelemetryClientException;
@@ -85,7 +85,7 @@ public class TelemetryChartDataModel implements Serializable {
    * @return The date as a simple string.
    */
   public String getStartDateString() {
-    SimpleDateFormat format = new SimpleDateFormat(ProjectDateForm.DATA_FORMAT, Locale.ENGLISH);
+    SimpleDateFormat format = new SimpleDateFormat(DpdInputForm.DATA_FORMAT, Locale.ENGLISH);
     return format.format(new Date(this.startDate));
   }
 
@@ -95,7 +95,7 @@ public class TelemetryChartDataModel implements Serializable {
    * @return The date as a simple string.
    */
   public String getEndDateString() {
-    SimpleDateFormat format = new SimpleDateFormat(ProjectDateForm.DATA_FORMAT, Locale.ENGLISH);
+    SimpleDateFormat format = new SimpleDateFormat(DpdInputForm.DATA_FORMAT, Locale.ENGLISH);
     return format.format(new Date(this.endDate));
   }
 

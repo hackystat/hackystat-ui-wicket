@@ -1,4 +1,4 @@
-package org.hackystat.projectbrowser.page.dailyprojectdata.projectdatepanel;
+package org.hackystat.projectbrowser.page.dailyprojectdata.inputpanel;
 
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -8,7 +8,7 @@ import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
  * Panel to let user select the date and project to display.
  * @author Shaoxuan Zhang
  */
-public class ProjectDatePanel extends Panel {
+public class DpdInputPanel extends Panel {
 
   /** Support serialization. */
   private static final long serialVersionUID = 1L;
@@ -17,10 +17,10 @@ public class ProjectDatePanel extends Panel {
    * @param id the wicket id.
    * @param page the page this panel is attached to.
    */
-  public ProjectDatePanel(String id, ProjectBrowserBasePage page) {
+  public DpdInputPanel(String id, ProjectBrowserBasePage page) {
     super(id);
     add(new FeedbackPanel("feedback"));
-    add(new ProjectDateForm("projectDateForm", page));
+    add(new DpdInputForm("dpdInputForm", page));
   }
 
 

@@ -5,7 +5,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
 import org.hackystat.projectbrowser.page.dailyprojectdata.coverage.CoveragePanel;
-import org.hackystat.projectbrowser.page.dailyprojectdata.projectdatepanel.ProjectDatePanel;
+import org.hackystat.projectbrowser.page.dailyprojectdata.inputpanel.DpdInputPanel;
 import org.hackystat.projectbrowser.page.dailyprojectdata.unittest.UnitTestPanel;
 
 /**
@@ -47,7 +47,7 @@ public class DailyProjectDataPage extends ProjectBrowserBasePage {
    * Creates the DPD page. 
    */
   public DailyProjectDataPage() {
-    add(new ProjectDatePanel("projectDatePanel", this));
+    add(new DpdInputPanel("projectDatePanel", this));
     add(new Panel(WICKET_PANEL_ID).setVisible(false));
     this.get("FooterFeedback").setModel(new PropertyModel(session, "feedback"));
   }
@@ -58,6 +58,7 @@ public class DailyProjectDataPage extends ProjectBrowserBasePage {
   @Override
   public void onProjectDateSubmit() {
     session.setDataModel(null);
+    session.setFeedback("Selected projects are: " + session.getSelectedProjects());
     this.replace(getDataPanel(WICKET_PANEL_ID));
   }
 }

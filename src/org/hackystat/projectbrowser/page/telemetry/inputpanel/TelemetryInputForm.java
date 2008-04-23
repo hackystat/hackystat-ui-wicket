@@ -17,7 +17,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.ProjectChoiceRenderer;
 import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
-import org.hackystat.projectbrowser.page.dailyprojectdata.projectdatepanel.ProjectDateForm;
+import org.hackystat.projectbrowser.page.dailyprojectdata.inputpanel.DpdInputForm;
 import org.hackystat.projectbrowser.page.telemetry.TelemetrySession;
 import org.hackystat.telemetry.service.resource.chart.jaxb.ParameterDefinition;
 import org.hackystat.telemetry.service.resource.chart.jaxb.Type;
@@ -73,14 +73,14 @@ public class TelemetryInputForm extends Form {
     //StartDateTextField
     DateTextField startDateTextField = 
       new DateTextField("startDateTextField", new PropertyModel(session, "startDate"), 
-          ProjectDateForm.DATA_FORMAT);
+          DpdInputForm.DATA_FORMAT);
     startDateTextField.add(new DatePicker());
     startDateTextField.setRequired(true);
     add(startDateTextField);
     //EndDateTextField
     DateTextField endDateTextField = 
       new DateTextField("endDateTextField", new PropertyModel(session, "endDate"), 
-          ProjectDateForm.DATA_FORMAT);
+          DpdInputForm.DATA_FORMAT);
     endDateTextField.add(new DatePicker());
     endDateTextField.setRequired(true);
     add(endDateTextField);

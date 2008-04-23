@@ -3,9 +3,11 @@ package org.hackystat.projectbrowser.page.dailyprojectdata;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
 import javax.xml.datatype.XMLGregorianCalendar;
+
 import org.apache.wicket.Component;
-import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.apache.wicket.markup.html.form.ListMultipleChoice;
 import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
 import org.hackystat.projectbrowser.ProjectBrowserApplication;
@@ -38,14 +40,14 @@ public class TestDailyProjectDataPage extends ProjectBrowserTestHelper {
     //first, go to daily project data page.
     tester.clickLink("DailyProjectDataPageLink");
     tester.assertRenderedPage(DailyProjectDataPage.class);
-    FormTester projectForm = tester.newFormTester("projectDatePanel:projectDateForm");
+    FormTester projectForm = tester.newFormTester("projectDatePanel:dpdInputForm");
     //checkt the date field.
     assertEquals("The date field should be set to today.", getDateTodayAsString(), 
         projectForm.getTextComponentValue("dateTextField"));
-    //checkt the project list content. 
+    //check the project list content.
     Component component = projectForm.getForm().get("projectMenu");
-    assertTrue("Check project select field", component instanceof DropDownChoice);
-    DropDownChoice projectChoice = (DropDownChoice) component;
+    assertTrue("Check project select field", component instanceof ListMultipleChoice);
+    ListMultipleChoice projectChoice = (ListMultipleChoice) component;
     boolean pass = false;
     int index = 0;
     for (int i = 0; i < projectChoice.getChoices().size(); i++) {

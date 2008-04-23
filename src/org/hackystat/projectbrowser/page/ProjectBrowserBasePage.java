@@ -15,7 +15,6 @@ import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.imageurl.ImageUrl;
 import org.hackystat.projectbrowser.page.crap.CrapPage;
 import org.hackystat.projectbrowser.page.dailyprojectdata.DailyProjectDataPage;
-import org.hackystat.projectbrowser.page.projects.ProjectsPage;
 import org.hackystat.projectbrowser.page.sensordata.SensorDataPage;
 import org.hackystat.projectbrowser.page.telemetry.TelemetryPage;
 import org.hackystat.utilities.tstamp.Tstamp;
@@ -65,7 +64,7 @@ public class ProjectBrowserBasePage extends WebPage {
     }
     */
     add(new BookmarkablePageLink("SensorDataPageLink", SensorDataPage.class));
-    add(new BookmarkablePageLink("ProjectsPageLink", ProjectsPage.class));
+    //add(new BookmarkablePageLink("ProjectsPageLink", ProjectsPage.class));
     add(new BookmarkablePageLink("DailyProjectDataPageLink", DailyProjectDataPage.class));
     add(new BookmarkablePageLink("TelemetryPageLink", TelemetryPage.class));
     add(new BookmarkablePageLink("CrapPageLink", CrapPage.class));

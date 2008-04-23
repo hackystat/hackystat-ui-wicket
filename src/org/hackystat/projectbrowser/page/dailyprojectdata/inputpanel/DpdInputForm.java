@@ -1,9 +1,10 @@
-package org.hackystat.projectbrowser.page.dailyprojectdata.projectdatepanel;
+package org.hackystat.projectbrowser.page.dailyprojectdata.inputpanel;
 
 import org.apache.wicket.extensions.markup.html.form.DateTextField;
 import org.apache.wicket.extensions.yui.calendar.DatePicker;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.ListMultipleChoice;
 import org.apache.wicket.model.PropertyModel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.ProjectChoiceRenderer;
@@ -14,7 +15,7 @@ import org.hackystat.projectbrowser.page.dailyprojectdata.DailyProjectDataSessio
  * Provides the form that specifies a Date and Project name for the SensorData page.  
  * @author Philip Johnson
  */
-public class ProjectDateForm extends Form {
+public class DpdInputForm extends Form {
 
   /** Support serialization. */
   public static final long serialVersionUID = 1L;
@@ -31,7 +32,7 @@ public class ProjectDateForm extends Form {
    * @param id The wicket:id.
    * @param page the page this page is attached to.
    */
-  public ProjectDateForm(final String id, ProjectBrowserBasePage page) {
+  public DpdInputForm(final String id, ProjectBrowserBasePage page) {
     super(id);
     this.page = page;
     DailyProjectDataSession session = ProjectBrowserSession.get().getDailyProjectDataSession();
@@ -45,14 +46,13 @@ public class ProjectDateForm extends Form {
     dateTextField.add(new DatePicker());
     dateTextField.setRequired(true);
     add(dateTextField);
-    // Need to add the datepicker thingy.
     
-    // Now create the drop-down menu for projects. 
-    DropDownChoice projectMenu = 
-      new DropDownChoice ("projectMenu", 
-          new PropertyModel(session, "project"),
+    // Now create the multiple choice menu for projects.
+    ListMultipleChoice projectMenu = 
+      new ListMultipleChoice ("projectMenu", 
+          new PropertyModel(session, "selectedProjects"),
           new PropertyModel(ProjectBrowserSession.get(), "projectList"),
-          new ProjectChoiceRenderer()) ;
+          new ProjectChoiceRenderer())  ;
     projectMenu.setRequired(true);
     add(projectMenu);
 

@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
-import org.hackystat.projectbrowser.page.dailyprojectdata.projectdatepanel.ProjectDateForm;
+import org.hackystat.projectbrowser.page.dailyprojectdata.inputpanel.DpdInputForm;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
 
 /**
@@ -22,6 +22,8 @@ public class DailyProjectDataSession implements Serializable {
   /** The date this user has selected in the ProjectDate form. */
   private long date = ProjectBrowserBasePage.getDateToday().getTime();
 
+  /** The projects this user has selected. */
+  private List<Project> selectedProjects = new ArrayList<Project>();
   /** The project this user has selected. */
   private Project project = null;
 
@@ -69,7 +71,7 @@ public class DailyProjectDataSession implements Serializable {
    * @return The date as a simple string. 
    */
   public String getDateString() {
-    SimpleDateFormat format = new SimpleDateFormat(ProjectDateForm.DATA_FORMAT, Locale.ENGLISH);
+    SimpleDateFormat format = new SimpleDateFormat(DpdInputForm.DATA_FORMAT, Locale.ENGLISH);
     return format.format(new Date(this.date));
   }
   
@@ -84,7 +86,24 @@ public class DailyProjectDataSession implements Serializable {
    * @return the project
    */
   public Project getProject() {
-    return project;
+    return this.project;
+  }
+  
+  /**
+   * Returns the list of projects selected by the user. 
+   * @return The list of projects selected by the user. 
+   */
+  public List<Project> getSelectedProjects() {
+    return this.selectedProjects;
+  }
+  
+  /**
+   * Sets the set of selected projects.
+   * @param projects The projects.
+   */
+  public void setSelectedProjects(List<Project> projects) {
+    this.selectedProjects = projects;
+    this.project = (projects.isEmpty()) ? null : projects.get(0);
   }
 
   /**
