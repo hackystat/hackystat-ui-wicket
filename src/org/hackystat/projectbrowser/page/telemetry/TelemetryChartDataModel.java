@@ -5,10 +5,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Random;
+import org.apache.wicket.model.IModel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.googlechart.ChartType;
 import org.hackystat.projectbrowser.googlechart.GoogleChart;
@@ -40,6 +41,8 @@ public class TelemetryChartDataModel implements Serializable {
   private List<Project> selectedProjects = new ArrayList<Project>();
   /** The analysis this user has selected. */
   private String telemetryName = null;
+  /** The parameters for this telemetry chart. */
+  private List<String> parameters = new ArrayList<String>();
   /** Store the data retrieved from telemetry service. */
   private Map<Project, List<TelemetryStream>> projectStreamData = 
                                         new HashMap<Project, List<TelemetryStream>>();
@@ -51,9 +54,10 @@ public class TelemetryChartDataModel implements Serializable {
    * @param endDate the end date of this model..
    * @param selectedProjects the project ofs this model.
    * @param telemetryName the telemetry name of this model.
+   * @param parameters the list of parameters
    */
   public void setModel(Date startDate, Date endDate, List<Project> selectedProjects,
-      String telemetryName) {
+      String telemetryName, List<IModel> parameters) {
     this.startDate = startDate.getTime();
     this.endDate = endDate.getTime();
     this.selectedProjects = selectedProjects;
@@ -61,6 +65,10 @@ public class TelemetryChartDataModel implements Serializable {
     this.telemetryName = telemetryName;
     this.projectCharts.clear();
     this.projectStreamData.clear();
+    this.parameters.clear();
+    for (IModel model : parameters) {
+      this.parameters.add(model.getObject().toString());
+    }
     // this.chartUrl = this.getChartUrl(project);
   }
 
@@ -128,13 +136,13 @@ public class TelemetryChartDataModel implements Serializable {
       try {
         streamList = client.getChart(this.getTelemetryName(), project.getOwner(), project.getName(),
             session.getGranularity(), Tstamp.makeTimestamp(session.getStartDate().getTime()),
-            Tstamp.makeTimestamp(session.getEndDate().getTime()), session.getParameterAsString())
+            Tstamp.makeTimestamp(session.getEndDate().getTime()), this.getParameterAsString())
             .getTelemetryStream();
       }
       catch (TelemetryClientException e) {
-        // TODO Auto-generated catch block
         streamList = new ArrayList<TelemetryStream>();
-        e.printStackTrace();
+        session.setFeedback("Errors when retrieving " + this.telemetryName + " telemetry data: "
+            + e.getMessage());
       }
       this.projectStreamData.put(project, streamList);
     }
@@ -155,8 +163,7 @@ public class TelemetryChartDataModel implements Serializable {
       // retrieve data from hackystat.
       List<TelemetryStream> streams = this.getTelemetryStream(project);
 
-      Iterator<String> colorIterator = session.getColors().iterator();
-      Iterator<String> markerIterator = session.getMarkers().iterator();
+      Random random = new Random();
       for (TelemetryStream stream : streams) {
         List<Double> streamData = new ArrayList<Double>();
         for (TelemetryPoint point : stream.getTelemetryPoint()) {
@@ -176,11 +183,19 @@ public class TelemetryChartDataModel implements Serializable {
           }
         }
         googleChart.getChartData().add(streamData);
-        googleChart.addColor(colorIterator.next());
-        googleChart.getChartMarker().add(markerIterator.next());
+        Long longValue = Math.round(Math.random() * 0xFFFFFF);
+        String randomColor = "000000" + Long.toHexString(longValue);
+        randomColor = randomColor.substring(randomColor.length() - 6);
+        googleChart.addColor(randomColor);
+        if (!session.getMarkers().isEmpty()) {
+          int i = random.nextInt(session.getMarkers().size());
+          googleChart.getChartMarker().add(session.getMarkers().get(i));
+        }
         googleChart.getChartLegend().add(stream.getName());
       }
-      googleChart.addAxisLabel("x", getDateList(streams.get(0).getTelemetryPoint()));
+      if (!streams.isEmpty()) {
+        googleChart.addAxisLabel("x", getDateList(streams.get(0).getTelemetryPoint()));
+      }
       googleChart.addAxisLabel("y");
 
       session.setFeedback(googleChart.getUrl());
@@ -245,5 +260,22 @@ public class TelemetryChartDataModel implements Serializable {
       this.projectCharts.put(project, chartLink);
     }
     return chartLink;
+  }
+  
+  /**
+   * Return the comma-separated list of parameters in String
+   * @return the parameters as String
+   */
+  public String getParameterAsString() {
+    StringBuffer stringBuffer = new StringBuffer();
+    for (String model : this.parameters) {
+      stringBuffer.append(model);
+      stringBuffer.append(',');
+    }
+    String param = stringBuffer.toString();
+    if (param.length() >= 1) {
+      param = param.substring(0, param.length() - 1);
+    }
+    return param;
   }
 }

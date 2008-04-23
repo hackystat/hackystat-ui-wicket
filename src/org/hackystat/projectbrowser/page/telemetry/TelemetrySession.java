@@ -227,23 +227,6 @@ public class TelemetrySession implements Serializable {
   }
 
   /**
-   * Return the comma-separated list of parameters in String
-   * @return the parameters as String
-   */
-  public String getParameterAsString() {
-    StringBuffer stringBuffer = new StringBuffer();
-    for (IModel model : this.parameters) {
-      stringBuffer.append(model.getObject());
-      stringBuffer.append(',');
-    }
-    String param = stringBuffer.toString();
-    if (param.length() >= 1) {
-      param = param.substring(0, param.length() - 1);
-    }
-    return param;
-  }
-
-  /**
    * @return the granularityList
    */
   public List<String> getGranularityList() {
@@ -254,7 +237,9 @@ public class TelemetrySession implements Serializable {
    * Update the data model.
    */
   public void updateDataModel() {
-    this.dataModel.setModel(getStartDate(), getEndDate(), selectedProjects, telemetryName);
+    //this.dataModel = new TelemetryChartDataModel();
+    this.dataModel.
+      setModel(getStartDate(), getEndDate(), selectedProjects, telemetryName, parameters);
   }
   
   /**

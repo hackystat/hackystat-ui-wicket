@@ -115,11 +115,8 @@ public class TelemetryInputForm extends Form {
         ParameterDefinition paramDef = (ParameterDefinition)item.getModelObject();
         item.add(new Label("name", paramDef.getName()));
         Component component = getComponent("field", paramDef.getType());
-        if (item.getIndex() >= session.getParameters().size()) {
+        if (item.getIndex() >= session.getParameters().size() && component.getModel() != null) {
           session.getParameters().add(component.getModel());
-        }
-        else if (session.getParameters().get(item.getIndex()) == null) {
-          session.getParameters().add(item.getIndex(), component.getModel());
         }
         else {
           component.setModel(session.getParameters().get(item.getIndex()));

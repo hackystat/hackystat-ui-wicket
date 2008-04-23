@@ -23,8 +23,6 @@ public class TelemetryDataPanel extends Panel {
   private static final long serialVersionUID = 1L;
   /** TelemetrySession that hold the page state.*/
   TelemetrySession session = ProjectBrowserSession.get().getTelemetrySession();
-  /** Data model that holds this panel's state. */
-  TelemetryChartDataModel dataModel = null;
 
   /**
    * @param id the wicket component id.
@@ -36,11 +34,12 @@ public class TelemetryDataPanel extends Panel {
       feedback.append(project.getName()).append('-').append(project.getOwner()).append(", ");
     }
     session.setFeedback(feedback.toString());
-    dataModel = session.getDataModel();
     //display project information
-    add(new Label("telemetryName", new PropertyModel(dataModel, "telemetryName")));
+    add(new Label("telemetryName", 
+                  new PropertyModel(session.getDataModel(), "telemetryName")));
 
-    ListView dateList = new ListView("dateList", new PropertyModel(dataModel, "dateList")) {
+    ListView dateList = new ListView("dateList", 
+                                     new PropertyModel(session.getDataModel(), "dateList")) {
       /** Support serialization. */
       public static final long serialVersionUID = 1L;
       @Override
@@ -52,14 +51,14 @@ public class TelemetryDataPanel extends Panel {
     add(dateList);
     
     ListView projectTable = 
-      new ListView("projectTable", new PropertyModel(dataModel, "selectedProjects")) {
+      new ListView("projectTable", new PropertyModel(session.getDataModel(), "selectedProjects")) {
       /** Support serialization. */
       public static final long serialVersionUID = 1L;
       @Override
       protected void populateItem(ListItem item) {
         Project project = (Project)item.getModelObject();
         Label projectNameLabel = new Label("projectName", project.getName());
-        List<TelemetryStream> streamList = dataModel.getTelemetryStream(project);
+        List<TelemetryStream> streamList = session.getDataModel().getTelemetryStream(project);
         projectNameLabel.add(new AttributeModifier("rowspan", new Model(streamList.size() + 1)));
         item.add(projectNameLabel);
         
@@ -106,18 +105,21 @@ public class TelemetryDataPanel extends Panel {
     add(projectTable);
     
     ListView projectList = 
-      new ListView("projectList", new PropertyModel(dataModel, "selectedProjects")) {
+      new ListView("projectList", new PropertyModel(session.getDataModel(), "selectedProjects")) {
       /** Support serialization. */
       public static final long serialVersionUID = 1L;
       @Override
       protected void populateItem(ListItem item) {
         Project project = (Project)item.getModelObject();
         item.add(new Label("projectName", project.getName()));
-        item.add(new Label("startDate", new PropertyModel(dataModel, "startDateString")));
-        item.add(new Label("endDate", new PropertyModel(dataModel, "endDateString")));
+        item.add(new Label("startDate", 
+                           new PropertyModel(session.getDataModel(), "startDateString")));
+        item.add(new Label("endDate", 
+                           new PropertyModel(session.getDataModel(), "endDateString")));
         WebComponent chartUrl = new WebComponent("chartUrl");
         chartUrl.add(
-            new AttributeModifier("src", true, new Model(dataModel.getProjectChart(project))));
+            new AttributeModifier("src", true, 
+                                  new Model(session.getDataModel().getProjectChart(project))));
         add(chartUrl);
         item.add(chartUrl);
       }

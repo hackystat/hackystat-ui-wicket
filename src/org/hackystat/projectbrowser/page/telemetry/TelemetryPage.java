@@ -30,6 +30,6 @@ public class TelemetryPage extends ProjectBrowserBasePage {
    */
   @Override
   public void onProjectDateSubmit() {
-    //this.replace(new TelemetryDataPanel("dataPanel"));
+    this.replace(new TelemetryDataPanel("dataPanel"));
   }
 }
