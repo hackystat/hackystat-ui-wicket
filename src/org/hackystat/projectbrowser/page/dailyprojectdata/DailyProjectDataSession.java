@@ -40,6 +40,7 @@ public class DailyProjectDataSession implements Serializable {
   /** the data model for data panel. */
   private DailyProjectDataModel dataModel = null;
   
+  
   /**
    * Initialize this session, initialize the analysis list.
    */

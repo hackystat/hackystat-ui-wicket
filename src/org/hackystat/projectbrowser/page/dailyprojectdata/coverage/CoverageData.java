@@ -2,12 +2,11 @@ package org.hackystat.projectbrowser.page.dailyprojectdata.coverage;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import org.hackystat.projectbrowser.ProjectBrowserApplication;
+import org.hackystat.sensorbase.resource.projects.jaxb.Project;
 import org.hackystat.utilities.stacktrace.StackTrace;
 
 /**
@@ -23,23 +22,23 @@ public class CoverageData implements Serializable {
   /** Support serialization. */
   private static final long serialVersionUID = 1L;
   
-  /** The name of the project whose data is kept in this instance. */
-  private String name;
+  /** The project whose data is kept in this instance. */
+  private Project project;
   
-  private List<Integer> buckets = new ArrayList<Integer>(5);
-  /** collection of numbers of covered entries. */
-  private Map<String, Integer> numCovered = new HashMap<String, Integer>();
-  /** collection of numbers of uncovered entries. */
-  private Map<String, Integer> numUncovered = new HashMap<String, Integer>();
+  /** The five buckets for this data. */
+  private List<Integer> buckets = new ArrayList<Integer>();
+  
+  /** The total number of entries added across all buckets. */
+  private int total = 0;
 
   /**
    * Creates a new CoverageData instance and initializes the buckets to zero.  
    * @param name The name of the Project associated with this instance. 
    */
-  public CoverageData(String name) {
-    this.name = name;
+  public CoverageData(Project name) {
+    this.project = name;
     for (int i = 0; i < 5; i++) {
-      buckets.set(i, 0);
+      buckets.add(0);
     }
   }
   
@@ -49,6 +48,7 @@ public class CoverageData implements Serializable {
    */
   private void incrementBucket(int bucket) {
     buckets.set(bucket, 1 + buckets.get(bucket));
+    this.total++;
   }
   
   /**
@@ -58,18 +58,22 @@ public class CoverageData implements Serializable {
    * @param numUncovered The number of uncovered somethings. 
    */
   public void addEntry(int numCovered, int numUncovered) {
+    // If no method level coverage, ignore.
+    if ((numCovered == 0) && (numUncovered == 0)) {
+      return;
+    }
     try {
       double percent = (double)numCovered / (double)(numCovered + numUncovered);
-      if (percent < 21) {
+      if (percent <= 0.20) {
         incrementBucket(0);
       }
-      else if (percent < 41) {
+      else if (percent <= 0.40) {
         incrementBucket(1);
       }
-      else if (percent < 61) {
+      else if (percent <= 0.60) {
         incrementBucket(2);
       }
-      else if (percent < 81) {
+      else if (percent <= 0.80) {
         incrementBucket(3);
       }
       else {
@@ -91,113 +95,56 @@ public class CoverageData implements Serializable {
     return buckets.get(bucket);
   }
   
-  
-  
   /**
-   * Return the formatted string of this coverage data. 
-   * @param granularity granularity of the returning data.
-   * @return the formatted string
+   * Returns the total number of entries across all buckets. 
+   * @return The total number of entries. 
    */
-  public String getDisplayString(String granularity) {
-    return convertToFormattedDisplayString(this.getNumCovered(granularity), 
-                                           this.getNumUncovered(granularity));
+  public int getTotal() {
+    return this.total;
   }
   
   /**
-   * Convert the given coverage data into formatted display string.
-   * Formatted as coverage%(covered/total)
-   * @param numCovered covered number of the coverage data.
-   * @param numUncovered uncovered number of the coverage data.
-   * @return the formatted string
+   * Returns the total number of entries across all buckets as a string. 
+   * @return The total number of entries. 
    */
-  public static String convertToFormattedDisplayString(int numCovered, int numUncovered) {
-    return (int)((double)numCovered / (numCovered + numUncovered) * 100) + "% (" + 
-    numCovered + "/" + (numCovered + numUncovered) + ")";
+  public String getTotalString() {
+    return String.valueOf(this.total);
   }
   
   /**
-   * Retrieve the coverage value from the given formatted string
-   * @param string the given string.
-   * @return the coverage value in percent.
+   * Returns the bucket value as a percentage of the total number of entries across all buckets.
+   * @param bucket The bucket whose percentage is to be returned.
+   * @return The bucket as a percentage.
    */
-  public static int getCoverageFromFormattedDisplayString(String string) {
-    int index = string.indexOf('%');
-    if (index < 0) {
-      return 0;
-    }
-    String coverageString = string.substring(0, index);
-    return Integer.valueOf(coverageString);
+  public int getBucketPercentage(int bucket) {
+    double percent = (double)getBucketValue(bucket) / (double)getTotal();
+    return ((int) (percent * 100));
   }
-  
-  /**
-   * Set coverage data with the given granularity.
-   * @param granularity string of the granularity.
-   * @param numCovered number of covered entries.
-   * @param numUncovered number of uncovered entries.
-   */
-  public void setCoverage(String granularity, Integer numCovered, Integer numUncovered) {
-    this.numCovered.put(granularity, numCovered);
-    this.numUncovered.put(granularity, numUncovered);
-  }
-  
-  /**
-   * return the coverage value of the given granularity.
-   * @param granularity string of the granularity.
-   * @return the coverage value.
-   */
-  public double getCoverage(String granularity) {
-    return (double)getNumCovered(granularity) /
-                (getNumCovered(granularity) + getNumUncovered(granularity));
-  }
-  
-  /**
-   * @param granularity string of the granularity.
-   * @return number of covered entries.
-   */
-  public int getNumCovered(String granularity) {
-    return this.numCovered.get(granularity);
-  }
-  
-  /**
-   * @param granularity string of the granularity.
-   * @return number of uncovered entries.
-   */
-  public int getNumUncovered(String granularity) {
-    return this.numUncovered.get(granularity);
-  }
-  /**
-   * @param name the name to set
-   */
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  /**
-   * @return the name
-   */
-  public String getName() {
-    return name;
-  }
-
-  /**
-   * Add coverage data to the specified granularity.
-   * @param granularity the granularity
-   * @param numCovered number of covered entries.
-   * @param numUncovered number of uncovered entries.
-   */
-  public void addCoverage(String granularity, Integer numCovered, Integer numUncovered) {
-    if (this.numCovered.get(granularity) == null) {
-      this.numCovered.put(granularity, numCovered);
-    }
-    else {
-      this.numCovered.put(granularity, numCovered + this.numCovered.get(granularity));
-    }
-    if (this.numUncovered.get(granularity) == null) {
-      this.numUncovered.put(granularity, numUncovered);
-    }
-    else {
-      this.numUncovered.put(granularity, numUncovered + this.numUncovered.get(granularity));
-    }
     
+  /**
+   * Returns the current value of the specified bucket as a string. 
+   * @param bucket The bucket number, where 0 is the first one and 4 is the last one. 
+   * @return The value inside the given bucket. 
+   */
+  public String getBucketValueString(int bucket) {
+    return String.valueOf(getBucketValue(bucket));
+  }
+  
+  /**
+   * Returns the bucket percentage as a string.
+   * @param bucket The bucket.
+   * @return Its percentage as a string.
+   */
+  public String getBucketPercentageString(int bucket) {
+    return String.valueOf(getBucketPercentage(bucket));
+  }
+  
+ 
+  /**
+   * Return the project associated with this data. 
+   * @return The project.
+   */
+  public Project getProject() {
+    return project;
   }
 }

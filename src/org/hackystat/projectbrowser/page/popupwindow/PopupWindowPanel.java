@@ -41,6 +41,7 @@ public class PopupWindowPanel extends Panel {
     link = new AjaxLink("showModalWindow") {
       /** Support serialization. */
       private static final long serialVersionUID = 1L;
+        @Override
         public void onClick(AjaxRequestTarget target) {
           modalWindow.show(target);
         }

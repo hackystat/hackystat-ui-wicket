@@ -1,47 +1,39 @@
 <html xmlns:wicket>
 <wicket:panel>
-  <h3>Coverage</h3>
-  <h4>
-    Project Name: <span wicket:id="projectName"/><br/>
-    Project Owner: <span wicket:id="projectOwner"/><br>
-    Date: <span wicket:id="date"/>
-  </h4>
-
-  <h4>Overall coverage summary</h4>
-  <table width="100%">
+  <h3>Number of classes in each of five ranges for method-level coverage</h3>
+  <table>
     <tr>
-      <th>Name</th>
-      <th>class, %</th>
-      <th>method, %</th>
-      <th>block, %</th>
-      <th>line, %</th>
+      <th>Project</th>
+      <th>0-20%</th>
+      <th>20-40%</th>
+      <th>40-60%</th>
+      <th>60-80%</th>
+      <th>80-100%</th>
+      <th>Total</th>
     </tr>
-    <tr>
-      <td> All classes </td>
-      <td wicket:id="classCoverage"/>
-      <td wicket:id="methodCoverage"/>
-      <td wicket:id="blockCoverage"/>
-      <td wicket:id="lineCoverage"/>
+    <tr wicket:id="coverageDataList">
+      <td wicket:id="project"/>
+      <td><span wicket:id="bucket0"/> (<span wicket:id="bucket0%"/> %)</td>
+      <td><span wicket:id="bucket1"/> (<span wicket:id="bucket1%"/> %)</td>
+      <td><span wicket:id="bucket2"/> (<span wicket:id="bucket2%"/> %)</td>
+      <td><span wicket:id="bucket3"/> (<span wicket:id="bucket3%"/> %)</td>
+      <td><span wicket:id="bucket4"/> (<span wicket:id="bucket4%"/> %)</td>
+      <td wicket:id="total"/>
     </tr>
   </table>
-  <br/>
-  <h4>Coverage by package</h4>
-  <table width="100%">
-  	<tr>
-      <th>Name</th>
-      <th>class, %</th>
-      <th>method, %</th>
-      <th>block, %</th>
-      <th>line, %</th>
-    </tr>
-    <tr wicket:id="memberDataList">
-      <td wicket:id="name"/>
-      <td wicket:id="classCoverage"/>
-      <td wicket:id="methodCoverage"/>
-      <td wicket:id="blockCoverage"/>
-      <td wicket:id="lineCoverage"/>
-    </tr>
-  </table>
+<p>
+The goal of this analysis is to provide a perspective on the quality of testing associated
+with a set of projects.  Each row of the table provides a perspective on coverage for a single
+project.  The coverage perspective indicates how many classes fall into each of five possible
+ranges for coverage: 0-20%, 20-40%, 40-60%, 60-80%, and 80-100%.  Ideally, 
+100% of the classes will have 100% coverage, which would result in all of the classes appearing
+in the 80-100% range.
+</p>
 
+<p>
+To facilitate comparison between projects, the table indicates the absolute number of classes falling into a
+given range as well as the percentage of the total number of classes.  This allows you to distinguish
+between big vs. small projects as well as compare with a "normalized" value. 
+</p>
 </wicket:panel>
 </html>

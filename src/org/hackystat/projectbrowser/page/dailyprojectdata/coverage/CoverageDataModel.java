@@ -4,11 +4,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.hackystat.dailyprojectdata.resource.coverage.jaxb.ConstructData;
 import org.hackystat.projectbrowser.page.dailyprojectdata.DailyProjectDataModel;
+import org.hackystat.sensorbase.resource.projects.jaxb.Project;
 
 /**
- * Data model for coverage panel.
+ * The data model for Coverage DPD display.  This data model accommodates multiple Projects.
+ * For each project, the data model indicates the number of classes whose method-level percentage
+ * falls into each of five buckets, from 0-20% to 80-100%.
+ * @author Philip Johnson
  * @author Shaoxuan Zhang
  *
  */
@@ -16,108 +21,42 @@ public class CoverageDataModel extends DailyProjectDataModel {
 
   /** Support serialization. */
   private static final long serialVersionUID = 1L;
-  /** collection of granularities. */
-  private String[] granularities = {"class", "method", "line", "block"};
   
-  /** Holds the coverage data.*/
-  private List<CoverageData> coverageDataList = new ArrayList<CoverageData>();
+  /** Holds the coverage data, organized by Project.*/
+  private Map<Project, CoverageData> coverageDataMap = new HashMap<Project, CoverageData>();
 
   /**
-   * return the CoverageData with the given name.
-   * @param name the given name.
-   * @return the CoverageData instance. null if not found.
+   * Return the CoverageData instance associated with the specified project.
+   * Creates and returns a new CoverageData instance if one is not yet present.
+   * @param project The project. 
+   * @return The CoverageData instance for this project.  
    */
-  public CoverageData getCoverageData(String name) {
-    if (name == null) {
-      return null;
+  public CoverageData getCoverageData(Project project) {
+    if (!coverageDataMap.containsKey(project)) {
+      coverageDataMap.put(project, new CoverageData(project));
     }
-    for (CoverageData coverageData : this.coverageDataList) {
-      if (name.equals(coverageData.getName())) {
-        return coverageData;
-      }
-    }
-    return null;
+    return coverageDataMap.get(project);
   }
   
-  /**
-   * @param granularity the given granularity.
-   * @return coverage value of the given granularity in percent.
-   */
-  public String getCoverageDisplayString(String granularity) {
-    int numCovered = 0;
-    int numUncovered = 0;
-    for (CoverageData data : this.coverageDataList) {
-      numCovered += data.getNumCovered(granularity);
-      numUncovered += data.getNumUncovered(granularity);
-    }
-    return CoverageData.convertToFormattedDisplayString(numCovered, numUncovered);
-  }
   
   /**
-   * add the piece of coverage data into this data model.
-   * @param data the piece of data from dpd client.
-   * @param granularity granularity of this data.
+   * Adds information about a specific file's coverage to this data model.
+   * @param project The project associated with this file. 
+   * @param data The file coverage information.
    */
-  public void add(ConstructData data, String granularity) {
-    CoverageData coverageData = this.getCoverageData(data.getName());
-    if (coverageData == null) {
-      coverageData = new CoverageData(data.getName());
-      this.coverageDataList.add(coverageData);
-    }
+  public void add(Project project, ConstructData data) {
+    CoverageData coverageData = this.getCoverageData(project);
     coverageData.addEntry(data.getNumCovered(), data.getNumUncovered());
-    coverageData.setCoverage(granularity, data.getNumCovered(), data.getNumUncovered());
   }
   
   /**
-   * @param coverageDataList the coverageDataList to set
-   */
-  public void setCoverageDataList(List<CoverageData> coverageDataList) {
-    this.coverageDataList = coverageDataList;
-  }
-
-  /**
-   * @return the coverageDataList
+   * Returns a list of CoverageData instances for display in the table.
+   * @return A list of CoverageData instances. 
    */
   public List<CoverageData> getCoverageDataList() {
+    List<CoverageData> coverageDataList = new ArrayList<CoverageData>();
+    coverageDataList.addAll(coverageDataMap.values());
     return coverageDataList;
-  }
-
-  /**
-   * Merge the data entries into package.
-   */
-  public void mergeIntoPackage() {
-    Map<String, CoverageData> coverageDataMap = new HashMap<String, CoverageData>();
-    for (CoverageData data : this.coverageDataList) {
-      String packageName = getPackageName(data.getName());
-      CoverageData newData = coverageDataMap.get(packageName);
-      if (newData == null) {
-        newData = new CoverageData(packageName);
-        coverageDataMap.put(packageName, newData);
-      }
-      for (String g : granularities) {
-        newData.addCoverage(g, data.getNumCovered(g), data.getNumUncovered(g));
-      }
-    }
-    this.coverageDataList.clear();
-    this.coverageDataList.addAll(coverageDataMap.values());
-  }
-
-  /**
-   * Return the package name within the given file name.
-   * @param name the given file name.
-   * @return the package name.
-   */
-  private String getPackageName(String name) {
-    int beginIndex = name.indexOf("src");
-    beginIndex += 4;
-    int endIndex = name.lastIndexOf('/');
-    if (endIndex == -1) {
-      endIndex = name.lastIndexOf('\\');
-    }
-    String packageName = name.substring(beginIndex, endIndex);
-    packageName = packageName.replace('/', '.');
-    packageName = packageName.replace('\\', '.');
-    return packageName;
   }
 
 }
