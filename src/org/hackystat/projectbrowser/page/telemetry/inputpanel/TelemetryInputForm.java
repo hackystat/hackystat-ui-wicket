@@ -18,6 +18,7 @@ import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.ProjectChoiceRenderer;
 import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
 import org.hackystat.projectbrowser.page.dailyprojectdata.inputpanel.DpdInputForm;
+import org.hackystat.projectbrowser.page.popupwindow.PopupWindowPanel;
 import org.hackystat.projectbrowser.page.telemetry.TelemetrySession;
 import org.hackystat.telemetry.service.resource.chart.jaxb.ParameterDefinition;
 import org.hackystat.telemetry.service.resource.chart.jaxb.Type;
@@ -61,6 +62,12 @@ public class TelemetryInputForm extends Form {
       }
     };
     telemetryMenu.setRequired(true);
+    //add the popup window
+    PopupWindowPanel telemetryPopup = 
+      new PopupWindowPanel("chartDefPopup", "Telemetry Descriptions");
+    telemetryPopup.getModalWindow().setContent(
+        new TelemetryDescriptionPanel(telemetryPopup.getModalWindow().getContentId()));
+    add(telemetryPopup);
     this.add(telemetryMenu);
     if (session.getTelemetryName() == null) {
       session.setTelemetryName(session.getTelemetryList().get(0));
@@ -122,6 +129,13 @@ public class TelemetryInputForm extends Form {
           component.setModel(session.getParameters().get(item.getIndex()));
         }
         item.add(component);
+        PopupWindowPanel parameterPopup = 
+          new PopupWindowPanel("parameterPopup", paramDef.getName());
+        // TODO add content.
+        parameterPopup.getModalWindow().setContent(
+            new Label(parameterPopup.getModalWindow().getContentId(), 
+                               paramDef.getDescription()));
+        item.add(parameterPopup);
       }
     };
     add(parameterList);

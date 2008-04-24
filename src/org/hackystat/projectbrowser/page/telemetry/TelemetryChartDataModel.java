@@ -145,13 +145,13 @@ public class TelemetryChartDataModel implements Serializable {
             session.getGranularity(), Tstamp.makeTimestamp(session.getStartDate().getTime()),
             Tstamp.makeTimestamp(session.getEndDate().getTime()), this.getParameterAsString())
             .getTelemetryStream();
+        this.projectStreamData.put(project, streamList);
       }
       catch (TelemetryClientException e) {
         streamList = new ArrayList<TelemetryStream>();
         session.setFeedback("Errors when retrieving " + this.telemetryName + " telemetry data: "
             + e.getMessage());
       }
-      this.projectStreamData.put(project, streamList);
     }
     return streamList ;
   }

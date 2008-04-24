@@ -5,8 +5,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import org.apache.wicket.model.IModel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
@@ -15,6 +17,7 @@ import org.hackystat.sensorbase.resource.projects.jaxb.Project;
 import org.hackystat.telemetry.service.client.TelemetryClient;
 import org.hackystat.telemetry.service.client.TelemetryClientException;
 import org.hackystat.telemetry.service.resource.chart.jaxb.ParameterDefinition;
+import org.hackystat.telemetry.service.resource.chart.jaxb.TelemetryChartDefinition;
 import org.hackystat.telemetry.service.resource.chart.jaxb.TelemetryChartRef;
 
 /**
@@ -35,12 +38,15 @@ public class TelemetrySession implements Serializable {
   //private Project project = null;
   /** The analysis this user has selected. */
   private String telemetryName = null;
+  /** The descriptions for all telemetries. */
+  private final Map<String, TelemetryChartDefinition> telemetrys = 
+                            new HashMap<String, TelemetryChartDefinition>();
   /** The granularity of the chart. Either Day, Week, or Month. */
   private String granularity = "Day";
   /** The available granularities. */
   private final List<String> granularityList = new ArrayList<String>();
   /** The analysis list. */
-  private List<String> telemetryList = null;
+  //private List<String> telemetryList = null;
   /** the feedback string. */
   private String feedback = "";
   /** The parameters for telemetry chart. */
@@ -133,19 +139,20 @@ public class TelemetrySession implements Serializable {
    * @return the telemetryList
    */
   public List<String> getTelemetryList() {
-    if (this.telemetryList == null || this.telemetryList.size() <= 0) {
-      telemetryList = new ArrayList<String>();
+    List<String> telemetryList = new ArrayList<String>();
+    if (this.getTelemetrys().isEmpty()) {
       TelemetryClient client  = ProjectBrowserSession.get().getTelemetryClient();
       try {
         for (TelemetryChartRef chartRef : client.getChartIndex().getTelemetryChartRef()) {
-          telemetryList.add(chartRef.getName());
+          getTelemetrys().put(chartRef.getName(), client.getChartDefinition(chartRef.getName()));
         }
       }
       catch (TelemetryClientException e) {
         this.feedback = "Exception when retrieving Telemetry chart definition: " + e.getMessage();
       }
-      Collections.sort(this.telemetryList);
     }
+    telemetryList.addAll(this.getTelemetrys().keySet());
+    Collections.sort(telemetryList);
     return telemetryList;
   }
 
@@ -155,12 +162,21 @@ public class TelemetrySession implements Serializable {
    */
   public List<ParameterDefinition> getParameterList() {
     if (this.telemetryName != null) {
-      TelemetryClient client  = ProjectBrowserSession.get().getTelemetryClient();
-      try {
-        return client.getChartDefinition(this.telemetryName).getParameterDefinition();
+      TelemetryChartDefinition teleDef = 
+        this.getTelemetrys().get(telemetryName);
+      if (teleDef == null) {
+        TelemetryClient client  = ProjectBrowserSession.get().getTelemetryClient();
+        try {
+          teleDef = client.getChartDefinition(this.telemetryName);
+          this.getTelemetrys().put(telemetryName, teleDef);
+          return teleDef.getParameterDefinition();
+        }
+        catch (TelemetryClientException e) {
+          this.feedback = "Exception when retrieving Telemetry chart definition: " + e.getMessage();
+        }
       }
-      catch (TelemetryClientException e) {
-        this.feedback = "Exception when retrieving Telemetry chart definition: " + e.getMessage();
+      else {
+        return teleDef.getParameterDefinition();
       }
     }
     return new ArrayList<ParameterDefinition>();
@@ -297,4 +313,23 @@ public class TelemetrySession implements Serializable {
   public List<String> getMarkers() {
     return markers;
   }
+
+  /**
+   * @return the telemetrys
+   */
+  public Map<String, TelemetryChartDefinition> getTelemetrys() {
+    return telemetrys;
+  }
+  
+  /**
+   * @return the list of TelemetryChartDefinition.
+   */
+  public List<TelemetryChartDefinition> getChartDescriptions() {
+    List<TelemetryChartDefinition> chartDef = new ArrayList<TelemetryChartDefinition>();
+    for (String telemetryName : this.getTelemetryList()) {
+      chartDef.add(this.telemetrys.get(telemetryName));
+    }
+    return chartDef;
+  }
+
 }
