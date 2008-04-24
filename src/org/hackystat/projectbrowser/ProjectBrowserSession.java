@@ -136,6 +136,8 @@ public class ProjectBrowserSession extends WebSession {
     try {
       String host = ((ProjectBrowserApplication)getApplication()).getSensorBaseHost();
       SensorBaseClient client = new SensorBaseClient(host, email, password);
+      // Set timeout to 60 minutes.
+      client.setTimeout(1000 * 60 * 60);
       client.authenticate();
       this.email = email;
       this.password = password;

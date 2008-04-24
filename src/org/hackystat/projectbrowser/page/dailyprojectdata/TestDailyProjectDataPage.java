@@ -40,7 +40,7 @@ public class TestDailyProjectDataPage extends ProjectBrowserTestHelper {
     //first, go to daily project data page.
     tester.clickLink("DailyProjectDataPageLink");
     tester.assertRenderedPage(DailyProjectDataPage.class);
-    FormTester projectForm = tester.newFormTester("projectDatePanel:dpdInputForm");
+    FormTester projectForm = tester.newFormTester("dpdInputPanel:dpdInputForm");
     //checkt the date field.
     assertEquals("The date field should be set to today.", getDateTodayAsString(), 
         projectForm.getTextComponentValue("dateTextField"));
@@ -65,8 +65,8 @@ public class TestDailyProjectDataPage extends ProjectBrowserTestHelper {
     projectForm.select("analysisMenu", 1);
     projectForm.submit();
     //check the result.
-    tester.assertLabel("dataPanel:projectName", "Default");
-    tester.assertLabel("dataPanel:date", getDateTodayAsString());
+    tester.assertLabel("dpdDataPanel:projectName", "Default");
+    tester.assertLabel("dpdDataPanel:date", getDateTodayAsString());
   }
   
   /**

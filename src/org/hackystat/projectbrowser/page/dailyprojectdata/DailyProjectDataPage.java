@@ -17,11 +17,14 @@ public class DailyProjectDataPage extends ProjectBrowserBasePage {
 
   /** Support serialization. */
   private static final long serialVersionUID = 1L;
-  /** Daily project data session to hold up the state. */
+  /** Daily project data session to hold the state. */
   private DailyProjectDataSession session = 
     ProjectBrowserSession.get().getDailyProjectDataSession();
-  /** the wicket id for the data panel. */
-  private static final String WICKET_PANEL_ID = "dataPanel";
+  /** The wicket id for the input panel. */
+  private static final String dpdInputPanelId = "dpdInputPanel";
+  /** The wicket id for the data panel. */
+  private static final String dpdDataPanelId = "dpdDataPanel";
+
   /**
    * Return a panel according the analysis field in DailyProjectDataSession.
    * @param id the wicket id.
@@ -47,8 +50,8 @@ public class DailyProjectDataPage extends ProjectBrowserBasePage {
    * Creates the DPD page. 
    */
   public DailyProjectDataPage() {
-    add(new DpdInputPanel("projectDatePanel", this));
-    add(new Panel(WICKET_PANEL_ID).setVisible(false));
+    add(new DpdInputPanel(dpdInputPanelId, this));
+    add(new Panel(dpdDataPanelId).setVisible(false));
     this.get("FooterFeedback").setModel(new PropertyModel(session, "feedback"));
   }
 
@@ -58,7 +61,6 @@ public class DailyProjectDataPage extends ProjectBrowserBasePage {
   @Override
   public void onProjectDateSubmit() {
     session.setDataModel(null);
-    session.setFeedback("Selected projects are: " + session.getSelectedProjects());
-    this.replace(getDataPanel(WICKET_PANEL_ID));
+    this.replace(getDataPanel(dpdDataPanelId));
   }
 }

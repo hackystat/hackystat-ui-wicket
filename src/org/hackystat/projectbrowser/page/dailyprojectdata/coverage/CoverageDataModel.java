@@ -64,6 +64,7 @@ public class CoverageDataModel extends DailyProjectDataModel {
       coverageData = new CoverageData(data.getName());
       this.coverageDataList.add(coverageData);
     }
+    coverageData.addEntry(data.getNumCovered(), data.getNumUncovered());
     coverageData.setCoverage(granularity, data.getNumCovered(), data.getNumUncovered());
   }
   

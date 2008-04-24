@@ -11,7 +11,7 @@ import org.hackystat.projectbrowser.page.dailyprojectdata.inputpanel.DpdInputFor
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
 
 /**
- * Session for daily project data page to hold its object.
+ * Session instance for the daily project data page to hold its state.
  * @author Shaoxuan Zhang
  */
 public class DailyProjectDataSession implements Serializable {
@@ -24,11 +24,12 @@ public class DailyProjectDataSession implements Serializable {
 
   /** The projects this user has selected. */
   private List<Project> selectedProjects = new ArrayList<Project>();
+  
   /** The project this user has selected. */
   private Project project = null;
 
   /** The analysis this user has selected. */
-  private String analysis = "Coverage";
+  private String analysis;
   
   /** The analysis list. */
   private List<String> analysisList = new ArrayList<String>();
@@ -48,6 +49,7 @@ public class DailyProjectDataSession implements Serializable {
     analysisList.add("Unit Test");
     //analysisList.add("Complexity");
     //analysisList.add("Coupling");
+    this.analysis = analysisList.get(0);
   }
 
   /**
@@ -107,35 +109,40 @@ public class DailyProjectDataSession implements Serializable {
   }
 
   /**
-   * @param analysis the analysis to set
+   * Sets the selected analysis.
+   * @param analysis The analysis to set.
    */
   public void setAnalysis(String analysis) {
     this.analysis = analysis;
   }
 
   /**
-   * @return the analysis
+   * Gets the selected analysis.
+   * @return The analysis.
    */
   public String getAnalysis() {
     return analysis;
   }
 
   /**
-   * @return the analysisList
+   * Returns the list of possible analyses. 
+   * @return The analysisList.
    */
   public List<String> getAnalysisList() {
     return analysisList;
   }
 
   /**
-   * @param feedback the feedback to set
+   * Sets the feedback string. 
+   * @param feedback The feedback to set.
    */
   public void setFeedback(String feedback) {
     this.feedback = feedback;
   }
 
   /**
-   * @return the feedback
+   * Gets the feedback string, and also clears it.
+   * @return The feedback string. 
    */
   public String getFeedback() {
     String returnString = this.feedback;
@@ -144,14 +151,16 @@ public class DailyProjectDataSession implements Serializable {
   }
 
   /**
-   * @param dataModel the dataModel to set
+   * Sets the data model for this page. 
+   * @param dataModel The new dataModel.
    */
   public void setDataModel(DailyProjectDataModel dataModel) {
     this.dataModel = dataModel;
   }
 
   /**
-   * @return the dataModel
+   * Gets the current data model for this page. 
+   * @return The dataModel.
    */
   public DailyProjectDataModel getDataModel() {
     return dataModel;
