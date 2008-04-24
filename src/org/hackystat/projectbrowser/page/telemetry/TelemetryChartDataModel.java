@@ -44,10 +44,12 @@ public class TelemetryChartDataModel implements Serializable {
   /** The parameters for this telemetry chart. */
   private List<String> parameters = new ArrayList<String>();
   /** Store the data retrieved from telemetry service. */
-  private Map<Project, List<TelemetryStream>> projectStreamData = 
-                                        new HashMap<Project, List<TelemetryStream>>();
+  private Map<Project, List<SelectableTelemetryStream>> projectStreamData = 
+                                        new HashMap<Project, List<SelectableTelemetryStream>>();
   /** Chart with all project streams. */
   private String overallChart = null;
+  /** Chart with selected project streams. */
+  private String selectedChart = null;
   /** the width of this chart. */
   private int width = 1000;
   /** the height of this chart. */
@@ -76,6 +78,7 @@ public class TelemetryChartDataModel implements Serializable {
       this.parameters.add(model.getObject().toString());
     }
     this.overallChart = null;
+    this.selectedChart = null;
     // this.chartUrl = this.getChartUrl(project);
   }
 
@@ -135,20 +138,27 @@ public class TelemetryChartDataModel implements Serializable {
    * @param project the given project.
    * @return the list of TelemetryStream.
    */
-  public List<TelemetryStream> getTelemetryStream(Project project) {
-    List<TelemetryStream> streamList = this.projectStreamData.get(project);
-    if (streamList == null || streamList.isEmpty()) {
+  public List<SelectableTelemetryStream> getTelemetryStream(Project project) {
+    List<SelectableTelemetryStream> streamList = this.projectStreamData.get(project);
+    if (streamList == null) {
+      streamList = new ArrayList<SelectableTelemetryStream>();
+    }
+    if (streamList.isEmpty()) {
       TelemetryClient client = ProjectBrowserSession.get().getTelemetryClient();
       TelemetrySession session = ProjectBrowserSession.get().getTelemetrySession();
       try {
-        streamList = client.getChart(this.getTelemetryName(), project.getOwner(), project.getName(),
+        List<TelemetryStream> streams = client.getChart(
+            this.getTelemetryName(), project.getOwner(), project.getName(),
             session.getGranularity(), Tstamp.makeTimestamp(session.getStartDate().getTime()),
             Tstamp.makeTimestamp(session.getEndDate().getTime()), this.getParameterAsString())
             .getTelemetryStream();
+        for (TelemetryStream stream : streams) {
+          streamList.add(new SelectableTelemetryStream(stream));
+        }
         this.projectStreamData.put(project, streamList);
       }
       catch (TelemetryClientException e) {
-        streamList = new ArrayList<TelemetryStream>();
+        streamList = new ArrayList<SelectableTelemetryStream>();
         session.setFeedback("Errors when retrieving " + this.telemetryName + " telemetry data: "
             + e.getMessage());
       }
@@ -165,8 +175,12 @@ public class TelemetryChartDataModel implements Serializable {
   public String getChartUrl(Project project) {
     if (this.getTelemetryName() != null && project != null) {
       // retrieve data from hackystat.
-      List<TelemetryStream> streams = this.getTelemetryStream(project);
-      return getChartUrl(null, streams);
+      List<SelectableTelemetryStream> streams = this.getTelemetryStream(project);
+      List<TelemetryStream> streamList = new ArrayList<TelemetryStream>();
+      for (SelectableTelemetryStream stream : streams) {
+        streamList.add(stream.getTelemetryStream());
+      }
+      return getChartUrl(null, streamList);
     }
     return "";
   }
@@ -185,13 +199,15 @@ public class TelemetryChartDataModel implements Serializable {
       if (namePrecedings != null && i < namePrecedings.size()) {
         namePreceding = namePrecedings.get(i);
       }
-      double streamMax = this.addStreamToChart(namePreceding, streams.get(i), googleChart);
+      double streamMax = 
+        this.addStreamToChart(namePreceding, streams.get(i), googleChart);
       if (streamMax > maximum) {
         maximum = streamMax;
       }
     }
     if (!streams.isEmpty()) {
-      googleChart.addAxisLabel("x", getDateList(streams.get(0).getTelemetryPoint()));
+      googleChart.addAxisLabel("x", 
+                       getDateList(streams.get(0).getTelemetryPoint()));
     }
     if (maximum > 100 || maximum < 50) {
       double newRange;
@@ -292,11 +308,13 @@ public class TelemetryChartDataModel implements Serializable {
     if (this.selectedProjects.isEmpty()) {
       return new ArrayList<String>();
     }
-    List<TelemetryStream> streamList = this.getTelemetryStream(this.selectedProjects.get(0));
+    List<SelectableTelemetryStream> streamList = 
+        this.getTelemetryStream(this.selectedProjects.get(0));
     if (streamList.isEmpty()) {
       return new ArrayList<String>();
     }
-    List<String> dateList = getDateList(streamList.get(0).getTelemetryPoint());
+    List<String> dateList = 
+      getDateList(streamList.get(0).getTelemetryStream().getTelemetryPoint());
     return dateList;
   }
   
@@ -347,9 +365,9 @@ public class TelemetryChartDataModel implements Serializable {
       List<TelemetryStream> streams = new ArrayList<TelemetryStream>();
       List<String> projectNames = new ArrayList<String>();
       for (Project project : this.selectedProjects) {
-        List<TelemetryStream> streamList = this.getTelemetryStream(project);
+        List<SelectableTelemetryStream> streamList = this.getTelemetryStream(project);
         for (int i = 0; i < streamList.size(); ++i) {
-          streams.add(streamList.get(i));
+          streams.add(streamList.get(i).getTelemetryStream());
           projectNames.add(project.getName());
         }
       }
@@ -384,5 +402,33 @@ public class TelemetryChartDataModel implements Serializable {
    */
   public int getHeight() {
     return height;
+  }
+
+  /**
+   * @return the selectedChart
+   */
+  public String getSelectedChart() {
+    if (selectedChart == null || "".equals(selectedChart)) {
+      List<TelemetryStream> streams = new ArrayList<TelemetryStream>();
+      List<String> projectNames = new ArrayList<String>();
+      for (Project project : this.selectedProjects) {
+        List<SelectableTelemetryStream> streamList = this.getTelemetryStream(project);
+        for (int i = 0; i < streamList.size(); ++i) {
+          if (streamList.get(i).isSelected()) {
+            streams.add(streamList.get(i).getTelemetryStream());
+            projectNames.add(project.getName());
+          }
+        }
+      }
+      selectedChart = this.getChartUrl(projectNames, streams);
+    }
+    return selectedChart;
+  }
+
+  /**
+   * reset the selectedChart.
+   */
+  public void resetSelectedChart() {
+    this.selectedChart = "";
   }
 }

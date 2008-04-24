@@ -2,24 +2,40 @@
   <wicket:panel>
     <h3>Telemetry Chart: <span wicket:id="telemetryName" />
     </h3>
-    The overall chart : <br/>
-    <img wicket:id="overallChart" /><br/>
-    <span wicket:id="chartUrlWindow" /><br/><br/>
-    <table width="100%">
-      <th>Project</th>
-      <th>Stream</th>
-      <span wicket:id="dateList">
-        <th wicket:id="date"></th>
-      </span>
-      <tr wicket:id="projectTable">
-        <td rowspan="1" wicket:id="projectName">project name</td>
+    <h4>Overall chart : </h4>
+    <img wicket:id="overallChart" />
+    <br />
+    <span wicket:id="chartUrlWindow" />
+    <br />
+    <br />
+    <form wicket:id="streamForm">
+      <table width="100%">
+        <th>Project</th>
+        <th></th>
+        <th>Stream</th>
+        <span wicket:id="dateList">
+          <th wicket:id="date">
+          </th>
+        </span>
+        <tr wicket:id="projectTable">
+          <td rowspan="1" wicket:id="projectName">project name</td>
           <tr wicket:id="projectStream">
+            <td><input type="checkbox" wicket:id="streamCheckBox" /></td>
             <td wicket:id="streamName">stream name</td>
             <span wicket:id="streamData">
               <td wicket:id="data">data</td>
             </span>
           </tr>
-      </tr>
-    </table>
+        </tr>
+      </table>
+      <input type="submit" value="Select"/>
+    </form>
+    <br/>
+    <h4>Selected chart : </h4>
+    <img wicket:id="selectedChart" />
+    <br />
+    <span wicket:id="selectedChartUrlWindow" />
+    <br />
+    <br />
   </wicket:panel>
 </html>
