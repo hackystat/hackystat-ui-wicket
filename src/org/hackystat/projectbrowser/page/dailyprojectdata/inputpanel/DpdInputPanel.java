@@ -19,8 +19,9 @@ public class DpdInputPanel extends Panel {
    */
   public DpdInputPanel(String id, ProjectBrowserBasePage page) {
     super(id);
-    add(new FeedbackPanel("feedback"));
-    add(new DpdInputForm("dpdInputForm", page));
+    DpdInputForm dpdInputForm = new DpdInputForm("dpdInputForm", page);
+    dpdInputForm.add(new FeedbackPanel("feedback"));
+    add(dpdInputForm);
   }
 
 

@@ -9,10 +9,15 @@ import org.apache.wicket.model.PropertyModel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.ProjectChoiceRenderer;
 import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
+import org.hackystat.projectbrowser.page.contextsensitive.ContextSensitivePanel;
 import org.hackystat.projectbrowser.page.dailyprojectdata.DailyProjectDataSession;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 
 /**
- * Provides the form that specifies a Date and Project name for the SensorData page.  
+ * Provides the form for use in specifying DPD analyses.  This form allows the user to select
+ * a data and a set of Projects and an analysis.  Depending upon the analysis that is selected,
+ * one or more form fields could be displayed. 
  * @author Philip Johnson
  */
 public class DpdInputForm extends Form {
@@ -36,18 +41,15 @@ public class DpdInputForm extends Form {
     super(id);
     this.page = page;
     DailyProjectDataSession session = ProjectBrowserSession.get().getDailyProjectDataSession();
-    //set Project to Default if null
-    if (session.getProject() == null) {
-      session.setProject(ProjectBrowserSession.get().getDefaultProject());
-    }
-    //setModel(new CompoundPropertyModel(this));
+
+    // [1] Create the Date field, always visible, always required.
     DateTextField dateTextField = 
       new DateTextField("dateTextField", new PropertyModel(session, "date"), DATA_FORMAT);
     dateTextField.add(new DatePicker());
     dateTextField.setRequired(true);
     add(dateTextField);
     
-    // Now create the multiple choice menu for projects.
+    // [2] Create the multi-choice menu for projects, always visible, always required.
     ListMultipleChoice projectMenu = 
       new ListMultipleChoice ("projectMenu", 
           new PropertyModel(session, "selectedProjects"),
@@ -56,14 +58,42 @@ public class DpdInputForm extends Form {
     projectMenu.setRequired(true);
     add(projectMenu);
 
-    // Now create the drop-down menu for analysis. 
+    // [3] Create the drop-down list for Analyses, always visible, always required.
     DropDownChoice analysisMenu = 
       new DropDownChoice ("analysisMenu", 
           new PropertyModel(session, "analysis"),
           new PropertyModel(session, "analysisList"));
     analysisMenu.setRequired(true);
     add(analysisMenu);
+    
+    // [4] Create the ContextSensitivePanel containing analysis-specific menus.
+    ContextSensitivePanel csPanel = new ContextSensitivePanel("dpdContextSensitivePanel", 
+        session.getContextSensitiveMenus());
+    session.setContextSensitivePanel(csPanel);
+    add(csPanel);
+    
+    // [5] Add the Ajax behavior to the analysis menu that will make the appropriate
+    // context-sensitive menus visible depending upon the selected analysis.
+    analysisMenu.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+      /** Support serialization. */ 
+      public static final long serialVersionUID = 1L;
+      @Override
+      protected void onUpdate(AjaxRequestTarget target) {
+        DailyProjectDataSession session = ProjectBrowserSession.get().getDailyProjectDataSession();
+        // Make the appropriate context-sensitive menus visible, depending upon the analysis.
+        if ("Coverage".equals(session.getAnalysis())) {
+          session.getContextSensitivePanel().setVisible(target, "Values", "Coverage Type");
+        }
+        else {
+          // Make all context-sensitive menus not visible.
+          session.getContextSensitivePanel().setVisible(target);
+        }
+      } 
+      } 
+    );
   }
+  
+  
   /**
    * Process the user action after submitting a project and date. 
    */

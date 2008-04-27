@@ -3,15 +3,22 @@ package org.hackystat.projectbrowser.page.dailyprojectdata;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+
 import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
+import org.hackystat.projectbrowser.page.contextsensitive.ContextSensitiveMenu;
+import org.hackystat.projectbrowser.page.contextsensitive.ContextSensitivePanel;
 import org.hackystat.projectbrowser.page.dailyprojectdata.inputpanel.DpdInputForm;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
 
 /**
  * Session instance for the daily project data page to hold its state.
+ * @author Philip Johnson
  * @author Shaoxuan Zhang
  */
 public class DailyProjectDataSession implements Serializable {
@@ -25,14 +32,11 @@ public class DailyProjectDataSession implements Serializable {
   /** The projects this user has selected. */
   private List<Project> selectedProjects = new ArrayList<Project>();
   
-  /** The project this user has selected. */
-  private Project project = null;
-
-  /** The analysis this user has selected. */
-  private String analysis;
+  /** The analysis this user has selected. Defaults to Coverage */
+  private String analysis = "Coverage";
   
-  /** The analysis list. */
-  private List<String> analysisList = new ArrayList<String>();
+  /** The list of analysis choices. */
+  private List<String> analysisList = Arrays.asList("Coverage", "UnitTest");
 
   /** the feedback string. */
   private String feedback = "";
@@ -40,17 +44,23 @@ public class DailyProjectDataSession implements Serializable {
   /** the data model for data panel. */
   private DailyProjectDataModel dataModel = null;
   
+  private ContextSensitivePanel csPanel; 
+  
+  /** Holds the state of the context-sensitive menus in the context sensitive panel. */
+  private Map<String, ContextSensitiveMenu> csMenus = new HashMap<String, ContextSensitiveMenu>();
+  
   
   /**
    * Initialize this session, initialize the analysis list.
    */
   public DailyProjectDataSession() {
-    //analysisList.add("Build");
-    analysisList.add("Coverage");
-    analysisList.add("Unit Test");
-    //analysisList.add("Complexity");
-    //analysisList.add("Coupling");
-    this.analysis = analysisList.get(0);
+    // Initialize the context sensitive menus.  
+    // Since the default analysis is Coverage, the Values and Coverage Type menus are visible.
+    csMenus.put("Values", new ContextSensitiveMenu("Values", "Count", 
+        Arrays.asList("Count", "Percentage"), true));
+    csMenus.put("Coverage Type", new ContextSensitiveMenu("Coverage Type", "Method", 
+        Arrays.asList("Block", "Class", "Conditional", "Element", "Line", "Method", "Statement"), 
+        true));
   }
 
   /**
@@ -78,19 +88,6 @@ public class DailyProjectDataSession implements Serializable {
     return format.format(new Date(this.date));
   }
   
-  /**
-   * @param project the project to set
-   */
-  public void setProject(Project project) {
-    this.project = project;
-  }
-
-  /**
-   * @return the project
-   */
-  public Project getProject() {
-    return this.project;
-  }
   
   /**
    * Returns the list of projects selected by the user. 
@@ -106,7 +103,6 @@ public class DailyProjectDataSession implements Serializable {
    */
   public void setSelectedProjects(List<Project> projects) {
     this.selectedProjects = projects;
-    this.project = (projects.isEmpty()) ? null : projects.get(0);
   }
 
   /**
@@ -165,5 +161,38 @@ public class DailyProjectDataSession implements Serializable {
    */
   public DailyProjectDataModel getDataModel() {
     return dataModel;
+  }
+
+  /**
+   * Gets all context sensitive menus.
+   * @return The context sensitive menus.
+   */
+  public List<ContextSensitiveMenu> getContextSensitiveMenus() {
+    return new ArrayList<ContextSensitiveMenu>(this.csMenus.values());
+  }
+  
+  /**
+   * Gets the context sensitive menu with the passed name, or null if not found.
+   * @param name The name of the context sensitive menu.
+   * @return The menu instance, or null if not found.
+   */
+  public ContextSensitiveMenu getContextSensitiveMenu(String name) {
+    return this.csMenus.get(name);
+  }
+  
+  /**
+   * Get the context sensitive panel holding the context sensitive menus.
+   * @return The context sensitive panel.
+   */
+  public ContextSensitivePanel getContextSensitivePanel() { 
+    return this.csPanel;
+  }
+  
+  /**
+   * Sets the panel containing the context sensitive menus.
+   * @param panel The panel.
+   */
+  public void setContextSensitivePanel(ContextSensitivePanel panel) {
+    this.csPanel = panel;
   }
 }

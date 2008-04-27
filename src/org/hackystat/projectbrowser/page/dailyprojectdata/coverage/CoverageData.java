@@ -126,7 +126,7 @@ public class CoverageData implements Serializable {
    * @param bucket The bucket number, where 0 is the first one and 4 is the last one. 
    * @return The value inside the given bucket. 
    */
-  public String getBucketValueString(int bucket) {
+  public String getBucketCountString(int bucket) {
     return String.valueOf(getBucketValue(bucket));
   }
   
@@ -136,7 +136,7 @@ public class CoverageData implements Serializable {
    * @return Its percentage as a string.
    */
   public String getBucketPercentageString(int bucket) {
-    return String.valueOf(getBucketPercentage(bucket));
+    return getBucketPercentage(bucket) + "%";
   }
   
  

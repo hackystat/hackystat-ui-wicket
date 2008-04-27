@@ -1,6 +1,6 @@
 <html xmlns:wicket>
 <wicket:panel>
-  <h3>Number of classes in each of five ranges for method-level coverage</h3>
+  <h3><span wicket:id="valuesType">[Count]</span> of classes in each of five ranges for <span wicket:id="coverageType">[Type]</span>-level coverage</h3>
   <table>
     <tr>
       <th>Project</th>
@@ -13,27 +13,34 @@
     </tr>
     <tr wicket:id="coverageDataList">
       <td wicket:id="project"/>
-      <td><span wicket:id="bucket0"/> (<span wicket:id="bucket0%"/> %)</td>
-      <td><span wicket:id="bucket1"/> (<span wicket:id="bucket1%"/> %)</td>
-      <td><span wicket:id="bucket2"/> (<span wicket:id="bucket2%"/> %)</td>
-      <td><span wicket:id="bucket3"/> (<span wicket:id="bucket3%"/> %)</td>
-      <td><span wicket:id="bucket4"/> (<span wicket:id="bucket4%"/> %)</td>
+      <td><span wicket:id="bucket0"/> </td>
+      <td><span wicket:id="bucket1"/> </td>
+      <td><span wicket:id="bucket2"/> </td>
+      <td><span wicket:id="bucket3"/> </td>
+      <td><span wicket:id="bucket4"/> </td>
       <td wicket:id="total"/>
     </tr>
   </table>
 <p>
 The goal of this analysis is to provide a perspective on the quality of testing associated
 with a set of projects.  Each row of the table provides a perspective on coverage for a single
-project.  The coverage perspective indicates how many classes fall into each of five possible
+project.  The perspective indicates how many classes fall into each of five possible
 ranges for coverage: 0-20%, 20-40%, 40-60%, 60-80%, and 80-100%.  Ideally, 
 100% of the classes will have 100% coverage, which would result in all of the classes appearing
 in the 80-100% range.
 </p>
 
 <p>
-To facilitate comparison between projects, the table indicates the absolute number of classes falling into a
-given range as well as the percentage of the total number of classes.  This allows you to distinguish
-between big vs. small projects as well as compare with a "normalized" value. 
+To facilitate comparison between projects, you can specify either "Count" or "Percentage" when 
+generating this table.  "Count" shows the absolute number of classes whose coverage falls within
+the given range.  "Percentage" shows the proportion of classes for this project that falls within
+the given range.  Using "Count" helps you distinguish between large and small projects, while 
+using "Percentage" enables you to more easily compare projects with a "normalized" value.
+</p>
+
+<p>
+Different coverage tools support different types. For example, Emma supports "Method", "Block", 
+"Line", and "Class".  Clover supports "Conditional", "Element", "Statement", and "Method".
 </p>
 </wicket:panel>
 </html>

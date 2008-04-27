@@ -1,36 +1,20 @@
 <html xmlns:wicket>
   <wicket:panel>
-    <span wicket:id="feedback">Feedback</span>
-    <form wicket:id="dpdInputForm">
-      <table width="100%">
-        <tr>
-          <th>Date:</th>
-          <td>
-            <input style="width: 6em" wicket:id="dateTextField" type="text" />
-          </td>
-        </tr>
-        <tr>
-          <th>Project:</th>
-          <td>
-            <select style="width: 10em" wicket:id="projectMenu">
-              <option value="Default">Default</option>
-            </select>
-          </td>
-        </tr>
-        <tr>
-          <th>Analysis:</th>
-          <td>
-            <select style="width: 10em" wicket:id="analysisMenu">
-              <option value="Default">Default</option>
-            </select>
-          </td>
-        </tr>
-        <tr>
-          <td colspan="2" style="text-align:center">
-            <input type="submit" value="Submit" />
-          </td>
-        </tr>
-      </table>
-    </form>
+    <form wicket:id="dpdInputForm" class="hform">
+      <fieldset>
+        <legend>Daily Project Analyses</legend>
+        <p><label>Date:</label> <input style="width: 6em" wicket:id="dateTextField" type="text" /></p>
+        <p><label>Project:</label> <select style="width: 10em" wicket:id="projectMenu">
+                                     <option value="Default">[Default]</option>
+                                   </select> </p>
+        <p><label>Analysis:</label> <select style="width: 10em" wicket:id="analysisMenu">
+                                      <option value="Default">[Coverage]</option>
+                                    </select> </p>
+        <span wicket:id="dpdContextSensitivePanel"/>
+      
+         <p><input type="submit" value="Submit" class="button"></p>
+        <div id="feedback"><span wicket:id="feedback">[Form Feedback]</span></div>
+	   </fieldset>
+      </form>
   </wicket:panel>
 </html>

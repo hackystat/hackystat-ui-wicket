@@ -1,5 +1,7 @@
 package org.hackystat.projectbrowser.page.dailyprojectdata.coverage;
 
+import java.util.logging.Logger;
+
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -9,6 +11,7 @@ import org.hackystat.dailyprojectdata.client.DailyProjectDataClient;
 import org.hackystat.dailyprojectdata.client.DailyProjectDataClientException;
 import org.hackystat.dailyprojectdata.resource.coverage.jaxb.ConstructData;
 import org.hackystat.dailyprojectdata.resource.coverage.jaxb.CoverageDailyProjectData;
+import org.hackystat.projectbrowser.ProjectBrowserApplication;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.page.dailyprojectdata.DailyProjectDataSession;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
@@ -34,13 +37,15 @@ public class CoveragePanel extends Panel {
   public CoveragePanel(String id) {
     super(id);
     DailyProjectDataSession session = ProjectBrowserSession.get().getDailyProjectDataSession();
-    // this.setModel(new CompoundPropertyModel(this));
     // prepare the data model.
     CoverageDataModel dataModel = (CoverageDataModel) session.getDataModel();
     if (dataModel == null) {
       dataModel = getCoverageDataModel();
       session.setDataModel(dataModel);
     }
+    add(new Label("valuesType", session.getContextSensitiveMenu("Values").getSelectedValue()));
+    add(new Label("coverageType", 
+        session.getContextSensitiveMenu("Coverage Type").getSelectedValue()));
     ListView memberDataListView = new ListView("coverageDataList", new PropertyModel(dataModel,
         "coverageDataList")) {
       /** Support serialization. */
@@ -50,16 +55,22 @@ public class CoveragePanel extends Panel {
       protected void populateItem(ListItem item) {
         CoverageData coverageData = (CoverageData) item.getModelObject();
         item.add(new Label("project", coverageData.getProject().getName()));
-        item.add(new Label("bucket0", coverageData.getBucketValueString(0)));
-        item.add(new Label("bucket0%", coverageData.getBucketPercentageString(0)));
-        item.add(new Label("bucket1", coverageData.getBucketValueString(1)));
-        item.add(new Label("bucket1%", coverageData.getBucketPercentageString(1)));
-        item.add(new Label("bucket2", coverageData.getBucketValueString(2)));
-        item.add(new Label("bucket2%", coverageData.getBucketPercentageString(2)));
-        item.add(new Label("bucket3", coverageData.getBucketValueString(3)));
-        item.add(new Label("bucket3%", coverageData.getBucketPercentageString(3)));
-        item.add(new Label("bucket4", coverageData.getBucketValueString(4)));
-        item.add(new Label("bucket4%", coverageData.getBucketPercentageString(4)));
+        DailyProjectDataSession session = ProjectBrowserSession.get().getDailyProjectDataSession();
+        String valueType = session.getContextSensitiveMenu("Values").getSelectedValue();
+        if ("Count".equals(valueType)) {
+          item.add(new Label("bucket0", coverageData.getBucketCountString(0)));
+          item.add(new Label("bucket1", coverageData.getBucketCountString(1)));
+          item.add(new Label("bucket2", coverageData.getBucketCountString(2)));
+          item.add(new Label("bucket3", coverageData.getBucketCountString(3)));
+          item.add(new Label("bucket4", coverageData.getBucketCountString(4)));
+        }
+        else {
+          item.add(new Label("bucket0", coverageData.getBucketPercentageString(0)));
+          item.add(new Label("bucket1", coverageData.getBucketPercentageString(1)));
+          item.add(new Label("bucket2", coverageData.getBucketPercentageString(2)));
+          item.add(new Label("bucket3", coverageData.getBucketPercentageString(3)));
+          item.add(new Label("bucket4", coverageData.getBucketPercentageString(4)));
+        }
         item.add(new Label("total", coverageData.getTotalString()));
       }
     };
@@ -75,20 +86,22 @@ public class CoveragePanel extends Panel {
     CoverageDataModel coverageDataModel = new CoverageDataModel();
     DailyProjectDataClient dpdClient = ProjectBrowserSession.get().getDailyProjectDataClient();
     DailyProjectDataSession session = ProjectBrowserSession.get().getDailyProjectDataSession();
-    String granularity = "method"; // will make this a parameter later.
-
+    String granularity = session.getContextSensitiveMenu("Coverage Type").getSelectedValue();
+    
     for (Project project : session.getSelectedProjects()) {
-      System.out.println("Getting DPD for project: " + project.getName());
+      Logger logger = ((ProjectBrowserApplication)ProjectBrowserApplication.get()).getLogger();
+      logger.info("Getting DPD for project: " + project.getName());
       try {
         CoverageDailyProjectData classData = dpdClient.getCoverage(project.getOwner(),
             project.getName(), Tstamp.makeTimestamp(session.getDate().getTime()), granularity);
-        System.out.println("Finished getting DPD for project: " + project.getName());
+        logger.info("Finished getting DPD for project: " + project.getName());
         for (ConstructData data : classData.getConstructData()) {
           coverageDataModel.add(project, data);
         }
       }
       catch (DailyProjectDataClientException e) {
-        session.setFeedback("Exception when getting coverage data: " + e.getMessage());
+        session.setFeedback("Exception when getting coverage data for project " + project + ": " +
+            e.getMessage());
       }
     }
     return coverageDataModel;

@@ -1,5 +1,6 @@
 package org.hackystat.projectbrowser.page.dailyprojectdata;
 
+import org.apache.wicket.behavior.HeaderContributor;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
@@ -50,6 +51,9 @@ public class DailyProjectDataPage extends ProjectBrowserBasePage {
    * Creates the DPD page. 
    */
   public DailyProjectDataPage() {
+    add(HeaderContributor.forCss(
+        org.hackystat.projectbrowser.page.dailyprojectdata.DailyProjectDataPage.class, 
+        "dailyprojectdata.css"));
     add(new DpdInputPanel(dpdInputPanelId, this));
     add(new Panel(dpdDataPanelId).setVisible(false));
     this.get("FooterFeedback").setModel(new PropertyModel(session, "feedback"));

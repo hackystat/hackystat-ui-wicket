@@ -31,14 +31,14 @@ public class UnitTestPanel extends Panel {
     super(id);
     DailyProjectDataSession session = ProjectBrowserSession.get().getDailyProjectDataSession();
     this.setModel(new CompoundPropertyModel(this));
-    if (session.getProject() == null) {
+    //if (session.getProject() == null) {
       add(new Label("projectName", ""));
       add(new Label("projectOwner", ""));
-    }
-    else {
-      add(new Label("projectName", session.getProject().getName()));
-      add(new Label("projectOwner", session.getProject().getOwner()));
-    }
+//    }
+//    else {
+//      add(new Label("projectName", session.getProject().getName()));
+//      add(new Label("projectOwner", session.getProject().getOwner()));
+//    }
     add(new Label("date", new PropertyModel(session, "dateString")));
     UnitTestDataModel dataModel = (UnitTestDataModel) session.getDataModel();
     if (dataModel == null) {
@@ -83,13 +83,9 @@ public class UnitTestPanel extends Panel {
     DailyProjectDataSession session = ProjectBrowserSession.get().getDailyProjectDataSession();
     DailyProjectDataClient dpdClient = ProjectBrowserSession.get().getDailyProjectDataClient();
     List<MemberData> memberDataList = new ArrayList<MemberData>();
-    if (session.getProject() == null) {
-      session.setFeedback("You did not selected a project to display.");
-      return memberDataList;
-    }
     try {
-      memberDataList = dpdClient.getUnitTest(session.getProject().getOwner(), 
-          session.getProject().getName(),
+      memberDataList = dpdClient.getUnitTest(session.getSelectedProjects().get(0).getOwner(), 
+          "Default",
           Tstamp.makeTimestamp(session.getDate().getTime())).getMemberData();
     }
     catch (DailyProjectDataClientException e) {
