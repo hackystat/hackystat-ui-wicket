@@ -42,7 +42,7 @@ public class TestDailyProjectDataPage extends ProjectBrowserTestHelper {
     tester.assertRenderedPage(DailyProjectDataPage.class);
     FormTester projectForm = tester.newFormTester("dpdInputPanel:dpdInputForm");
     //checkt the date field.
-    assertEquals("The date field should be set to today.", getDateTodayAsString(), 
+    assertEquals("The date field should be set to yesterday.", getDateYesterdayAsString(), 
         projectForm.getTextComponentValue("dateTextField"));
     //check the project list content.
     Component component = projectForm.getForm().get("projectMenu");
@@ -65,6 +65,8 @@ public class TestDailyProjectDataPage extends ProjectBrowserTestHelper {
     projectForm.select("analysisMenu", 1);
     projectForm.submit();
     //check the result.
+    tester.assertRenderedPage(
+        org.hackystat.projectbrowser.page.dailyprojectdata.DailyProjectDataPage.class);
     //tester.assertLabel("dpdDataPanel:valuesType", "Count");
   }
   
@@ -72,8 +74,8 @@ public class TestDailyProjectDataPage extends ProjectBrowserTestHelper {
    * return a String that represent the date of today.
    * @return a String represent today.
    */
-  public String getDateTodayAsString() {
-    XMLGregorianCalendar time = Tstamp.makeTimestamp();
+  public String getDateYesterdayAsString() {
+    XMLGregorianCalendar time = Tstamp.incrementDays(Tstamp.makeTimestamp(), -1);
     String timeString = time.getYear() + "-";
     timeString += (time.getMonth() >= 10) ? time.getMonth() : "0" + time.getMonth();
     timeString += "-";

@@ -98,6 +98,14 @@ public class ProjectBrowserBasePage extends WebPage {
     time.setTime(0, 0, 0);
     return time.toGregorianCalendar().getTime();
   }
+  
+  /**
+   * Return yesterday's date. 
+   * @return Yesterday.
+   */
+  public static final Date getDateYesterday() {
+    return getDateBefore(1);
+  }
 
   /**
    * make a Date that represent i days ago, at 0:00:00.

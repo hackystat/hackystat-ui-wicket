@@ -77,6 +77,11 @@ public class DpdInputForm extends Form {
     analysisMenu.add(new AjaxFormComponentUpdatingBehavior("onchange") {
       /** Support serialization. */ 
       public static final long serialVersionUID = 1L;
+      
+      /**
+       * When the user changes the Analysis menu selection, we want to set the visibility of
+       * all context sensitive menus appropriately.
+       */
       @Override
       protected void onUpdate(AjaxRequestTarget target) {
         DailyProjectDataSession session = ProjectBrowserSession.get().getDailyProjectDataSession();

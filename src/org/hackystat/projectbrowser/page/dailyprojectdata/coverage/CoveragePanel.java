@@ -1,21 +1,13 @@
 package org.hackystat.projectbrowser.page.dailyprojectdata.coverage;
 
-import java.util.logging.Logger;
-
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
-import org.hackystat.dailyprojectdata.client.DailyProjectDataClient;
-import org.hackystat.dailyprojectdata.client.DailyProjectDataClientException;
-import org.hackystat.dailyprojectdata.resource.coverage.jaxb.ConstructData;
-import org.hackystat.dailyprojectdata.resource.coverage.jaxb.CoverageDailyProjectData;
-import org.hackystat.projectbrowser.ProjectBrowserApplication;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.page.dailyprojectdata.DailyProjectDataSession;
-import org.hackystat.sensorbase.resource.projects.jaxb.Project;
-import org.hackystat.utilities.tstamp.Tstamp;
+
 
 /**
  * Data panel for coverage.
@@ -38,11 +30,7 @@ public class CoveragePanel extends Panel {
     super(id);
     DailyProjectDataSession session = ProjectBrowserSession.get().getDailyProjectDataSession();
     // prepare the data model.
-    CoverageDataModel dataModel = (CoverageDataModel) session.getDataModel();
-    if (dataModel == null) {
-      dataModel = getCoverageDataModel();
-      session.setDataModel(dataModel);
-    }
+    CoverageDataModel dataModel = session.getCoverageDataModel();
     add(new Label("valuesType", session.getContextSensitiveMenu("Values").getSelectedValue()));
     add(new Label("coverageType", 
         session.getContextSensitiveMenu("Coverage Type").getSelectedValue()));
@@ -78,32 +66,13 @@ public class CoveragePanel extends Panel {
   }
 
   /**
-   * Return a coverageDataModel that represents the newest data.
-   * 
-   * @return The coverage data model.
+   * Returns true if this panel should be displayed.  
+   * The panel should be displayed if its corresponding data model has information.
+   * @return True if this panel should be displayed. 
    */
-  private CoverageDataModel getCoverageDataModel() {
-    CoverageDataModel coverageDataModel = new CoverageDataModel();
-    DailyProjectDataClient dpdClient = ProjectBrowserSession.get().getDailyProjectDataClient();
+  @Override
+  public boolean isVisible() {
     DailyProjectDataSession session = ProjectBrowserSession.get().getDailyProjectDataSession();
-    String granularity = session.getContextSensitiveMenu("Coverage Type").getSelectedValue();
-    
-    for (Project project : session.getSelectedProjects()) {
-      Logger logger = ((ProjectBrowserApplication)ProjectBrowserApplication.get()).getLogger();
-      logger.info("Getting DPD for project: " + project.getName());
-      try {
-        CoverageDailyProjectData classData = dpdClient.getCoverage(project.getOwner(),
-            project.getName(), Tstamp.makeTimestamp(session.getDate().getTime()), granularity);
-        logger.info("Finished getting DPD for project: " + project.getName());
-        for (ConstructData data : classData.getConstructData()) {
-          coverageDataModel.add(project, data);
-        }
-      }
-      catch (DailyProjectDataClientException e) {
-        session.setFeedback("Exception when getting coverage data for project " + project + ": " +
-            e.getMessage());
-      }
-    }
-    return coverageDataModel;
+    return !session.getCoverageDataModel().isEmpty(); 
   }
 }

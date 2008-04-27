@@ -1,7 +1,6 @@
 package org.hackystat.projectbrowser.page.dailyprojectdata;
 
 import org.apache.wicket.behavior.HeaderContributor;
-import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
@@ -27,27 +26,6 @@ public class DailyProjectDataPage extends ProjectBrowserBasePage {
   private static final String dpdDataPanelId = "dpdDataPanel";
 
   /**
-   * Return a panel according the analysis field in DailyProjectDataSession.
-   * @param id the wicket id.
-   * @return the panel
-   */
-  private Panel getDataPanel(String id) {
-    Panel panel;
-    String analysis = session.getAnalysis();
-    if ("Unit Test".equals(analysis)) {
-      panel = new UnitTestPanel(id);
-    }
-    else if ("Coverage".equals(analysis)) {
-      panel = new CoveragePanel(id);
-    }
-    else {
-      panel = new Panel(id);
-      panel.setVisible(false);
-    }
-    return panel;
-  }
-
-  /**
    * Creates the DPD page. 
    */
   public DailyProjectDataPage() {
@@ -55,16 +33,32 @@ public class DailyProjectDataPage extends ProjectBrowserBasePage {
         org.hackystat.projectbrowser.page.dailyprojectdata.DailyProjectDataPage.class, 
         "dailyprojectdata.css"));
     add(new DpdInputPanel(dpdInputPanelId, this));
-    add(new Panel(dpdDataPanelId).setVisible(false));
+    if ("Coverage".equals(session.getAnalysis())) {
+      add(new CoveragePanel(dpdDataPanelId));
+    }
+    else if ("UnitTest".equals(session.getAnalysis())) {
+      add(new UnitTestPanel(dpdDataPanelId));
+    }
     this.get("FooterFeedback").setModel(new PropertyModel(session, "feedback"));
   }
 
   /**
    * The action to be performed when the user has set the Project and Date fields. 
+   * We will (1) clear all of our data models; (2) update the appropriate data model based upon
+   * the user's settings; and (3) set the data panel.
    */
   @Override
   public void onProjectDateSubmit() {
-    session.setDataModel(null);
-    this.replace(getDataPanel(dpdDataPanelId));
+    // Get rid of all prior state.
+    session.clearDataModels();
+    // Update a single model depending upon the user's settings. 
+    if ("Coverage".equals(session.getAnalysis())) {
+      session.getCoverageDataModel().update();
+      this.replace(new CoveragePanel(dpdDataPanelId));
+    }
+    else if ("UnitTest".equals(session.getAnalysis())) {
+      session.getUnitTestDataModel().update();
+      this.replace(new UnitTestPanel(dpdDataPanelId));
+    }
   }
 }

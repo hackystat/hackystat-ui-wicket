@@ -13,7 +13,9 @@ import java.util.Map;
 import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
 import org.hackystat.projectbrowser.page.contextsensitive.ContextSensitiveMenu;
 import org.hackystat.projectbrowser.page.contextsensitive.ContextSensitivePanel;
+import org.hackystat.projectbrowser.page.dailyprojectdata.coverage.CoverageDataModel;
 import org.hackystat.projectbrowser.page.dailyprojectdata.inputpanel.DpdInputForm;
+import org.hackystat.projectbrowser.page.dailyprojectdata.unittest.UnitTestDataModel;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
 
 /**
@@ -27,7 +29,7 @@ public class DailyProjectDataSession implements Serializable {
   private static final long serialVersionUID = 1L;
 
   /** The date this user has selected in the ProjectDate form. */
-  private long date = ProjectBrowserBasePage.getDateToday().getTime();
+  private long date = ProjectBrowserBasePage.getDateYesterday().getTime();
 
   /** The projects this user has selected. */
   private List<Project> selectedProjects = new ArrayList<Project>();
@@ -41,17 +43,20 @@ public class DailyProjectDataSession implements Serializable {
   /** the feedback string. */
   private String feedback = "";
 
-  /** the data model for data panel. */
-  private DailyProjectDataModel dataModel = null;
-  
+  /** The context sensitive panel.  We keep a pointer to this in the session for Ajax updating. */
   private ContextSensitivePanel csPanel; 
   
   /** Holds the state of the context-sensitive menus in the context sensitive panel. */
   private Map<String, ContextSensitiveMenu> csMenus = new HashMap<String, ContextSensitiveMenu>();
   
+  /** The Coverage data model. */
+  private CoverageDataModel coverageDataModel = new CoverageDataModel();
+  
+  /** The Unit Test analysis data model. */
+  private UnitTestDataModel unitTestDataModel = new UnitTestDataModel();
   
   /**
-   * Initialize this session, initialize the analysis list.
+   * Initialize this session, including the list of context-sensitive menus.
    */
   public DailyProjectDataSession() {
     // Initialize the context sensitive menus.  
@@ -98,7 +103,7 @@ public class DailyProjectDataSession implements Serializable {
   }
   
   /**
-   * Sets the set of selected projects.
+   * Sets the set of selected projects
    * @param projects The projects.
    */
   public void setSelectedProjects(List<Project> projects) {
@@ -148,22 +153,6 @@ public class DailyProjectDataSession implements Serializable {
   }
 
   /**
-   * Sets the data model for this page. 
-   * @param dataModel The new dataModel.
-   */
-  public void setDataModel(DailyProjectDataModel dataModel) {
-    this.dataModel = dataModel;
-  }
-
-  /**
-   * Gets the current data model for this page. 
-   * @return The dataModel.
-   */
-  public DailyProjectDataModel getDataModel() {
-    return dataModel;
-  }
-
-  /**
    * Gets all context sensitive menus.
    * @return The context sensitive menus.
    */
@@ -194,5 +183,29 @@ public class DailyProjectDataSession implements Serializable {
    */
   public void setContextSensitivePanel(ContextSensitivePanel panel) {
     this.csPanel = panel;
+  }
+  
+  /**
+   * Get the Coverage data model. 
+   * @return The Coverage data model associated with this session.
+   */
+  public CoverageDataModel getCoverageDataModel() {
+    return this.coverageDataModel;
+  }
+  
+  /**
+   * Gets the Unit test model associated with this session.
+   * @return The Unit Test model. 
+   */
+  public UnitTestDataModel getUnitTestDataModel() {
+    return this.unitTestDataModel;
+  }
+  
+  /**
+   * Sets all analysis data models to their empty state. 
+   */
+  public void clearDataModels() {
+    this.coverageDataModel.clear();
+    this.unitTestDataModel.clear();
   }
 }
