@@ -19,8 +19,7 @@ import org.hackystat.utilities.tstamp.Tstamp;
 
 /**
  * The data model for UnitTest DPD display.  This data model accommodates multiple Projects.
- * For each project, the data model indicates the number of classes whose method-level percentage
- * falls into each of five buckets, from 0-20% to 80-100%.
+ * For each project, the data model indicates the number of passing and failing unit tests.  
  * @author Philip Johnson
  * @author Shaoxuan Zhang
  *

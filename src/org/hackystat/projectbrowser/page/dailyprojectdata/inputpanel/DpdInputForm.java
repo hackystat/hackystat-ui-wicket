@@ -103,6 +103,9 @@ public class DpdInputForm extends Form {
         else if ("UnitTest".equals(session.getAnalysis())) {
           session.getContextSensitivePanel().setVisible(target, values);
         }
+        else if ("Build".equals(session.getAnalysis())) {
+          session.getContextSensitivePanel().setVisible(target, values);
+        }
         else {
           // Make all context-sensitive menus not visible.
           session.getContextSensitivePanel().setVisible(target);

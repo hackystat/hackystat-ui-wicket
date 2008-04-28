@@ -32,7 +32,7 @@ public class UnitTestPanel extends Panel {
     // prepare the data model.
     UnitTestDataModel dataModel = session.getUnitTestDataModel();
     add(new Label("valuesType", session.getContextSensitiveMenu("Values").getSelectedValue()));
-    ListView memberDataListView = new ListView("unitTestDataList", new PropertyModel(dataModel,
+    ListView unitTestListView = new ListView("unitTestDataList", new PropertyModel(dataModel,
         "unitTestDataList")) {
       /** Support serialization. */
       private static final long serialVersionUID = 1L;
@@ -54,7 +54,7 @@ public class UnitTestPanel extends Panel {
         item.add(new Label("total", unittestData.getTotalString()));
       }
     };
-    add(memberDataListView);
+    add(unitTestListView);
   }
 
   /**

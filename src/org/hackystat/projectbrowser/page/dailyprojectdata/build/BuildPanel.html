@@ -1,0 +1,51 @@
+<html xmlns:wicket>
+  <wicket:panel>
+    <h3>
+      <span wicket:id="valuesType">[Count]</span> of build invocations that passed and failed</h3>
+    <table>
+      <tr>
+        <th>Project</th>
+        <th>Success</th>
+        <th>Failure</th>
+        <th>Total</th>
+      </tr>
+      <tr wicket:id="buildDataList">
+        <td wicket:id="project"/>
+        <td>
+          <span wicket:id="bucket0"/>
+        </td>
+        <td>
+          <span wicket:id="bucket1"/>
+        </td>
+        <td wicket:id="total" />
+      </tr>
+    </table>
+    <p>
+
+The goal of this analysis is to provide a perspective on the amount of build invocations associated
+with a set of projects.  Each row of the table provides a perspective on build 
+invocations for a single
+project.  The perspective indicates how many build invocations passed and how many
+ failed, 
+as well as how many total builds occurred.  
+
+</p>
+
+    <p>
+This analysis provides a sense for build "activity" associated with a given project.  Projects
+that depart significantly from their "baseline" level of build counts or success/failure
+ratio  might be
+encountering new development conditions that might impact on schedule or resources.  
+</p>
+
+    <p>
+To facilitate comparison between projects, you can specify either "Count" or "Percentage" when 
+generating this table.  "Count" shows the absolute number of build invocations.
+"Percentage" shows the proportion of invocations that passed or failed.
+Using "Count" helps you distinguish between projects that have very different numbers
+of invocations, while 
+using "Percentage" enables you to more easily compare projects with a "normalized" value.
+</p>
+
+  </wicket:panel>
+</html>
