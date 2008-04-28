@@ -51,7 +51,7 @@ public class SigninPage extends WebPage {
   private List<String> getServiceInfo() {
     List<String> serviceInfo = new ArrayList<String>();
     StringBuffer available = new StringBuffer(20);
-    StringBuffer notAvailable = new StringBuffer(20);
+    StringBuffer notAvailable = new StringBuffer(22);
     available.append("Available services: ");
     notAvailable.append("Unavailable services: ");
     
