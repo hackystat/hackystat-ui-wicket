@@ -107,10 +107,9 @@ public class ProjectBrowserTestHelper {
                                   int days) {
     try {
       
-      SimData simData = new SimData(sensorbaseServer.getHostName());
+      SimData simData = new SimData(getSensorBaseHostName());
       XMLGregorianCalendar start = Tstamp.incrementDays(endTime, -100);
       XMLGregorianCalendar end = Tstamp.incrementDays(endTime, 60);
-      String projectUriPattern = "projectbrowser-test-helper";
       String SUCCESS = "Success";
       String FAILURE = "Failure";
       String PASS = "pass";
@@ -120,7 +119,7 @@ public class ProjectBrowserTestHelper {
       String LOGPREFIX = "ProjectBrowserTestHelper: Making data for day: ";
       
       simData.makeUser(user);
-      simData.makeProject(projectName, user, start, end, "*/" + projectUriPattern + "/*");
+      simData.makeProject(projectName, user, start, end, "*/" + projectName + "/*");
       
       simData.getLogger().info(LOGPREFIX + endTime);
 
@@ -173,13 +172,15 @@ public class ProjectBrowserTestHelper {
    * @param user the given user.
    */
   public void clearData(String user) {
-    SensorBaseClient client = new SensorBaseClient(user, user, sensorbaseServer.getHostName());
+    SensorBaseClient client = new SensorBaseClient(getSensorBaseHostName(), user, user);
     try {
+      client.authenticate();
       client.deleteSensorData(user);
       for (ProjectRef ref : client.getProjectIndex(user).getProjectRef()) {
         Project project = client.getProject(ref);
-        if (user.equals(project.getOwner())) {
-          client.deleteProject(user, client.getProject(ref).getName());
+        //System.out.println("Removing project " + project.getName() + project.getOwner());
+        if (user.equals(project.getOwner()) && !"Default".equals(project.getName())) {
+          client.deleteProject(user, project.getName());
         }
       }
       client.deleteUser(user);
@@ -187,6 +188,7 @@ public class ProjectBrowserTestHelper {
     catch (SensorBaseClientException e) {
       System.out.println("Errors when clearing data associated with " + user + ": " + 
           e.getMessage());
+      e.printStackTrace();
     }
   }
 }

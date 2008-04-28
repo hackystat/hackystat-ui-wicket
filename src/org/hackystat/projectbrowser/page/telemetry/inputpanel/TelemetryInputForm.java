@@ -74,9 +74,11 @@ public class TelemetryInputForm extends Form {
     }
 
     //set Project to Default if null
+    /*
     if (session.getSelectedProjects().size() <= 0) {
       session.getSelectedProjects().add(ProjectBrowserSession.get().getDefaultProject());
     }
+    */
     //StartDateTextField
     DateTextField startDateTextField = 
       new DateTextField("startDateTextField", new PropertyModel(session, "startDate"), 

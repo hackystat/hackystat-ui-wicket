@@ -11,6 +11,8 @@ import org.hackystat.projectbrowser.page.telemetry.datapanel.TelemetryDataPanel;
 import org.hackystat.projectbrowser.page.telemetry.inputpanel.TelemetryInputPanel;
 import org.hackystat.projectbrowser.test.ProjectBrowserTestHelper;
 import org.hackystat.utilities.tstamp.Tstamp;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -18,7 +20,21 @@ import org.junit.Test;
  * @author Shaoxuan Zhang
  */
 public class TestTelemetryPage extends ProjectBrowserTestHelper {
-
+  /** the test user. */
+  private String testUser = "TestTelemetryUser";
+  /** email of the test user. */
+  private String testUserEmail = "TestTelemetryUser@hackystat.org";
+  /** the test project. */
+  private String testProject = "TestTelemetryProject";
+  
+  /**
+   * Initialize data for testing.
+   */
+  @Before
+  public void setUp() {
+    this.generateSimData(testUser, testProject, Tstamp.makeTimestamp(), 2);
+  }
+  
   /**
    * Test the daily project data page.
    */
@@ -27,12 +43,9 @@ public class TestTelemetryPage extends ProjectBrowserTestHelper {
     WicketTester tester = new WicketTester(new ProjectBrowserApplication(getTestProperties()));
     tester.startPage(SigninPage.class); 
     // Let's sign in.
-    String testUser = "TestTelemetryUser@hackystat.org";
-    String testProject = "TelemetryProject";
-    this.generateSimData("TestTelemetryUser", testProject, Tstamp.makeTimestamp(), 4);
     FormTester signinForm = tester.newFormTester("signinForm");
-    signinForm.setValue("user", testUser);
-    signinForm.setValue("password", testUser);
+    signinForm.setValue("user", testUserEmail);
+    signinForm.setValue("password", testUserEmail);
     signinForm.submit("Signin");
     //first, go to daily project data page.
     tester.clickLink("TelemetryPageLink");
@@ -46,12 +59,16 @@ public class TestTelemetryPage extends ProjectBrowserTestHelper {
       System.out.println("Confirmed that data panel did not show initially.");
     }
     FormTester inputForm = tester.newFormTester("inputPanel:inputForm");
+    assertEquals("Check the defult value of the date field.", 
+          getDateYesterdayAsString(), inputForm.getTextComponentValue("endDateTextField"));
+    /*
     //inputForm.selectMultiple("projectMenu", new int[]{0,1,2});
     inputForm.submit();
     System.out.println(tester.getComponentFromLastRenderedPage("FooterFeedback").getModelObject());
     tester.assertComponent("dataPanel", TelemetryDataPanel.class);
     assertEquals("chart image should be empty initially.", 
         "", tester.getTagByWicketId("selectedChart").getAttribute("src"));
+        */
     /*
     FormTester streamForm = tester.newFormTester("dataPanel:streamForm");
     streamForm.getForm().get("selectAll").setModelObject(true);
@@ -59,15 +76,22 @@ public class TestTelemetryPage extends ProjectBrowserTestHelper {
     assertEquals("chart image should be displayed now.", "http://chart.apis.google.com/chart?",
         tester.getTagByWicketId("selectedChart").getAttribute("src"));
         */
-    this.clearData(testUser);
+  }
+  
+  /**
+   * Clear testing data.
+   */
+  @After
+  public void clear() {
+    this.clearData(testUserEmail);
   }
   
   /**
    * return a String that represent the date of today.
    * @return a String represent today.
    */
-  public String getDateTodayAsString() {
-    XMLGregorianCalendar time = Tstamp.makeTimestamp();
+  public String getDateYesterdayAsString() {
+    XMLGregorianCalendar time = Tstamp.incrementDays(Tstamp.makeTimestamp(), -1);
     String timeString = time.getYear() + "-";
     timeString += (time.getMonth() >= 10) ? time.getMonth() : "0" + time.getMonth();
     timeString += "-";

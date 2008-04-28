@@ -409,32 +409,38 @@ public class TelemetryChartDataModel implements Serializable {
    * @return the selectedChart
    */
   public String getSelectedChart() {
-    if (selectedChart == null || "".equals(selectedChart)) {
-      List<TelemetryStream> streams = new ArrayList<TelemetryStream>();
-      List<String> projectNames = new ArrayList<String>();
-      for (Project project : this.selectedProjects) {
-        List<SelectableTelemetryStream> streamList = this.getTelemetryStream(project);
-        for (int i = 0; i < streamList.size(); ++i) {
-          if (streamList.get(i).isSelected()) {
-            streams.add(streamList.get(i).getTelemetryStream());
-            projectNames.add(project.getName());
-          }
-        }
-      }
-      if (streams.isEmpty()) {
-        selectedChart = "";
-        return selectedChart;
-      }
-      selectedChart = this.getChartUrl(projectNames, streams);
-    }
     return selectedChart;
   }
 
   /**
-   * reset the selectedChart.
+   * @return true if the chart is empty.
    */
-  public void resetSelectedChart() {
-    this.selectedChart = "";
+  public boolean isChartEmpty() {
+    return selectedChart == null || "".equals(selectedChart);
+  }
+  
+  /**
+   * reset the selectedChart.
+   * @return true if the chart is successfully updated.
+   */
+  public boolean updateSelectedChart() {
+    List<TelemetryStream> streams = new ArrayList<TelemetryStream>();
+    List<String> projectNames = new ArrayList<String>();
+    for (Project project : this.selectedProjects) {
+      List<SelectableTelemetryStream> streamList = this.getTelemetryStream(project);
+      for (int i = 0; i < streamList.size(); ++i) {
+        if (streamList.get(i).isSelected()) {
+          streams.add(streamList.get(i).getTelemetryStream());
+          projectNames.add(project.getName());
+        }
+      }
+    }
+    if (streams.isEmpty()) {
+      selectedChart = "";
+      return false;
+    }
+    selectedChart = this.getChartUrl(projectNames, streams);
+    return true;
   }
   
   /**

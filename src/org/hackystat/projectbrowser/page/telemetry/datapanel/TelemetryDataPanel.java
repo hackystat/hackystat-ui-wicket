@@ -43,7 +43,10 @@ public class TelemetryDataPanel extends Panel {
       private static final long serialVersionUID = 1L;
       @Override
       public void onSubmit() {
-        session.getDataModel().resetSelectedChart();
+        if (!session.getDataModel().updateSelectedChart()) {
+          session.setFeedback("Fail to get a chart image, " +
+          		"you may forget to select some stream before getting the chart.");
+        }
       }
     };
     add(streamForm);
@@ -141,7 +144,14 @@ public class TelemetryDataPanel extends Panel {
                               new PropertyModel(dataModel, "selectedChart")));
     add(selectedchartUrl);
     PopupWindowPanel selectedchartUrlWindow = 
-      new PopupWindowPanel("selectedChartUrlWindow", "Google Chart URL");
+      new PopupWindowPanel("selectedChartUrlWindow", "Google Chart URL") {
+      /** Support serialization. */
+      public static final long serialVersionUID = 1L;
+      @Override
+      public boolean isVisible () {
+        return !session.getDataModel().isChartEmpty();
+      }
+    };
     selectedchartUrlWindow.getModalWindow().setContent(
         new Label(selectedchartUrlWindow.getModalWindow().getContentId(), 
                   new PropertyModel(dataModel, "selectedChart")));
