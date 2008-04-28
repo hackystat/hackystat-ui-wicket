@@ -1,4 +1,4 @@
-package org.hackystat.projectbrowser.page.telemetry;
+package org.hackystat.projectbrowser.page.telemetry.datapanel;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
@@ -14,6 +14,7 @@ import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.googlechart.ChartType;
 import org.hackystat.projectbrowser.googlechart.GoogleChart;
 import org.hackystat.projectbrowser.page.dailyprojectdata.inputpanel.DpdInputForm;
+import org.hackystat.projectbrowser.page.telemetry.TelemetrySession;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
 import org.hackystat.telemetry.service.client.TelemetryClient;
 import org.hackystat.telemetry.service.client.TelemetryClientException;
@@ -420,6 +421,10 @@ public class TelemetryChartDataModel implements Serializable {
           }
         }
       }
+      if (streams.isEmpty()) {
+        selectedChart = "";
+        return selectedChart;
+      }
       selectedChart = this.getChartUrl(projectNames, streams);
     }
     return selectedChart;
@@ -430,5 +435,17 @@ public class TelemetryChartDataModel implements Serializable {
    */
   public void resetSelectedChart() {
     this.selectedChart = "";
+  }
+  
+  /**
+   * Change all selected flags of streams to the given flag.
+   * @param flag the boolean flag.
+   */
+  public void changeSelectionForAll(boolean flag) {
+    for (List<SelectableTelemetryStream> streamList : this.projectStreamData.values()) {
+      for (SelectableTelemetryStream stream : streamList) {
+        stream.setSelected(flag);
+      }
+    }
   }
 }

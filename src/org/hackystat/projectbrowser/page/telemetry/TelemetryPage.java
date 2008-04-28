@@ -3,6 +3,7 @@ package org.hackystat.projectbrowser.page.telemetry;
 import org.apache.wicket.model.PropertyModel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
+import org.hackystat.projectbrowser.page.telemetry.datapanel.TelemetryDataPanel;
 import org.hackystat.projectbrowser.page.telemetry.inputpanel.TelemetryInputPanel;
 
 /**

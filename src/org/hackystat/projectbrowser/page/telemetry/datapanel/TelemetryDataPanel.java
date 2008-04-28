@@ -1,4 +1,4 @@
-package org.hackystat.projectbrowser.page.telemetry;
+package org.hackystat.projectbrowser.page.telemetry.datapanel;
 
 import java.util.List;
 import org.apache.wicket.AttributeModifier;
@@ -14,6 +14,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.page.popupwindow.PopupWindowPanel;
+import org.hackystat.projectbrowser.page.telemetry.TelemetrySession;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
 import org.hackystat.telemetry.service.resource.chart.jaxb.TelemetryPoint;
 /**
@@ -33,6 +34,9 @@ public class TelemetryDataPanel extends Panel {
   public TelemetryDataPanel(String id) {
     super(id);
     IModel dataModel = new PropertyModel(session, "dataModel");
+    
+    // TODO logger, delete no more.
+    //System.out.println("Telemetry name: " + session.getDataModel().getTelemetryName());
     
     Form streamForm = new Form("streamForm") {
       /** Support serialization. */
@@ -58,7 +62,19 @@ public class TelemetryDataPanel extends Panel {
       }
     };
     streamForm.add(dateList);
-    
+
+    streamForm.add(new CheckBox("selectAll", new Model()) {
+      /** Support serialization. */
+      public static final long serialVersionUID = 1L;
+      @Override
+      protected  void  onSelectionChanged(java.lang.Object newSelection) {
+        session.getDataModel().changeSelectionForAll((Boolean)newSelection);
+      }
+      @Override
+      protected boolean wantOnSelectionChangedNotifications() {
+        return true;
+      }
+    });
     
     ListView projectTable = 
       new ListView("projectTable", new PropertyModel(dataModel, "selectedProjects")) {
@@ -81,10 +97,12 @@ public class TelemetryDataPanel extends Panel {
           protected void populateItem(ListItem item) {
             SelectableTelemetryStream stream = (SelectableTelemetryStream)item.getModelObject();
             String streamName = stream.getTelemetryStream().getName();
+            /*
             int index = streamName.indexOf('<');
             if (index > 0) {
               streamName = streamName.substring(0, index);
             }
+            */
             item.add(new Label("streamName", streamName));
             
             item.add(new CheckBox("streamCheckBox", new PropertyModel(stream, "selected")));
@@ -116,17 +134,6 @@ public class TelemetryDataPanel extends Panel {
       }
     };
     streamForm.add(projectTable);
-
-    //add the overall chart.
-    WebComponent chartUrl = new WebComponent("overallChart");
-    chartUrl.add(new AttributeModifier("src", true, 
-                              new PropertyModel(dataModel, "overallChart")));
-    add(chartUrl);
-    PopupWindowPanel chartUrlWindow = new PopupWindowPanel("chartUrlWindow", "Google Chart URL");
-    chartUrlWindow.getModalWindow().setContent(
-        new Label(chartUrlWindow.getModalWindow().getContentId(), 
-                  new PropertyModel(dataModel, "overallChart")));
-    add(chartUrlWindow);
 
     //add the selected chart.
     WebComponent selectedchartUrl = new WebComponent("selectedChart");

@@ -19,7 +19,6 @@ import org.hackystat.sensorbase.resource.projects.jaxb.Project;
 import org.hackystat.sensorbase.resource.projects.jaxb.ProjectIndex;
 import org.hackystat.sensorbase.resource.projects.jaxb.ProjectRef;
 import org.hackystat.telemetry.service.client.TelemetryClient;
-import org.hackystat.utilities.stacktrace.StackTrace;
 
 /**
  * Provides a session instance that holds authentication credentials.
@@ -271,7 +270,7 @@ public class ProjectBrowserSession extends WebSession {
       }
       catch (SensorBaseClientException e) {
         Logger logger = ((ProjectBrowserApplication)getApplication()).getLogger();
-        logger.warning("Error getting projects for " + this.email + StackTrace.toString(e));
+        logger.warning("Error getting projects for " + this.email/* + StackTrace.toString(e)*/);
       }
     }
     return projectList;

@@ -57,7 +57,11 @@ public class DpdInputForm extends Form {
           new ProjectChoiceRenderer())  ;
     projectMenu.setRequired(true);
     add(projectMenu);
-
+    //set Project to Default if null
+    if (session.getSelectedProjects().size() <= 0) {
+      session.getSelectedProjects().add(ProjectBrowserSession.get().getDefaultProject());
+    }
+    
     // [3] Create the drop-down list for Analyses, always visible, always required.
     DropDownChoice analysisMenu = 
       new DropDownChoice ("analysisMenu", 

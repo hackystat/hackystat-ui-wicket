@@ -107,6 +107,9 @@
       <include name="slf4j-api-${slf4j.version}.jar" />
       <include name="slf4j-simple-${slf4j.version}.jar" />
     </fileset>
+    <fileset dir="${lib.dir}">
+      <include name="simdata.jar" />
+    </fileset>
   </path>
   
   <path id="run.classpath">
@@ -154,7 +157,9 @@
        </lib>
        <lib file="${env.WICKET_HOME}/lib">
          <include name="wicket-${wicket.version}.jar" />
+
          <include name="wicket-datetime-${wicket.version}.jar" />
+
          <include name="wicket-extensions-${wicket.version}.jar" />
        </lib>
        <lib dir="${env.SLF4J_HOME}">

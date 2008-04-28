@@ -121,9 +121,11 @@ public class GoogleChart implements Serializable {
     if (this.chartLegend.size() > 0) {
       StringBuffer stringBuffer = new StringBuffer();
       for (String dataItem : this.chartLegend) {
+        /*
         int index = dataItem.indexOf('<');
         String data = dataItem.substring(0, index);
-        stringBuffer.append(data + DATASET_SEPARATOR);
+        */
+        stringBuffer.append(dataItem + DATASET_SEPARATOR);
       }
       String dataString = stringBuffer.toString();
       if (dataString.endsWith(DATASET_SEPARATOR)) {

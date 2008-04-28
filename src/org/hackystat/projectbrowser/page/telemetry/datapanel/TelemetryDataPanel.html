@@ -2,16 +2,10 @@
   <wicket:panel>
     <h3>Telemetry Chart: <span wicket:id="telemetryName" />
     </h3>
-    <h4>Overall chart : </h4>
-    <img wicket:id="overallChart" />
-    <br />
-    <span wicket:id="chartUrlWindow" />
-    <br />
-    <br />
     <form wicket:id="streamForm">
       <table width="100%">
         <th>Project</th>
-        <th></th>
+        <th><input type="checkbox" wicket:id="selectAll" /></th>
         <th>Stream</th>
         <span wicket:id="dateList">
           <th wicket:id="date">
@@ -28,7 +22,7 @@
           </tr>
         </tr>
       </table>
-      <input type="submit" value="Select"/>
+      <input type="submit" value="Get Chart"/>
     </form>
     <br/>
     <h4>Selected chart : </h4>

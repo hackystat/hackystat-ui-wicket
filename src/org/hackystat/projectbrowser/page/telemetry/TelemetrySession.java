@@ -13,6 +13,7 @@ import org.apache.wicket.model.IModel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
 import org.hackystat.projectbrowser.page.dailyprojectdata.inputpanel.DpdInputForm;
+import org.hackystat.projectbrowser.page.telemetry.datapanel.TelemetryChartDataModel;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
 import org.hackystat.telemetry.service.client.TelemetryClient;
 import org.hackystat.telemetry.service.client.TelemetryClientException;

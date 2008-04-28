@@ -69,7 +69,7 @@ public class TelemetryInputForm extends Form {
         new TelemetryDescriptionPanel(telemetryPopup.getModalWindow().getContentId()));
     add(telemetryPopup);
     this.add(telemetryMenu);
-    if (session.getTelemetryName() == null) {
+    if (session.getTelemetryName() == null && !session.getTelemetryList().isEmpty()) {
       session.setTelemetryName(session.getTelemetryList().get(0));
     }
 
