@@ -1,0 +1,53 @@
+<html xmlns:wicket>
+<wicket:panel>
+  <h3><span wicket:id="valuesType">[Count]</span> of classes in each of five ranges for <span wicket:id="couplingType">[Type]</span> coupling</h3>
+  <table>
+    <tr>
+      <th>Project</th>
+      <th>0-5</th>
+      <th>6-10</th>
+      <th>11-15</th>
+      <th>15-20</th>
+      <th>20+</th>
+      <th>Total</th>
+    </tr>
+    <tr wicket:id="couplingDataList">
+      <td wicket:id="project"/>
+      <td><span wicket:id="bucket0"/> </td>
+      <td><span wicket:id="bucket1"/> </td>
+      <td><span wicket:id="bucket2"/> </td>
+      <td><span wicket:id="bucket3"/> </td>
+      <td><span wicket:id="bucket4"/> </td>
+      <td wicket:id="total"/>
+    </tr>
+  </table>
+<p>
+The goal of this analysis is to provide a perspective on the design quality of one or more 
+projects through the level of coupling associated with each class.  
+</p>
+<p>
+"Afferent" coupling 
+indicates the "responsibility" associated with a class, in other words, how many other classes
+use it.  If a class has high afferent coupling, then changes to this class are likely to have
+a ripple effect on other classes.  "Efferent" coupling represents the independence of a class,
+or the number of other classes it must use in order to accomplish its task.
+If a class has high efferent coupling, then it could be negatively impacted by changes to many 
+other parts of the system.
+</p>
+<p>
+
+Each row of the table provides a perspective on coupling for a single
+project.  The perspective indicates how many classes fall into each of five possible
+ranges for coupling: 0-5, 6-10, 11-15, 15-20, and 20+.  
+</p>
+
+<p>
+To facilitate comparison between projects, you can specify either "Count" or "Percentage" when 
+generating this table.  "Count" shows the absolute number of classes whose coupling falls within
+the given range.  "Percentage" shows the proportion of classes for this project that falls within
+the given range.  Using "Count" helps you distinguish between large and small projects, while 
+using "Percentage" enables you to more easily compare projects with a "normalized" value.
+</p>
+
+</wicket:panel>
+</html>

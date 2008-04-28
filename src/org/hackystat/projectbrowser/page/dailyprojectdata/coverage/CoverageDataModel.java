@@ -101,25 +101,12 @@ public class CoverageDataModel implements Serializable {
     return coverageDataMap.get(project);
   }
   
-  
   /**
-   * Adds information about a specific file's coverage to this data model.
-   * @param project The project associated with this file. 
-   * @param data The file coverage information.
-   */
-  public void add(Project project, ConstructData data) {
-    CoverageData coverageData = this.getCoverageData(project);
-    coverageData.addEntry(data.getNumCovered(), data.getNumUncovered());
-  }
-  
-  /**
-   * Returns a list of CoverageData instances for display in the table.
-   * @return A list of CoverageData instances. 
+   * Returns the list of CoverageData instances, needed for markup.
+   * @return The list of CoverageData instances. 
    */
   public List<CoverageData> getCoverageDataList() {
-    List<CoverageData> coverageDataList = new ArrayList<CoverageData>();
-    coverageDataList.addAll(coverageDataMap.values());
-    return coverageDataList;
+    return new ArrayList<CoverageData>(this.coverageDataMap.values());
   }
-
+  
 }

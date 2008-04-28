@@ -4,6 +4,7 @@ import org.apache.wicket.behavior.HeaderContributor;
 import org.apache.wicket.model.PropertyModel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
+import org.hackystat.projectbrowser.page.dailyprojectdata.coupling.CouplingPanel;
 import org.hackystat.projectbrowser.page.dailyprojectdata.coverage.CoveragePanel;
 import org.hackystat.projectbrowser.page.dailyprojectdata.inputpanel.DpdInputPanel;
 import org.hackystat.projectbrowser.page.dailyprojectdata.unittest.UnitTestPanel;
@@ -39,6 +40,9 @@ public class DailyProjectDataPage extends ProjectBrowserBasePage {
     else if ("UnitTest".equals(session.getAnalysis())) {
       add(new UnitTestPanel(dpdDataPanelId));
     }
+    else if ("Coupling".equals(session.getAnalysis())) {
+      add(new CouplingPanel(dpdDataPanelId));
+    }
     this.get("FooterFeedback").setModel(new PropertyModel(session, "feedback"));
   }
 
@@ -59,6 +63,10 @@ public class DailyProjectDataPage extends ProjectBrowserBasePage {
     else if ("UnitTest".equals(session.getAnalysis())) {
       session.getUnitTestDataModel().update();
       this.replace(new UnitTestPanel(dpdDataPanelId));
+    }
+    else if ("Coupling".equals(session.getAnalysis())) {
+      session.getCouplingDataModel().update();
+      this.replace(new CouplingPanel(dpdDataPanelId));
     }
   }
 }

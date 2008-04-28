@@ -93,6 +93,9 @@ public class DpdInputForm extends Form {
         if ("Coverage".equals(session.getAnalysis())) {
           session.getContextSensitivePanel().setVisible(target, "Values", "Coverage Type");
         }
+        else if ("Coupling".equals(session.getAnalysis())) {
+          session.getContextSensitivePanel().setVisible(target, "Values", "Coupling Type");
+        }
         else {
           // Make all context-sensitive menus not visible.
           session.getContextSensitivePanel().setVisible(target);

@@ -13,6 +13,7 @@ import java.util.Map;
 import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
 import org.hackystat.projectbrowser.page.contextsensitive.ContextSensitiveMenu;
 import org.hackystat.projectbrowser.page.contextsensitive.ContextSensitivePanel;
+import org.hackystat.projectbrowser.page.dailyprojectdata.coupling.CouplingDataModel;
 import org.hackystat.projectbrowser.page.dailyprojectdata.coverage.CoverageDataModel;
 import org.hackystat.projectbrowser.page.dailyprojectdata.inputpanel.DpdInputForm;
 import org.hackystat.projectbrowser.page.dailyprojectdata.unittest.UnitTestDataModel;
@@ -38,7 +39,7 @@ public class DailyProjectDataSession implements Serializable {
   private String analysis = "Coverage";
   
   /** The list of analysis choices. */
-  private List<String> analysisList = Arrays.asList("Coverage", "UnitTest");
+  private List<String> analysisList = Arrays.asList("Coverage", "Coupling", "UnitTest");
 
   /** the feedback string. */
   private String feedback = "";
@@ -55,6 +56,9 @@ public class DailyProjectDataSession implements Serializable {
   /** The Unit Test analysis data model. */
   private UnitTestDataModel unitTestDataModel = new UnitTestDataModel();
   
+  /** The coupling data model. */
+  private CouplingDataModel couplingDataModel = new CouplingDataModel();
+  
   /**
    * Initialize this session, including the list of context-sensitive menus.
    */
@@ -66,6 +70,9 @@ public class DailyProjectDataSession implements Serializable {
     csMenus.put("Coverage Type", new ContextSensitiveMenu("Coverage Type", "Method", 
         Arrays.asList("Block", "Class", "Conditional", "Element", "Line", "Method", "Statement"), 
         true));
+    csMenus.put("Coupling Type", new ContextSensitiveMenu("Coupling Type", "Afferent+Efferent", 
+        Arrays.asList("Afferent", "Efferent", "Afferent+Efferent"), 
+        false));
   }
 
   /**
@@ -201,11 +208,21 @@ public class DailyProjectDataSession implements Serializable {
     return this.unitTestDataModel;
   }
   
+  
+  /**
+   * Gets the Coupling model associated with this session.
+   * @return The Coupling model. 
+   */
+  public CouplingDataModel getCouplingDataModel() {
+    return this.couplingDataModel;
+  }
+  
   /**
    * Sets all analysis data models to their empty state. 
    */
   public void clearDataModels() {
     this.coverageDataModel.clear();
     this.unitTestDataModel.clear();
+    this.couplingDataModel.clear();
   }
 }
