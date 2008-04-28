@@ -30,7 +30,7 @@ public class CoverageData implements Serializable {
   
   /** The total number of entries added across all buckets. */
   private int total = 0;
-
+  
   /**
    * Creates a new CoverageData instance and initializes the buckets to zero.  
    * @param name The name of the Project associated with this instance. 
@@ -113,12 +113,18 @@ public class CoverageData implements Serializable {
   
   /**
    * Returns the bucket value as a percentage of the total number of entries across all buckets.
+   * Returns zero if there are no entries. 
    * @param bucket The bucket whose percentage is to be returned.
    * @return The bucket as a percentage.
    */
   public int getBucketPercentage(int bucket) {
-    double percent = (double)getBucketValue(bucket) / (double)getTotal();
-    return ((int) (percent * 100));
+    if (getTotal() == 0) {
+      return 0;
+    }
+    else {
+      double percent = (double)getBucketValue(bucket) / (double)getTotal();
+      return ((int) (percent * 100));
+    }
   }
     
   /**

@@ -58,8 +58,9 @@ public class CoverageDataModel implements Serializable {
         CoverageDailyProjectData classData = dpdClient.getCoverage(project.getOwner(),
             project.getName(), Tstamp.makeTimestamp(session.getDate().getTime()), granularity);
         logger.info("Finished getting DPD for project: " + project.getName());
+        // Create a CoverageData instance for this project.
+        CoverageData coverageData = this.getCoverageData(project);
         for (ConstructData data : classData.getConstructData()) {
-          CoverageData coverageData = this.getCoverageData(project);
           coverageData.addEntry(data.getNumCovered(), data.getNumUncovered());
         }
       }

@@ -44,8 +44,8 @@ public class TelemetryDataPanel extends Panel {
       @Override
       public void onSubmit() {
         if (!session.getDataModel().updateSelectedChart()) {
-          session.setFeedback("Fail to get a chart image, " +
-          		"you may forget to select some stream before getting the chart.");
+          session.setFeedback("Failed to get a chart image. " +
+          		" Please check to make sure you've selected at least one stream!");
         }
       }
     };

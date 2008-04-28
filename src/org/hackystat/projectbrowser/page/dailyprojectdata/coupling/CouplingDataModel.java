@@ -59,9 +59,9 @@ public class CouplingDataModel implements Serializable {
             project.getName(), Tstamp.makeTimestamp(session.getDate().getTime()), "class",
             "DependencyFinder");
         logger.info("Finished getting Coupling DPD for project: " + project.getName());
+        CouplingData couplingData = this.getCouplingData(project);
         for (org.hackystat.dailyprojectdata.resource.coupling.jaxb.CouplingData data : 
           classData.getCouplingData()) {
-            CouplingData couplingData = this.getCouplingData(project);
             int couplingCount = 0;
             if ("Afferent".equals(couplingType)) {
               couplingCount = data.getAfferent().intValue();

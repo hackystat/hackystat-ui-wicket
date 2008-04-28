@@ -1,5 +1,8 @@
 package org.hackystat.projectbrowser.authentication;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.wicket.behavior.HeaderContributor;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
@@ -34,35 +37,53 @@ public class SigninPage extends WebPage {
     add(new Label("application-name", (app.hasApplicationLogo() ? "" : app.getApplicationName())));
     add(new SigninForm("signinForm"));
     add(new RegisterForm("registerForm"));
-    add(new Label("serviceInfo", getServiceInfo()));
+    List<String> serviceInfo = getServiceInfo();
+    add(new Label("available", serviceInfo.get(0)));
+    add(new Label("notAvailable", serviceInfo.get(1)));
   }
   
   /**
-   * Returns a string indicating which services are available. 
-   * @return A string indicating service availability. 
+   * Returns a list containing two strings.  The first string indicates the services that 
+   * were contacted successfully.  The second string indicates the services that were not
+   * contacted successfully. 
+   * @return A list of two strings indicating service availability. 
    */
-  private String getServiceInfo() {
+  private List<String> getServiceInfo() {
+    List<String> serviceInfo = new ArrayList<String>();
+    StringBuffer available = new StringBuffer(20);
+    StringBuffer notAvailable = new StringBuffer(20);
+    available.append("Available services: ");
+    notAvailable.append("Unavailable services: ");
+    
     ProjectBrowserApplication app = (ProjectBrowserApplication)getApplication();
     String sensorbase = app.getSensorBaseHost();
-    boolean sensorbaseOk = SensorBaseClient.isHost(sensorbase);
+    if (SensorBaseClient.isHost(sensorbase)) {
+      available.append(sensorbase);
+    }
+    else {
+      notAvailable.append(sensorbase);
+    }
     String dpd = app.getDailyProjectDataHost();
-    boolean dpdOk = DailyProjectDataClient.isHost(dpd);
+    if (DailyProjectDataClient.isHost(dpd)) {
+      available.append(' ').append(dpd);
+    }
+    else {
+      notAvailable.append(' ').append(dpd);
+    }
     String telemetry = app.getTelemetryHost();
-    boolean telemetryOk = TelemetryClient.isHost(telemetry);
-    
-    StringBuffer serviceInfo = new StringBuffer();
-    if (sensorbaseOk || dpdOk || telemetryOk) {
-      serviceInfo.append("Contacted: ");
-      serviceInfo.append(sensorbaseOk ? sensorbase + " " : "");
-      serviceInfo.append(dpdOk ? dpd + " " : "");
-      serviceInfo.append(telemetryOk ? telemetry + " " : "");
+    if (TelemetryClient.isHost(telemetry)) {
+      available.append(' ').append(telemetry);
     }
-    if (!sensorbaseOk || !dpdOk || !telemetryOk) {
-      serviceInfo.append("Failed to contact: ");
-      serviceInfo.append(sensorbaseOk ? "" : sensorbase + " ");
-      serviceInfo.append(dpdOk ? "" : dpd + " ");
-      serviceInfo.append(telemetryOk ? "" : telemetry + " ");
+    else {
+      notAvailable.append(' ').append(telemetry);
     }
-    return serviceInfo.toString();
+    String availableString = ((available.length() > 20) ?
+        available.toString() : "");
+    String notAvailableString = ((notAvailable.length() > 22) ?
+        notAvailable.toString() : "");
+        
+    serviceInfo.add(availableString);
+    serviceInfo.add(notAvailableString);
+    return serviceInfo;
   }
 }

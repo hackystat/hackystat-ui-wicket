@@ -111,8 +111,13 @@ public class CouplingData implements Serializable {
    * @return The bucket as a percentage.
    */
   public int getBucketPercentage(int bucket) {
-    double percent = (double)getBucketValue(bucket) / (double)getTotal();
-    return ((int) (percent * 100));
+    if (getTotal() == 0) {
+      return 0;
+    }
+    else {
+      double percent = (double)getBucketValue(bucket) / (double)getTotal();
+      return ((int) (percent * 100));
+    }
   }
     
   /**
