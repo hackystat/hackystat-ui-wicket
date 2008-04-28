@@ -27,9 +27,9 @@ public class TestTelemetryPage extends ProjectBrowserTestHelper {
     WicketTester tester = new WicketTester(new ProjectBrowserApplication(getTestProperties()));
     tester.startPage(SigninPage.class); 
     // Let's sign in.
-    String testUser = "TestUser@hackystat.org";
+    String testUser = "TestTelemetryUser@hackystat.org";
     String testProject = "TelemetryProject";
-    this.generateSimData("TestUser", testProject, Tstamp.makeTimestamp(), 4);
+    this.generateSimData("TestTelemetryUser", testProject, Tstamp.makeTimestamp(), 4);
     FormTester signinForm = tester.newFormTester("signinForm");
     signinForm.setValue("user", testUser);
     signinForm.setValue("password", testUser);
@@ -55,11 +55,11 @@ public class TestTelemetryPage extends ProjectBrowserTestHelper {
     /*
     FormTester streamForm = tester.newFormTester("dataPanel:streamForm");
     streamForm.getForm().get("selectAll").setModelObject(true);
-    tester.assertListView("dataPanel:streamForm:projectTable", new ArrayList<String>());
     streamForm.submit();
     assertEquals("chart image should be displayed now.", "http://chart.apis.google.com/chart?",
         tester.getTagByWicketId("selectedChart").getAttribute("src"));
         */
+    this.clearData(testUser);
   }
   
   /**

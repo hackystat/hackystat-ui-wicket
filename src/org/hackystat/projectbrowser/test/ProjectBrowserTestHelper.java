@@ -4,6 +4,10 @@ import java.util.Properties;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.hackystat.projectbrowser.ProjectBrowserProperties;
 import org.junit.BeforeClass;
+import org.hackystat.sensorbase.client.SensorBaseClient;
+import org.hackystat.sensorbase.client.SensorBaseClientException;
+import org.hackystat.sensorbase.resource.projects.jaxb.Project;
+import org.hackystat.sensorbase.resource.projects.jaxb.ProjectRef;
 import org.hackystat.simdata.SimData;
 import org.hackystat.utilities.tstamp.Tstamp;
 
@@ -161,6 +165,28 @@ public class ProjectBrowserTestHelper {
     }
     catch (Exception e) {
       e.printStackTrace();
+    }
+  }
+  
+  /**
+   * Clear data associated with the given user.
+   * @param user the given user.
+   */
+  public void clearData(String user) {
+    SensorBaseClient client = new SensorBaseClient(user, user, sensorbaseServer.getHostName());
+    try {
+      client.deleteSensorData(user);
+      for (ProjectRef ref : client.getProjectIndex(user).getProjectRef()) {
+        Project project = client.getProject(ref);
+        if (user.equals(project.getOwner())) {
+          client.deleteProject(user, client.getProject(ref).getName());
+        }
+      }
+      client.deleteUser(user);
+    }
+    catch (SensorBaseClientException e) {
+      System.out.println("Errors when clearing data associated with " + user + ": " + 
+          e.getMessage());
     }
   }
 }
