@@ -38,6 +38,8 @@ public class SensorDataPage extends ProjectBrowserBasePage {
   @Override
   public void onProjectDateSubmit() {
     try {
+      // Set the footerFeedback to null. 
+      this.footerFeedback = "";
       // Start by getting the project summary.
       SensorDataSession session = ProjectBrowserSession.get().getSensorDataSession();
       //String projectName = session.getProjectName();

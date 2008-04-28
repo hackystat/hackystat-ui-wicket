@@ -95,7 +95,7 @@ public class ProjectBrowserProperties {
     properties.setProperty(PORT_KEY, String.valueOf(defaultPort));
     properties.setProperty(ADMIN_EMAIL_KEY, "johnson@hackystat.org");
     properties.setProperty(APPLICATION_LOGO_KEY, "");
-    properties.setProperty(WICKET_CONFIGURATION_KEY, "development");
+    properties.setProperty(WICKET_CONFIGURATION_KEY, "deployment");
     properties.setProperty(APPLICATION_NAME_KEY, "Hackystat ProjectBrowser");
     properties.setProperty(SENSORDATA_ITEMSPERPAGE_KEY, String.valueOf(defaultItemsPerPage));
 
