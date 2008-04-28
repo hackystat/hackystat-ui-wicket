@@ -13,6 +13,7 @@ import java.util.Map;
 import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
 import org.hackystat.projectbrowser.page.contextsensitive.ContextSensitiveMenu;
 import org.hackystat.projectbrowser.page.contextsensitive.ContextSensitivePanel;
+import org.hackystat.projectbrowser.page.dailyprojectdata.complexity.ComplexityDataModel;
 import org.hackystat.projectbrowser.page.dailyprojectdata.coupling.CouplingDataModel;
 import org.hackystat.projectbrowser.page.dailyprojectdata.coverage.CoverageDataModel;
 import org.hackystat.projectbrowser.page.dailyprojectdata.inputpanel.DpdInputForm;
@@ -39,7 +40,8 @@ public class DailyProjectDataSession implements Serializable {
   private String analysis = "Coverage";
   
   /** The list of analysis choices. */
-  private List<String> analysisList = Arrays.asList("Coverage", "Coupling", "UnitTest");
+  private List<String> analysisList = 
+    Arrays.asList("Coverage", "Coupling", "Complexity", "UnitTest");
 
   /** the feedback string. */
   private String feedback = "";
@@ -58,7 +60,10 @@ public class DailyProjectDataSession implements Serializable {
   
   /** The coupling data model. */
   private CouplingDataModel couplingDataModel = new CouplingDataModel();
-  
+
+  /** The complexity data model. */
+  private ComplexityDataModel complexityDataModel = new ComplexityDataModel();
+
   /**
    * Initialize this session, including the list of context-sensitive menus.
    */
@@ -218,11 +223,20 @@ public class DailyProjectDataSession implements Serializable {
   }
   
   /**
+   * Gets the Complexity model associated with this session.
+   * @return The Complexity model. 
+   */
+  public ComplexityDataModel getComplexityDataModel() {
+    return this.complexityDataModel;
+  }
+  
+  /**
    * Sets all analysis data models to their empty state. 
    */
   public void clearDataModels() {
     this.coverageDataModel.clear();
     this.unitTestDataModel.clear();
     this.couplingDataModel.clear();
+    this.complexityDataModel.clear();
   }
 }

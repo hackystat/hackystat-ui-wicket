@@ -1,0 +1,57 @@
+<html xmlns:wicket>
+<wicket:panel>
+  <h3><span wicket:id="valuesType">[Count]</span> of methods in each of five ranges for <span wicket:id="complexityType">[Type]</span> complexity</h3>
+  <table>
+    <tr>
+      <th>Project</th>
+      <th>0-10</th>
+      <th>11-20</th>
+      <th>21-30</th>
+      <th>31-40</th>
+      <th>40+</th>
+      <th>Total</th>
+    </tr>
+    <tr wicket:id="complexityDataList">
+      <td wicket:id="project"/>
+      <td><span wicket:id="bucket0"/> </td>
+      <td><span wicket:id="bucket1"/> </td>
+      <td><span wicket:id="bucket2"/> </td>
+      <td><span wicket:id="bucket3"/> </td>
+      <td><span wicket:id="bucket4"/> </td>
+      <td wicket:id="total"/>
+    </tr>
+  </table>
+<p>
+The goal of this analysis is to provide a perspective on the design quality of one or more 
+projects through the level of complexity associated with each method. At present, the 
+only complexity metric is cyclomatic complexity. 
+</p>
+<p>
+The cyclomatic complexity of a program unit is the count of the number of linearly 
+independent paths through the source code. For instance, if the program unit contains only
+straight line code with no conditionals or loops, then its cyclomatic complexity would be 1. 
+If the program unit also contains a single simple conditional statement, then 
+its cyclomatic complexity would be 2. This value
+corresponds to the two possible paths through the code: one path where the conditional test
+evaluates to true, and a second path where the conditional test evaluates to false.
+</p>
+
+<p>
+Each row of the table provides a perspective on complexity for a single
+project.  The perspective indicates how many methods fall into each of five possible
+ranges for complexity: 0-10, 11-20, 21-30, 31-40, and 40+.  
+</p>
+
+<p>
+To facilitate comparison between projects, you can specify either "Count" or "Percentage" when 
+generating this table.  "Count" shows the absolute number of methods whose complexity falls within
+the given range.  "Percentage" shows the proportion of methods for this project that falls within
+the given range.  Using "Count" helps you distinguish between large and small projects, while 
+using "Percentage" enables you to more easily compare projects with a "normalized" value.
+</p>
+
+<p>
+Currently, this analysis focusses on cyclomatic complexity as produced by the JavaNCSS tool.
+</p>
+</wicket:panel>
+</html>
