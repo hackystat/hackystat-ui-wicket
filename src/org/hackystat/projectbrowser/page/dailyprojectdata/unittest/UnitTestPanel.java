@@ -4,53 +4,54 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.PropertyModel;
-import org.hackystat.dailyprojectdata.resource.unittest.jaxb.MemberData;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.page.dailyprojectdata.DailyProjectDataSession;
 
+
 /**
- * Page to show daily unit test data of the project.
+ * Data panel for unittest.
+ * 
+ * @author Philip Johnson
  * @author Shaoxuan Zhang
+ * 
  */
 public class UnitTestPanel extends Panel {
+
   /** Support serialization. */
   private static final long serialVersionUID = 1L;
 
   /**
-   * create the UnitTestPage
-   * @param id wicket component id.
+   * Create this panel, providing the appropriate wicket ID.
+   * 
+   * @param id The wicket component id.
    */
-  public UnitTestPanel(final String id) {
+  public UnitTestPanel(String id) {
     super(id);
     DailyProjectDataSession session = ProjectBrowserSession.get().getDailyProjectDataSession();
-    this.setModel(new CompoundPropertyModel(this));
-    //if (session.getProject() == null) {
-      add(new Label("projectName", ""));
-      add(new Label("projectOwner", ""));
-//    }
-//    else {
-//      add(new Label("projectName", session.getProject().getName()));
-//      add(new Label("projectOwner", session.getProject().getOwner()));
-//    }
-    add(new Label("date", new PropertyModel(session, "dateString")));
+    // prepare the data model.
     UnitTestDataModel dataModel = session.getUnitTestDataModel();
-    ListView memberDataListView = 
-      new ListView("memberDataList", new PropertyModel(dataModel, "memberDataList")) {
+    add(new Label("valuesType", session.getContextSensitiveMenu("Values").getSelectedValue()));
+    ListView memberDataListView = new ListView("unitTestDataList", new PropertyModel(dataModel,
+        "unitTestDataList")) {
       /** Support serialization. */
       private static final long serialVersionUID = 1L;
+
       @Override
       protected void populateItem(ListItem item) {
-        MemberData memberData = (MemberData) item.getModelObject();
-        item.add(new Label("name", getEmailFromUri(memberData.getMemberUri())));
-        item.add(new Label("testSuccessCount", memberData.getSuccess().toString()));
-        item.add(new Label("testFailureCount", memberData.getFailure().toString()));
-      }
-
-      private String getEmailFromUri(String memberUri) {
-        int index = memberUri.lastIndexOf('/');
-        return memberUri.substring(index + 1);
+        UnitTestData unittestData = (UnitTestData) item.getModelObject();
+        item.add(new Label("project", unittestData.getProject().getName()));
+        DailyProjectDataSession session = ProjectBrowserSession.get().getDailyProjectDataSession();
+        String valueType = session.getContextSensitiveMenu("Values").getSelectedValue();
+        if ("Count".equals(valueType)) {
+          item.add(new Label("bucket0", unittestData.getBucketCountString(0)));
+          item.add(new Label("bucket1", unittestData.getBucketCountString(1)));
+        }
+        else {
+          item.add(new Label("bucket0", unittestData.getBucketPercentageString(0)));
+          item.add(new Label("bucket1", unittestData.getBucketPercentageString(1)));
+        }
+        item.add(new Label("total", unittestData.getTotalString()));
       }
     };
     add(memberDataListView);

@@ -1,23 +1,44 @@
 <html xmlns:wicket>
 <wicket:panel>
-  <h3>Unit Test</h3>
-  <h4>
-    Project Name: <span wicket:id="projectName"/><br/>
-    Project Owner: <span wicket:id="projectOwner"/><br>
-    Date: <span wicket:id="date"/>
-  </h4>
-  <table width="90%">
-  	<tr>
-      <th>Name</th>
-      <th>Success Test</th>
-      <th>Failure Test</th>
+  <h3><span wicket:id="valuesType">[Count]</span> of test invocations that passed and failed</h3>
+  <table>
+    <tr>
+      <th>Project</th>
+      <th>Success</th>
+      <th>Failure</th>
+      <th>Total</th>
     </tr>
-    <tr wicket:id="memberDataList">
-      <td wicket:id="name"/>
-      <td wicket:id="testSuccessCount"/>
-      <td wicket:id="testFailureCount"/>
+    <tr wicket:id="unitTestDataList">
+      <td wicket:id="project"/>
+      <td><span wicket:id="bucket0"/> </td>
+      <td><span wicket:id="bucket1"/> </td>
+      <td wicket:id="total"/>
     </tr>
   </table>
+<p>
+The goal of this analysis is to provide a perspective on the amount of test invocations associated
+with a set of projects.  Each row of the table provides a perspective on test 
+invocations for a single
+project.  The perspective indicates how many unit test invocations passed and how many unit test
+invocations failed, 
+as well as how many total unit test invocations occurred.  
+Note that if a given test will be counted multiple times, once for each time it was invoked. 
+</p>
+
+<p>
+This analysis provides a sense for testing "activity" associated with a given project.  Projects
+that depart significantly from their "baseline" level of testing activities might be
+encountering new development conditions that might impact on schedule or resources.  
+</p>
+
+<p>
+To facilitate comparison between projects, you can specify either "Count" or "Percentage" when 
+generating this table.  "Count" shows the absolute number of unit test invocations.
+"Percentage" shows the proportion of invocations that passed or failed.
+Using "Count" helps you distinguish between projects that have very different numbers
+of invocations, while 
+using "Percentage" enables you to more easily compare projects with a "normalized" value.
+</p>
 
 </wicket:panel>
 </html>

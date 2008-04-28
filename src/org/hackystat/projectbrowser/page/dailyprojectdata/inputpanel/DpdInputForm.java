@@ -88,16 +88,20 @@ public class DpdInputForm extends Form {
        */
       @Override
       protected void onUpdate(AjaxRequestTarget target) {
+        String values = "Values";
         DailyProjectDataSession session = ProjectBrowserSession.get().getDailyProjectDataSession();
         // Make the appropriate context-sensitive menus visible, depending upon the analysis.
         if ("Coverage".equals(session.getAnalysis())) {
-          session.getContextSensitivePanel().setVisible(target, "Values", "Coverage Type");
+          session.getContextSensitivePanel().setVisible(target, values, "Coverage Type");
         }
         else if ("Coupling".equals(session.getAnalysis())) {
-          session.getContextSensitivePanel().setVisible(target, "Values", "Coupling Type");
+          session.getContextSensitivePanel().setVisible(target, values, "Coupling Type");
         }
         else if ("Complexity".equals(session.getAnalysis())) {
-          session.getContextSensitivePanel().setVisible(target, "Values");
+          session.getContextSensitivePanel().setVisible(target, values);
+        }
+        else if ("UnitTest".equals(session.getAnalysis())) {
+          session.getContextSensitivePanel().setVisible(target, values);
         }
         else {
           // Make all context-sensitive menus not visible.
