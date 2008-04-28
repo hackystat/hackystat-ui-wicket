@@ -40,7 +40,7 @@ public class TestTelemetryPage extends ProjectBrowserTestHelper {
     tester.assertComponent("inputPanel", TelemetryInputPanel.class);
     try {
       tester.assertComponent("dataPanel", TelemetryDataPanel.class);
-      fail();
+      fail("dataPanel should not be shown.");
     }
     catch (NullPointerException e) {
       System.out.println("Confirmed that data panel did not show initially.");
