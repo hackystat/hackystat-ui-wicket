@@ -60,7 +60,7 @@ public class BuildDataModel implements Serializable {
         // Create a BuildData instance for this project.
         BuildData buildData = this.getBuildData(project);
         for (MemberData data : classData.getMemberData()) {
-          buildData.addEntry(data.getSuccess(), data.getFailure());
+          buildData.addEntry(data);
         }
       }
       catch (DailyProjectDataClientException e) {

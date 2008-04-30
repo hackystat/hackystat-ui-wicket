@@ -44,7 +44,7 @@ public class BuildPanel extends Panel {
         DailyProjectDataSession session = ProjectBrowserSession.get().getDailyProjectDataSession();
         String valueType = session.getContextSensitiveMenu("Values").getSelectedValue();
         if ("Count".equals(valueType)) {
-          item.add(new Label("bucket0", buildData.getBucketCountString(0)));
+          item.add(buildData.getPanel("bucket0", 0, true));
           item.add(new Label("bucket1", buildData.getBucketCountString(1)));
         }
         else {
