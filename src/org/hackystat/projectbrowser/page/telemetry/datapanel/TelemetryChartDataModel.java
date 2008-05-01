@@ -131,6 +131,8 @@ public class TelemetryChartDataModel implements Serializable {
       }
     }
     catch (TelemetryClientException e) {
+      this.processingMessage += "Errors when retrieving " + this.telemetryName + 
+      " telemetry data: " + e.getMessage() + ". Please try again.\n";
       session.setFeedback("Errors when retrieving " + this.telemetryName + " telemetry data: "
           + e.getMessage() + ". Please try again.");
       this.complete = false;
