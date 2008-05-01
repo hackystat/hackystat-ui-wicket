@@ -9,6 +9,7 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
@@ -34,9 +35,6 @@ public class TelemetryDataPanel extends Panel {
   public TelemetryDataPanel(String id) {
     super(id);
     IModel dataModel = new PropertyModel(session, "dataModel");
-    
-    // TODO logger, delete no more.
-    //System.out.println("Telemetry name: " + session.getDataModel().getTelemetryName());
     
     Form streamForm = new Form("streamForm") {
       /** Support serialization. */
@@ -156,14 +154,25 @@ public class TelemetryDataPanel extends Panel {
         new Label(selectedchartUrlWindow.getModalWindow().getContentId(), 
                   new PropertyModel(dataModel, "selectedChart")));
     add(selectedchartUrlWindow);
+    
+    //attribute to decide to show panel content or not.
+    AttributeModifier visibleAttribute = 
+      new AttributeModifier("style", true, new AbstractReadOnlyModel() {
+      private static final long serialVersionUID = 2013912742253160111L;
+      @Override
+      public Object getObject() {
+        return (!session.getDataModel().isEmpty() && session.getDataModel().isComplete()) ? 
+            "" : "display:none";
+      }
+    });
+    add(visibleAttribute);
   }
   
-  /**
-   * Display this panel only if the SdtSummaryModel contains information. 
-   * @return True if this panel should be displayed.
-   */
-  @Override
+  
+  //@Override
+  /*
   public boolean isVisible() {
-    return !session.getDataModel().isEmpty();
+    return !session.getDataModel().isEmpty() && session.getDataModel().isComplete();
   }
+  */
 }

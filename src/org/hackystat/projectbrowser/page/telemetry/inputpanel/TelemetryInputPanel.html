@@ -1,8 +1,8 @@
 <html xmlns:wicket>
   <wicket:panel>
     <span wicket:id="feedback">Feedback</span>
-    <form wicket:id="inputForm">
       <table>
+    <form wicket:id="inputForm">
         <tr>
           <td>
             Chart:
@@ -51,10 +51,17 @@
         </tr>
         <tr>
           <td style="text-align:center">
-            <input type="submit" value="Display Telemetry" />
+            <input type="submit" value="Display Telemetry" wicket:id="submit"/>
           </td>
         </tr>
-      </table>
     </form>
+    <form wicket:id="cancelForm">
+        <tr>
+          <td style="text-align:center">
+            <input type="submit" value="Cancel" wicket:id="cancel"/>
+          </td>
+        </tr>
+    </form>
+      </table>
   </wicket:panel>
 </html>

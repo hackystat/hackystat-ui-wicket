@@ -5,6 +5,7 @@ import org.apache.wicket.extensions.markup.html.form.DateTextField;
 import org.apache.wicket.extensions.yui.calendar.DatePicker;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
@@ -40,11 +41,11 @@ public class TelemetryInputForm extends Form {
    * Create this form, supplying the wicket:id.
    * 
    * @param id The wicket:id.
-   * @param page the page this page is attached to.
+   * @param p the page this page is attached to.
    */
-  public TelemetryInputForm(String id, ProjectBrowserBasePage page) {
+  public TelemetryInputForm(String id, ProjectBrowserBasePage p) {
     super(id);
-    this.page = page;
+    this.page = p;
     
     // Create the drop-down menu for telemetry. 
     DropDownChoice telemetryMenu = 
@@ -60,15 +61,19 @@ public class TelemetryInputForm extends Form {
       protected void onSelectionChanged(java.lang.Object newSelection) {
         session.getParameters().clear();
       }
+      @Override
+      public boolean isEnabled() {
+        return getIsEnable();
+      }
     };
     telemetryMenu.setRequired(true);
+    add(telemetryMenu);
     //add the popup window
     PopupWindowPanel telemetryPopup = 
       new PopupWindowPanel("chartDefPopup", "Telemetry Descriptions");
     telemetryPopup.getModalWindow().setContent(
         new TelemetryDescriptionPanel(telemetryPopup.getModalWindow().getContentId()));
     add(telemetryPopup);
-    this.add(telemetryMenu);
     if (session.getTelemetryName() == null && !session.getTelemetryList().isEmpty()) {
       session.setTelemetryName(session.getTelemetryList().get(0));
     }
@@ -82,21 +87,44 @@ public class TelemetryInputForm extends Form {
     //StartDateTextField
     DateTextField startDateTextField = 
       new DateTextField("startDateTextField", new PropertyModel(session, "startDate"), 
-          DpdInputForm.DATA_FORMAT);
+          DpdInputForm.DATA_FORMAT) {
+      /** Support serialization. */
+      public static final long serialVersionUID = 1L;
+      @Override
+      public boolean isEnabled() {
+        return getIsEnable();
+      }
+    };
     startDateTextField.add(new DatePicker());
     startDateTextField.setRequired(true);
     add(startDateTextField);
+    
     //EndDateTextField
     DateTextField endDateTextField = 
       new DateTextField("endDateTextField", new PropertyModel(session, "endDate"), 
-          DpdInputForm.DATA_FORMAT);
+          DpdInputForm.DATA_FORMAT) {
+      /** Support serialization. */
+      public static final long serialVersionUID = 1L;
+      @Override
+      public boolean isEnabled() {
+        return getIsEnable();
+      }
+    };
     endDateTextField.add(new DatePicker());
     endDateTextField.setRequired(true);
     add(endDateTextField);
+    
     //granularity
     add(new DropDownChoice("granularity", 
                            new PropertyModel(session, "granularity"), 
-                           session.getGranularityList()));
+                           session.getGranularityList()) {
+      /** Support serialization. */
+      public static final long serialVersionUID = 1L;
+      @Override
+      public boolean isEnabled() {
+        return getIsEnable();
+      }
+    });
     
     // Now create the drop-down menu for projects. 
     ListMultipleChoice projectMenu = 
@@ -106,9 +134,9 @@ public class TelemetryInputForm extends Form {
           new ProjectChoiceRenderer()) {
       /** Support serialization. */
       public static final long serialVersionUID = 1L;
-      @Override 
-      public boolean isVisible() {
-        return ProjectBrowserSession.get().getTelemetrySession().getTelemetryName() != null;
+      @Override
+      public boolean isEnabled() {
+        return getIsEnable();
       }
     };
     projectMenu.setRequired(true);
@@ -133,23 +161,51 @@ public class TelemetryInputForm extends Form {
         item.add(component);
         PopupWindowPanel parameterPopup = 
           new PopupWindowPanel("parameterPopup", paramDef.getName());
-        // TODO add content.
         parameterPopup.getModalWindow().setContent(
             new Label(parameterPopup.getModalWindow().getContentId(), 
                                paramDef.getDescription()));
         item.add(parameterPopup);
       }
+      
+      @Override
+      public boolean isVisible() {
+        return getIsEnable();
+      }
     };
     add(parameterList);
+    
+    Button submitButton = new Button("submit") {
+      /** Support serialization. */
+      public static final long serialVersionUID = 1L;
+      @Override
+      public void onSubmit() {
+        ProjectBrowserSession.get().getTelemetrySession().updateDataModel();
+        page.onProjectDateSubmit();
+        //setResponsePage(TelemetryPage.class);
+      }
+      @Override
+      public boolean isEnabled() {
+        return getIsEnable();
+      }
+    };
+    add(submitButton);
+    
   }
-
+  
   /**
-   * Process the user action after submitting a project and date. 
+   * Disable the whole form when data loading in process.
+   * @return true if the form is enabled.
    */
   @Override
-  public void onSubmit() {
-    ProjectBrowserSession.get().getTelemetrySession().updateDataModel();
-    page.onProjectDateSubmit();
+  public boolean isEnabled() {
+    return getIsEnable();
+  }
+  
+  /**
+   * @return true if the form is enabled.
+   */
+  protected boolean getIsEnable() {
+    return !ProjectBrowserSession.get().getTelemetrySession().getDataModel().isInProcess();
   }
   
   /**

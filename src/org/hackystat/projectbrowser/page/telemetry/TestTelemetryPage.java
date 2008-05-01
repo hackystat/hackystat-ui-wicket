@@ -1,13 +1,11 @@
 package org.hackystat.projectbrowser.page.telemetry;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
 import org.hackystat.projectbrowser.ProjectBrowserApplication;
 import org.hackystat.projectbrowser.authentication.SigninPage;
-import org.hackystat.projectbrowser.page.telemetry.datapanel.TelemetryDataPanel;
 import org.hackystat.projectbrowser.page.telemetry.inputpanel.TelemetryInputPanel;
 import org.hackystat.projectbrowser.test.ProjectBrowserTestHelper;
 import org.hackystat.utilities.tstamp.Tstamp;
@@ -51,13 +49,6 @@ public class TestTelemetryPage extends ProjectBrowserTestHelper {
     tester.clickLink("TelemetryPageLink");
     tester.assertRenderedPage(TelemetryPage.class);
     tester.assertComponent("inputPanel", TelemetryInputPanel.class);
-    try {
-      tester.assertComponent("dataPanel", TelemetryDataPanel.class);
-      fail("dataPanel should not be shown.");
-    }
-    catch (NullPointerException e) {
-      System.out.println("Confirmed that data panel did not show initially.");
-    }
     FormTester inputForm = tester.newFormTester("inputPanel:inputForm");
     assertEquals("Check the defult value of the date field.", 
           getDateYesterdayAsString(), inputForm.getTextComponentValue("endDateTextField"));

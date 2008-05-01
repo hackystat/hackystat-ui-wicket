@@ -257,6 +257,20 @@ public class TelemetrySession implements Serializable {
     //this.dataModel = new TelemetryChartDataModel();
     this.dataModel.
       setModel(getStartDate(), getEndDate(), selectedProjects, telemetryName, parameters);
+    Thread thread = new Thread() {
+      @Override
+      public void run() {
+        dataModel.loadData();
+      }
+    };
+    thread.start();
+  }
+  
+  /**
+   * Cancel data model's update.
+   */
+  public void canelDataUpdate() {
+    dataModel.cancelDataLoading();
   }
   
   /**

@@ -10,6 +10,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import org.apache.wicket.model.IModel;
+import org.hackystat.projectbrowser.ProjectBrowserApplication;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.googlechart.ChartType;
 import org.hackystat.projectbrowser.googlechart.GoogleChart;
@@ -46,7 +47,7 @@ public class TelemetryChartDataModel implements Serializable {
   private List<String> parameters = new ArrayList<String>();
   /** Store the data retrieved from telemetry service. */
   private Map<Project, List<SelectableTelemetryStream>> projectStreamData = 
-                                        new HashMap<Project, List<SelectableTelemetryStream>>();
+    new HashMap<Project, List<SelectableTelemetryStream>>();
   /** Chart with all project streams. */
   private String overallChart = null;
   /** Chart with selected project streams. */
@@ -55,7 +56,20 @@ public class TelemetryChartDataModel implements Serializable {
   private int width = 1000;
   /** the height of this chart. */
   private int height = 300;
-
+  /** state of data loading process. */
+  private boolean inProcess;
+  /** result of data loading. */
+  private boolean complete;
+  /** message to display when data loading is in process.*/
+  private String processingMessage = "";
+  /** host of the telemetry host. */
+  private String telemetryHost;
+  /** email of the user. */
+  private String email;
+  /** password of the user. */
+  private String password;
+  /** session that holds the state of this page. */
+  private TelemetrySession session;
   /** The URL of google chart. */
   // private String chartUrl = "";
   /**
@@ -67,6 +81,12 @@ public class TelemetryChartDataModel implements Serializable {
    */
   public void setModel(Date startDate, Date endDate, List<Project> selectedProjects,
       String telemetryName, List<IModel> parameters) {
+    this.processingMessage = "";
+    this.telemetryHost = ((ProjectBrowserApplication)ProjectBrowserSession.get().getApplication()).
+                    getTelemetryHost();
+    this.email = ProjectBrowserSession.get().getEmail();
+    this.password = ProjectBrowserSession.get().getPassword();
+    this.session = ProjectBrowserSession.get().getTelemetrySession();
     this.startDate = startDate.getTime();
     this.endDate = endDate.getTime();
     this.selectedProjects = selectedProjects;
@@ -83,6 +103,51 @@ public class TelemetryChartDataModel implements Serializable {
     // this.chartUrl = this.getChartUrl(project);
   }
 
+  /**
+   * Load data from Hackystat service.
+   */
+  public void loadData() {
+    this.inProcess = true;
+    this.complete = false;
+    this.processingMessage = "Loading data from Hackystat serive.\n";
+    try {
+      for (int i = 0; i < this.selectedProjects.size() && inProcess; i++) {
+        Project project = this.selectedProjects.get(i);
+        this.processingMessage += "Loading data of project " + project.getName() + 
+            " (" + (i + 1) + " of " + this.selectedProjects.size() + ").\n";
+        List<SelectableTelemetryStream> streamList = new ArrayList<SelectableTelemetryStream>();
+
+        TelemetryClient client = new TelemetryClient(this.telemetryHost, this.email, this.password);
+        List<TelemetryStream> streams = client.getChart(this.getTelemetryName(),
+            project.getOwner(), project.getName(), session.getGranularity(),
+            Tstamp.makeTimestamp(session.getStartDate().getTime()),
+            Tstamp.makeTimestamp(session.getEndDate().getTime()), this.getParameterAsString())
+            .getTelemetryStream();
+        for (TelemetryStream stream : streams) {
+          streamList.add(new SelectableTelemetryStream(stream));
+        }
+        this.projectStreamData.put(project, streamList);
+      //this.processingMessage += "Done.\n";
+      }
+    }
+    catch (TelemetryClientException e) {
+      session.setFeedback("Errors when retrieving " + this.telemetryName + " telemetry data: "
+          + e.getMessage() + ". Please try again.");
+      this.complete = false;
+      this.inProcess = false;
+      return;
+    }
+    this.processingMessage += "All done.\n";
+    this.complete = inProcess;
+    this.inProcess = false;
+  }
+  
+  /**
+   * Cancel the data loading process.
+   */
+  public void cancelDataLoading() {
+    this.inProcess = false;
+  }
   /**
    * Returns the start date in yyyy-MM-dd format.
    * 
@@ -144,27 +209,7 @@ public class TelemetryChartDataModel implements Serializable {
     if (streamList == null) {
       streamList = new ArrayList<SelectableTelemetryStream>();
     }
-    if (streamList.isEmpty()) {
-      TelemetryClient client = ProjectBrowserSession.get().getTelemetryClient();
-      TelemetrySession session = ProjectBrowserSession.get().getTelemetrySession();
-      try {
-        List<TelemetryStream> streams = client.getChart(
-            this.getTelemetryName(), project.getOwner(), project.getName(),
-            session.getGranularity(), Tstamp.makeTimestamp(session.getStartDate().getTime()),
-            Tstamp.makeTimestamp(session.getEndDate().getTime()), this.getParameterAsString())
-            .getTelemetryStream();
-        for (TelemetryStream stream : streams) {
-          streamList.add(new SelectableTelemetryStream(stream));
-        }
-        this.projectStreamData.put(project, streamList);
-      }
-      catch (TelemetryClientException e) {
-        streamList = new ArrayList<SelectableTelemetryStream>();
-        session.setFeedback("Errors when retrieving " + this.telemetryName + " telemetry data: "
-            + e.getMessage());
-      }
-    }
-    return streamList ;
+    return streamList;
   }
 
   /**
@@ -185,9 +230,10 @@ public class TelemetryChartDataModel implements Serializable {
     }
     return "";
   }
-  
+
   /**
    * Return the google chart url that present all streams within the given list.
+   * 
    * @param namePrecedings precedings to add before stream names.
    * @param streams the given stream list.
    * @return the URL string of the chart.
@@ -200,15 +246,13 @@ public class TelemetryChartDataModel implements Serializable {
       if (namePrecedings != null && i < namePrecedings.size()) {
         namePreceding = namePrecedings.get(i);
       }
-      double streamMax = 
-        this.addStreamToChart(namePreceding, streams.get(i), googleChart);
+      double streamMax = this.addStreamToChart(namePreceding, streams.get(i), googleChart);
       if (streamMax > maximum) {
         maximum = streamMax;
       }
     }
     if (!streams.isEmpty()) {
-      googleChart.addAxisLabel("x", 
-                       getDateList(streams.get(0).getTelemetryPoint()));
+      googleChart.addAxisLabel("x", getDateList(streams.get(0).getTelemetryPoint()));
     }
     if (maximum > 100 || maximum < 50) {
       double newRange;
@@ -228,21 +272,22 @@ public class TelemetryChartDataModel implements Serializable {
       googleChart.addAxisLabel("y");
     }
 
-    //ProjectBrowserSession.get().getTelemetrySession().setFeedback(googleChart.getUrl());
-    
+    // ProjectBrowserSession.get().getTelemetrySession().setFeedback(googleChart.getUrl());
+
     return googleChart.getUrl();
   }
-  
+
   /**
    * Add the given stream to the google chart. And return the maximum value of the stream.
+   * 
    * @param namePreceding string that put before the name of the stream.
    * @param stream the given stream
    * @param googleChart the google chart
    * @return the maximum value of the stream.
    */
-  public double addStreamToChart(String namePreceding, TelemetryStream stream, 
-                                 GoogleChart googleChart) {
-    //prepare useful object.
+  public double addStreamToChart(String namePreceding, TelemetryStream stream,
+      GoogleChart googleChart) {
+    // prepare useful object.
     Random random = new Random();
     TelemetrySession session = ProjectBrowserSession.get().getTelemetrySession();
     double maximum = -1;
@@ -262,7 +307,7 @@ public class TelemetryChartDataModel implements Serializable {
         streamData.add(value);
       }
     }
-    //add the chart only if the stream is not empty.
+    // add the chart only if the stream is not empty.
     if (maximum >= 0) {
       googleChart.getChartData().add(streamData);
       Long longValue = Math.round(Math.random() * 0xFFFFFF);
@@ -278,13 +323,14 @@ public class TelemetryChartDataModel implements Serializable {
         name = namePreceding + "-" + name;
       }
       googleChart.getChartLegend().add(name);
-      
+
     }
     return maximum;
   }
 
   /**
    * Return the date list within the list of points.
+   * 
    * @param points the point list.
    * @return the date list.
    */
@@ -300,25 +346,25 @@ public class TelemetryChartDataModel implements Serializable {
     }
     return dates;
   }
-  
+
   /**
    * Return the date list inside this model.
+   * 
    * @return the date list.
    */
   public List<String> getDateList() {
     if (this.selectedProjects.isEmpty()) {
       return new ArrayList<String>();
     }
-    List<SelectableTelemetryStream> streamList = 
-        this.getTelemetryStream(this.selectedProjects.get(0));
+    List<SelectableTelemetryStream> streamList = this.getTelemetryStream(this.selectedProjects
+        .get(0));
     if (streamList.isEmpty()) {
       return new ArrayList<String>();
     }
-    List<String> dateList = 
-      getDateList(streamList.get(0).getTelemetryStream().getTelemetryPoint());
+    List<String> dateList = getDateList(streamList.get(0).getTelemetryStream().getTelemetryPoint());
     return dateList;
   }
-  
+
   /**
    * @return the selectedProjects
    */
@@ -340,9 +386,10 @@ public class TelemetryChartDataModel implements Serializable {
     }
     return chartLink;
   }
-  
+
   /**
    * Return the comma-separated list of parameters in String
+   * 
    * @return the parameters as String
    */
   public String getParameterAsString() {
@@ -418,9 +465,10 @@ public class TelemetryChartDataModel implements Serializable {
   public boolean isChartEmpty() {
     return selectedChart == null || "".equals(selectedChart);
   }
-  
+
   /**
    * reset the selectedChart.
+   * 
    * @return true if the chart is successfully updated.
    */
   public boolean updateSelectedChart() {
@@ -442,9 +490,10 @@ public class TelemetryChartDataModel implements Serializable {
     selectedChart = this.getChartUrl(projectNames, streams);
     return true;
   }
-  
+
   /**
    * Change all selected flags of streams to the given flag.
+   * 
    * @param flag the boolean flag.
    */
   public void changeSelectionForAll(boolean flag) {
@@ -453,5 +502,26 @@ public class TelemetryChartDataModel implements Serializable {
         stream.setSelected(flag);
       }
     }
+  }
+
+  /**
+   * @return the inProcess
+   */
+  public boolean isInProcess() {
+    return inProcess;
+  }
+
+  /**
+   * @return the isComplete
+   */
+  public boolean isComplete() {
+    return complete;
+  }
+
+  /**
+   * @return the message
+   */
+  public String getProcessingMessage() {
+    return processingMessage;
   }
 }
