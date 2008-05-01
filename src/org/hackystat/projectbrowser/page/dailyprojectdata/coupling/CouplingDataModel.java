@@ -73,7 +73,7 @@ public class CouplingDataModel implements Serializable {
               couplingCount = data.getAfferent().intValue() + data.getEfferent().intValue();
             }
             
-          couplingData.addEntry(couplingCount);
+          couplingData.addEntry(couplingCount, data);
         }
       }
       catch (DailyProjectDataClientException e) {

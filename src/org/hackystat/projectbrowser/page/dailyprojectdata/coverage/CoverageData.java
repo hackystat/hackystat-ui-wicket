@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.hackystat.dailyprojectdata.resource.coverage.jaxb.ConstructData;
 import org.hackystat.projectbrowser.ProjectBrowserApplication;
+import org.hackystat.projectbrowser.page.dailyprojectdata.detailspanel.DailyProjectDetailsPanel;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
 import org.hackystat.utilities.stacktrace.StackTrace;
 
@@ -26,7 +28,7 @@ public class CoverageData implements Serializable {
   private Project project;
   
   /** The five buckets for this data. */
-  private List<Integer> buckets = new ArrayList<Integer>();
+  private List<List<ConstructData>> buckets = new ArrayList<List<ConstructData>>();
   
   /** The total number of entries added across all buckets. */
   private int total = 0;
@@ -38,26 +40,29 @@ public class CoverageData implements Serializable {
   public CoverageData(Project name) {
     this.project = name;
     for (int i = 0; i < 5; i++) {
-      buckets.add(0);
+      buckets.add(new ArrayList<ConstructData>());
     }
   }
   
   /**
    * Increments the given bucket by 1. 
-   * @param bucket The bucket number. 
+   * @param bucket The bucket number.
+   * @param data The Construct Data.  
    */
-  private void incrementBucket(int bucket) {
-    buckets.set(bucket, 1 + buckets.get(bucket));
+  private void incrementBucket(int bucket, ConstructData data) {
+    buckets.get(bucket).add(data);
     this.total++;
   }
   
   /**
    * Updates this CoverageData instance with information about the covered/uncovered information
    * for a given instance in the Project.  
-   * @param numCovered The number of covered somethings. 
-   * @param numUncovered The number of uncovered somethings. 
+   * @param data The construct data. 
    */
-  public void addEntry(int numCovered, int numUncovered) {
+  public void addEntry(ConstructData data) {
+    
+    int numCovered = data.getNumCovered();
+    int numUncovered = data.getNumUncovered();
     // If no method level coverage, ignore.
     if ((numCovered == 0) && (numUncovered == 0)) {
       return;
@@ -65,19 +70,19 @@ public class CoverageData implements Serializable {
     try {
       double percent = (double)numCovered / (double)(numCovered + numUncovered);
       if (percent <= 0.20) {
-        incrementBucket(0);
+        incrementBucket(0, data);
       }
       else if (percent <= 0.40) {
-        incrementBucket(1);
+        incrementBucket(1, data);
       }
       else if (percent <= 0.60) {
-        incrementBucket(2);
+        incrementBucket(2, data);
       }
       else if (percent <= 0.80) {
-        incrementBucket(3);
+        incrementBucket(3, data);
       }
       else {
-        incrementBucket(4);
+        incrementBucket(4, data);
       }
     }
     catch (Exception e) {
@@ -92,7 +97,7 @@ public class CoverageData implements Serializable {
    * @return The value inside the given bucket. 
    */
   public int getBucketValue(int bucket) {
-    return buckets.get(bucket);
+    return buckets.get(bucket).size();
   }
   
   /**
@@ -152,5 +157,23 @@ public class CoverageData implements Serializable {
    */
   public Project getProject() {
     return project;
+  }
+  
+  /**
+   * Returns a details panel containing information about this bucket.
+   * @param id The wicket id for this panel.
+   * @param bucket The bucket of interest. 
+   * @param isCount True if the count should be returned, false if percentage. 
+   * @return The DailyProjectDetailsPanel instance. 
+   */
+  public DailyProjectDetailsPanel getPanel(String id, int bucket, boolean isCount) {
+    DailyProjectDetailsPanel dpdPanel = 
+      new DailyProjectDetailsPanel(id, "Coverage Data", 
+          ((isCount) ? this.getBucketCountString(bucket) : this.getBucketPercentageString(bucket)));
+    dpdPanel.getModalWindow().setContent(
+        new CoverageDetailsPanel(dpdPanel.getModalWindow().getContentId(),
+        buckets.get(bucket)));
+        
+    return dpdPanel;
   }
 }

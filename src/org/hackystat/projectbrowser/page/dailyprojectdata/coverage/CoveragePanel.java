@@ -45,20 +45,12 @@ public class CoveragePanel extends Panel {
         item.add(new Label("project", coverageData.getProject().getName()));
         DailyProjectDataSession session = ProjectBrowserSession.get().getDailyProjectDataSession();
         String valueType = session.getContextSensitiveMenu("Values").getSelectedValue();
-        if ("Count".equals(valueType)) {
-          item.add(new Label("bucket0", coverageData.getBucketCountString(0)));
-          item.add(new Label("bucket1", coverageData.getBucketCountString(1)));
-          item.add(new Label("bucket2", coverageData.getBucketCountString(2)));
-          item.add(new Label("bucket3", coverageData.getBucketCountString(3)));
-          item.add(new Label("bucket4", coverageData.getBucketCountString(4)));
-        }
-        else {
-          item.add(new Label("bucket0", coverageData.getBucketPercentageString(0)));
-          item.add(new Label("bucket1", coverageData.getBucketPercentageString(1)));
-          item.add(new Label("bucket2", coverageData.getBucketPercentageString(2)));
-          item.add(new Label("bucket3", coverageData.getBucketPercentageString(3)));
-          item.add(new Label("bucket4", coverageData.getBucketPercentageString(4)));
-        }
+        boolean isCount = ("Count".equals(valueType));
+        item.add(coverageData.getPanel("bucket0", 0, isCount));
+        item.add(coverageData.getPanel("bucket1", 1, isCount));
+        item.add(coverageData.getPanel("bucket2", 2, isCount));
+        item.add(coverageData.getPanel("bucket3", 3, isCount));
+        item.add(coverageData.getPanel("bucket4", 4, isCount));
         item.add(new Label("total", coverageData.getTotalString()));
       }
     };

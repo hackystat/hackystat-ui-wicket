@@ -44,20 +44,12 @@ public class ComplexityPanel extends Panel {
         item.add(new Label("project", complexityData.getProject().getName()));
         DailyProjectDataSession session = ProjectBrowserSession.get().getDailyProjectDataSession();
         String valueType = session.getContextSensitiveMenu("Values").getSelectedValue();
-        if ("Count".equals(valueType)) {
-          item.add(new Label("bucket0", complexityData.getBucketCountString(0)));
-          item.add(new Label("bucket1", complexityData.getBucketCountString(1)));
-          item.add(new Label("bucket2", complexityData.getBucketCountString(2)));
-          item.add(new Label("bucket3", complexityData.getBucketCountString(3)));
-          item.add(new Label("bucket4", complexityData.getBucketCountString(4)));
-        }
-        else {
-          item.add(new Label("bucket0", complexityData.getBucketPercentageString(0)));
-          item.add(new Label("bucket1", complexityData.getBucketPercentageString(1)));
-          item.add(new Label("bucket2", complexityData.getBucketPercentageString(2)));
-          item.add(new Label("bucket3", complexityData.getBucketPercentageString(3)));
-          item.add(new Label("bucket4", complexityData.getBucketPercentageString(4)));
-        }
+        boolean isCount = ("Count".equals(valueType));
+        item.add(complexityData.getPanel("bucket0", 0, isCount));
+        item.add(complexityData.getPanel("bucket1", 1, isCount));
+        item.add(complexityData.getPanel("bucket2", 2, isCount));
+        item.add(complexityData.getPanel("bucket3", 3, isCount));
+        item.add(complexityData.getPanel("bucket4", 4, isCount));
         item.add(new Label("total", complexityData.getTotalString()));
       }
     };

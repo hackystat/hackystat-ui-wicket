@@ -6,8 +6,10 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.hackystat.projectbrowser.ProjectBrowserApplication;
+import org.hackystat.projectbrowser.page.dailyprojectdata.detailspanel.DailyProjectDetailsPanel;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
 import org.hackystat.utilities.stacktrace.StackTrace;
+import org.hackystat.dailyprojectdata.resource.complexity.jaxb.FileData;
 
 /**
  * Data structure for representing complexity information about a single project. 
@@ -26,52 +28,58 @@ public class ComplexityData implements Serializable {
   private Project project;
   
   /** The five buckets for this data. */
-  private List<Integer> buckets = new ArrayList<Integer>();
+  private List<List<FileData>> buckets = new ArrayList<List<FileData>>();
   
   /** The total number of entries added across all buckets. */
   private int total = 0;
 
   /**
-   * Creates a new complexityData instance and initializes the buckets to zero.  
+   * Creates a new complexityData instance.  
    * @param name The name of the Project associated with this instance. 
    */
   public ComplexityData(Project name) {
     this.project = name;
     for (int i = 0; i < 5; i++) {
-      buckets.add(0);
+      buckets.add(new ArrayList<FileData>());
     }
   }
   
+  
   /**
-   * Increments the given bucket by 1. 
-   * @param bucket The bucket number. 
+   * Adds the complexity data in this FileData instance to the appropriate buckets.
+   * @param data The FileData.
    */
-  private void incrementBucket(int bucket) {
-    buckets.set(bucket, 1 + buckets.get(bucket));
-    this.total++;
+  public void addEntry(FileData data) {
+    String methodData = data.getComplexityValues();
+    List<Integer> complexities = getComplexities(methodData);
+    for (Integer complexity : complexities) {
+      addEntry(complexity, data);
+      this.total++;
+    }
   }
   
   /**
    * Updates this ComplexityData instance with information about the number of complexitys for 
    * a specific class. 
    * @param complexityCount The number of complexitys. 
+   * @param data The FileData containing this complexity count.
    */
-  public void addEntry(int complexityCount) {
+  public void addEntry(int complexityCount, FileData data) {
     try {
       if (complexityCount <= 5) {
-        incrementBucket(0);
+        buckets.get(0).add(data);
       }
       else if (complexityCount <= 10) {
-        incrementBucket(1);
+        buckets.get(1).add(data);
       }
       else if (complexityCount <= 15) {
-        incrementBucket(2);
+        buckets.get(2).add(data);
       }
       else if (complexityCount <= 20) {
-        incrementBucket(3);
+        buckets.get(3).add(data);
       }
       else {
-        incrementBucket(4);
+        buckets.get(4).add(data);
       }
     }
     catch (Exception e) {
@@ -86,7 +94,7 @@ public class ComplexityData implements Serializable {
    * @return The value inside the given bucket. 
    */
   public int getBucketValue(int bucket) {
-    return buckets.get(bucket);
+    return buckets.get(bucket).size();
   }
   
   /**
@@ -145,5 +153,45 @@ public class ComplexityData implements Serializable {
    */
   public Project getProject() {
     return project;
+  }
+  
+  /**
+   * Returns a details panel containing information about this bucket.
+   * @param id The wicket id for this panel.
+   * @param bucket The bucket of interest. 
+   * @param isCount True if the count should be returned, false if percentage. 
+   * @return The DailyProjectDetailsPanel instance. 
+   */
+  public DailyProjectDetailsPanel getPanel(String id, int bucket, boolean isCount) {
+    DailyProjectDetailsPanel dpdPanel = 
+      new DailyProjectDetailsPanel(id, "Complexity Data", 
+          ((isCount) ? this.getBucketCountString(bucket) : this.getBucketPercentageString(bucket)));
+    dpdPanel.getModalWindow().setContent(
+        new ComplexityDetailsPanel(dpdPanel.getModalWindow().getContentId(),
+        buckets.get(bucket)));
+        
+    return dpdPanel;
+  }
+  
+
+  /**
+   * Takes the string containing method complexities and returns them as a List of Integers.
+   * This really should go into the DPD system.  
+   * @param methodData The method data as a string. 
+   * @return The method data as a list of integers. 
+   */
+  private List<Integer> getComplexities(String methodData) {
+    List<Integer> methodComplexities = new ArrayList<Integer>();
+    try {
+      String[] numStringList = methodData.split(",");
+      for (String numString : numStringList) {
+        methodComplexities.add(Integer.parseInt(numString));
+      }
+    }
+    catch (Exception e) {
+      Logger logger = ((ProjectBrowserApplication)ProjectBrowserApplication.get()).getLogger();
+      logger.info("Failed to parse Complexity method data: " + methodData);
+    }
+    return methodComplexities;
   }
 }

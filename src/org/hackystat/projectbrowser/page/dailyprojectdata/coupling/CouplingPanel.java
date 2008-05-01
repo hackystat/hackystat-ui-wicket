@@ -45,20 +45,12 @@ public class CouplingPanel extends Panel {
         item.add(new Label("project", couplingData.getProject().getName()));
         DailyProjectDataSession session = ProjectBrowserSession.get().getDailyProjectDataSession();
         String valueType = session.getContextSensitiveMenu("Values").getSelectedValue();
-        if ("Count".equals(valueType)) {
-          item.add(new Label("bucket0", couplingData.getBucketCountString(0)));
-          item.add(new Label("bucket1", couplingData.getBucketCountString(1)));
-          item.add(new Label("bucket2", couplingData.getBucketCountString(2)));
-          item.add(new Label("bucket3", couplingData.getBucketCountString(3)));
-          item.add(new Label("bucket4", couplingData.getBucketCountString(4)));
-        }
-        else {
-          item.add(new Label("bucket0", couplingData.getBucketPercentageString(0)));
-          item.add(new Label("bucket1", couplingData.getBucketPercentageString(1)));
-          item.add(new Label("bucket2", couplingData.getBucketPercentageString(2)));
-          item.add(new Label("bucket3", couplingData.getBucketPercentageString(3)));
-          item.add(new Label("bucket4", couplingData.getBucketPercentageString(4)));
-        }
+        boolean isCount = ("Count".equals(valueType));
+        item.add(couplingData.getPanel("bucket0", 0, isCount));
+        item.add(couplingData.getPanel("bucket1", 1, isCount));
+        item.add(couplingData.getPanel("bucket2", 2, isCount));
+        item.add(couplingData.getPanel("bucket3", 3, isCount));
+        item.add(couplingData.getPanel("bucket4", 4, isCount));
         item.add(new Label("total", couplingData.getTotalString()));
       }
     };

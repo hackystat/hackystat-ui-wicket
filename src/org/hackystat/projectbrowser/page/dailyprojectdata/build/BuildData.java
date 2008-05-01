@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.wicket.markup.html.basic.Label;
 import org.hackystat.dailyprojectdata.resource.build.jaxb.MemberData;
 import org.hackystat.projectbrowser.page.dailyprojectdata.detailspanel.DailyProjectDetailsPanel;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
@@ -36,7 +35,7 @@ public class BuildData implements Serializable {
   private int total = 0;
   
   /**
-   * Creates a new BuildData instance and initializes the buckets to zero.  
+   * Creates a new BuildData instance.  
    * @param name The name of the Project associated with this instance. 
    */
   public BuildData(Project name) {
@@ -139,16 +138,14 @@ public class BuildData implements Serializable {
    * @return The DailyProjectDetailsPanel instance. 
    */
   public DailyProjectDetailsPanel getPanel(String id, int bucket, boolean isCount) {
-    StringBuffer members = new StringBuffer();
-    List<MemberData> dataList = ((bucket == 0) ? successes : failures);
-    for (MemberData data : dataList) {
-      members.append(data.getMemberUri()).append(' ');
-    }
+    boolean displaySuccesses = (bucket == 0);
+    List<MemberData> dataList = (displaySuccesses ? successes : failures);
     DailyProjectDetailsPanel dpdPanel = 
       new DailyProjectDetailsPanel(id, "Build Data", 
           ((isCount) ? this.getBucketCountString(bucket) : this.getBucketPercentageString(bucket)));
-    dpdPanel.getModalWindow().setContent(new Label(dpdPanel.getModalWindow().getContentId(),
-        members.toString()));
+    dpdPanel.getModalWindow().setContent(
+        new BuildDetailsPanel(dpdPanel.getModalWindow().getContentId(),
+        dataList, displaySuccesses));
         
     return dpdPanel;
   }

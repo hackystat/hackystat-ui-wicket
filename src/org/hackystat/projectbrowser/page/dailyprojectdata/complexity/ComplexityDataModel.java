@@ -14,6 +14,7 @@ import org.hackystat.projectbrowser.ProjectBrowserApplication;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.page.dailyprojectdata.DailyProjectDataSession;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
+import org.hackystat.utilities.stacktrace.StackTrace;
 import org.hackystat.utilities.tstamp.Tstamp;
 
 /**
@@ -63,39 +64,14 @@ public class ComplexityDataModel implements Serializable {
         logger.info("Finished getting Complexity DPD for project: " + project.getName());
         ComplexityData complexityData = this.getComplexityData(project);
         for (FileData data : classData.getFileData()) {
-          String methodData = data.getComplexityValues();
-          List<Integer> complexities = getComplexities(methodData);
-          for (Integer complexity : complexities) {
-            complexityData.addEntry(complexity);
-          }
+          complexityData.addEntry(data);
         }
       }
       catch (Exception e) {
         session.setFeedback("Exception when getting complexity data for project " + project + ": " +
-            e.getMessage());
+            StackTrace.toString(e));
       }
     }
-  }
-  
-  /**
-   * Takes the string containing method complexities and returns them as a List of Integers.
-   * This really should go into the DPD system.  
-   * @param methodData The method data as a string. 
-   * @return The method data as a list of integers. 
-   */
-  private List<Integer> getComplexities(String methodData) {
-    List<Integer> methodComplexities = new ArrayList<Integer>();
-    try {
-      String[] numStringList = methodData.split(",");
-      for (String numString : numStringList) {
-        methodComplexities.add(Integer.parseInt(numString));
-      }
-    }
-    catch (Exception e) {
-      Logger logger = ((ProjectBrowserApplication)ProjectBrowserApplication.get()).getLogger();
-      logger.info("Failed to parse Complexity method data: " + methodData);
-    }
-    return methodComplexities;
   }
   
   /**

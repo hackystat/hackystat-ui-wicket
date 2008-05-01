@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.hackystat.projectbrowser.ProjectBrowserApplication;
+import org.hackystat.projectbrowser.page.dailyprojectdata.detailspanel.DailyProjectDetailsPanel;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
 import org.hackystat.utilities.stacktrace.StackTrace;
 
@@ -26,7 +27,8 @@ public class CouplingData implements Serializable {
   private Project project;
   
   /** The five buckets for this data. */
-  private List<Integer> buckets = new ArrayList<Integer>();
+  private List<List<org.hackystat.dailyprojectdata.resource.coupling.jaxb.CouplingData>> buckets = 
+    new ArrayList<List<org.hackystat.dailyprojectdata.resource.coupling.jaxb.CouplingData>>();
   
   /** The total number of entries added across all buckets. */
   private int total = 0;
@@ -38,41 +40,37 @@ public class CouplingData implements Serializable {
   public CouplingData(Project name) {
     this.project = name;
     for (int i = 0; i < 5; i++) {
-      buckets.add(0);
+      buckets.add(
+          new ArrayList<org.hackystat.dailyprojectdata.resource.coupling.jaxb.CouplingData>());
     }
   }
-  
-  /**
-   * Increments the given bucket by 1. 
-   * @param bucket The bucket number. 
-   */
-  private void incrementBucket(int bucket) {
-    buckets.set(bucket, 1 + buckets.get(bucket));
-    this.total++;
-  }
+
   
   /**
    * Updates this CouplingData instance with information about the number of couplings for 
    * a specific class. 
    * @param couplingCount The number of couplings. 
+   * @param data The Coupling data. 
    */
-  public void addEntry(int couplingCount) {
+  public void addEntry(int couplingCount, 
+      org.hackystat.dailyprojectdata.resource.coupling.jaxb.CouplingData data) {
     try {
       if (couplingCount <= 5) {
-        incrementBucket(0);
+        buckets.get(0).add(data);
       }
       else if (couplingCount <= 10) {
-        incrementBucket(1);
+        buckets.get(1).add(data);
       }
       else if (couplingCount <= 15) {
-        incrementBucket(2);
+        buckets.get(2).add(data);
       }
       else if (couplingCount <= 20) {
-        incrementBucket(3);
+        buckets.get(3).add(data);
       }
       else {
-        incrementBucket(4);
+        buckets.get(4).add(data);
       }
+      total++;
     }
     catch (Exception e) {
       Logger logger = ((ProjectBrowserApplication)ProjectBrowserApplication.get()).getLogger();
@@ -86,7 +84,7 @@ public class CouplingData implements Serializable {
    * @return The value inside the given bucket. 
    */
   public int getBucketValue(int bucket) {
-    return buckets.get(bucket);
+    return buckets.get(bucket).size();
   }
   
   /**
@@ -145,5 +143,23 @@ public class CouplingData implements Serializable {
    */
   public Project getProject() {
     return project;
+  }
+  
+  /**
+   * Returns a details panel containing information about this bucket.
+   * @param id The wicket id for this panel.
+   * @param bucket The bucket of interest. 
+   * @param isCount True if the count should be returned, false if percentage. 
+   * @return The DailyProjectDetailsPanel instance. 
+   */
+  public DailyProjectDetailsPanel getPanel(String id, int bucket, boolean isCount) {
+    DailyProjectDetailsPanel dpdPanel = 
+      new DailyProjectDetailsPanel(id, "Coupling Data", 
+          ((isCount) ? this.getBucketCountString(bucket) : this.getBucketPercentageString(bucket)));
+    dpdPanel.getModalWindow().setContent(
+        new CouplingDetailsPanel(dpdPanel.getModalWindow().getContentId(),
+        buckets.get(bucket)));
+        
+    return dpdPanel;
   }
 }

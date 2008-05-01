@@ -61,7 +61,7 @@ public class CoverageDataModel implements Serializable {
         // Create a CoverageData instance for this project.
         CoverageData coverageData = this.getCoverageData(project);
         for (ConstructData data : classData.getConstructData()) {
-          coverageData.addEntry(data.getNumCovered(), data.getNumUncovered());
+          coverageData.addEntry(data);
         }
       }
       catch (DailyProjectDataClientException e) {

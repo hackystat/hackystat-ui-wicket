@@ -43,14 +43,8 @@ public class BuildPanel extends Panel {
         item.add(new Label("project", buildData.getProject().getName()));
         DailyProjectDataSession session = ProjectBrowserSession.get().getDailyProjectDataSession();
         String valueType = session.getContextSensitiveMenu("Values").getSelectedValue();
-        if ("Count".equals(valueType)) {
-          item.add(buildData.getPanel("bucket0", 0, true));
-          item.add(new Label("bucket1", buildData.getBucketCountString(1)));
-        }
-        else {
-          item.add(new Label("bucket0", buildData.getBucketPercentageString(0)));
-          item.add(new Label("bucket1", buildData.getBucketPercentageString(1)));
-        }
+        item.add(buildData.getPanel("bucket0", 0, ("Count".equals(valueType))));
+        item.add(buildData.getPanel("bucket1", 1, ("Count".equals(valueType))));
         item.add(new Label("total", buildData.getTotalString()));
       }
     };
