@@ -53,7 +53,7 @@ public class ProjectDateValidator extends AbstractFormValidator {
    * Returns the form components.
    * @return The form components. 
    */
-  @Override
+  //@Override
   public FormComponent[] getDependentFormComponents() {
     return components.clone();
   }
@@ -63,7 +63,7 @@ public class ProjectDateValidator extends AbstractFormValidator {
    * @param arg0 The form to validate. 
    */
   @SuppressWarnings("unchecked")
-  @Override
+  //@Override
   public void validate(Form arg0) {
     ListMultipleChoice projectMenu = (ListMultipleChoice)components[0]; 
     DateTextField dateField = (DateTextField)components[1];
