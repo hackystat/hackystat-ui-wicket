@@ -47,7 +47,7 @@ public class TelemetryPage extends ProjectBrowserBasePage {
       }
     };
     loadingProcessPanel.setOutputMarkupId(true);
-    add(loadingProcessPanel);
+    //add(loadingProcessPanel);
     this.get("FooterFeedback").setModel(new PropertyModel(session, "feedback"));
     this.get("FooterFeedback").setOutputMarkupId(true);
   }

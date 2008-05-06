@@ -9,7 +9,6 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
@@ -156,6 +155,7 @@ public class TelemetryDataPanel extends Panel {
     add(selectedchartUrlWindow);
     
     //attribute to decide to show panel content or not.
+    /*
     AttributeModifier visibleAttribute = 
       new AttributeModifier("style", true, new AbstractReadOnlyModel() {
       private static final long serialVersionUID = 2013912742253160111L;
@@ -166,13 +166,16 @@ public class TelemetryDataPanel extends Panel {
       }
     });
     add(visibleAttribute);
+    */
   }
   
-  
-  //@Override
-  /*
+  /**
+   * Show the panel only when the data model is not empty and no loadin is in process.
+   * @return true when this panel should be shown.
+   */
+  @Override
   public boolean isVisible() {
     return !session.getDataModel().isEmpty() && session.getDataModel().isComplete();
   }
-  */
+  
 }
