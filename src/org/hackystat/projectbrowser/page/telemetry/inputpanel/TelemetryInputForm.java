@@ -21,6 +21,7 @@ import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
 import org.hackystat.projectbrowser.page.dailyprojectdata.inputpanel.DpdInputForm;
 import org.hackystat.projectbrowser.page.popupwindow.PopupWindowPanel;
 import org.hackystat.projectbrowser.page.telemetry.TelemetrySession;
+import org.hackystat.projectbrowser.page.validator.ProjectDateValidator;
 import org.hackystat.telemetry.service.resource.chart.jaxb.ParameterDefinition;
 import org.hackystat.telemetry.service.resource.chart.jaxb.Type;
 
@@ -79,11 +80,10 @@ public class TelemetryInputForm extends Form {
     }
 
     //set Project to Default if null
-    /*
     if (session.getSelectedProjects().size() <= 0) {
       session.getSelectedProjects().add(ProjectBrowserSession.get().getDefaultProject());
     }
-    */
+
     //StartDateTextField
     DateTextField startDateTextField = 
       new DateTextField("startDateTextField", new PropertyModel(session, "startDate"), 
@@ -141,6 +141,10 @@ public class TelemetryInputForm extends Form {
     };
     projectMenu.setRequired(true);
     add(projectMenu);
+    
+    // Add a validator that makes sure the date interval is within all project intervals.
+    add(new ProjectDateValidator(projectMenu, startDateTextField, endDateTextField));
+  
     
     // Add parameter List
     ListView parameterList = 

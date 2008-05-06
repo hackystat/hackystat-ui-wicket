@@ -1,14 +1,11 @@
 package org.hackystat.projectbrowser.page.dailyprojectdata.inputpanel;
 
-import java.util.Date;
-
 import org.apache.wicket.extensions.markup.html.form.DateTextField;
 import org.apache.wicket.extensions.yui.calendar.DatePicker;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.ListMultipleChoice;
 import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.validation.validator.DateValidator;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.ProjectChoiceRenderer;
 import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
@@ -50,7 +47,6 @@ public class DpdInputForm extends Form {
     DateTextField dateTextField = 
       new DateTextField("dateTextField", new PropertyModel(session, "date"), DATA_FORMAT);
     dateTextField.add(new DatePicker());
-    dateTextField.add(DateValidator.maximum(new Date()));
     dateTextField.setRequired(true);
     add(dateTextField);
     
@@ -65,6 +61,7 @@ public class DpdInputForm extends Form {
     
     // Add a validator that makes sure the date is within the project interval.
     add(new ProjectDateValidator(projectMenu, dateTextField));
+    
     //set Project to Default if null
     if (session.getSelectedProjects().size() <= 0) {
       session.getSelectedProjects().add(ProjectBrowserSession.get().getDefaultProject());
