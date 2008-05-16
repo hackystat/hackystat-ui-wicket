@@ -16,8 +16,6 @@ public class SdtSummaryPanel extends Panel {
   /** For serialization */
   private static final long serialVersionUID = 1L;
   
-  //private SensorDataPage page = null;
-
   /**
    * Creates a panel to display summary information. 
    * @param id The wicket ID. 

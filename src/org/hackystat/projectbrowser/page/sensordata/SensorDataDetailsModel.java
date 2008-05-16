@@ -47,27 +47,26 @@ public class SensorDataDetailsModel implements Serializable {
     detailsList.clear();
     SensorBaseClient client = ProjectBrowserSession.get().getSensorBaseClient();
     SensorDataSession session = ProjectBrowserSession.get().getSensorDataSession();
-    //String projectName = session.getProjectName();
-    //String owner = ProjectBrowserSession.get().getUserEmail();
     String projectName = session.getProject().getName();
     String owner = session.getProject().getOwner();
     XMLGregorianCalendar startTime = Tstamp.makeTimestamp(session.getDate().getTime());
     XMLGregorianCalendar endTime = Tstamp.incrementDays(startTime, 1);
-    // Retrieve all sensor data instances if SdtName is "Total".
     SensorDataIndex index = null;
     try {
+      // Retrieve all sensor data instances if SdtName is "Total".
       if ("Total".equals(sdtName)) {
         index = client.getProjectSensorData(owner, projectName, startTime, endTime);
       }
+      // Retrieve the sensor data instances for the specified tool
       else {
-        index = client.getProjectSensorData(owner, projectName, startTime, endTime, sdtName);
+        index = client.getProjectSensorData(owner, projectName, startTime, endTime, sdtName, tool);
       }
       for (SensorDataRef ref : index.getSensorDataRef()) {
-        //SensorData data = client.getSensorData(ref);
+        detailsList.add(new SensorDataDetails(ref));
         // HACK.  Replace above call to get an index with just the tool's sensor data. 
-        if ("All".equals(tool) || tool.equals(ref.getTool())) {
-          detailsList.add(new SensorDataDetails(ref));
-        }
+        // if ("All".equals(tool) || tool.equals(ref.getTool())) {
+        //   detailsList.add(new SensorDataDetails(ref));
+        // }
       }
     }
     catch (Exception e) {
