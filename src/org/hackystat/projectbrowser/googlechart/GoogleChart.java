@@ -3,6 +3,7 @@ package org.hackystat.projectbrowser.googlechart;
 import java.awt.Color;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -29,7 +30,7 @@ public class GoogleChart implements Serializable {
   /** data to display. */
   private List<List<Double>> chartData = new ArrayList<List<Double>>();
   /** scale of the data. */
-  private List<Double> chartDataScale = null;
+  private List<List<Double>> chartDataScale = new ArrayList<List<Double>>();
   /** colors of the chart. */
   private List<String> colors = new ArrayList<String>();
   /** title. */
@@ -39,7 +40,9 @@ public class GoogleChart implements Serializable {
   /** Axis labels. */
   private List<List<String>> axisLabels = new ArrayList<List<String>>();
   /** Axis max ranges. */
-  private List<Double> axisMaxRange = new ArrayList<Double>();
+  private List<List<Double>> axisMaxRange = new ArrayList<List<Double>>();
+  /** Axis colors. */
+  private List<String> axisColor = new ArrayList<String>();
   /** the markers. */
   private List<String> chartMarker = new ArrayList<String>();
   /** the legends. */
@@ -63,21 +66,30 @@ public class GoogleChart implements Serializable {
   public String getUrl() {
     String url = GOOGLECHART_API_URL;
     url += "chs=" + this.width + "x" + this.height;
+    //add data
     url += PARAMETER_SEPARATOR + "chd=t:" + getDataAsString(this.chartData);
-    if (chartDataScale != null && chartDataScale.size() >= 1) {
-      url += PARAMETER_SEPARATOR + "chds=" + toTextEncodingData(this.chartDataScale);
+    //add data scale
+    if (chartDataScale != null && !chartDataScale.isEmpty()) {
+      String scaleData = getDataAsString(this.chartDataScale);
+      scaleData = scaleData.replace('|', ',');
+      url += PARAMETER_SEPARATOR + "chds=" + scaleData;
     }
+    //add chart type
     url += PARAMETER_SEPARATOR + "cht=" + chartType.abbrev();
+    //add title
     if (this.title != null) {
       url += PARAMETER_SEPARATOR + "chtt=" + this.title;
     }
-    if (colors != null && colors.size() >= 1) {
+    //add stream color
+    if (colors != null && !colors.isEmpty()) {
       url += PARAMETER_SEPARATOR + "chco=" + toTextEncodingData(this.colors);
     }
-    if (this.axisTypes.size() > 0) {
+    //add axis type
+    if (!this.axisTypes.isEmpty()) {
       url += PARAMETER_SEPARATOR + "chxt=" + toTextEncodingData(this.axisTypes);
     }
-    if (this.axisLabels.size() > 0) {
+    //add axis label
+    if (!this.axisLabels.isEmpty()) {
       StringBuffer stringBuffer = new StringBuffer();
       for (int i = 0; i < this.axisLabels.size(); ++i) {
         if (this.axisLabels.get(i).size() > 0) {
@@ -92,20 +104,33 @@ public class GoogleChart implements Serializable {
       }
       url += PARAMETER_SEPARATOR + "chxl=" + stringBuffer.toString();
     }
-    if (this.axisMaxRange.size() > 0) {
-      List<List<String>> rangeList = new ArrayList<List<String>>();
+    //add axis range
+    if (!this.axisMaxRange.isEmpty()) {
+      List<List<String>> axisRange = new ArrayList<List<String>>();
       for (int i = 0; i < this.axisMaxRange.size(); ++i) {
-        if (!this.axisMaxRange.get(i).isNaN()) {
+        if (!this.axisMaxRange.get(i).isEmpty()) {
           List<String> range = new ArrayList<String>();
-          range.add(i + "");
-          range.add(0.0 + "");
-          range.add(this.axisMaxRange.get(i) + "");
-          rangeList.add(range);
+          range.add(String.valueOf(i));
+          for (Double value : this.axisMaxRange.get(i)) {
+            range.add(value.toString());
+          }
+          axisRange.add(range);
         }
       }
-      url += PARAMETER_SEPARATOR + "chxr=" + this.getDataAsString(rangeList);
+      url += PARAMETER_SEPARATOR + "chxr=" + this.getDataAsString(axisRange);
     }
-    if (this.chartMarker.size() > 0) {
+    //add axis color
+    if (!this.axisColor.isEmpty()) {
+      List<List<String>> axisStyle = new ArrayList<List<String>>();
+      for (int i = 0; i < this.axisColor.size(); ++i) {
+        if (this.axisColor.get(i).length() > 0) {
+          axisStyle.add(Arrays.asList(new String[]{String.valueOf(i), this.axisColor.get(i)}));
+        }
+      }
+      url += PARAMETER_SEPARATOR + "chxs=" + this.getDataAsString(axisStyle);
+    }
+    //add chart mark
+    if (!this.chartMarker.isEmpty()) {
       List<List<String>> markerList = new ArrayList<List<String>>();
       for (int i = 0; i < this.chartMarker.size(); ++i) {
           List<String> marker = new ArrayList<String>();
@@ -118,7 +143,8 @@ public class GoogleChart implements Serializable {
       }
       url += PARAMETER_SEPARATOR + "chm=" + this.getDataAsString(markerList);
     }
-    if (this.chartLegend.size() > 0) {
+    // add legend
+    if (!this.chartLegend.isEmpty()) {
       StringBuffer stringBuffer = new StringBuffer();
       for (String dataItem : this.chartLegend) {
         /*
@@ -284,14 +310,14 @@ public class GoogleChart implements Serializable {
   /**
    * @param chartDataScale the chartDataScale to set
    */
-  public void setChartDataScale(List<Double> chartDataScale) {
+  public void setChartDataScale(List<List<Double>> chartDataScale) {
     this.chartDataScale = chartDataScale;
   }
 
   /**
    * @return the chartDataScale
    */
-  public List<Double> getChartDataScale() {
+  public List<List<Double>> getChartDataScale() {
     return chartDataScale;
   }
 
@@ -337,29 +363,33 @@ public class GoogleChart implements Serializable {
    * @param type axis label type, either x, t, y, or r.
    */
   public void addAxisLabel(String type) {
-    addAxisLabel(type, new ArrayList<String>());
+    addAxisLabel(type, new ArrayList<String>(), "");
   }
 
   /**
    * add a label with given label values.
    * @param type axis label type, either x, t, y, or r.
    * @param labels the given label values.
+   * @param color the axis color.
    */
-  public void addAxisLabel(String type, List<String> labels) {
+  public void addAxisLabel(String type, List<String> labels, String color) {
     this.axisTypes.add(type);
     this.axisLabels.add(labels);
-    this.axisMaxRange.add(Double.NaN);
+    this.axisMaxRange.add(new ArrayList<Double>());
+    this.axisColor.add(color);
   }
 
   /**
    * add a label with given label range.
    * @param type axis label type, either x, t, y, or r.
    * @param range the given range.
+   * @param color the axis color.
    */
-  public void addAxisLabel(String type, Double range) {
+  public void addAxisRange(String type, List<Double> range, String color) {
     this.axisTypes.add(type);
     this.axisLabels.add(new ArrayList<String>());
     this.axisMaxRange.add(range);
+    this.axisColor.add(color);
   }
   
   /**
@@ -395,6 +425,7 @@ public class GoogleChart implements Serializable {
    * See addAxisLabel(String type, Double range)
    * @param maximum the maximum value this chart will present.
    */
+  /*
   public void rescaleStream(double maximum) {
     for (List<Double> stream : this.chartData) {
       for (int i = 0; i < stream.size(); ++i) {
@@ -405,5 +436,6 @@ public class GoogleChart implements Serializable {
       }
     }
   }
+  */
   
 }

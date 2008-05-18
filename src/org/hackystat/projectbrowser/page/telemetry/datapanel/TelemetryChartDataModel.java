@@ -243,6 +243,7 @@ public class TelemetryChartDataModel implements Serializable {
   public String getChartUrl(List<String> namePrecedings, List<TelemetryStream> streams) {
     GoogleChart googleChart = new GoogleChart(ChartType.LINE, this.width, this.height);
     double maximum = 0;
+    //add streams to the chart.§
     for (int i = 0; i < streams.size(); ++i) {
       String namePreceding = null;
       if (namePrecedings != null && i < namePrecedings.size()) {
@@ -253,9 +254,12 @@ public class TelemetryChartDataModel implements Serializable {
         maximum = streamMax;
       }
     }
+    //add the x axis.
     if (!streams.isEmpty()) {
-      googleChart.addAxisLabel("x", getDateList(streams.get(0).getTelemetryPoint()));
+      googleChart.addAxisLabel("x", getDateList(streams.get(0).getTelemetryPoint()), "");
+      //googleChart.addAxisLabel("y");
     }
+    /*
     if (maximum > 100 || maximum < 50) {
       double newRange;
       if (maximum > 100) {
@@ -273,6 +277,7 @@ public class TelemetryChartDataModel implements Serializable {
     else {
       googleChart.addAxisLabel("y");
     }
+    */
 
     // ProjectBrowserSession.get().getTelemetrySession().setFeedback(googleChart.getUrl());
 
@@ -293,6 +298,7 @@ public class TelemetryChartDataModel implements Serializable {
     Random random = new Random();
     TelemetrySession session = ProjectBrowserSession.get().getTelemetrySession();
     double maximum = -1;
+    double minimum = 9999999;
     List<Double> streamData = new ArrayList<Double>();
     for (TelemetryPoint point : stream.getTelemetryPoint()) {
       if (point.getValue() == null) {
@@ -303,19 +309,38 @@ public class TelemetryChartDataModel implements Serializable {
         if (value.isNaN()) {
           value = 0.0;
         }
-        if (value > maximum) {
-          maximum = value;
+        else {
+          if (value > maximum) {
+            maximum = value;
+          }
+          if (value < minimum) {
+            minimum = value;
+          }
         }
         streamData.add(value);
       }
     }
     // add the chart only if the stream is not empty.
     if (maximum >= 0) {
+      //add stream data
       googleChart.getChartData().add(streamData);
+      //prepare the range data.
+      List<Double> range = getRangeList(minimum, maximum);
+      //add range
+      googleChart.getChartDataScale().add(range);
+      //add stream color
       Long longValue = Math.round(Math.random() * 0xFFFFFF);
       String randomColor = "000000" + Long.toHexString(longValue);
       randomColor = randomColor.substring(randomColor.length() - 6);
       googleChart.addColor(randomColor);
+      //add y axis with the same color
+      googleChart.addAxisRange("y", range, randomColor);
+      //add y axis label
+      List<String> unitLabel = new ArrayList<String>();
+      //unitLabel.add(stream.getYAxis().getName());
+      unitLabel.add(stream.getYAxis().getUnits());
+      //googleChart.addAxisLabel("y", unitLabel, randomColor);
+      //add markers
       if (!session.getMarkers().isEmpty()) {
         int i = random.nextInt(session.getMarkers().size());
         googleChart.getChartMarker().add(session.getMarkers().get(i));
@@ -328,6 +353,29 @@ public class TelemetryChartDataModel implements Serializable {
 
     }
     return maximum;
+  }
+
+  /**
+   * return a list that contains the range minimum and maximum.
+   * The minimum value and maximum value will be normalized accordingly.
+   * @param min the minimum value
+   * @param max the maximum value
+   * @return the list
+   */
+  private List<Double> getRangeList(double min, double max) {
+    double minimum = min;
+    double maximum = max;
+    List<Double> rangeList = new ArrayList<Double>();
+    if (minimum == maximum) {
+      minimum -= 0.5;
+      minimum = (minimum < 0) ? 0 : minimum;
+      maximum += 0.5;
+    }
+    minimum = Math.floor(minimum);
+    maximum = Math.ceil(maximum);
+    rangeList.add(minimum);
+    rangeList.add(maximum);
+    return rangeList;
   }
 
   /**

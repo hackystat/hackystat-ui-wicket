@@ -97,6 +97,7 @@ public class TelemetryDataPanel extends Panel {
           protected void populateItem(ListItem item) {
             SelectableTelemetryStream stream = (SelectableTelemetryStream)item.getModelObject();
             String streamName = stream.getTelemetryStream().getName();
+            String streamUnit = stream.getTelemetryStream().getYAxis().getUnits();
             /*
             int index = streamName.indexOf('<');
             if (index > 0) {
@@ -104,6 +105,8 @@ public class TelemetryDataPanel extends Panel {
             }
             */
             item.add(new Label("streamName", streamName));
+            
+            item.add(new Label("streamUnit", streamUnit));
             
             item.add(new CheckBox("streamCheckBox", new PropertyModel(stream, "selected")));
             
