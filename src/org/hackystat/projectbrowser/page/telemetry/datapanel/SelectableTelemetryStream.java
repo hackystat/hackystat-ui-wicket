@@ -16,6 +16,8 @@ public class SelectableTelemetryStream implements Serializable {
   private boolean selected = false;
   /** The TelemetryStream of this stream. */
   private TelemetryStream telemetryStream;
+  /** The color associated with this stream */
+  private String color = "";
   /**
    * @param telemetryStream the TelemetryStream of this instance.
    */
@@ -45,5 +47,17 @@ public class SelectableTelemetryStream implements Serializable {
    */
   public TelemetryStream getTelemetryStream() {
     return telemetryStream;
+  }
+  /**
+   * @param color the color to set
+   */
+  public void setColor(String color) {
+    this.color = color;
+  }
+  /**
+   * @return the color
+   */
+  public String getColor() {
+    return color;
   }
 }

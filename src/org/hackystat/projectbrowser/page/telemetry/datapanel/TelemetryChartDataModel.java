@@ -220,6 +220,7 @@ public class TelemetryChartDataModel implements Serializable {
    * @param project project this chart will present.
    * @return the URL string of the chart.
    */
+  /*
   public String getChartUrl(Project project) {
     if (this.getTelemetryName() != null && project != null) {
       // retrieve data from hackystat.
@@ -232,6 +233,7 @@ public class TelemetryChartDataModel implements Serializable {
     }
     return "";
   }
+  */
 
   /**
    * Return the google chart url that present all streams within the given list.
@@ -240,7 +242,7 @@ public class TelemetryChartDataModel implements Serializable {
    * @param streams the given stream list.
    * @return the URL string of the chart.
    */
-  public String getChartUrl(List<String> namePrecedings, List<TelemetryStream> streams) {
+  public String getChartUrl(List<String> namePrecedings, List<SelectableTelemetryStream> streams) {
     GoogleChart googleChart = new GoogleChart(ChartType.LINE, this.width, this.height);
     double maximum = 0;
     //add streams to the chart.§
@@ -256,7 +258,8 @@ public class TelemetryChartDataModel implements Serializable {
     }
     //add the x axis.
     if (!streams.isEmpty()) {
-      googleChart.addAxisLabel("x", getDateList(streams.get(0).getTelemetryPoint()), "");
+      googleChart.addAxisLabel("x", 
+          getDateList(streams.get(0).getTelemetryStream().getTelemetryPoint()), "");
       //googleChart.addAxisLabel("y");
     }
     /*
@@ -292,15 +295,19 @@ public class TelemetryChartDataModel implements Serializable {
    * @param googleChart the google chart
    * @return the maximum value of the stream.
    */
-  public double addStreamToChart(String namePreceding, TelemetryStream stream,
+  public double addStreamToChart(String namePreceding, SelectableTelemetryStream stream,
       GoogleChart googleChart) {
     // prepare useful object.
+    String axisType = "r";
+    if (googleChart.getChartData().isEmpty()) {
+      axisType = "y";
+    }
     Random random = new Random();
     TelemetrySession session = ProjectBrowserSession.get().getTelemetrySession();
     double maximum = -1;
     double minimum = 9999999;
     List<Double> streamData = new ArrayList<Double>();
-    for (TelemetryPoint point : stream.getTelemetryPoint()) {
+    for (TelemetryPoint point : stream.getTelemetryStream().getTelemetryPoint()) {
       if (point.getValue() == null) {
         streamData.add(-1.0);
       }
@@ -332,25 +339,23 @@ public class TelemetryChartDataModel implements Serializable {
       Long longValue = Math.round(Math.random() * 0xFFFFFF);
       String randomColor = "000000" + Long.toHexString(longValue);
       randomColor = randomColor.substring(randomColor.length() - 6);
+      stream.setColor(randomColor);
       googleChart.addColor(randomColor);
       //add y axis with the same color
-      googleChart.addAxisRange("y", range, randomColor);
-      //add y axis label
-      List<String> unitLabel = new ArrayList<String>();
-      //unitLabel.add(stream.getYAxis().getName());
-      unitLabel.add(stream.getYAxis().getUnits());
-      //googleChart.addAxisLabel("y", unitLabel, randomColor);
+      googleChart.addAxisRange(axisType, range, randomColor);
       //add markers
       if (!session.getMarkers().isEmpty()) {
         int i = random.nextInt(session.getMarkers().size());
         googleChart.getChartMarker().add(session.getMarkers().get(i));
       }
-      String name = stream.getName();
+      //add legend
+      /*
+      String name = stream.getTelemetryStream().getName();
       if (namePreceding != null && namePreceding.length() > 0) {
         name = namePreceding + "-" + name;
       }
       googleChart.getChartLegend().add(name);
-
+      */
     }
     return maximum;
   }
@@ -428,6 +433,7 @@ public class TelemetryChartDataModel implements Serializable {
    * @param project the given project.
    * @return the chart link.
    */
+  /*
   public String getProjectChart(Project project) {
     String chartLink = this.projectCharts.get(project);
     if (chartLink == null) {
@@ -436,6 +442,7 @@ public class TelemetryChartDataModel implements Serializable {
     }
     return chartLink;
   }
+  */
 
   /**
    * Return the comma-separated list of parameters in String
@@ -458,6 +465,7 @@ public class TelemetryChartDataModel implements Serializable {
   /**
    * @return the overallChart
    */
+  /*
   public String getOverallChart() {
     if (overallChart == null) {
       List<TelemetryStream> streams = new ArrayList<TelemetryStream>();
@@ -473,7 +481,7 @@ public class TelemetryChartDataModel implements Serializable {
     }
     return overallChart;
   }
-
+  */
   /**
    * @param width the width to set
    */
@@ -522,14 +530,17 @@ public class TelemetryChartDataModel implements Serializable {
    * @return true if the chart is successfully updated.
    */
   public boolean updateSelectedChart() {
-    List<TelemetryStream> streams = new ArrayList<TelemetryStream>();
+    List<SelectableTelemetryStream> streams = new ArrayList<SelectableTelemetryStream>();
     List<String> projectNames = new ArrayList<String>();
     for (Project project : this.selectedProjects) {
       List<SelectableTelemetryStream> streamList = this.getTelemetryStream(project);
-      for (int i = 0; i < streamList.size(); ++i) {
-        if (streamList.get(i).isSelected()) {
-          streams.add(streamList.get(i).getTelemetryStream());
+      for (SelectableTelemetryStream stream : streamList) {
+        if (stream.isSelected()) {
+          streams.add(stream);
           projectNames.add(project.getName());
+        }
+        else {
+          stream.setColor("");
         }
       }
     }

@@ -47,7 +47,7 @@ public class TelemetryDataPanel extends Panel {
       }
     };
     add(streamForm);
-    //display project information
+    //table headers
     add(new Label("telemetryName", 
                   new PropertyModel(dataModel, "telemetryName")));
 
@@ -62,7 +62,8 @@ public class TelemetryDataPanel extends Panel {
       }
     };
     streamForm.add(dateList);
-
+    
+    //checkbox to select stream to display
     streamForm.add(new CheckBox("selectAll", new Model()) {
       /** Support serialization. */
       public static final long serialVersionUID = 1L;
@@ -76,6 +77,7 @@ public class TelemetryDataPanel extends Panel {
       }
     });
     
+    //stream data
     ListView projectTable = 
       new ListView("projectTable", new PropertyModel(dataModel, "selectedProjects")) {
       /** Support serialization. */
@@ -107,6 +109,11 @@ public class TelemetryDataPanel extends Panel {
             item.add(new Label("streamName", streamName));
             
             item.add(new Label("streamUnit", streamUnit));
+            
+            WebComponent colorCell = new WebComponent("colorCell");
+            colorCell.add(new AttributeModifier("bgcolor", true, 
+                new PropertyModel(stream, "color")));
+            item.add(colorCell);
             
             item.add(new CheckBox("streamCheckBox", new PropertyModel(stream, "selected")));
             
