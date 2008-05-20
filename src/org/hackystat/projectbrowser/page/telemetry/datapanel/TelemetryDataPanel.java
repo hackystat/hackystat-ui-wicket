@@ -111,8 +111,8 @@ public class TelemetryDataPanel extends Panel {
             item.add(new Label("streamUnit", streamUnit));
             
             WebComponent colorCell = new WebComponent("colorCell");
-            colorCell.add(new AttributeModifier("bgcolor", true, 
-                new PropertyModel(stream, "color")));
+            colorCell.add(new AttributeModifier("style", true, 
+                new PropertyModel(stream, "backgroundColorValue")));
             item.add(colorCell);
             
             item.add(new CheckBox("streamCheckBox", new PropertyModel(stream, "selected")));

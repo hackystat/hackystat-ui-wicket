@@ -60,4 +60,12 @@ public class SelectableTelemetryStream implements Serializable {
   public String getColor() {
     return color;
   }
+  
+  /**
+   * Returns a background-color attribute with the value of color.
+   * @return The background-color key-value pair.
+   */
+  public String getBackgroundColorValue() {
+    return "background-color:#" + getColor();
+  }
 }
