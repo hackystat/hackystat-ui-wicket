@@ -254,10 +254,9 @@ public class TelemetrySession implements Serializable {
    * Update the data model.
    */
   public void updateDataModel() {
-    //this.dataModel = new TelemetryChartDataModel();
     this.dataModel.
       setModel(getStartDate(), getEndDate(), selectedProjects, telemetryName, parameters);
-    /*
+    
     Thread thread = new Thread() {
       @Override
       public void run() {
@@ -265,8 +264,8 @@ public class TelemetrySession implements Serializable {
       }
     };
     thread.start();
-    */
-    dataModel.loadData();
+    
+    //dataModel.loadData();
   }
   
   /**

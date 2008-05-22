@@ -48,8 +48,6 @@ public class TelemetryChartDataModel implements Serializable {
   /** Store the data retrieved from telemetry service. */
   private Map<Project, List<SelectableTelemetryStream>> projectStreamData = 
     new HashMap<Project, List<SelectableTelemetryStream>>();
-  /** Chart with all project streams. */
-  private String overallChart = null;
   /** Chart with selected project streams. */
   private String selectedChart = null;
   /** the width of this chart. */
@@ -57,9 +55,9 @@ public class TelemetryChartDataModel implements Serializable {
   /** the height of this chart. */
   private int height = 300;
   /** state of data loading process. */
-  private boolean inProcess;
+  private volatile boolean inProcess = false;
   /** result of data loading. */
-  private boolean complete;
+  private volatile boolean complete = false;
   /** message to display when data loading is in process.*/
   private String processingMessage = "";
   /** host of the telemetry host. */
@@ -98,7 +96,6 @@ public class TelemetryChartDataModel implements Serializable {
     for (IModel model : parameters) {
       this.parameters.add(model.getObject().toString());
     }
-    this.overallChart = null;
     this.selectedChart = null;
     // this.chartUrl = this.getChartUrl(project);
   }
@@ -139,8 +136,10 @@ public class TelemetryChartDataModel implements Serializable {
       this.inProcess = false;
       return;
     }
-    this.processingMessage += "All done.\n";
     this.complete = inProcess;
+    if (this.complete) {
+      this.processingMessage += "All done.\n";
+    }
     this.inProcess = false;
   }
   
@@ -148,6 +147,7 @@ public class TelemetryChartDataModel implements Serializable {
    * Cancel the data loading process.
    */
   public void cancelDataLoading() {
+    this.processingMessage += "Process Cancelled.\n";
     this.inProcess = false;
   }
   /**
@@ -260,30 +260,7 @@ public class TelemetryChartDataModel implements Serializable {
     if (!streams.isEmpty()) {
       googleChart.addAxisLabel("x", 
           getDateList(streams.get(0).getTelemetryStream().getTelemetryPoint()), "");
-      //googleChart.addAxisLabel("y");
     }
-    /*
-    if (maximum > 100 || maximum < 50) {
-      double newRange;
-      if (maximum > 100) {
-        newRange = Math.round(maximum / 50) * 50;
-      }
-      else if (maximum < 25) {
-        newRange = Math.round(maximum / 5) * 5;
-      }
-      else {
-        newRange = Math.round(maximum / 10) * 10;
-      }
-      googleChart.rescaleStream(newRange);
-      googleChart.addAxisLabel("y", newRange);
-    }
-    else {
-      googleChart.addAxisLabel("y");
-    }
-    */
-
-    // ProjectBrowserSession.get().getTelemetrySession().setFeedback(googleChart.getUrl());
-
     return googleChart.getUrl();
   }
 

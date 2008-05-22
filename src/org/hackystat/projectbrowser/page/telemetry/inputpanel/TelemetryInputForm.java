@@ -185,7 +185,6 @@ public class TelemetryInputForm extends Form {
       public void onSubmit() {
         ProjectBrowserSession.get().getTelemetrySession().updateDataModel();
         page.onProjectDateSubmit();
-        //setResponsePage(TelemetryPage.class);
       }
       @Override
       public boolean isEnabled() {

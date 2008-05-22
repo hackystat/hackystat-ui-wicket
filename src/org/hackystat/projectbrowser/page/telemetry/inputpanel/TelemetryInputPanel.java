@@ -23,8 +23,8 @@ public class TelemetryInputPanel extends Panel {
   public TelemetryInputPanel(String id, ProjectBrowserBasePage page) {
     super(id);
     add(new FeedbackPanel("feedback"));
-    //add(new TelemetryForm("telemetryForm"));
     add(new TelemetryInputForm("inputForm", page));
+    
     Button cancelButton = new Button("cancel") {
       /** Support serialization. */
       public static final long serialVersionUID = 1L;
