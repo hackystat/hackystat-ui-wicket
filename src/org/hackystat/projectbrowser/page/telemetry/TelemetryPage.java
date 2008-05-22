@@ -27,15 +27,6 @@ public class TelemetryPage extends ProjectBrowserBasePage {
    * Constructs the telemetry page. 
    */
   public TelemetryPage() {
-    /*
-    leftContainer = new WebMarkupContainer("leftContainer");
-    leftContainer.setOutputMarkupId(true);
-    add(leftContainer);
-    
-    rightContainer = new WebMarkupContainer("rightContainer");
-    rightContainer.setOutputMarkupId(true);
-    add(rightContainer);
-    */
     
     inputPanel = new TelemetryInputPanel("inputPanel", this);
     inputPanel.setOutputMarkupId(true);

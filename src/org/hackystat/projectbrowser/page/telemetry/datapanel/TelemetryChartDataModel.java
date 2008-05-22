@@ -106,11 +106,11 @@ public class TelemetryChartDataModel implements Serializable {
   public void loadData() {
     this.inProcess = true;
     this.complete = false;
-    this.processingMessage = "Loading data from Hackystat serive.\n";
+    this.processingMessage = "Retrieving data from Hackystat Telemetry service.\n";
     try {
       for (int i = 0; i < this.selectedProjects.size() && inProcess; i++) {
         Project project = this.selectedProjects.get(i);
-        this.processingMessage += "Loading data of project " + project.getName() + 
+        this.processingMessage += "Retrieving data for project " + project.getName() + 
             " (" + (i + 1) + " of " + this.selectedProjects.size() + ").\n";
         List<SelectableTelemetryStream> streamList = new ArrayList<SelectableTelemetryStream>();
 
