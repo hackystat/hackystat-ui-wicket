@@ -245,7 +245,7 @@ public class TelemetryChartDataModel implements Serializable {
   public String getChartUrl(List<String> namePrecedings, List<SelectableTelemetryStream> streams) {
     GoogleChart googleChart = new GoogleChart(ChartType.LINE, this.width, this.height);
     double maximum = 0;
-    //add streams to the chart.§
+    //add streams to the chart.
     for (int i = 0; i < streams.size(); ++i) {
       String namePreceding = null;
       if (namePrecedings != null && i < namePrecedings.size()) {
