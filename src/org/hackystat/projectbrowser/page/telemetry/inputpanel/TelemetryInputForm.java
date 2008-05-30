@@ -271,7 +271,7 @@ public class TelemetryInputForm extends Form {
       component = textField;
     }
     else {
-      component = new Label(id, "Parameter Type " + type.getName() + " not recognized.");
+      component = new Label(id, new Model("Parameter Type " + type.getName() + " not recognized."));
     }
     return component;
   }

@@ -146,9 +146,16 @@ public class TelemetryDataPanel extends Panel {
     streamForm.add(projectTable);
 
     //add the selected chart.
-    WebComponent selectedchartUrl = new WebComponent("selectedChart");
+    WebComponent selectedchartUrl = new WebComponent("selectedChart") {
+      /** Support serialization. */
+      public static final long serialVersionUID = 1L;
+      @Override
+      public boolean isVisible () {
+        return !session.getDataModel().isChartEmpty();
+      }
+    };
     selectedchartUrl.add(new AttributeModifier("src", true, 
-                              new PropertyModel(dataModel, "selectedChart")));
+        new PropertyModel(dataModel, "selectedChart")));
     add(selectedchartUrl);
     PopupWindowPanel selectedchartUrlWindow = 
       new PopupWindowPanel("selectedChartUrlWindow", "Google Chart URL") {

@@ -94,7 +94,9 @@ public class TelemetryChartDataModel implements Serializable {
     this.projectStreamData.clear();
     this.parameters.clear();
     for (IModel model : parameters) {
-      this.parameters.add(model.getObject().toString());
+      if (model.getObject() != null) {
+        this.parameters.add(model.getObject().toString());
+      }
     }
     this.selectedChart = null;
     // this.chartUrl = this.getChartUrl(project);

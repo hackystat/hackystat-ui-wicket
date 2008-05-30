@@ -1,8 +1,10 @@
 package org.hackystat.projectbrowser.page.telemetry;
 
+import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.AjaxSelfUpdatingTimerBehavior;
 import org.apache.wicket.markup.html.basic.MultiLineLabel;
+import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.time.Duration;
@@ -30,6 +32,18 @@ public class LoadingProcessPanel extends Panel {
     MultiLineLabel label = 
       new MultiLineLabel("processingMessage", new PropertyModel(dataModel, "processingMessage"));
     add(label);
+    //add loading image
+    Image loadingImage = new Image("loadingImage", 
+        new ResourceReference(LoadingProcessPanel.class, "loading21-1.gif")) {
+      /** Support serialization. */
+      private static final long serialVersionUID = 1L;
+      @Override
+      public boolean isVisible() {
+        return dataModel.isInProcess();
+      }
+    };
+    add(loadingImage);
+
     if (dataModel.isInProcess()) {
       start();
     }
