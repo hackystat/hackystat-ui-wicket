@@ -13,6 +13,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
+import org.hackystat.projectbrowser.imageurl.ImageUrl;
 import org.hackystat.projectbrowser.page.popupwindow.PopupWindowPanel;
 import org.hackystat.projectbrowser.page.telemetry.TelemetrySession;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
@@ -109,6 +110,8 @@ public class TelemetryDataPanel extends Panel {
             item.add(new Label("streamName", streamName));
             
             item.add(new Label("streamUnit", streamUnit));
+
+            item.add(new ImageUrl("streamMarker", stream.getMarkerImageUrl()));
             
             WebComponent colorCell = new WebComponent("colorCell");
             colorCell.add(new AttributeModifier("style", true, 
@@ -157,6 +160,8 @@ public class TelemetryDataPanel extends Panel {
     selectedchartUrl.add(new AttributeModifier("src", true, 
         new PropertyModel(dataModel, "selectedChart")));
     add(selectedchartUrl);
+    
+    
     PopupWindowPanel selectedchartUrlWindow = 
       new PopupWindowPanel("selectedChartUrlWindow", "Google Chart URL") {
       /** Support serialization. */
