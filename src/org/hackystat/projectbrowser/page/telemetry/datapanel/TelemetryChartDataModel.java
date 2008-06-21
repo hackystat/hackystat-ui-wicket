@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Random;
 import org.apache.wicket.model.IModel;
 import org.hackystat.projectbrowser.ProjectBrowserApplication;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
@@ -16,6 +15,7 @@ import org.hackystat.projectbrowser.googlechart.ChartType;
 import org.hackystat.projectbrowser.googlechart.GoogleChart;
 import org.hackystat.projectbrowser.page.dailyprojectdata.inputpanel.DpdInputForm;
 import org.hackystat.projectbrowser.page.telemetry.TelemetrySession;
+import org.hackystat.projectbrowser.page.telemetry.TelemetryStreamYAxis;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
 import org.hackystat.telemetry.service.client.TelemetryClient;
 import org.hackystat.telemetry.service.client.TelemetryClientException;
@@ -217,45 +217,60 @@ public class TelemetryChartDataModel implements Serializable {
   }
 
   /**
-   * Return the google chart url that present the telemetry associated with this session.
-   * 
-   * @param project project this chart will present.
-   * @return the URL string of the chart.
-   */
-  /*
-  public String getChartUrl(Project project) {
-    if (this.getTelemetryName() != null && project != null) {
-      // retrieve data from hackystat.
-      List<SelectableTelemetryStream> streams = this.getTelemetryStream(project);
-      List<TelemetryStream> streamList = new ArrayList<TelemetryStream>();
-      for (SelectableTelemetryStream stream : streams) {
-        streamList.add(stream.getTelemetryStream());
-      }
-      return getChartUrl(null, streamList);
-    }
-    return "";
-  }
-  */
-
-  /**
    * Return the google chart url that present all streams within the given list.
    * 
-   * @param namePrecedings precedings to add before stream names.
    * @param streams the given stream list.
    * @return the URL string of the chart.
    */
-  public String getChartUrl(List<String> namePrecedings, List<SelectableTelemetryStream> streams) {
+  public String getChartUrl(List<SelectableTelemetryStream> streams) {
     GoogleChart googleChart = new GoogleChart(ChartType.LINE, this.width, this.height);
-    double maximum = 0;
+    Map<String, TelemetryStreamYAxis> streamAxisMap = new HashMap<String, TelemetryStreamYAxis>();
+    
+    //combine streams Y axes.
+    for (SelectableTelemetryStream stream : streams) {
+      if (stream.isEmpty()) {
+        continue;
+      }
+      double streamMax = stream.getMaximum();
+      double streamMin = stream.getMinimum();
+      String streamUnitName = stream.getUnitName();
+      TelemetryStreamYAxis axis = streamAxisMap.get(streamUnitName);
+      if (axis == null) {
+        axis = newYAxis(streamUnitName, streamMax, streamMin);
+        stream.setColor(axis.getColor());
+        streamAxisMap.put(streamUnitName, axis);
+      }
+      else {
+        double axisMax = axis.getMaximum();
+        double axisMin = axis.getMinimum();
+        axis.setMaximum((axisMax > streamMax) ? axisMax : streamMax);
+        axis.setMinimum((axisMin < streamMin) ? axisMin : streamMin);
+        stream.setColor(axis.getColor());
+      }
+    }
+    //add the y axis and extend the range if it contains only one horizontal line.
+    for (TelemetryStreamYAxis axis : streamAxisMap.values()) {
+      String axisType = "r";
+      if (googleChart.isYAxisEmpty()) {
+        axisType = "y";
+      }
+      List<Double> rangeList = new ArrayList<Double>();
+      //extend the range of the axis if it contains only one vertical straight line.
+      if (axis.getMaximum() - axis.getMinimum() < 0.1) {
+        axis.setMaximum(axis.getMaximum() + 1.0);
+        axis.setMinimum(axis.getMinimum() - 1.0);
+      }
+      rangeList.add(axis.getMinimum());
+      rangeList.add(axis.getMaximum());
+      //add the axis to the chart.
+      googleChart.addAxisRange(axisType, rangeList, axis.getColor());
+    }
     //add streams to the chart.
     for (int i = 0; i < streams.size(); ++i) {
-      String namePreceding = null;
-      if (namePrecedings != null && i < namePrecedings.size()) {
-        namePreceding = namePrecedings.get(i);
-      }
-      double streamMax = this.addStreamToChart(namePreceding, streams.get(i), googleChart);
-      if (streamMax > maximum) {
-        maximum = streamMax;
+      SelectableTelemetryStream stream = streams.get(i);
+      if (!stream.isEmpty()) {
+        TelemetryStreamYAxis axis = streamAxisMap.get(stream.getUnitName());
+        this.addStreamToChart(stream, axis.getMinimum(), axis.getMaximum(), googleChart);
       }
     }
     //add the x axis.
@@ -266,79 +281,53 @@ public class TelemetryChartDataModel implements Serializable {
     return googleChart.getUrl();
   }
 
+
   /**
    * Add the given stream to the google chart. And return the maximum value of the stream.
    * 
-   * @param namePreceding string that put before the name of the stream.
-   * @param stream the given stream
-   * @param googleChart the google chart
-   * @return the maximum value of the stream.
+   * @param stream the given stream.
+   * @param maximum the maximum value of the range this stream will be associated to.
+   * @param minimum the minimum value of the range this stream will be associated to.
+   * @param googleChart the google chart.
    */
-  public double addStreamToChart(String namePreceding, SelectableTelemetryStream stream,
-      GoogleChart googleChart) {
-    // prepare useful object.
-    String axisType = "r";
-    if (googleChart.getChartData().isEmpty()) {
-      axisType = "y";
-    }
-    Random random = new Random();
-    TelemetrySession session = ProjectBrowserSession.get().getTelemetrySession();
-    double maximum = -1;
-    double minimum = 9999999;
-    List<Double> streamData = new ArrayList<Double>();
-    for (TelemetryPoint point : stream.getTelemetryStream().getTelemetryPoint()) {
-      if (point.getValue() == null) {
-        streamData.add(-1.0);
-      }
-      else {
-        Double value = Double.valueOf(point.getValue());
-        if (value.isNaN()) {
-          value = 0.0;
-        }
-        else {
-          if (value > maximum) {
-            maximum = value;
-          }
-          if (value < minimum) {
-            minimum = value;
-          }
-        }
-        streamData.add(value);
-      }
-    }
+  public void addStreamToChart(SelectableTelemetryStream stream,
+      double minimum, double maximum, GoogleChart googleChart) {
     // add the chart only if the stream is not empty.
-    if (maximum >= 0) {
+    if (!stream.isEmpty()) {
       //add stream data
-      googleChart.getChartData().add(streamData);
+      googleChart.getChartData().add(stream.getStreamData());
       //prepare the range data.
       List<Double> range = getRangeList(minimum, maximum);
       //add range
       googleChart.getChartDataScale().add(range);
       //add stream color
-      Long longValue = Math.round(Math.random() * 0xFFFFFF);
-      String randomColor = "000000" + Long.toHexString(longValue);
-      randomColor = randomColor.substring(randomColor.length() - 6);
-      stream.setColor(randomColor);
-      googleChart.addColor(randomColor);
-      //add y axis with the same color
-      googleChart.addAxisRange(axisType, range, randomColor);
+      googleChart.addColor(stream.getColor());
+      //add line style;
+      googleChart.addLineStyle(stream.getThickness(), 
+          stream.getLineLength(), stream.getBlankLength());
+      /*googleChart.addAxisRange(axisType, range, randomColor);*/
       //add markers
-      if (!session.getMarkers().isEmpty()) {
-        int i = random.nextInt(session.getMarkers().size());
-        googleChart.getChartMarker().add(session.getMarkers().get(i));
-      }
-      //add legend
-      /*
-      String name = stream.getTelemetryStream().getName();
-      if (namePreceding != null && namePreceding.length() > 0) {
-        name = namePreceding + "-" + name;
-      }
-      googleChart.getChartLegend().add(name);
-      */
+      /*stream.setMarker(GoogleChart.getRandomMarker());*/
+      googleChart.getChartMarker().add(stream.getMarker());
+      googleChart.getMarkerColors().add(stream.getColor());
     }
-    return maximum;
   }
 
+  /**
+   * create a new TelemetryStreamYAxis instance with given parameters.
+   * @param streamUnitName the unit name
+   * @param streamMax the maximum value
+   * @param streamMin the minimum value
+   * @return the new object
+   */
+  private TelemetryStreamYAxis newYAxis(String streamUnitName, double streamMax, double streamMin) {
+    TelemetryStreamYAxis axis = new TelemetryStreamYAxis(streamUnitName);
+    axis.setMaximum(streamMax);
+    axis.setMinimum(streamMin);
+    axis.setColor(GoogleChart.getRandomColor());
+    return axis;
+  }
+  
   /**
    * return a list that contains the range minimum and maximum.
    * The minimum value and maximum value will be normalized accordingly.
@@ -504,22 +493,41 @@ public class TelemetryChartDataModel implements Serializable {
   }
 
   /**
-   * reset the selectedChart.
-   * 
+   * update the selectedChart.
    * @return true if the chart is successfully updated.
    */
   public boolean updateSelectedChart() {
     List<SelectableTelemetryStream> streams = new ArrayList<SelectableTelemetryStream>();
-    List<String> projectNames = new ArrayList<String>();
+    boolean dashed = false;
     for (Project project : this.selectedProjects) {
       List<SelectableTelemetryStream> streamList = this.getTelemetryStream(project);
+      String projectMarker = null;
+      double thickness = 2;
+      double lineLength = 1;
+      double blankLength = 0;
+      boolean isLineStylePicked = false;
       for (SelectableTelemetryStream stream : streamList) {
         if (stream.isSelected()) {
+          if (projectMarker == null) {
+            projectMarker = GoogleChart.getNextMarker();
+          }
+          if (!isLineStylePicked) {
+            isLineStylePicked = true;
+            if (dashed) {
+              lineLength = 6;
+              blankLength = 3;
+            }
+            dashed = !dashed;
+          }
+          stream.setMarker(projectMarker);
+          stream.setThickness(thickness);
+          stream.setLineLength(lineLength);
+          stream.setBlankLength(blankLength);
           streams.add(stream);
-          projectNames.add(project.getName());
         }
         else {
           stream.setColor("");
+          stream.setMarker("");
         }
       }
     }
@@ -527,7 +535,7 @@ public class TelemetryChartDataModel implements Serializable {
       selectedChart = "";
       return false;
     }
-    selectedChart = this.getChartUrl(projectNames, streams);
+    selectedChart = this.getChartUrl(streams);
     return true;
   }
 

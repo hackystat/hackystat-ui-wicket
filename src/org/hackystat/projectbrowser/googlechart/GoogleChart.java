@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Chart class that represent a chart image that generated from Google Chart API.
@@ -45,8 +46,16 @@ public class GoogleChart implements Serializable {
   private List<String> axisColor = new ArrayList<String>();
   /** the markers. */
   private List<String> chartMarker = new ArrayList<String>();
+  /** colors of the markers. */
+  private List<String> markerColors = new ArrayList<String>();
   /** the legends. */
   private List<String> chartLegend = new ArrayList<String>();
+  /** the line styles.*/
+  private List<List<Double>> chartLineStyle = new ArrayList<List<Double>>();
+  /** collection of markers.*/
+  private static final List<String> markers = Arrays.asList(new String[]{"o", "d", "c", "x", "s"});
+  /** index of the current available marker. */
+  private static int markersIndex = 0;
   /**
    * initialize the chart with indispensable parameter.
    * @param chartType type of this chart.
@@ -59,6 +68,17 @@ public class GoogleChart implements Serializable {
     this.height = height;
   }
   
+  /**
+   * Return the next available marker.
+   * @return a String that represents the marker
+   */
+  public static String getNextMarker() {
+    if (markersIndex >= markers.size()) {
+      markersIndex = 0;
+    }
+    return markers.get(markersIndex++);
+  }
+
   /**
    * Return the URL that represent this chart from Google Chart API.
    * @return the URL of this chart.
@@ -83,6 +103,9 @@ public class GoogleChart implements Serializable {
     //add stream color
     if (colors != null && !colors.isEmpty()) {
       url += PARAMETER_SEPARATOR + "chco=" + toTextEncodingData(this.colors);
+    }
+    if (!this.chartLineStyle.isEmpty()) {
+      url += PARAMETER_SEPARATOR + "chls=" + getDataAsString(chartLineStyle);
     }
     //add axis type
     if (!this.axisTypes.isEmpty()) {
@@ -135,7 +158,7 @@ public class GoogleChart implements Serializable {
       for (int i = 0; i < this.chartMarker.size(); ++i) {
           List<String> marker = new ArrayList<String>();
           marker.add(this.chartMarker.get(i));
-          marker.add(this.colors.get(i));
+          marker.add(this.getMarkerColors().get(i));
           marker.add(i + "");
           marker.add("-1.0");
           marker.add("10.0");
@@ -161,25 +184,6 @@ public class GoogleChart implements Serializable {
     }
     return url;
   }
-
-  /**
-   * Return the color list in format of String.
-   * @param colorList the color list to encode.
-   * @return the result string.
-   */
-  /*
-  private String getColorDataAsString(List<Color> colorList) {
-    StringBuffer buffer = new StringBuffer();
-    for (Color color : colorList) {
-      buffer.append(colorToString(color) + DATAITEM_SEPARATOR);
-    }
-    String colorString = buffer.toString();
-    if (colorString.endsWith(DATAITEM_SEPARATOR)) {
-      colorString = colorString.substring(0, colorString.lastIndexOf(DATAITEM_SEPARATOR));
-    }
-    return colorString;
-  }
-   */
   
   /**
    * convert a Color object to a String, with format of RRGGBB.
@@ -393,13 +397,24 @@ public class GoogleChart implements Serializable {
   }
   
   /**
-   * Remove the ith axislabel.
-   * @param i the index of label to be removed.
+   * add a line style with the given parameters.
+   * @param thickness thickness of the line.
+   * @param lineLength length of the line segment.
+   * @param blankLength length of the blank segment.
    */
-  public void removeAxisLabel(int i) {
-    this.axisTypes.remove(i);
-    this.axisLabels.remove(i);
-    this.axisMaxRange.remove(i);
+  public void addLineStyle(double thickness, double lineLength, double blankLength) {
+    this.chartLineStyle.add(Arrays.asList(new Double[]{thickness, lineLength, blankLength}));
+  }
+  /**
+   * @return true if no Y axis in this chart yet.
+   */
+  public boolean isYAxisEmpty() {
+    for (String axisType : this.axisTypes) {
+      if ("y".equals(axisType) || "y".equals(axisType)) {
+        return false;
+      }
+    }
+    return true;
   }
   
   /**
@@ -417,25 +432,32 @@ public class GoogleChart implements Serializable {
   }
 
   /**
-   * Rescale the data within this chart. 
-   * google chart is only support data ranged from 0 to 100. Data greater than 100 will be treated
-   * as 100.
-   * This method is to rescale the data into this 0-100 range so that this chart can show data with
-   * any range. You will need to add y axis label assoicated with the well range as well.
-   * See addAxisLabel(String type, Double range)
-   * @param maximum the maximum value this chart will present.
+   * @return a random color in format of RRGGBB.
    */
-  /*
-  public void rescaleStream(double maximum) {
-    for (List<Double> stream : this.chartData) {
-      for (int i = 0; i < stream.size(); ++i) {
-        if (stream.get(i) >= 0) {
-          Double newValue = stream.remove(i);
-          stream.add(i, newValue * 100 / maximum);
-        }
-      }
-    }
+  public static String getRandomColor() {
+    Long longValue = Math.round(Math.random() * 0xFFFFFF);
+    String randomColor = "000000" + Long.toHexString(longValue);
+    randomColor = randomColor.substring(randomColor.length() - 6);
+    return randomColor;
   }
-  */
-  
+  /**
+   * @return a random marker.
+   */
+  public static String getRandomMarker() {
+    Random random = new Random();
+    return markers.get(random.nextInt(markers.size()));
+  }
+  /**
+   * @param markerColors the markerColors to set
+   */
+  public void setMarkerColors(List<String> markerColors) {
+    this.markerColors = markerColors;
+  }
+
+  /**
+   * @return the markerColors
+   */
+  public List<String> getMarkerColors() {
+    return markerColors;
+  }
 }
