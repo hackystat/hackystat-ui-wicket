@@ -1,4 +1,4 @@
-package org.hackystat.projectbrowser.page.telemetry;
+package org.hackystat.projectbrowser.page.loadingprocesspanel;
 
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -8,10 +8,13 @@ import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.time.Duration;
-import org.hackystat.projectbrowser.page.telemetry.datapanel.TelemetryChartDataModel;
 
 /**
  * Panel to show progress of a lengthy operation.
+ * This panel will show when process is in progress or process end not successfully.
+ * This panel will display the processingMessage.
+ * This panel will update every second via Ajax when process is in progress.
+ * For more detail, please see Processable interface.
  * 
  * @author Shaoxuan Zhang
  */
@@ -19,14 +22,14 @@ public class LoadingProcessPanel extends Panel {
   /** Support serialization. */
   private static final long serialVersionUID = 1L;
   /** the data model. */
-  private TelemetryChartDataModel dataModel;
+  private Processable dataModel;
 
   /**
    * @param id the wicket component id.
    * @param model the data model associating with this panel.
    */
   @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
-  public LoadingProcessPanel(String id, TelemetryChartDataModel model) {
+  public LoadingProcessPanel(String id, Processable model) {
     super(id);
     this.dataModel = model;
     MultiLineLabel label = 

@@ -111,6 +111,13 @@ public class TelemetryDataPanel extends Panel {
             
             item.add(new Label("streamUnit", streamUnit));
 
+            /*
+            WebComponent streamMarker = new WebComponent("streamMarker");
+            streamMarker.add(new AttributeModifier("src", true, 
+                new PropertyModel(stream, "markerImageUrl")));
+            item.add(streamMarker);
+            */
+            
             item.add(new ImageUrl("streamMarker", stream.getMarkerImageUrl()));
             
             WebComponent colorCell = new WebComponent("colorCell");

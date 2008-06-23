@@ -35,8 +35,6 @@ public class TelemetrySession implements Serializable {
   private long endDate = ProjectBrowserBasePage.getDateBefore(1).getTime();
   /** The projects this user has selected. */
   private List<Project> selectedProjects = new ArrayList<Project>();
-  /** The project this user has selected. */
-  //private Project project = null;
   /** The analysis this user has selected. */
   private String telemetryName = null;
   /** The descriptions for all telemetries. */
@@ -46,18 +44,12 @@ public class TelemetrySession implements Serializable {
   private String granularity = "Day";
   /** The available granularities. */
   private final List<String> granularityList = new ArrayList<String>();
-  /** The analysis list. */
-  //private List<String> telemetryList = null;
   /** the feedback string. */
   private String feedback = "";
   /** The parameters for telemetry chart. */
   private List<IModel> parameters = new ArrayList<IModel>();
   /** The data model to hold state for data panel */
   private TelemetryChartDataModel dataModel = new TelemetryChartDataModel();
-  /** Default color collection.*/
-  private List<String> colors = new ArrayList<String>();
-  /** collection of markers.*/
-  private List<String> markers = new ArrayList<String>();
   /**
    * Create the instance.
    */
@@ -65,18 +57,6 @@ public class TelemetrySession implements Serializable {
     granularityList.add("Day");
     granularityList.add("Week");
     granularityList.add("Month");
-    getColors().add("76A4FB");
-    getColors().add("FF0000");
-    getColors().add("80C65A");
-    getColors().add("224499");
-    getColors().add("990066");
-    getColors().add("FF9900");
-    getColors().add("FFCC33");
-    getMarkers().add("o");
-    getMarkers().add("d");
-    getMarkers().add("c");
-    getMarkers().add("x");
-    getMarkers().add("s");
   }
 
   /**
@@ -85,24 +65,6 @@ public class TelemetrySession implements Serializable {
   public List<IModel> getParameters() {
     return this.parameters;
   }
-  
-  /**
-   * @param project the project to set
-   */
-  /*
-  public void setProject(Project project) {
-    this.project = project;
-  }
-  */
-
-  /**
-   * @return the project
-   */
-  /*
-  public Project getProject() {
-    return project;
-  }
-  */
 
   /**
    * @param feedback the feedback to set
@@ -264,8 +226,6 @@ public class TelemetrySession implements Serializable {
       }
     };
     thread.start();
-    
-    //dataModel.loadData();
   }
   
   /**
@@ -301,34 +261,6 @@ public class TelemetrySession implements Serializable {
    */
   public List<Project> getSelectedProjects() {
     return selectedProjects;
-  }
-
-  /**
-   * @param colors the colors to set
-   */
-  public void setColors(List<String> colors) {
-    this.colors = colors;
-  }
-
-  /**
-   * @return the colors
-   */
-  public List<String> getColors() {
-    return colors;
-  }
-
-  /**
-   * @param markers the markers to set
-   */
-  public void setMarkers(List<String> markers) {
-    this.markers = markers;
-  }
-
-  /**
-   * @return the markers
-   */
-  public List<String> getMarkers() {
-    return markers;
   }
 
   /**

@@ -14,6 +14,7 @@ import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.googlechart.ChartType;
 import org.hackystat.projectbrowser.googlechart.GoogleChart;
 import org.hackystat.projectbrowser.page.dailyprojectdata.inputpanel.DpdInputForm;
+import org.hackystat.projectbrowser.page.loadingprocesspanel.Processable;
 import org.hackystat.projectbrowser.page.telemetry.TelemetrySession;
 import org.hackystat.projectbrowser.page.telemetry.TelemetryStreamYAxis;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
@@ -28,7 +29,7 @@ import org.hackystat.utilities.tstamp.Tstamp;
  * 
  * @author Shaoxuan Zhang
  */
-public class TelemetryChartDataModel implements Serializable {
+public class TelemetryChartDataModel implements Serializable, Processable {
   /** Support serialization. */
   private static final long serialVersionUID = 1L;
 

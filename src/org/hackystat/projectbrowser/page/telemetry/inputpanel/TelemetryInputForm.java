@@ -35,9 +35,9 @@ public class TelemetryInputForm extends Form {
   /** Support serialization. */
   public static final long serialVersionUID = 1L;
   /** The page containing this form. */
-  ProjectBrowserBasePage page = null;
+  private ProjectBrowserBasePage page = null;
   /** TelemetrySession that holds page state for telemetry. */
-  TelemetrySession session = ProjectBrowserSession.get().getTelemetrySession();
+  private TelemetrySession session = ProjectBrowserSession.get().getTelemetrySession();
   /**
    * Create this form, supplying the wicket:id.
    * 

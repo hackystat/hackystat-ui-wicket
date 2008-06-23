@@ -4,12 +4,14 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.model.PropertyModel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
+import org.hackystat.projectbrowser.page.loadingprocesspanel.LoadingProcessPanel;
 import org.hackystat.projectbrowser.page.telemetry.datapanel.TelemetryDataPanel;
 import org.hackystat.projectbrowser.page.telemetry.inputpanel.TelemetryInputPanel;
 
 /**
  * Provides a page with Telemetry analyses. 
  * @author Philip Johnson
+ * @author Shaoxuan Zhang
  */
 public class TelemetryPage extends ProjectBrowserBasePage {
 
