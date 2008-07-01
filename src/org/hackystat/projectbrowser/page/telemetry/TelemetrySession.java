@@ -14,7 +14,6 @@ import org.apache.wicket.model.IModel;
 import org.hackystat.projectbrowser.ProjectBrowserApplication;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
-import org.hackystat.projectbrowser.page.dailyprojectdata.inputpanel.DpdInputForm;
 import org.hackystat.projectbrowser.page.telemetry.datapanel.TelemetryChartDataModel;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
 import org.hackystat.telemetry.service.client.TelemetryClient;
@@ -190,7 +189,8 @@ public class TelemetrySession implements Serializable {
    * @return The date as a simple string. 
    */
   public String getStartDateString() {
-    SimpleDateFormat format = new SimpleDateFormat(DpdInputForm.DATA_FORMAT, Locale.ENGLISH);
+    SimpleDateFormat format = 
+      new SimpleDateFormat(ProjectBrowserBasePage.DATA_FORMAT, Locale.ENGLISH);
     return format.format(new Date(this.startDate));
   }
   
@@ -199,7 +199,8 @@ public class TelemetrySession implements Serializable {
    * @return The date as a simple string. 
    */
   public String getEndDateString() {
-    SimpleDateFormat format = new SimpleDateFormat(DpdInputForm.DATA_FORMAT, Locale.ENGLISH);
+    SimpleDateFormat format = 
+      new SimpleDateFormat(ProjectBrowserBasePage.DATA_FORMAT, Locale.ENGLISH);
     return format.format(new Date(this.endDate));
   }
 

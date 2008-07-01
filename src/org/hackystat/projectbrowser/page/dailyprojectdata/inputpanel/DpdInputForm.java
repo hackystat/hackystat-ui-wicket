@@ -26,9 +26,6 @@ public class DpdInputForm extends Form {
   /** Support serialization. */
   public static final long serialVersionUID = 1L;
 
-  /** Date format used in date field input. */
-  public static final String DATA_FORMAT = "yyyy-MM-dd";
-
   /** The page containing this form. */
   ProjectBrowserBasePage page = null;
   
@@ -45,7 +42,8 @@ public class DpdInputForm extends Form {
 
     // [1] Create the Date field, always visible, always required.
     DateTextField dateTextField = 
-      new DateTextField("dateTextField", new PropertyModel(session, "date"), DATA_FORMAT);
+      new DateTextField("dateTextField", new PropertyModel(session, "date"), 
+          ProjectBrowserBasePage.DATA_FORMAT);
     dateTextField.add(new DatePicker());
     dateTextField.setRequired(true);
     add(dateTextField);

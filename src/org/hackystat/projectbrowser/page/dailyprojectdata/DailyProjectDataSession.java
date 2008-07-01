@@ -17,7 +17,6 @@ import org.hackystat.projectbrowser.page.dailyprojectdata.build.BuildDataModel;
 import org.hackystat.projectbrowser.page.dailyprojectdata.complexity.ComplexityDataModel;
 import org.hackystat.projectbrowser.page.dailyprojectdata.coupling.CouplingDataModel;
 import org.hackystat.projectbrowser.page.dailyprojectdata.coverage.CoverageDataModel;
-import org.hackystat.projectbrowser.page.dailyprojectdata.inputpanel.DpdInputForm;
 import org.hackystat.projectbrowser.page.dailyprojectdata.unittest.UnitTestDataModel;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
 
@@ -105,7 +104,8 @@ public class DailyProjectDataSession implements Serializable {
    * @return The date as a simple string. 
    */
   public String getDateString() {
-    SimpleDateFormat format = new SimpleDateFormat(DpdInputForm.DATA_FORMAT, Locale.ENGLISH);
+    SimpleDateFormat format = 
+      new SimpleDateFormat(ProjectBrowserBasePage.DATA_FORMAT, Locale.ENGLISH);
     return format.format(new Date(this.date));
   }
   

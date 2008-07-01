@@ -18,7 +18,6 @@ import org.apache.wicket.model.PropertyModel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.ProjectChoiceRenderer;
 import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
-import org.hackystat.projectbrowser.page.dailyprojectdata.inputpanel.DpdInputForm;
 import org.hackystat.projectbrowser.page.popupwindow.PopupWindowPanel;
 import org.hackystat.projectbrowser.page.telemetry.TelemetrySession;
 import org.hackystat.projectbrowser.page.validator.ProjectDateValidator;
@@ -87,7 +86,7 @@ public class TelemetryInputForm extends Form {
     //StartDateTextField
     DateTextField startDateTextField = 
       new DateTextField("startDateTextField", new PropertyModel(session, "startDate"), 
-          DpdInputForm.DATA_FORMAT) {
+          ProjectBrowserBasePage.DATA_FORMAT) {
       /** Support serialization. */
       public static final long serialVersionUID = 1L;
       @Override
@@ -102,7 +101,7 @@ public class TelemetryInputForm extends Form {
     //EndDateTextField
     DateTextField endDateTextField = 
       new DateTextField("endDateTextField", new PropertyModel(session, "endDate"), 
-          DpdInputForm.DATA_FORMAT) {
+          ProjectBrowserBasePage.DATA_FORMAT) {
       /** Support serialization. */
       public static final long serialVersionUID = 1L;
       @Override

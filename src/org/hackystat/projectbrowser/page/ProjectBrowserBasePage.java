@@ -45,6 +45,9 @@ public class ProjectBrowserBasePage extends WebPage {
   /** Displays text at the bottom of the screen for user information. */
   protected String footerFeedback = "";
 
+  /** Date format used in date field input. */
+  public static final String DATA_FORMAT = "yyyy-MM-dd";
+
   
   /**
    * Create the ProjectBrowserBasePage.
