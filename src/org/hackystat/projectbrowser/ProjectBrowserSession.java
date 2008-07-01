@@ -11,6 +11,7 @@ import org.apache.wicket.Session;
 import org.apache.wicket.protocol.http.WebSession;
 import org.hackystat.dailyprojectdata.client.DailyProjectDataClient;
 import org.hackystat.projectbrowser.page.dailyprojectdata.DailyProjectDataSession;
+import org.hackystat.projectbrowser.page.projectportfolio.ProjectPortfolioSession;
 import org.hackystat.projectbrowser.page.sensordata.SensorDataSession;
 import org.hackystat.projectbrowser.page.telemetry.TelemetrySession;
 import org.hackystat.sensorbase.client.SensorBaseClient;
@@ -54,6 +55,10 @@ public class ProjectBrowserSession extends WebSession {
   private DailyProjectDataSession dailyProjectDataSession = new DailyProjectDataSession();
   
   private TelemetrySession telemetrySession = new TelemetrySession();
+
+  /** ProjectPortfolioSession that holds page state for Project Portfolio. */
+  private ProjectPortfolioSession projectPortfolioSession = new ProjectPortfolioSession();
+  
   /**
    * Provide a constructor that initializes WebSession.
    * @param request The request object.
@@ -270,7 +275,7 @@ public class ProjectBrowserSession extends WebSession {
       }
       catch (SensorBaseClientException e) {
         Logger logger = ((ProjectBrowserApplication)getApplication()).getLogger();
-        logger.warning("Error getting projects for " + this.email/* + StackTrace.toString(e)*/);
+        logger.warning("Error getting projects for " + this.email + ": " + e.getMessage());
       }
     }
     return projectList;
@@ -325,5 +330,12 @@ public class ProjectBrowserSession extends WebSession {
    */
   public String getEmail() {
     return email;
+  }
+
+  /**
+   * @return the projectPortfolioSession
+   */
+  public ProjectPortfolioSession getProjectPortfolioSession() {
+    return projectPortfolioSession;
   }
 }

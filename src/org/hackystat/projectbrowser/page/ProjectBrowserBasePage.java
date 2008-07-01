@@ -15,6 +15,8 @@ import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.imageurl.ImageUrl;
 import org.hackystat.projectbrowser.page.crap.CrapPage;
 import org.hackystat.projectbrowser.page.dailyprojectdata.DailyProjectDataPage;
+import org.hackystat.projectbrowser.page.projectportfolio.ProjectPortfolioPage;
+import org.hackystat.projectbrowser.page.projects.ProjectsPage;
 import org.hackystat.projectbrowser.page.sensordata.SensorDataPage;
 import org.hackystat.projectbrowser.page.telemetry.TelemetryPage;
 import org.hackystat.utilities.tstamp.Tstamp;
@@ -63,11 +65,49 @@ public class ProjectBrowserBasePage extends WebPage {
       this.projectName = projectNames.get(0);
     }
     */
-    add(new BookmarkablePageLink("SensorDataPageLink", SensorDataPage.class));
-    //add(new BookmarkablePageLink("ProjectsPageLink", ProjectsPage.class));
-    add(new BookmarkablePageLink("DailyProjectDataPageLink", DailyProjectDataPage.class));
-    add(new BookmarkablePageLink("TelemetryPageLink", TelemetryPage.class));
-    add(new BookmarkablePageLink("CrapPageLink", CrapPage.class));
+    add(new BookmarkablePageLink("SensorDataPageLink", SensorDataPage.class) {
+      private static final long serialVersionUID = 1L;
+      @Override
+      public boolean isVisible() {
+        return ((ProjectBrowserApplication)getApplication()).isPageAvailable("sensordata");
+      }
+    });
+    add(new BookmarkablePageLink("ProjectsPageLink", ProjectsPage.class) {
+      private static final long serialVersionUID = 1L;
+      @Override
+      public boolean isVisible() {
+        return ((ProjectBrowserApplication)getApplication()).isPageAvailable("projects");
+      }
+    });
+    add(new BookmarkablePageLink("DailyProjectDataPageLink", DailyProjectDataPage.class) {
+      private static final long serialVersionUID = 1L;
+      @Override
+      public boolean isVisible() {
+        return ((ProjectBrowserApplication)getApplication()).isPageAvailable("dailyprojectdata");
+      }
+    });
+    add(new BookmarkablePageLink("TelemetryPageLink", TelemetryPage.class) {
+      private static final long serialVersionUID = 1L;
+      @Override
+      public boolean isVisible() {
+        return ((ProjectBrowserApplication)getApplication()).isPageAvailable("telemetry");
+      }
+    });
+    add(new BookmarkablePageLink("ProjectPortfolioPageLink", ProjectPortfolioPage.class) {
+      private static final long serialVersionUID = 1L;
+      @Override
+      public boolean isVisible() {
+        return ((ProjectBrowserApplication)getApplication()).isPageAvailable("projectportfolio");
+      }
+    });
+    add(new BookmarkablePageLink("CrapPageLink", CrapPage.class) {
+      private static final long serialVersionUID = 1L;
+      @Override
+      public boolean isVisible() {
+        return ((ProjectBrowserApplication)getApplication()).isPageAvailable("crap");
+      }
+    });
+    
     add(new Link("LogoutLink") {
       /** Support serialization. */
       private static final long serialVersionUID = 1L;

@@ -29,6 +29,11 @@ public class ProjectBrowserProperties {
   public static final String APPLICATION_NAME_KEY =  "projectbrowser.application.name";
   /** Optional items per page */
   public static final String SENSORDATA_ITEMSPERPAGE_KEY = "projectbrowser.sensordata.itemsperpage";
+  /** Key for tabs of pages. */
+  public static final String AVAILABLEPAGE_KEY = "projectbrowser.availablepage";
+  /** Available pages. */
+  public static final String[] PAGE_NAMES = {"sensordata", "projects", "dailyprojectdata", 
+                                                 "telemetry", "projectportfolio", "crap"};
   /** The default number of items per page. */
   private int defaultItemsPerPage = 50;
   /** The default port as an int. */
@@ -98,6 +103,10 @@ public class ProjectBrowserProperties {
     properties.setProperty(WICKET_CONFIGURATION_KEY, "deployment");
     properties.setProperty(APPLICATION_NAME_KEY, "Hackystat ProjectBrowser");
     properties.setProperty(SENSORDATA_ITEMSPERPAGE_KEY, String.valueOf(defaultItemsPerPage));
+    for (String page : PAGE_NAMES) {
+      String pageKey = AVAILABLEPAGE_KEY + "." + page;
+      properties.setProperty(pageKey, "false");
+    }
 
     // Now read in the properties file, and override the defaults if supplied. 
     FileInputStream stream = null;
@@ -186,6 +195,15 @@ public class ProjectBrowserProperties {
    */
   public boolean hasApplicationLogo() {
     return !"".equals(get(APPLICATION_LOGO_KEY));
+  }
+  
+  /**
+   * @param pageName name of the page.
+   * @return true if the user set the page as available.
+   */
+  public boolean isPageAvailable (String pageName) {
+    String pageKey = AVAILABLEPAGE_KEY + "." + pageName;
+    return "true".equals(get(pageKey));
   }
   
   /**

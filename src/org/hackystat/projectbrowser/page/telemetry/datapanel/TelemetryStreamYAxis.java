@@ -1,4 +1,4 @@
-package org.hackystat.projectbrowser.page.telemetry;
+package org.hackystat.projectbrowser.page.telemetry.datapanel;
 
 import java.io.Serializable;
 

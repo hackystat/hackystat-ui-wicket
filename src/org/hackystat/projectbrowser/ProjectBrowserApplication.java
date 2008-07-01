@@ -12,6 +12,7 @@ import org.hackystat.projectbrowser.authentication.SigninPage;
 import org.hackystat.projectbrowser.page.ProjectBrowserPageAuthentication;
 import org.hackystat.projectbrowser.page.crap.CrapPage;
 import org.hackystat.projectbrowser.page.dailyprojectdata.DailyProjectDataPage;
+import org.hackystat.projectbrowser.page.projectportfolio.ProjectPortfolioPage;
 import org.hackystat.projectbrowser.page.projects.ProjectsPage;
 import org.hackystat.projectbrowser.page.sensordata.SensorDataPage;
 import org.hackystat.projectbrowser.page.telemetry.TelemetryPage;
@@ -80,14 +81,35 @@ public class ProjectBrowserApplication extends WebApplication {
    */
   @Override
   public void init() {
-    mountBookmarkablePage("sensordata", SensorDataPage.class);
+    if (isPageAvailable("sensordata")) {
+      mountBookmarkablePage("sensordata", SensorDataPage.class);
+    }
+    if (isPageAvailable("projects")) {
     mountBookmarkablePage("projects", ProjectsPage.class);
+    }
+    if (isPageAvailable("dailyprojectdata")) {
     mountBookmarkablePage("dailyprojectdata", DailyProjectDataPage.class);
+    }
+    if (isPageAvailable("telemetry")) {
     mountBookmarkablePage("telemetry", TelemetryPage.class);
+    }
+    if (isPageAvailable("projectportfolio")) {
+    mountBookmarkablePage("projectportfolio", ProjectPortfolioPage.class);
+    }
+    if (isPageAvailable("crap")) {
     mountBookmarkablePage("crap", CrapPage.class);
+    }
     getSecuritySettings().setAuthorizationStrategy(new ProjectBrowserPageAuthentication());
     super.init();
 
+  }
+
+  /**
+   * @param pageName name of the page.
+   * @return true if the user set the page as available.
+   */
+  public boolean isPageAvailable (String pageName) {
+    return properties.isPageAvailable(pageName);
   }
   
   /**

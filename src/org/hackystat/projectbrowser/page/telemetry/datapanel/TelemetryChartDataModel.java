@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.logging.Logger;
 import org.apache.wicket.model.IModel;
 import org.hackystat.projectbrowser.ProjectBrowserApplication;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
@@ -15,13 +16,12 @@ import org.hackystat.projectbrowser.googlechart.ChartType;
 import org.hackystat.projectbrowser.googlechart.GoogleChart;
 import org.hackystat.projectbrowser.page.dailyprojectdata.inputpanel.DpdInputForm;
 import org.hackystat.projectbrowser.page.loadingprocesspanel.Processable;
-import org.hackystat.projectbrowser.page.telemetry.TelemetrySession;
-import org.hackystat.projectbrowser.page.telemetry.TelemetryStreamYAxis;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
 import org.hackystat.telemetry.service.client.TelemetryClient;
 import org.hackystat.telemetry.service.client.TelemetryClientException;
 import org.hackystat.telemetry.service.resource.chart.jaxb.TelemetryPoint;
 import org.hackystat.telemetry.service.resource.chart.jaxb.TelemetryStream;
+import org.hackystat.utilities.logger.HackystatLogger;
 import org.hackystat.utilities.tstamp.Tstamp;
 
 /**
@@ -32,13 +32,13 @@ import org.hackystat.utilities.tstamp.Tstamp;
 public class TelemetryChartDataModel implements Serializable, Processable {
   /** Support serialization. */
   private static final long serialVersionUID = 1L;
-
   /** The start date this user has selected. */
   private long startDate = 0;
   /** The end date this user has selected. */
   private long endDate = 0;
+  /** The granularity of the chart. Either Day, Week, or Month. */
+  private String granularity = "Day";
   /** The project this user has selected. */
-  // private Project project = null;
   private Map<Project, String> projectCharts = new HashMap<Project, String>();
   /** The projects this user has selected. */
   private List<Project> selectedProjects = new ArrayList<Project>();
@@ -67,27 +67,27 @@ public class TelemetryChartDataModel implements Serializable, Processable {
   private String email;
   /** password of the user. */
   private String password;
-  /** session that holds the state of this page. */
-  private TelemetrySession session;
   /** The URL of google chart. */
   // private String chartUrl = "";
+  
   /**
    * @param startDate the start date of this model..
    * @param endDate the end date of this model..
    * @param selectedProjects the project ofs this model.
    * @param telemetryName the telemetry name of this model.
+   * @param granularity the granularity of this model, Day or Week or Month.
    * @param parameters the list of parameters
    */
   public void setModel(Date startDate, Date endDate, List<Project> selectedProjects,
-      String telemetryName, List<IModel> parameters) {
+      String telemetryName, String granularity, List<IModel> parameters) {
     this.processingMessage = "";
     this.telemetryHost = ((ProjectBrowserApplication)ProjectBrowserSession.get().getApplication()).
                     getTelemetryHost();
     this.email = ProjectBrowserSession.get().getEmail();
     this.password = ProjectBrowserSession.get().getPassword();
-    this.session = ProjectBrowserSession.get().getTelemetrySession();
     this.startDate = startDate.getTime();
     this.endDate = endDate.getTime();
+    this.granularity = granularity;
     this.selectedProjects = selectedProjects;
     // this.project = selectedProjects.get(0);
     this.telemetryName = telemetryName;
@@ -101,6 +101,7 @@ public class TelemetryChartDataModel implements Serializable, Processable {
     }
     this.selectedChart = null;
     // this.chartUrl = this.getChartUrl(project);
+    System.out.println(Tstamp.makeTimestamp(this.startDate));
   }
 
   /**
@@ -109,32 +110,41 @@ public class TelemetryChartDataModel implements Serializable, Processable {
   public void loadData() {
     this.inProcess = true;
     this.complete = false;
-    this.processingMessage = "Retrieving data from Hackystat Telemetry service.\n";
+    this.processingMessage = "Retrieving telemetry chart <" + getTelemetryName() + 
+    "> from Hackystat Telemetry service.\n";
+    Logger logger = HackystatLogger.getLogger("org.hackystat.projectbrowser", "projectbrowser");
     try {
+      TelemetryClient client = new TelemetryClient(this.telemetryHost, this.email, this.password);
+
       for (int i = 0; i < this.selectedProjects.size() && inProcess; i++) {
         Project project = this.selectedProjects.get(i);
-        this.processingMessage += "Retrieving data for project " + project.getName() + 
+        this.processingMessage += "Retrieving data for project: " + project.getName() + 
             " (" + (i + 1) + " of " + this.selectedProjects.size() + ").\n";
+        
+        logger.info("Retrieving chart <" + getTelemetryName()
+            + "> for project: " + project.getName());
+        
         List<SelectableTelemetryStream> streamList = new ArrayList<SelectableTelemetryStream>();
-
-        TelemetryClient client = new TelemetryClient(this.telemetryHost, this.email, this.password);
+        
         List<TelemetryStream> streams = client.getChart(this.getTelemetryName(),
-            project.getOwner(), project.getName(), session.getGranularity(),
-            Tstamp.makeTimestamp(session.getStartDate().getTime()),
-            Tstamp.makeTimestamp(session.getEndDate().getTime()), this.getParameterAsString())
-            .getTelemetryStream();
+            project.getOwner(), project.getName(), granularity,
+            Tstamp.makeTimestamp(startDate), Tstamp.makeTimestamp(endDate), 
+            this.getParameterAsString()).getTelemetryStream();
         for (TelemetryStream stream : streams) {
           streamList.add(new SelectableTelemetryStream(stream));
         }
         this.projectStreamData.put(project, streamList);
-      //this.processingMessage += "Done.\n";
+
+        logger.info("Finished retrieving chart <" + getTelemetryName() + 
+            "> for project: " + project.getName());
       }
     }
     catch (TelemetryClientException e) {
-      this.processingMessage += "Errors when retrieving " + this.telemetryName + 
-      " telemetry data: " + e.getMessage() + ". Please try again.\n";
-      session.setFeedback("Errors when retrieving " + this.telemetryName + " telemetry data: "
-          + e.getMessage() + ". Please try again.");
+      String errorMessage = "Errors when retrieving " + this.telemetryName + 
+      " telemetry data: " + e.getMessage() + ". Please try again.";
+      this.processingMessage += errorMessage + "\n";
+
+      logger.warning(errorMessage);
       this.complete = false;
       this.inProcess = false;
       return;
@@ -360,13 +370,9 @@ public class TelemetryChartDataModel implements Serializable, Processable {
    */
   public List<String> getDateList(List<TelemetryPoint> points) {
     List<String> dates = new ArrayList<String>();
+    SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd", Locale.US);
     for (TelemetryPoint point : points) {
-      String month = "0" + point.getTime().getMonth();
-      month = month.substring(month.length() - 2);
-      String date = "0" + point.getTime().getDay();
-      date = date.substring(date.length() - 2);
-      String dateString = month + "-" + date;
-      dates.add(dateString);
+      dates.add(dateFormat.format(point.getTime().toGregorianCalendar().getTime()));
     }
     return dates;
   }

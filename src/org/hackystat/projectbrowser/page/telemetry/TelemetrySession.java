@@ -9,7 +9,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.logging.Logger;
 import org.apache.wicket.model.IModel;
+import org.hackystat.projectbrowser.ProjectBrowserApplication;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
 import org.hackystat.projectbrowser.page.dailyprojectdata.inputpanel.DpdInputForm;
@@ -102,16 +104,21 @@ public class TelemetrySession implements Serializable {
    * @return the telemetryList
    */
   public List<String> getTelemetryList() {
+    Logger logger = ((ProjectBrowserApplication)ProjectBrowserApplication.get()).getLogger();
     List<String> telemetryList = new ArrayList<String>();
     if (this.getTelemetrys().isEmpty()) {
       TelemetryClient client  = ProjectBrowserSession.get().getTelemetryClient();
       try {
+        logger.info("Retrieving data for Telemetry chart definitions.");
         for (TelemetryChartRef chartRef : client.getChartIndex().getTelemetryChartRef()) {
           getTelemetrys().put(chartRef.getName(), client.getChartDefinition(chartRef.getName()));
         }
+        logger.info("Finished retrieving data for Telemetry chart definitions.");
       }
       catch (TelemetryClientException e) {
         this.feedback = "Exception when retrieving Telemetry chart definition: " + e.getMessage();
+        logger.warning("Error when retrieving Telemetry chart definition: " 
+                                      + e.getMessage());
       }
     }
     telemetryList.addAll(this.getTelemetrys().keySet());
@@ -124,18 +131,23 @@ public class TelemetrySession implements Serializable {
    * @return list of ParameterDefinition.
    */
   public List<ParameterDefinition> getParameterList() {
+    Logger logger = ((ProjectBrowserApplication)ProjectBrowserApplication.get()).getLogger();
     if (this.telemetryName != null) {
       TelemetryChartDefinition teleDef = 
         this.getTelemetrys().get(telemetryName);
       if (teleDef == null) {
         TelemetryClient client  = ProjectBrowserSession.get().getTelemetryClient();
         try {
+          logger.info("Retrieving chart definition of telemetry: " + this.telemetryName);
           teleDef = client.getChartDefinition(this.telemetryName);
           this.getTelemetrys().put(telemetryName, teleDef);
           return teleDef.getParameterDefinition();
         }
         catch (TelemetryClientException e) {
-          this.feedback = "Exception when retrieving Telemetry chart definition: " + e.getMessage();
+          this.feedback = "Error when retrieving chart definition of telemetry: " + 
+            this.telemetryName + ">>" + e.getMessage();
+          logger.warning("Error when retrieving chart definition of telemetry: " + 
+              this.telemetryName + ">>" + e.getMessage());
         }
       }
       else {
@@ -217,7 +229,8 @@ public class TelemetrySession implements Serializable {
    */
   public void updateDataModel() {
     this.dataModel.
-      setModel(getStartDate(), getEndDate(), selectedProjects, telemetryName, parameters);
+      setModel(getStartDate(), getEndDate(), 
+          selectedProjects, telemetryName, granularity, parameters);
     
     Thread thread = new Thread() {
       @Override
