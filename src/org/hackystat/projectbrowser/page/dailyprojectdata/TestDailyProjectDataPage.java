@@ -3,6 +3,7 @@ package org.hackystat.projectbrowser.page.dailyprojectdata;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import java.util.Properties;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 
@@ -11,6 +12,7 @@ import org.apache.wicket.markup.html.form.ListMultipleChoice;
 import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
 import org.hackystat.projectbrowser.ProjectBrowserApplication;
+import org.hackystat.projectbrowser.ProjectBrowserProperties;
 import org.hackystat.projectbrowser.authentication.SigninPage;
 import org.hackystat.projectbrowser.test.ProjectBrowserTestHelper;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
@@ -29,7 +31,9 @@ public class TestDailyProjectDataPage extends ProjectBrowserTestHelper {
    */
   @Test 
   public void testDailyProjectDataPage() {  //NOPMD WicketTester has its own assert classes.
-    WicketTester tester = new WicketTester(new ProjectBrowserApplication(getTestProperties()));
+    Properties testProperties = getTestProperties();
+    testProperties.put(ProjectBrowserProperties.AVAILABLEPAGE_KEY + ".dailyprojectdata", "true");
+    WicketTester tester = new WicketTester(new ProjectBrowserApplication(testProperties));
     tester.startPage(SigninPage.class); 
     // Let's sign in.
     String testUser = "TestUser@hackystat.org";

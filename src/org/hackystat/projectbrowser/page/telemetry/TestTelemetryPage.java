@@ -1,13 +1,21 @@
 package org.hackystat.projectbrowser.page.telemetry;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import java.util.Properties;
 import javax.xml.datatype.XMLGregorianCalendar;
+import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.form.ListMultipleChoice;
 import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
 import org.hackystat.projectbrowser.ProjectBrowserApplication;
+import org.hackystat.projectbrowser.ProjectBrowserProperties;
 import org.hackystat.projectbrowser.authentication.SigninPage;
+import org.hackystat.projectbrowser.page.loadingprocesspanel.LoadingProcessPanel;
 import org.hackystat.projectbrowser.page.telemetry.inputpanel.TelemetryInputPanel;
 import org.hackystat.projectbrowser.test.ProjectBrowserTestHelper;
+import org.hackystat.sensorbase.resource.projects.jaxb.Project;
 import org.hackystat.utilities.tstamp.Tstamp;
 import org.junit.After;
 import org.junit.Before;
@@ -38,7 +46,9 @@ public class TestTelemetryPage extends ProjectBrowserTestHelper {
    */
   @Test 
   public void testTelemetryPage() {  //NOPMD WicketTester has its own assert classes.
-    WicketTester tester = new WicketTester(new ProjectBrowserApplication(getTestProperties()));
+    Properties testProperties = getTestProperties();
+    testProperties.put(ProjectBrowserProperties.AVAILABLEPAGE_KEY + ".telemetry", "true");
+    WicketTester tester = new WicketTester(new ProjectBrowserApplication(testProperties));
     tester.startPage(SigninPage.class); 
     // Let's sign in.
     FormTester signinForm = tester.newFormTester("signinForm");
@@ -50,23 +60,50 @@ public class TestTelemetryPage extends ProjectBrowserTestHelper {
     tester.assertRenderedPage(TelemetryPage.class);
     tester.assertComponent("inputPanel", TelemetryInputPanel.class);
     FormTester inputForm = tester.newFormTester("inputPanel:inputForm");
-    assertEquals("Check the defult value of the date field.", 
+    //checkt the date field.
+    assertEquals("The date field should be set to yesterday.", 
           getDateYesterdayAsString(), inputForm.getTextComponentValue("endDateTextField"));
-    /*
-    //inputForm.selectMultiple("projectMenu", new int[]{0,1,2});
+
+    //check the project list content.
+    Component component = inputForm.getForm().get("projectMenu");
+    assertTrue("Check project select field", component instanceof ListMultipleChoice);
+    ListMultipleChoice projectChoice = (ListMultipleChoice) component;
+    boolean pass = false;
+    int index = 0;
+    for (int i = 0; i < projectChoice.getChoices().size(); i++) {
+      Project project = (Project)projectChoice.getChoices().get(i);
+      if ("Default".equals(project.getName())) {
+        index = i;
+        pass = true;
+      }
+    }
+    if (!pass) {
+      fail("Default project not found in project list.");
+    }
+    //select that choice.
+    inputForm.select("projectMenu", index);
+    inputForm.select("telemetryMenu", 1);
     inputForm.submit();
-    System.out.println(tester.getComponentFromLastRenderedPage("FooterFeedback").getModelObject());
+    //check the result.
+    tester.assertRenderedPage(TelemetryPage.class);
+    
+    tester.assertComponent("loadingProcessPanel", LoadingProcessPanel.class);
+    
+    /*
+    
     tester.assertComponent("dataPanel", TelemetryDataPanel.class);
     assertEquals("chart image should be empty initially.", 
         "", tester.getTagByWicketId("selectedChart").getAttribute("src"));
-        */
-    /*
+        
+    
     FormTester streamForm = tester.newFormTester("dataPanel:streamForm");
     streamForm.getForm().get("selectAll").setModelObject(true);
     streamForm.submit();
     assertEquals("chart image should be displayed now.", "http://chart.apis.google.com/chart?",
         tester.getTagByWicketId("selectedChart").getAttribute("src"));
-        */
+        
+    */
+    
   }
   
   /**
