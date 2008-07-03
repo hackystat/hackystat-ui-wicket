@@ -426,13 +426,12 @@ public class TelemetrySession implements Serializable {
         String error = "Telemetry from URL parameter is unknown: " + telemetryString;
         logger.warning(error);
         errorMessage.append(error);
-        errorMessage.append("\n");
+        errorMessage.append('\n');
       }
     }
     else {
       isLoadSucceed = false;
-      errorMessage.append("Telemetry key is missing in URL parameters.");
-      errorMessage.append("\n");
+      errorMessage.append("Telemetry key is missing in URL parameters.\n");
     }
     //load start date
     if (parameters.containsKey(START_DATE_KEY)) {
@@ -447,7 +446,7 @@ public class TelemetrySession implements Serializable {
           "Errors when parsing start date from URL parameter: " + startDateString;
         logger.warning(error + " > " + e.getMessage());
         errorMessage.append(error);
-        errorMessage.append("\n");
+        errorMessage.append('\n');
       }
     }
     else {
@@ -466,7 +465,7 @@ public class TelemetrySession implements Serializable {
         String error = "Errors when parsing end date from URL parameter: " + endDateString;
         logger.warning(error + " > " + e.getMessage());
         errorMessage.append(error);
-        errorMessage.append("\n");
+        errorMessage.append('\n');
       }
     }
     else {
@@ -486,7 +485,7 @@ public class TelemetrySession implements Serializable {
               " >> project name and owner are missing or not formatted correctly.";
           logger.warning(error);
           errorMessage.append(error);
-          errorMessage.append("\n");
+          errorMessage.append('\n');
           continue;
         }
         String projectName = projectInfo[0];
@@ -499,7 +498,7 @@ public class TelemetrySession implements Serializable {
               ProjectBrowserSession.get().getEmail();
           logger.warning(error);
           errorMessage.append(error);
-          errorMessage.append("\n");
+          errorMessage.append('\n');
         }
         else {
           projectsList.add(project);
@@ -524,7 +523,7 @@ public class TelemetrySession implements Serializable {
         String error = "Granularity is not supported: " + granularityString;
         logger.warning(error);
         errorMessage.append(error);
-        errorMessage.append("\n");
+        errorMessage.append('\n');
       }
     }
     else {
@@ -550,7 +549,7 @@ public class TelemetrySession implements Serializable {
               		" type: " + paramDefList.get(i).getType().getName();
               logger.warning(error);
               errorMessage.append(error);
-              errorMessage.append("\n");
+              errorMessage.append('\n');
             }
           }
         }
@@ -562,7 +561,7 @@ public class TelemetrySession implements Serializable {
           this.telemetryName + "(" + paramDefList.size() + ")";
           logger.warning(error);
           errorMessage.append(error);
-          errorMessage.append("\n");
+          errorMessage.append('\n');
         }
       }
     }
