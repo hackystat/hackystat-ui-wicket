@@ -1,6 +1,8 @@
 package org.hackystat.projectbrowser.page.telemetry;
 
+import org.apache.wicket.PageParameters;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.apache.wicket.model.PropertyModel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
@@ -26,9 +28,10 @@ public class TelemetryPage extends ProjectBrowserBasePage {
   /** the LoadingProcessPanel in this page. */
   private LoadingProcessPanel loadingProcessPanel;
   /**
-   * Constructs the telemetry page. 
+   * Constructs the telemetry page without URL parameters.
    */
   public TelemetryPage() {
+    //session.clearParamErrorMessage();
     
     inputPanel = new TelemetryInputPanel("inputPanel", this);
     inputPanel.setOutputMarkupId(true);
@@ -51,6 +54,23 @@ public class TelemetryPage extends ProjectBrowserBasePage {
     
     this.get("FooterFeedback").setModel(new PropertyModel(session, "feedback"));
     this.get("FooterFeedback").setOutputMarkupId(true);
+    
+    add(new MultiLineLabel("paramErrorMessage", new PropertyModel(session, "paramErrorMessage")));
+  }
+
+  /**
+   * Constructs the telemetry page. 
+   * @param parameters the parameters from URL request.
+   */
+  public TelemetryPage(PageParameters parameters) {
+    this();
+
+    boolean isLoadSucceed = session.loadPageParameters(parameters);
+
+    if (isLoadSucceed) {
+      session.updateDataModel();
+      loadingProcessPanel.start();
+    }
   }
   
   /**
@@ -59,5 +79,6 @@ public class TelemetryPage extends ProjectBrowserBasePage {
   @Override
   public void onProjectDateSubmit() {
     loadingProcessPanel.start();
+    //setResponsePage(TelemetryPage.class, session.getPageParameters());
   }
 }

@@ -101,7 +101,6 @@ public class TelemetryChartDataModel implements Serializable, Processable {
     }
     this.selectedChart = null;
     // this.chartUrl = this.getChartUrl(project);
-    System.out.println(Tstamp.makeTimestamp(this.startDate));
   }
 
   /**
@@ -140,7 +139,7 @@ public class TelemetryChartDataModel implements Serializable, Processable {
       }
     }
     catch (TelemetryClientException e) {
-      String errorMessage = "Errors when retrieving " + this.telemetryName + 
+      String errorMessage = "Errors when retrieving " + getTelemetryName() + 
       " telemetry data: " + e.getMessage() + ". Please try again.";
       this.processingMessage += errorMessage + "\n";
 

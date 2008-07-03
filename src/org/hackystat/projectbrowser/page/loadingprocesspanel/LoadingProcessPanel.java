@@ -28,6 +28,11 @@ public class LoadingProcessPanel extends Panel {
    * @param id the wicket component id.
    * @param model the data model associating with this panel.
    */
+  // Has to suppress this warning because this constructor calls start() which calls onFinish which
+  // is an overridable method. Calling start() is necessary to start the Ajax auto update function
+  // if process is undergoing when every time this panel is created. The onFinish() method is not
+  // actually called when constructing. It is called within the timers interface method and will be
+  // called later.
   @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
   public LoadingProcessPanel(String id, Processable model) {
     super(id);

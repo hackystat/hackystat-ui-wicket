@@ -6,6 +6,7 @@ import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -15,6 +16,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.imageurl.ImageUrl;
 import org.hackystat.projectbrowser.page.popupwindow.PopupWindowPanel;
+import org.hackystat.projectbrowser.page.telemetry.TelemetryPage;
 import org.hackystat.projectbrowser.page.telemetry.TelemetrySession;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
 import org.hackystat.telemetry.service.resource.chart.jaxb.TelemetryPoint;
@@ -35,6 +37,12 @@ public class TelemetryDataPanel extends Panel {
   public TelemetryDataPanel(String id) {
     super(id);
     IModel dataModel = new PropertyModel(session, "dataModel");
+    
+    BookmarkablePageLink restLink = 
+      new BookmarkablePageLink("restLink", TelemetryPage.class, session.getPageParameters());
+    
+    //restLink.add(new Label("restLinkLabel", new Model(restLink)));
+    add(restLink);
     
     Form streamForm = new Form("streamForm") {
       /** Support serialization. */
