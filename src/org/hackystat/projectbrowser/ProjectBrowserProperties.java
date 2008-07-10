@@ -103,9 +103,10 @@ public class ProjectBrowserProperties {
     properties.setProperty(WICKET_CONFIGURATION_KEY, "deployment");
     properties.setProperty(APPLICATION_NAME_KEY, "Hackystat ProjectBrowser");
     properties.setProperty(SENSORDATA_ITEMSPERPAGE_KEY, String.valueOf(defaultItemsPerPage));
-    properties.setProperty(AVAILABLEPAGE_KEY + ".sensordata", "true");
-    properties.setProperty(AVAILABLEPAGE_KEY + ".dailyprojectdata", "true");
-    properties.setProperty(AVAILABLEPAGE_KEY + ".telemetry", "true");
+    String trueString = "true";
+    properties.setProperty(AVAILABLEPAGE_KEY + ".sensordata", trueString);
+    properties.setProperty(AVAILABLEPAGE_KEY + ".dailyprojectdata", trueString);
+    properties.setProperty(AVAILABLEPAGE_KEY + ".telemetry", trueString);
 
     // Now read in the properties file, and override the defaults if supplied. 
     FileInputStream stream = null;
