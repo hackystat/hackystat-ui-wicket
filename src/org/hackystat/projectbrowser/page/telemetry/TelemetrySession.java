@@ -516,7 +516,7 @@ public class TelemetrySession implements Serializable {
     if (parameters.containsKey(GRANULARITY_KEY)) {
       String granularityString = parameters.getString(GRANULARITY_KEY);
       if (this.granularityList.contains(granularityString)) {
-        this.setGranularity(granularity);
+        this.setGranularity(granularityString);
       }
       else {
         isLoadSucceed = false;

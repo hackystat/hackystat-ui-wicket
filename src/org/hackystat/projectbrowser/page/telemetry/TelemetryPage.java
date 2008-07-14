@@ -64,7 +64,6 @@ public class TelemetryPage extends ProjectBrowserBasePage {
    */
   public TelemetryPage(PageParameters parameters) {
     this();
-
     boolean isLoadSucceed = session.loadPageParameters(parameters);
 
     if (isLoadSucceed) {

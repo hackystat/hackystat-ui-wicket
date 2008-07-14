@@ -6,9 +6,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.wicket.PageParameters;
 import org.hackystat.projectbrowser.ProjectBrowserApplication;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.page.loadingprocesspanel.Processable;
+import org.hackystat.projectbrowser.page.telemetry.TelemetrySession;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
 import org.hackystat.telemetry.service.client.TelemetryClient;
 import org.hackystat.telemetry.service.client.TelemetryClientException;
@@ -116,14 +118,16 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
           TelemetryChartData chartData = telemetryClient.getChart(measure, owner, projectName, 
               telemetryGranularity, Tstamp.makeTimestamp(startDate), Tstamp.makeTimestamp(endDate),
               getParameters().get(measure));
+          MiniBarChart chart;
           if (colorMeasures.contains(measure)) {
-            charts.add(new AutoColorMiniBarChart(chartData.getTelemetryStream().get(0),
-                this.configurations.get(measure)));
+            chart = new AutoColorMiniBarChart(chartData.getTelemetryStream().get(0),
+                this.configurations.get(measure));
           }
           else {
-            charts.add(new MiniBarChart(chartData.getTelemetryStream().get(0)));
+            chart = new MiniBarChart(chartData.getTelemetryStream().get(0));
           }
-          
+          chart.setTelemetryPageParameters(getTelemetryPageParameters(measure, project));
+          charts.add(chart);
         }
         this.measuresCharts.put(project, charts);
       }
@@ -142,6 +146,26 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
       this.processingMessage += "All done.\n";
     }
     this.inProcess = false;
+  }
+
+  /**
+   * Return a PageParameters instance that include necessary information for telemetry.
+   * @param measure the telemetry analysis
+   * @param project the project
+   * @return the PagaParameters object
+   */
+  private PageParameters getTelemetryPageParameters(String measure, Project project) {
+    PageParameters parameters = new PageParameters();
+    
+    parameters.put(TelemetrySession.TELEMETRY_KEY, measure);
+    parameters.put(TelemetrySession.START_DATE_KEY, Tstamp.makeTimestamp(startDate).toString());
+    parameters.put(TelemetrySession.END_DATE_KEY, Tstamp.makeTimestamp(endDate).toString());
+    parameters.put(TelemetrySession.SELECTED_PROJECTS_KEY, 
+        project.getName() + TelemetrySession.PROJECT_NAME_OWNER_SEPARATR + project.getOwner());
+    parameters.put(TelemetrySession.GRANULARITY_KEY, this.telemetryGranularity);
+    parameters.put(TelemetrySession.TELEMETRY_PARAMERTERS_KEY, this.getParameters().get(measure));
+    
+    return parameters;
   }
 
   /**

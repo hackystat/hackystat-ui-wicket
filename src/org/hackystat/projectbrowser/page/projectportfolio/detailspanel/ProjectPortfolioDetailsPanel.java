@@ -2,6 +2,8 @@ package org.hackystat.projectbrowser.page.projectportfolio.detailspanel;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.link.BookmarkablePageLink;
+import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -9,6 +11,7 @@ import org.apache.wicket.model.Model;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.imageurl.ImageUrl;
 import org.hackystat.projectbrowser.page.projectportfolio.ProjectPortfolioSession;
+import org.hackystat.projectbrowser.page.telemetry.TelemetryPage;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
 
 /**
@@ -46,7 +49,12 @@ public class ProjectPortfolioDetailsPanel extends Panel {
           @Override
           protected void populateItem(ListItem item) {
             MiniBarChart chart = (MiniBarChart)item.getModelObject();
-            item.add(new ImageUrl("chart", chart.getImageUrl()));
+            
+            Link chartLink = new BookmarkablePageLink("chartLink", 
+                TelemetryPage.class, chart.getTelemetryPageParameters());
+            chartLink.add(new ImageUrl("chart", chart.getImageUrl()));
+            item.add(chartLink);
+            
             String value;
             if (chart.getLatestValue() >= 0) {
               value = String.valueOf(chart.getLatestValue());

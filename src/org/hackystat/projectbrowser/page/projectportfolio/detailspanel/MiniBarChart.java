@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import org.apache.wicket.PageParameters;
 import org.hackystat.projectbrowser.googlechart.ChartType;
 import org.hackystat.projectbrowser.googlechart.GoogleChart;
 import org.hackystat.telemetry.service.resource.chart.jaxb.TelemetryPoint;
@@ -28,11 +29,15 @@ public class MiniBarChart implements Serializable {
   public static final int width = 30;
   /** The height of the chart. */
   public static final int height = 15;
+  
   /** 
    * Color of the chart. 
    * Default to be black.
    */
   private String chartColor = "000000";
+  /** The PageParameters to construct the link. */
+  private PageParameters telemetryPageParameters;
+  
   
   /**
    * @param stream The stream of this chart.
@@ -123,6 +128,20 @@ public class MiniBarChart implements Serializable {
    */
   public String getValueColor() {
     return "000000";
+  }
+
+  /**
+   * @param telemetryPageParameters the telemetryPageParameters to set
+   */
+  public void setTelemetryPageParameters(PageParameters telemetryPageParameters) {
+    this.telemetryPageParameters = telemetryPageParameters;
+  }
+
+  /**
+   * @return the telemetryPageParameters
+   */
+  public PageParameters getTelemetryPageParameters() {
+    return telemetryPageParameters;
   }
 
 }
