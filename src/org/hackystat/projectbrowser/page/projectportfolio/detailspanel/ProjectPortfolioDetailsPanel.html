@@ -1,0 +1,28 @@
+<html xmlns:wicket>
+  <wicket:panel>
+    <h3>Project Portfolio
+    </h3>
+      <table>
+        <th>Project</th>
+        <th colspan="2" style="text-align:center">Coverage</th>
+        <th colspan="2" style="text-align:center">CyclomaticComplexity</th>
+        <th colspan="2" style="text-align:center">Coupling</th>
+        <th colspan="2" style="text-align:center">Churn</th>
+        <th colspan="2" style="text-align:center">Commit</th>
+        <th colspan="2" style="text-align:center">CodeIssue</th>
+        <th colspan="2" style="text-align:center">FileMetric</th>
+        <tr wicket:id="projectTable">
+          <td wicket:id="projectName">project name</td>
+          <span wicket:id="measures">
+            <td>
+              <img wicket:id="chart"></img>
+            </td>
+            <td>
+              <span wicket:id="value"></span>
+            </td>
+          </span>
+        </tr>
+      </table>
+
+  </wicket:panel>
+</html>

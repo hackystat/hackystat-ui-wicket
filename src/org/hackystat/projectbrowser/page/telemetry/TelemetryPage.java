@@ -79,6 +79,6 @@ public class TelemetryPage extends ProjectBrowserBasePage {
   @Override
   public void onProjectDateSubmit() {
     loadingProcessPanel.start();
-    //setResponsePage(TelemetryPage.class, session.getPageParameters());
+    setResponsePage(TelemetryPage.class);
   }
 }

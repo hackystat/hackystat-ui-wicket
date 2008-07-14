@@ -78,11 +78,6 @@ public class TelemetryInputForm extends Form {
       session.setTelemetryName(session.getTelemetryList().get(0));
     }
 
-    //set Project to Default if null
-    if (session.getSelectedProjects().size() <= 0) {
-      session.getSelectedProjects().add(ProjectBrowserSession.get().getDefaultProject());
-    }
-
     //StartDateTextField
     DateTextField startDateTextField = 
       new DateTextField("startDateTextField", new PropertyModel(session, "startDate"), 
@@ -124,6 +119,11 @@ public class TelemetryInputForm extends Form {
         return getIsEnable();
       }
     });
+
+    //set Project to Default if null
+    if (session.getSelectedProjects().isEmpty()) {
+      session.getSelectedProjects().add(ProjectBrowserSession.get().getDefaultProject());
+    }
     
     // Now create the drop-down menu for projects. 
     ListMultipleChoice projectMenu = 

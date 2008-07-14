@@ -52,6 +52,8 @@ public class GoogleChart implements Serializable {
   private List<String> chartLegend = new ArrayList<String>();
   /** the line styles.*/
   private List<List<Double>> chartLineStyle = new ArrayList<List<Double>>();
+  /** the bar chart size. */
+  private List<Integer> barChartSize = new ArrayList<Integer>();
   /** collection of markers.*/
   private static final List<String> markers = Arrays.asList(new String[]{"o", "d", "c", "x", "s"});
   /** index of the current available marker. */
@@ -87,29 +89,33 @@ public class GoogleChart implements Serializable {
     String url = GOOGLECHART_API_URL;
     url += "chs=" + this.width + "x" + this.height;
     //add data
-    url += PARAMETER_SEPARATOR + "chd=t:" + getDataAsString(this.chartData);
+    url += PARAMETER_SEPARATOR + "chd=t:" + getDataTableAsString(this.chartData);
     //add data scale
     if (chartDataScale != null && !chartDataScale.isEmpty()) {
-      String scaleData = getDataAsString(this.chartDataScale);
+      String scaleData = getDataTableAsString(this.chartDataScale);
       scaleData = scaleData.replace('|', ',');
       url += PARAMETER_SEPARATOR + "chds=" + scaleData;
     }
     //add chart type
     url += PARAMETER_SEPARATOR + "cht=" + chartType.abbrev();
+    //add bar chart size
+    if (!this.barChartSize.isEmpty()) {
+      url += PARAMETER_SEPARATOR + "chbh=" + getDataListAsString(barChartSize);
+    }
     //add title
     if (this.title != null) {
       url += PARAMETER_SEPARATOR + "chtt=" + this.title;
     }
     //add stream color
     if (colors != null && !colors.isEmpty()) {
-      url += PARAMETER_SEPARATOR + "chco=" + toTextEncodingData(this.colors);
+      url += PARAMETER_SEPARATOR + "chco=" + getDataListAsString(this.colors);
     }
     if (!this.chartLineStyle.isEmpty()) {
-      url += PARAMETER_SEPARATOR + "chls=" + getDataAsString(chartLineStyle);
+      url += PARAMETER_SEPARATOR + "chls=" + getDataTableAsString(chartLineStyle);
     }
     //add axis type
     if (!this.axisTypes.isEmpty()) {
-      url += PARAMETER_SEPARATOR + "chxt=" + toTextEncodingData(this.axisTypes);
+      url += PARAMETER_SEPARATOR + "chxt=" + getDataListAsString(this.axisTypes);
     }
     //add axis label
     if (!this.axisLabels.isEmpty()) {
@@ -140,7 +146,7 @@ public class GoogleChart implements Serializable {
           axisRange.add(range);
         }
       }
-      url += PARAMETER_SEPARATOR + "chxr=" + this.getDataAsString(axisRange);
+      url += PARAMETER_SEPARATOR + "chxr=" + this.getDataTableAsString(axisRange);
     }
     //add axis color
     if (!this.axisColor.isEmpty()) {
@@ -150,7 +156,7 @@ public class GoogleChart implements Serializable {
           axisStyle.add(Arrays.asList(new String[]{String.valueOf(i), this.axisColor.get(i)}));
         }
       }
-      url += PARAMETER_SEPARATOR + "chxs=" + this.getDataAsString(axisStyle);
+      url += PARAMETER_SEPARATOR + "chxs=" + this.getDataTableAsString(axisStyle);
     }
     //add chart mark
     if (!this.chartMarker.isEmpty()) {
@@ -164,7 +170,7 @@ public class GoogleChart implements Serializable {
           marker.add("10.0");
           markerList.add(marker);
       }
-      url += PARAMETER_SEPARATOR + "chm=" + this.getDataAsString(markerList);
+      url += PARAMETER_SEPARATOR + "chm=" + this.getDataTableAsString(markerList);
     }
     // add legend
     if (!this.chartLegend.isEmpty()) {
@@ -208,10 +214,10 @@ public class GoogleChart implements Serializable {
    * @param list the list of data to be encoded.
    * @return String of the encoded data.
    */
-  private String getDataAsString(List<? extends List<? extends Object>> list) {
+  private String getDataTableAsString(List<? extends List<? extends Object>> list) {
     StringBuffer buffer = new StringBuffer();
     for (List<? extends Object> dataList : list) {
-      buffer.append(toTextEncodingData(dataList) + DATASET_SEPARATOR);
+      buffer.append(getDataListAsString(dataList) + DATASET_SEPARATOR);
     }
     String dataString = buffer.toString();
     if (dataString.endsWith(DATASET_SEPARATOR)) {
@@ -225,7 +231,7 @@ public class GoogleChart implements Serializable {
    * @param dataList the data list to be converted.
    * @return the string of result.
    */
-  private String toTextEncodingData(List<? extends Object> dataList) {
+  private String getDataListAsString(List<? extends Object> dataList) {
     StringBuffer buffer = new StringBuffer();
     for (Object dataItem : dataList) {
       if (dataItem instanceof Double) {
@@ -459,5 +465,17 @@ public class GoogleChart implements Serializable {
    */
   public List<String> getMarkerColors() {
     return markerColors;
+  }
+  /**
+   * Set the size of the bar chart.
+   * @param barHeight the height or width of the bar.
+   * @param groupSpace the space between groups.
+   * @param barSpace the space between bars in a group.
+   */
+  public void setBarChartSize(int barHeight, int groupSpace, int barSpace) {
+    this.barChartSize.clear();
+    barChartSize.add(barHeight);
+    barChartSize.add(groupSpace);
+    barChartSize.add(barSpace);
   }
 }
