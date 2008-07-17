@@ -34,19 +34,24 @@ public class TelemetrySession implements Serializable {
 
   /** Support serialization. */
   private static final long serialVersionUID = 1L;
-  
-  /** The parameter key of start date. */
-  public static final String START_DATE_KEY = "startdate";
-  /** The parameter key of end date. */
-  public static final String END_DATE_KEY = "enddate";
-  /** The parameter key of selectedProjects. */
-  public static final String SELECTED_PROJECTS_KEY = "projects";
+
   /** The parameter key of telemetry. */
-  public static final String TELEMETRY_KEY = "telemetry";
+  public static final String TELEMETRY_KEY = "0";
   /** The parameter key of granularity. */
-  public static final String GRANULARITY_KEY = "granularity";
+  public static final String GRANULARITY_KEY = "1";
+  /** The parameter key of start date. */
+  public static final String START_DATE_KEY = "2";
+  /** The parameter key of end date. */
+  public static final String END_DATE_KEY = "3";
+  /** The parameter key of selectedProjects. */
+  public static final String SELECTED_PROJECTS_KEY = "4";
   /** The parameter key of telemetry parameters. */
-  public static final String TELEMETRY_PARAMERTERS_KEY = "param";
+  public static final String TELEMETRY_PARAMERTERS_KEY = "5";
+  /** The last parameter key. */
+  public static final String LAST_KEY = "5";
+  /** The last parameter key. */
+  public static final String PARAMETER_ORDER_MESSAGE = "Correct parameter order is : " + 
+                        "/telemetryName/granularity/startDate/endDate/projects/param";
   
   /** The separator for parameter values. */
   public static final String PARAMETER_VALUE_SEPARATOR = ",";
@@ -412,8 +417,16 @@ public class TelemetrySession implements Serializable {
   public boolean loadPageParameters(PageParameters parameters) {
     boolean isLoadSucceed = true;
     boolean isTelemetryLoaded = false;
-    StringBuffer errorMessage = new StringBuffer(1000);
     Logger logger = this.getLogger();
+    if (!parameters.containsKey(LAST_KEY)) {
+      isLoadSucceed = false;
+      String error = "Some parameters are missing, should be " + LAST_KEY + "\n" +
+      		PARAMETER_ORDER_MESSAGE;
+      logger.warning(error);
+      this.paramErrorMessage = error + "\n";
+      return false;
+    }
+    StringBuffer errorMessage = new StringBuffer(1000);
     //load telemetry name
     if (parameters.containsKey(TELEMETRY_KEY)) {
       String telemetryString = parameters.getString(TELEMETRY_KEY);
@@ -433,6 +446,24 @@ public class TelemetrySession implements Serializable {
       isLoadSucceed = false;
       errorMessage.append("Telemetry key is missing in URL parameters.\n");
     }
+    //load granularity
+    if (parameters.containsKey(GRANULARITY_KEY)) {
+      String granularityString = parameters.getString(GRANULARITY_KEY);
+      if (this.granularityList.contains(granularityString)) {
+        this.setGranularity(granularityString);
+      }
+      else {
+        isLoadSucceed = false;
+        String error = "Granularity is not supported: " + granularityString;
+        logger.warning(error);
+        errorMessage.append(error);
+        errorMessage.append('\n');
+      }
+    }
+    else {
+      isLoadSucceed = false;
+      errorMessage.append("granularity key is missing in URL parameters.\n");
+    }
     //load start date
     if (parameters.containsKey(START_DATE_KEY)) {
       String startDateString = parameters.getString(START_DATE_KEY);
@@ -451,7 +482,7 @@ public class TelemetrySession implements Serializable {
     }
     else {
       isLoadSucceed = false;
-      errorMessage.append("startDate key is missing in URL parameters.");
+      errorMessage.append("startDate key is missing in URL parameters.\n");
     }
     //load end date
     if (parameters.containsKey(END_DATE_KEY)) {
@@ -479,7 +510,7 @@ public class TelemetrySession implements Serializable {
       List<Project> projectsList = new ArrayList<Project>();
       for (String string : projectsStringArray) {
         String[] projectInfo = string.split(PROJECT_NAME_OWNER_SEPARATR, 2);
-        if (projectInfo.length < 1) {
+        if (projectInfo.length <= 1) {
           isLoadSucceed = false;
           String error = "Error URL parameter: project: " + string + 
               " >> project name and owner are missing or not formatted correctly.";
@@ -511,24 +542,6 @@ public class TelemetrySession implements Serializable {
     else {
       isLoadSucceed = false;
       errorMessage.append("projects key is missing in URL parameters.\n");
-    }
-    //load granularity
-    if (parameters.containsKey(GRANULARITY_KEY)) {
-      String granularityString = parameters.getString(GRANULARITY_KEY);
-      if (this.granularityList.contains(granularityString)) {
-        this.setGranularity(granularityString);
-      }
-      else {
-        isLoadSucceed = false;
-        String error = "Granularity is not supported: " + granularityString;
-        logger.warning(error);
-        errorMessage.append(error);
-        errorMessage.append('\n');
-      }
-    }
-    else {
-      isLoadSucceed = false;
-      errorMessage.append("granularity key is missing in URL parameters.\n");
     }
     //load telemetry parameters
     if (parameters.containsKey(TELEMETRY_PARAMERTERS_KEY)) {
@@ -570,7 +583,7 @@ public class TelemetrySession implements Serializable {
       errorMessage.append("param key is missing in URL parameters.\n");
     }
     if (errorMessage.length() > 0) {
-      this.paramErrorMessage = errorMessage.toString();
+      this.paramErrorMessage = errorMessage.toString() + PARAMETER_ORDER_MESSAGE;
     }
     return isLoadSucceed;
   }
@@ -610,10 +623,10 @@ public class TelemetrySession implements Serializable {
     PageParameters parameters = new PageParameters();
 
     parameters.put(TELEMETRY_KEY, this.getTelemetryName());
+    parameters.put(GRANULARITY_KEY, this.getGranularity());
     parameters.put(START_DATE_KEY, this.getFormattedStartDateString());
     parameters.put(END_DATE_KEY, this.getFormattedEndDateString());
     parameters.put(SELECTED_PROJECTS_KEY, this.getSelectedProjectsAsString());
-    parameters.put(GRANULARITY_KEY, this.getGranularity());
     parameters.put(TELEMETRY_PARAMERTERS_KEY, this.getParametersAsString());
     
     return parameters;

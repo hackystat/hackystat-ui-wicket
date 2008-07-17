@@ -8,6 +8,7 @@ import org.apache.wicket.Request;
 import org.apache.wicket.Response;
 import org.apache.wicket.Session;
 import org.apache.wicket.protocol.http.WebApplication;
+import org.apache.wicket.request.target.coding.IndexedParamUrlCodingStrategy;
 import org.hackystat.projectbrowser.authentication.SigninPage;
 import org.hackystat.projectbrowser.page.ProjectBrowserPageAuthentication;
 import org.hackystat.projectbrowser.page.crap.CrapPage;
@@ -91,7 +92,7 @@ public class ProjectBrowserApplication extends WebApplication {
     mountBookmarkablePage("dailyprojectdata", DailyProjectDataPage.class);
     }
     if (isPageAvailable("telemetry")) {
-    mountBookmarkablePage("telemetry", TelemetryPage.class);
+      mount(new IndexedParamUrlCodingStrategy("telemetry", TelemetryPage.class));
     }
     if (isPageAvailable("projectportfolio")) {
     mountBookmarkablePage("projectportfolio", ProjectPortfolioPage.class);

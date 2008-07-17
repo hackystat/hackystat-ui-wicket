@@ -191,19 +191,6 @@ public class TelemetryDataPanel extends Panel {
                   new PropertyModel(dataModel, "selectedChart")));
     add(selectedchartUrlWindow);
     
-    //attribute to decide to show panel content or not.
-    /*
-    AttributeModifier visibleAttribute = 
-      new AttributeModifier("style", true, new AbstractReadOnlyModel() {
-      private static final long serialVersionUID = 2013912742253160111L;
-      @Override
-      public Object getObject() {
-        return (!session.getDataModel().isEmpty() && session.getDataModel().isComplete()) ? 
-            "" : "display:none";
-      }
-    });
-    add(visibleAttribute);
-    */
   }
   
   /**

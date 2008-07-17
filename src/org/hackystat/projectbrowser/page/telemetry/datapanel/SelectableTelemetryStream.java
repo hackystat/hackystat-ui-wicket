@@ -1,6 +1,7 @@
 package org.hackystat.projectbrowser.page.telemetry.datapanel;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import org.hackystat.telemetry.service.resource.chart.jaxb.TelemetryPoint;
@@ -48,6 +49,24 @@ public class SelectableTelemetryStream implements Serializable {
       }
       if (value >= 0 && value < minimum) {
         minimum = value;
+      }
+    }
+    if (!isEmpty()) {
+      BigInteger upperBound = this.telemetryStream.getYAxis().getUpperBound();
+      BigInteger lowerBound = this.telemetryStream.getYAxis().getLowerBound();
+      
+      //TODO : developing test out, delete when done.
+      /*
+      String name = this.telemetryStream.getName();
+      System.out.println("Stream: " + name + "'s upperBound is " + upperBound);
+      System.out.println("Stream: " + name + "'s lowerBound is " + lowerBound);
+      */
+      
+      if (upperBound != null && upperBound.doubleValue() > maximum) {
+        maximum = upperBound.doubleValue();
+      }
+      if (lowerBound != null && lowerBound.doubleValue() < minimum) {
+        minimum = lowerBound.doubleValue();
       }
     }
   }
@@ -110,7 +129,7 @@ public class SelectableTelemetryStream implements Serializable {
   /**
    * @return the isEmpty
    */
-  public boolean isEmpty() {
+  public final boolean isEmpty() {
     return this.maximum < 0;
   }
   /**
