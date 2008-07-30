@@ -37,7 +37,7 @@ public class TelemetryPage extends ProjectBrowserBasePage {
     inputPanel.setOutputMarkupId(true);
     add(inputPanel);
     
-    dataPanel = new TelemetryDataPanel("dataPanel");
+    dataPanel = new TelemetryDataPanel("dataPanel", session);
     dataPanel.setOutputMarkupId(true);
     add(dataPanel);
     

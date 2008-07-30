@@ -68,15 +68,16 @@ public class TelemetryInputForm extends Form {
     };
     telemetryMenu.setRequired(true);
     add(telemetryMenu);
+    //select the first chart as the default choice.
+    if (session.getTelemetryName() == null && !session.getTelemetryList().isEmpty()) {
+      session.setTelemetryName(session.getTelemetryList().get(0));
+    }
     //add the popup window
     PopupWindowPanel telemetryPopup = 
       new PopupWindowPanel("chartDefPopup", "Telemetry Descriptions");
     telemetryPopup.getModalWindow().setContent(
         new TelemetryDescriptionPanel(telemetryPopup.getModalWindow().getContentId()));
     add(telemetryPopup);
-    if (session.getTelemetryName() == null && !session.getTelemetryList().isEmpty()) {
-      session.setTelemetryName(session.getTelemetryList().get(0));
-    }
 
     //StartDateTextField
     DateTextField startDateTextField = 

@@ -7,8 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.wicket.PageParameters;
-import org.hackystat.projectbrowser.ProjectBrowserApplication;
-import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.page.loadingprocesspanel.Processable;
 import org.hackystat.projectbrowser.page.telemetry.TelemetrySession;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
@@ -77,12 +75,15 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
    * @param startDate the start date.
    * @param endDate the end date.
    * @param selectedProjects the selected projects.
+   * @param telemetryHost the telemetry host
+   * @param email the user's email
+   * @param password the user's passowrd
    */
-  public void setModel(long startDate, long endDate, List<Project> selectedProjects) {
-    this.telemetryHost = ((ProjectBrowserApplication)ProjectBrowserSession.get().getApplication()).
-        getTelemetryHost();
-    this.email = ProjectBrowserSession.get().getEmail();
-    this.password = ProjectBrowserSession.get().getPassword();
+  public void setModel(long startDate, long endDate, List<Project> selectedProjects, 
+      String telemetryHost, String email, String password) {
+    this.telemetryHost = telemetryHost;
+    this.email = email;
+    this.password = password;
     this.startDate = startDate;
     this.endDate = endDate;
     this.selectedProjects = selectedProjects;

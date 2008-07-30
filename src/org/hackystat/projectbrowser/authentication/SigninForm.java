@@ -6,6 +6,7 @@ import org.apache.wicket.markup.html.form.StatelessForm;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.PropertyModel;
+import org.hackystat.projectbrowser.ProjectBrowserApplication;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.page.WelcomePage;
 
@@ -45,6 +46,8 @@ class SigninForm extends StatelessForm {
   public void onSubmit() {
     boolean signinSuccessful = ProjectBrowserSession.get().signin(user, password);
     if (signinSuccessful) {
+      ((ProjectBrowserApplication)this.getApplication()).getLogger().
+        info("User " + this.user + " has logged in.");
       if (!continueToOriginalDestination()) {
         setResponsePage(new WelcomePage());
       }

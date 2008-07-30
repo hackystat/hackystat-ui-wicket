@@ -10,7 +10,7 @@ import org.apache.wicket.util.tester.WicketTester;
 import org.hackystat.projectbrowser.ProjectBrowserApplication;
 import org.hackystat.projectbrowser.ProjectBrowserProperties;
 import org.hackystat.projectbrowser.authentication.SigninPage;
-import org.hackystat.projectbrowser.page.loadingprocesspanel.LoadingProcessPanel;
+import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.ProjectPortfolioDetailsPanel;
 import org.hackystat.projectbrowser.page.projectportfolio.inputpanel.ProjectPortfolioInputPanel;
 import org.hackystat.projectbrowser.test.ProjectBrowserTestHelper;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
@@ -45,10 +45,12 @@ public class TestProjectPortfolioPage extends ProjectBrowserTestHelper {
    * Test the daily project data page.
    */
   @Test 
-  public void testTelemetryPage() {  //NOPMD WicketTester has its own assert classes.
+  public void testProjectPortfolioPage() {  //NOPMD WicketTester has its own assert classes.
     //prepare test properties.
     Properties testProperties = getTestProperties();
     testProperties.put(ProjectBrowserProperties.AVAILABLEPAGE_KEY + ".projectportfolio", "true");
+    testProperties.put(
+        ProjectBrowserProperties.BACKGROUND_PROCESS_KEY + ".projectportfolio", "false");
     WicketTester tester = new WicketTester(new ProjectBrowserApplication(testProperties));
     
     tester.startPage(SigninPage.class); 
@@ -85,7 +87,8 @@ public class TestProjectPortfolioPage extends ProjectBrowserTestHelper {
     //check the result.
     tester.assertRenderedPage(ProjectPortfolioPage.class);
     
-    tester.assertComponent("loadingProcessPanel", LoadingProcessPanel.class);
+    tester.isInvisible("loadingProcessPanel");
+    tester.assertComponent("detailPanel", ProjectPortfolioDetailsPanel.class);
   }
   
   /**

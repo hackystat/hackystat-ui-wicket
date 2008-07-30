@@ -3,6 +3,8 @@ package org.hackystat.projectbrowser.page.projectportfolio;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import org.hackystat.projectbrowser.ProjectBrowserApplication;
+import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
 import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.ProjectPortfolioDataModel;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
@@ -31,15 +33,26 @@ public class ProjectPortfolioSession implements Serializable {
    */
   public void updateDataModel() {
 
-    this.dataModel.setModel(startDate, endDate, selectedProjects);
+    boolean backgroundProcessEnable = ((ProjectBrowserApplication)ProjectBrowserApplication.get()).
+      isBackgroundProcessEnable("projectportfolio");
     
-    Thread thread = new Thread() {
-      @Override
-      public void run() {
-        dataModel.loadData();
-      }
-    };
-    thread.start();
+    this.dataModel.setModel(startDate, endDate, selectedProjects,
+        ((ProjectBrowserApplication)ProjectBrowserApplication.get()).getTelemetryHost(),
+        ProjectBrowserSession.get().getEmail(),
+        ProjectBrowserSession.get().getPassword());
+
+    if (backgroundProcessEnable) {
+      Thread thread = new Thread() {
+        @Override
+        public void run() {
+          dataModel.loadData();
+        }
+      };
+      thread.start();
+    }
+    else {
+      dataModel.loadData();
+    }
   }
 
   /**
@@ -54,13 +67,6 @@ public class ProjectPortfolioSession implements Serializable {
    */
   public List<Project> getSelectedProjects() {
     return selectedProjects;
-  }
-
-  /**
-   * @param dataModel the dataModel to set
-   */
-  public void setDataModel(ProjectPortfolioDataModel dataModel) {
-    this.dataModel = dataModel;
   }
 
   /**

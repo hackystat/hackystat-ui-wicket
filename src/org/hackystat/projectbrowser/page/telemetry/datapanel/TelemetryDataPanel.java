@@ -13,7 +13,6 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
-import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.imageurl.ImageUrl;
 import org.hackystat.projectbrowser.page.popupwindow.PopupWindowPanel;
 import org.hackystat.projectbrowser.page.telemetry.TelemetryPage;
@@ -29,13 +28,15 @@ public class TelemetryDataPanel extends Panel {
   /** Support serialization. */
   private static final long serialVersionUID = 1L;
   /** TelemetrySession that hold the page state.*/
-  TelemetrySession session = ProjectBrowserSession.get().getTelemetrySession();
+  TelemetrySession session;
 
   /**
    * @param id the wicket component id.
+   * @param s the TelemetrySession.
    */
-  public TelemetryDataPanel(String id) {
+  public TelemetryDataPanel(String id, TelemetrySession s) {
     super(id);
+    this.session = s;
     IModel dataModel = new PropertyModel(session, "dataModel");
     
     BookmarkablePageLink restLink = 
@@ -109,14 +110,9 @@ public class TelemetryDataPanel extends Panel {
             SelectableTelemetryStream stream = (SelectableTelemetryStream)item.getModelObject();
             String streamName = stream.getTelemetryStream().getName();
             String streamUnit = stream.getTelemetryStream().getYAxis().getUnits();
-            /*
-            int index = streamName.indexOf('<');
-            if (index > 0) {
-              streamName = streamName.substring(0, index);
-            }
-            */
-            item.add(new Label("streamName", streamName));
             
+            item.add(new CheckBox("streamCheckBox", new PropertyModel(stream, "selected")));
+            item.add(new Label("streamName", streamName));
             item.add(new Label("streamUnit", streamUnit));
 
             /*
@@ -132,8 +128,6 @@ public class TelemetryDataPanel extends Panel {
             colorCell.add(new AttributeModifier("style", true, 
                 new PropertyModel(stream, "backgroundColorValue")));
             item.add(colorCell);
-            
-            item.add(new CheckBox("streamCheckBox", new PropertyModel(stream, "selected")));
             
             ListView streamData = 
               new ListView("streamData", stream.getTelemetryStream().getTelemetryPoint()) {
@@ -165,7 +159,6 @@ public class TelemetryDataPanel extends Panel {
 
     //add the selected chart.
     WebComponent selectedchartUrl = new WebComponent("selectedChart") {
-      /** Support serialization. */
       public static final long serialVersionUID = 1L;
       @Override
       public boolean isVisible () {

@@ -50,13 +50,13 @@ public class ProjectBrowserSession extends WebSession {
   /** The analysis list. */
   public List<String> analysisList = new ArrayList<String>();
   
+  /** The SensorDataSession that holds page state for SensorData page. */
   private SensorDataSession sensorDataSession = new SensorDataSession();
-
+  /** The DailyProjectDataSession that holds page state for DailyProjectData page. */
   private DailyProjectDataSession dailyProjectDataSession = new DailyProjectDataSession();
-  
+  /** The TelemetrySession that holds page state for Telemetry page. */
   private TelemetrySession telemetrySession = new TelemetrySession();
-
-  /** ProjectPortfolioSession that holds page state for Project Portfolio. */
+  /** ProjectPortfolioSession that holds page state for Project Portfolio page. */
   private ProjectPortfolioSession projectPortfolioSession = new ProjectPortfolioSession();
   
   /**
@@ -338,4 +338,5 @@ public class ProjectBrowserSession extends WebSession {
   public ProjectPortfolioSession getProjectPortfolioSession() {
     return projectPortfolioSession;
   }
+
 }

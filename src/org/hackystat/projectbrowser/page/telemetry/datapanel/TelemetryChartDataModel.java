@@ -10,8 +10,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Logger;
 import org.apache.wicket.model.IModel;
-import org.hackystat.projectbrowser.ProjectBrowserApplication;
-import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.googlechart.ChartType;
 import org.hackystat.projectbrowser.googlechart.GoogleChart;
 import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
@@ -77,14 +75,17 @@ public class TelemetryChartDataModel implements Serializable, Processable {
    * @param telemetryName the telemetry name of this model.
    * @param granularity the granularity of this model, Day or Week or Month.
    * @param parameters the list of parameters
+   * @param telemetryHost the telemetry host
+   * @param email the user's email
+   * @param password the user's passowrd
    */
   public void setModel(Date startDate, Date endDate, List<Project> selectedProjects,
-      String telemetryName, String granularity, List<IModel> parameters) {
+      String telemetryName, String granularity, List<IModel> parameters,
+      String telemetryHost, String email, String password) {
     this.processingMessage = "";
-    this.telemetryHost = ((ProjectBrowserApplication)ProjectBrowserSession.get().getApplication()).
-                    getTelemetryHost();
-    this.email = ProjectBrowserSession.get().getEmail();
-    this.password = ProjectBrowserSession.get().getPassword();
+    this.telemetryHost = telemetryHost;
+    this.email = email;
+    this.password = password;
     this.startDate = startDate.getTime();
     this.endDate = endDate.getTime();
     this.granularity = granularity;
@@ -553,6 +554,7 @@ public class TelemetryChartDataModel implements Serializable, Processable {
    * @param flag the boolean flag.
    */
   public void changeSelectionForAll(boolean flag) {
+    System.out.println("changeSelectionForAll");
     for (List<SelectableTelemetryStream> streamList : this.projectStreamData.values()) {
       for (SelectableTelemetryStream stream : streamList) {
         stream.setSelected(flag);

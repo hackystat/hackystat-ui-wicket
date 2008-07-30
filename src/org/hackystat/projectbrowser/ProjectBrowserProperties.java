@@ -31,6 +31,8 @@ public class ProjectBrowserProperties {
   public static final String SENSORDATA_ITEMSPERPAGE_KEY = "projectbrowser.sensordata.itemsperpage";
   /** Key for tabs of pages. */
   public static final String AVAILABLEPAGE_KEY = "projectbrowser.availablepage";
+  /** If background process enable for pages. */
+  public static final String BACKGROUND_PROCESS_KEY = "projectbrowser.backgroundprocess.enable";
   /** Available pages. */
   public static final String[] PAGE_NAMES = {"sensordata", "projects", "dailyprojectdata", 
                                                  "telemetry", "projectportfolio", "crap"};
@@ -107,6 +109,7 @@ public class ProjectBrowserProperties {
     properties.setProperty(AVAILABLEPAGE_KEY + ".sensordata", trueString);
     properties.setProperty(AVAILABLEPAGE_KEY + ".dailyprojectdata", trueString);
     properties.setProperty(AVAILABLEPAGE_KEY + ".telemetry", trueString);
+    properties.setProperty(BACKGROUND_PROCESS_KEY + ".telemetry", trueString);
 
     // Now read in the properties file, and override the defaults if supplied. 
     FileInputStream stream = null;
@@ -203,6 +206,15 @@ public class ProjectBrowserProperties {
    */
   public boolean isPageAvailable (String pageName) {
     String pageKey = AVAILABLEPAGE_KEY + "." + pageName;
+    return "true".equals(get(pageKey));
+  }
+
+  /**
+   * @param pageName name of the page.
+   * @return true if the user set the background process of the page enable.
+   */
+  public boolean isBackgroundProcessEnable (String pageName) {
+    String pageKey = BACKGROUND_PROCESS_KEY + "." + pageName;
     return "true".equals(get(pageKey));
   }
   

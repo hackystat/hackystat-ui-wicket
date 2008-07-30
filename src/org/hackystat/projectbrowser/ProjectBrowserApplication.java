@@ -114,6 +114,14 @@ public class ProjectBrowserApplication extends WebApplication {
   }
   
   /**
+   * @param pageName name of the page.
+   * @return true if the user set the background process of the page enable.
+   */
+  public boolean isBackgroundProcessEnable (String pageName) {
+    return properties.isBackgroundProcessEnable(pageName);
+  }
+  
+  /**
    * Returns the ProjectBrowserProperties instance associated with this web app.
    * @return The properties.
    */

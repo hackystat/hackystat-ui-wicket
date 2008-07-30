@@ -1,13 +1,11 @@
 package org.hackystat.projectbrowser.page.telemetry;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Logger;
 import org.apache.wicket.PageParameters;
@@ -263,21 +261,25 @@ public class TelemetrySession implements Serializable {
    * Returns the start date in yyyy-MM-dd format.  
    * @return The date as a simple string. 
    */
+  /*
   public String getStartDateString() {
     SimpleDateFormat format = 
       new SimpleDateFormat(ProjectBrowserBasePage.DATA_FORMAT, Locale.ENGLISH);
     return format.format(new Date(this.startDate));
   }
+  */
   
   /**
    * Returns the end date in yyyy-MM-dd format.  
    * @return The date as a simple string. 
    */
+  /*
   public String getEndDateString() {
     SimpleDateFormat format = 
       new SimpleDateFormat(ProjectBrowserBasePage.DATA_FORMAT, Locale.ENGLISH);
     return format.format(new Date(this.endDate));
   }
+  */
 
   /**
    * @param granularity the granularity to set
@@ -302,20 +304,32 @@ public class TelemetrySession implements Serializable {
 
   /**
    * Update the data model.
+   * If execute in background process is determined in ProjectBrowserProperties.
    */
   public void updateDataModel() {
-    this.dataModel.
-      setModel(getStartDate(), getEndDate(), 
-          selectedProjects, telemetryName, granularity, parameters);
+    boolean backgroundProcessEnable = ((ProjectBrowserApplication)ProjectBrowserApplication.get()).
+      isBackgroundProcessEnable("telemetry");
+    dataModel.setModel(getStartDate(), getEndDate(), 
+        selectedProjects, telemetryName, granularity, parameters,
+        ((ProjectBrowserApplication)ProjectBrowserApplication.get()).getTelemetryHost(),
+        ProjectBrowserSession.get().getEmail(),
+        ProjectBrowserSession.get().getPassword());
     
-    Thread thread = new Thread() {
-      @Override
-      public void run() {
-        dataModel.loadData();
-      }
-    };
-    thread.start();
+    if (backgroundProcessEnable) {
+      Thread thread = new Thread() {
+        @Override
+        public void run() {
+          dataModel.loadData();
+        }
+      };
+      thread.start();
+    }
+    else {
+      dataModel.loadData();
+    }
+    
   }
+
   
   /**
    * Cancel data model's update.
@@ -324,12 +338,6 @@ public class TelemetrySession implements Serializable {
     dataModel.cancelDataLoading();
   }
   
-  /**
-   * @param dataModel the dataModel to set
-   */
-  public void setDataModel(TelemetryChartDataModel dataModel) {
-    this.dataModel = dataModel;
-  }
 
   /**
    * @return the dataModel
@@ -360,6 +368,9 @@ public class TelemetrySession implements Serializable {
     StringBuffer projectList = new StringBuffer();
     for (int i = 0; i < this.getSelectedProjects().size(); ++i) {
       Project project = this.getSelectedProjects().get(i);
+      if (project == null) {
+        continue;
+      }
       projectList.append(project.getName());
       projectList.append(PROJECT_NAME_OWNER_SEPARATR);
       projectList.append(project.getOwner());
