@@ -267,6 +267,7 @@ public class TestTelemetryPage extends ProjectBrowserTestHelper {
   /**
    * Test telemetry page with page parameters.
    */
+  /*
   @Test
   public void testTelemetryWithPageParamters() {  //NOPMD WicketTester has its own assert classes.
     Properties testProperties = getTestProperties();
@@ -291,6 +292,8 @@ public class TestTelemetryPage extends ProjectBrowserTestHelper {
     tester.assertRenderedPage(TelemetryPage.class);
     
   }
+  */
+  
   /**
    * Clear testing data.
    */
