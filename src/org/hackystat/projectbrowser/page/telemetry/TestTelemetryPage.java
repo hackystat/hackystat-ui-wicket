@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Properties;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.wicket.Component;
-import org.apache.wicket.PageParameters;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.ListMultipleChoice;
