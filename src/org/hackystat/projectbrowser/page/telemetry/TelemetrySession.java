@@ -45,8 +45,11 @@ public class TelemetrySession implements Serializable {
   public static final String SELECTED_PROJECTS_KEY = "4";
   /** The parameter key of telemetry parameters. */
   public static final String TELEMETRY_PARAMERTERS_KEY = "5";
-  /** The last parameter key. */
-  public static final String LAST_KEY = "5";
+  /** 
+   * The last parameter key that is required.
+   * The telemetry parameters key is optional because not all telemetries have parameter.
+   */
+  private static final String LAST_REQUIRED_KEY = "4";
   /** The last parameter key. */
   public static final String PARAMETER_ORDER_MESSAGE = "Correct parameter order is : " + 
                         "/telemetryName/granularity/startDate/endDate/projects/param";
@@ -429,9 +432,9 @@ public class TelemetrySession implements Serializable {
     boolean isLoadSucceed = true;
     boolean isTelemetryLoaded = false;
     Logger logger = this.getLogger();
-    if (!parameters.containsKey(LAST_KEY)) {
+    if (!parameters.containsKey(LAST_REQUIRED_KEY)) {
       isLoadSucceed = false;
-      String error = "Some parameters are missing, should be " + LAST_KEY + "\n" +
+      String error = "Some parameters are missing, should be " + LAST_REQUIRED_KEY + "\n" +
       		PARAMETER_ORDER_MESSAGE;
       logger.warning(error);
       this.paramErrorMessage = error + "\n";
@@ -588,10 +591,6 @@ public class TelemetrySession implements Serializable {
           errorMessage.append('\n');
         }
       }
-    }
-    else {
-      isLoadSucceed = false;
-      errorMessage.append("param key is missing in URL parameters.\n");
     }
     if (errorMessage.length() > 0) {
       this.paramErrorMessage = errorMessage.toString() + PARAMETER_ORDER_MESSAGE;
