@@ -6,7 +6,6 @@ import org.apache.wicket.util.tester.WicketTester;
 import org.hackystat.projectbrowser.ProjectBrowserApplication;
 import org.hackystat.projectbrowser.ProjectBrowserProperties;
 import org.hackystat.projectbrowser.authentication.SigninPage;
-import org.hackystat.projectbrowser.page.WelcomePage;
 import org.hackystat.projectbrowser.test.ProjectBrowserTestHelper;
 import org.junit.Test;
 
@@ -33,7 +32,7 @@ public class TestSensorDataPage extends ProjectBrowserTestHelper {
     signinForm.setValue("password", testUser);
     signinForm.submit("Signin");
     // Check to see that signin was successful; we're now at the SensorDataPage.     
-    tester.assertRenderedPage(WelcomePage.class);
+    tester.assertRenderedPage(SensorDataPage.class);
     tester.clickLink("SensorDataPageLink");
     tester.assertRenderedPage(SensorDataPage.class);
   }

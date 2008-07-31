@@ -8,7 +8,7 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.PropertyModel;
 import org.hackystat.projectbrowser.ProjectBrowserApplication;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
-import org.hackystat.projectbrowser.page.WelcomePage;
+import org.hackystat.projectbrowser.page.sensordata.SensorDataPage;
 
 /**
  * The form for providing credentials to sign in to the Sensorbase. 
@@ -49,7 +49,7 @@ class SigninForm extends StatelessForm {
       ((ProjectBrowserApplication)this.getApplication()).getLogger().
         info("User " + this.user + " has logged in.");
       if (!continueToOriginalDestination()) {
-        setResponsePage(new WelcomePage());
+        setResponsePage(new SensorDataPage());
       }
     }
     else {

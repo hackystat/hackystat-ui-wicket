@@ -34,7 +34,7 @@ public class ProjectBrowserProperties {
   /** If background process enable for pages. */
   public static final String BACKGROUND_PROCESS_KEY = "projectbrowser.backgroundprocess.enable";
   /** Available pages. */
-  public static final String[] PAGE_NAMES = {"sensordata", "projects", "dailyprojectdata", 
+  public static final String[] PAGE_NAMES = {"projects", "dailyprojectdata", 
                                                  "telemetry", "projectportfolio", "crap"};
   /** The default number of items per page. */
   private int defaultItemsPerPage = 50;

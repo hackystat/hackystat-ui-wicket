@@ -68,13 +68,7 @@ public class ProjectBrowserBasePage extends WebPage {
       this.projectName = projectNames.get(0);
     }
     */
-    add(new BookmarkablePageLink("SensorDataPageLink", SensorDataPage.class) {
-      private static final long serialVersionUID = 1L;
-      @Override
-      public boolean isVisible() {
-        return ((ProjectBrowserApplication)getApplication()).isPageAvailable("sensordata");
-      }
-    });
+    add(new BookmarkablePageLink("SensorDataPageLink", SensorDataPage.class));
     add(new BookmarkablePageLink("ProjectsPageLink", ProjectsPage.class) {
       private static final long serialVersionUID = 1L;
       @Override
