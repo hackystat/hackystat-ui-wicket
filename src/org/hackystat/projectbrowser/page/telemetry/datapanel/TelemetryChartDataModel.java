@@ -554,7 +554,6 @@ public class TelemetryChartDataModel implements Serializable, Processable {
    * @param flag the boolean flag.
    */
   public void changeSelectionForAll(boolean flag) {
-    System.out.println("changeSelectionForAll");
     for (List<SelectableTelemetryStream> streamList : this.projectStreamData.values()) {
       for (SelectableTelemetryStream stream : streamList) {
         stream.setSelected(flag);
