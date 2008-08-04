@@ -76,7 +76,6 @@ public class SensorDataTableModel extends SortableDataProvider {
    * @return The iterator.
    */
   @SuppressWarnings("unchecked")
-  @Override
   public Iterator iterator(int first, int count) {
     return rows.iterator();
   }
@@ -86,7 +85,6 @@ public class SensorDataTableModel extends SortableDataProvider {
    * @param obj The SensorDataTableRowModel.
    * @return The model.
    */
-  @Override
   public IModel model(Object obj) {
     return new Model((SensorDataTableRowModel) obj);
   }
@@ -95,7 +93,6 @@ public class SensorDataTableModel extends SortableDataProvider {
    * The total number of rows in this table.
    * @return The total number of rows. 
    */
-  @Override
   public int size() {
     return rows.size();
   }

@@ -31,7 +31,6 @@ public class SdtColumn extends AbstractColumn {
    * @param componentId Use this to assign to the component added to the cell.
    * @param model the model used to figure out what to display in the cell. 
    */
-  @Override
   public void populateItem(Item cellItem, String componentId, IModel model) {
     SensorDataTableRowModel rowModel = (SensorDataTableRowModel) model.getObject();
     cellItem.add(new SdtSummaryPanel(componentId, rowModel.getSensorDataSummaryList(this.sdtName),

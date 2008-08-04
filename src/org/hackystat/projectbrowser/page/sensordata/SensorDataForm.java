@@ -47,7 +47,6 @@ public class SensorDataForm extends Form {
              * Convert the passed integer to its month name.
              * @param object the month as an int.
              */
-            @Override
             public Object getDisplayValue(Object object) {
               SimpleDateFormat format = new SimpleDateFormat("MMM", Locale.US);
               Calendar cal = Calendar.getInstance();
@@ -57,7 +56,6 @@ public class SensorDataForm extends Form {
             }
 
             /** Required for IChoiceRenderer interface. */
-            @Override
             public String getIdValue(Object arg0, int index) {
               return String.valueOf(index);
             }
