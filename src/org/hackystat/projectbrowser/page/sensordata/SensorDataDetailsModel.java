@@ -49,7 +49,7 @@ public class SensorDataDetailsModel implements Serializable {
     SensorDataSession session = ProjectBrowserSession.get().getSensorDataSession();
     String projectName = session.getProject().getName();
     String owner = session.getProject().getOwner();
-    XMLGregorianCalendar startTime = Tstamp.makeTimestamp(session.getDate().getTime());
+    XMLGregorianCalendar startTime = Tstamp.makeTimestamp(); // needs to be changed.
     XMLGregorianCalendar endTime = Tstamp.incrementDays(startTime, 1);
     SensorDataIndex index = null;
     try {

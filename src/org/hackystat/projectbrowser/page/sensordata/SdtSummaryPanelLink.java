@@ -18,19 +18,19 @@ public class SdtSummaryPanelLink extends Link {
   /**
    * Creates the link in the SdtSummary Panel.
    * @param id The wicket ID.
-   * @param count The count of instances. 
+   * @param label The label for this link
    * @param sdtName The sensor data type name.
    * @param tool The tool. 
    */
-  public SdtSummaryPanelLink(String id, String count, String sdtName, String tool) {
+  public SdtSummaryPanelLink(String id, String label, String sdtName, String tool) {
     super(id);
     this.sdtName = sdtName;
     this.tool = tool;
-    add(new Label("count", count));
+    add(new Label("LinkLabel", label));
   }
 
   /**
-   * Don't need to provide this behavior, will be overridden. 
+   * Don't need to provide this behavior, will be overridden when instantiating the link.
    */
   @Override
   public void onClick() {

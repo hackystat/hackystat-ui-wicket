@@ -5,8 +5,12 @@
 
     <div id="sensordata-left">
       <form wicket:id="sensorDataForm">
-        <table width="100%">
-          <tr><td>Date:</td><td><input style="width: 6em" wicket:id="dateTextField" type="text"/></td></tr>
+        <table width="*">
+          <tr><td>Date:</td><td><span>
+                                  <select wicket:id="monthMenu"></select>
+                                  <select wicket:id="yearMenu"></select>
+                                </span>  
+                             </td></tr>
           <tr><td>Project:</td><td><select style="width: 10em" wicket:id="projectMenu">
                                      <option value="Default">[Default]</option>
                                    </select>
@@ -14,19 +18,17 @@
           <tr><td colspan="2" style="text-align:center"><input type="submit" value="submit"/></td></tr>
          </table>
       </form>
-      <div wicket:id="sdtSummaryPanel"/>
+      
     </div>
 
     <div id="sensordata-right">
-      <div wicket:id="sensorDataDetailsPanel"/>
+      <div wicket:id="SensorDataTablePanel"/>
     </div>
 
     <div id="info">
 <b>About this page:</b> 
 This page provides a way to determine the number of sensor data instances associated with a 
-given project on a given day, and how many instances of each type have been collected. By 
-selecting the link associated with the number of sensor data instances, you will generate a 
-table showing the contents of all of the specified sensor data instances. 
+given project on a given day of the month.
      </div>
 </wicket:extend>
 </body>

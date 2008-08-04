@@ -1,13 +1,11 @@
 package org.hackystat.projectbrowser.page.sensordata;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.ArrayList;
 import java.util.List;
 
+import org.hackystat.sensorbase.resource.projects.jaxb.MultiDayProjectSummary;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
 import org.hackystat.sensorbase.resource.projects.jaxb.ProjectSummary;
-import org.hackystat.sensorbase.resource.projects.jaxb.SensorDataSummary;
 
 /**
  * Provides a model for the summary of sdts and their counts. 
@@ -16,10 +14,8 @@ import org.hackystat.sensorbase.resource.projects.jaxb.SensorDataSummary;
 public class SdtSummaryModel implements Serializable {
   
   private static final long serialVersionUID = 1L;
-  private List<SdtSummary> sdtSummaryList = new ArrayList<SdtSummary>();
-  private long total = 0;
-  private long date = 0;
   private Project project = null;
+  private List<ProjectSummary> projectSummaries = null;
     
   /**
    * The default constructor, required by Wicket. 
@@ -29,19 +25,11 @@ public class SdtSummaryModel implements Serializable {
   }
 
   /**
-   * Returns the list of sdt summary instances. 
-   * @return The SDT instances. 
+   * Returns the list of ProjectSummary instances.
+   * @return The ProjectSummary instances. 
    */
-  public List<SdtSummary> getSdtList() {
-    return this.sdtSummaryList;
-  }
-  
-  /**
-   * Return the Date associated with this page. 
-   * @return The date for this page. 
-   */
-  public Date getDate() {
-    return new Date(this.date);
+  public List<ProjectSummary> getSummaryList() {
+    return this.projectSummaries;
   }
   
   /**
@@ -53,27 +41,13 @@ public class SdtSummaryModel implements Serializable {
   }
   
   /**
-   * Updates the SdtModel with the project summary instance. 
+   * Updates the SdtModel with the MultiDayProjectSummary instance. 
    * @param summary The summary instance. 
-   * @param date The date for this summary.
    * @param project The project for this summary.
    */
-  public final void setModel(ProjectSummary summary, Date date, Project project) {
-    total = 0;
-    sdtSummaryList.clear();
-    this.date = date.getTime();
+  public final void setModel(MultiDayProjectSummary summary, Project project) {
+    this.projectSummaries = summary.getProjectSummary();
     this.project = project;
-    List<SensorDataSummary> summaries = summary.getSensorDataSummaries().getSensorDataSummary();
-    if (summaries != null) {
-      for (SensorDataSummary sum : summaries) {
-        total += sum.getNumInstances().longValue();
-        sdtSummaryList.add(
-            new SdtSummary(sum.getSensorDataType(), sum.getTool(), 
-                sum.getNumInstances().longValue()));
-      }
-      // Now add the Total entry
-      sdtSummaryList.add(new SdtSummary("Total", "All", total));
-    }
   }
   
   /**

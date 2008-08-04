@@ -1,14 +1,14 @@
 package org.hackystat.projectbrowser.page.sensordata;
 
-import java.util.Date;
+import java.util.Calendar;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.sensorbase.client.SensorBaseClient;
+import org.hackystat.sensorbase.resource.projects.jaxb.MultiDayProjectSummary;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
-import org.hackystat.sensorbase.resource.projects.jaxb.ProjectSummary;
 import org.hackystat.utilities.stacktrace.StackTrace;
 import org.hackystat.utilities.tstamp.Tstamp;
 
@@ -28,8 +28,7 @@ public class SensorDataPage extends ProjectBrowserBasePage {
    */
   public SensorDataPage() {
     add(new SensorDataForm("sensorDataForm", this));
-    add(new SdtSummaryPanel("sdtSummaryPanel", this));
-    add(new SensorDataDetailsPanel("sensorDataDetailsPanel"));
+    add(new SensorDataTablePanel("SensorDataTablePanel", this));
   }
   
   /**
@@ -40,19 +39,30 @@ public class SensorDataPage extends ProjectBrowserBasePage {
     try {
       // Set the footerFeedback to null. 
       this.footerFeedback = "";
-      // Start by getting the project summary.
       SensorDataSession session = ProjectBrowserSession.get().getSensorDataSession();
-      //String projectName = session.getProjectName();
       Project project = session.getProject();
       SensorBaseClient client = ProjectBrowserSession.get().getSensorBaseClient();
-      Date date = session.getDate();
-      XMLGregorianCalendar startTime = Tstamp.makeTimestamp(date.getTime());
-      XMLGregorianCalendar endTime = Tstamp.incrementDays(startTime, 1);
-      ProjectSummary summary = 
-        client.getProjectSummary(project.getOwner(), project.getName(), startTime, endTime);
-      // Now create the summary model from the ProjectSummary and save it in this page's session.
-      SdtSummaryModel model = session.getSdtSummaryModel();
-      model.setModel(summary, date, project);
+      Calendar calendar = Calendar.getInstance();
+      // calendar.setTime(new Date());
+      // Set it to the first second of the first day of the month, get the start time.
+      calendar.set(Calendar.YEAR, session.getYear());
+      calendar.set(Calendar.MONTH, session.getMonth());
+      calendar.set(Calendar.DAY_OF_MONTH, calendar.getMinimum(Calendar.DAY_OF_MONTH));
+      calendar.set(Calendar.HOUR, 0);
+      calendar.set(Calendar.MINUTE, 0);
+      calendar.set(Calendar.SECOND, 0);
+      calendar.set(Calendar.MILLISECOND, 0);
+      XMLGregorianCalendar startTime = Tstamp.makeTimestamp(calendar.getTimeInMillis());
+      // Set it to the last second of the last day of the month, get the end time. 
+      int numDays = calendar.getMaximum(Calendar.DAY_OF_MONTH);
+
+      MultiDayProjectSummary summary =
+        client.getMultiDayProjectSummary(project.getOwner(), project.getName(), startTime, numDays);
+      // Update the model with this info.
+      session.getSensorDataTableModel().setModel(summary, project);
+      // Since the table in this panel has a variable number of columns that depend upon the model
+      // data, we must rebuild this panel each time we update the model.
+      addOrReplace(new SensorDataTablePanel("SensorDataTablePanel", this));
       
     }
     catch (Exception e) {

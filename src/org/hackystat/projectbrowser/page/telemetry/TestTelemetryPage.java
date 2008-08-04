@@ -68,6 +68,7 @@ public class TestTelemetryPage extends ProjectBrowserTestHelper {
    * From opening the page to showing the telemetry chart.
    * Most information during navigation is checked.
    */
+  @SuppressWarnings("unchecked")
   @Test 
   public void testTelemetryPageNormalNavigation() {
     this.generateSimData(testUser, testProject, Tstamp.makeTimestamp(), 3);
@@ -100,7 +101,7 @@ public class TestTelemetryPage extends ProjectBrowserTestHelper {
     assertTrue("Check telemetry select field", telemetryComponent instanceof DropDownChoice);
     DropDownChoice telemetryChoice = (DropDownChoice) telemetryComponent;
     assertFalse("Telemetry should not be null", telemetryChoice.getChoices().isEmpty());
-    String telemetryName = (String)telemetryChoice.getModelObjectAsString();
+    String telemetryName = telemetryChoice.getModelObjectAsString();
     //inputForm.select("telemetryMenu", 1);
 
     //check the project list content.
@@ -195,7 +196,7 @@ public class TestTelemetryPage extends ProjectBrowserTestHelper {
     assertTrue("Check telemetry select field", telemetryComponent instanceof DropDownChoice);
     DropDownChoice telemetryChoice = (DropDownChoice) telemetryComponent;
     assertFalse("Telemetry should not be null", telemetryChoice.getChoices().isEmpty());
-    String telemetryName = (String)telemetryChoice.getModelObjectAsString();
+    String telemetryName = telemetryChoice.getModelObjectAsString();
     inputForm.submit("submit");
     
     //check the result.
@@ -221,6 +222,7 @@ public class TestTelemetryPage extends ProjectBrowserTestHelper {
    * Test pop up windows in telemetry page.
    * All choices in telemetry menu should be in the description pop up window.
    */
+  @SuppressWarnings("unchecked")
   @Test
   public void testTelemetryPopUpPanel() {
     Properties testProperties = getTestProperties();

@@ -43,32 +43,21 @@ public class SensorDataDetailsProvider implements IDataProvider {
    * Used by the SdtSummary link to indicate how the model should be updated.
    * @param sdtName The sdtName.
    * @param tool The tool.
+   * @param start The start time. 
    */
-  public void setSensorDataDetailsProvider(String sdtName, String tool) {
+  public void setSensorDataDetailsProvider(String sdtName, String tool, long start) {
     detailsList.clear();
     SensorBaseClient client = ProjectBrowserSession.get().getSensorBaseClient();
     SensorDataSession session = ProjectBrowserSession.get().getSensorDataSession();
-    //String projectName = session.getProjectName();
-    //String owner = ProjectBrowserSession.get().getUserEmail();
     String projectName = session.getProject().getName();
     String owner = session.getProject().getOwner();
-    XMLGregorianCalendar startTime = Tstamp.makeTimestamp(session.getDate().getTime());
+    XMLGregorianCalendar startTime = Tstamp.makeTimestamp(start);
     XMLGregorianCalendar endTime = Tstamp.incrementDays(startTime, 1);
-    // Retrieve all sensor data instances if SdtName is "Total".
-    SensorDataIndex index = null;
     try {
-      if ("Total".equals(sdtName)) {
-        index = client.getProjectSensorData(owner, projectName, startTime, endTime);
-      }
-      else {
-        index = client.getProjectSensorData(owner, projectName, startTime, endTime, sdtName);
-      }
+      SensorDataIndex index =
+        client.getProjectSensorData(owner, projectName, startTime, endTime, sdtName, tool);
       for (SensorDataRef ref : index.getSensorDataRef()) {
-        //SensorData data = client.getSensorData(ref);
-        // HACK.  Replace above call to get an index with just the tool's sensor data. 
-        if ("All".equals(tool) || tool.equals(ref.getTool())) {
-          detailsList.add(new SensorDataDetails(ref));
-        }
+        detailsList.add(new SensorDataDetails(ref));
       }
     }
     catch (Exception e) {

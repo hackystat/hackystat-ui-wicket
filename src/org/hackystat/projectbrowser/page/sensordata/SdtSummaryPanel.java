@@ -1,11 +1,13 @@
 package org.hackystat.projectbrowser.page.sensordata;
 
-import org.apache.wicket.markup.html.basic.Label;
+import java.util.List;
+
+import javax.xml.datatype.XMLGregorianCalendar;
+
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.PropertyModel;
-import org.hackystat.projectbrowser.ProjectBrowserSession;
+import org.hackystat.sensorbase.resource.projects.jaxb.SensorDataSummary;
 
 /**
  * A panel for holding the SDT summary information. 
@@ -15,59 +17,38 @@ public class SdtSummaryPanel extends Panel {
 
   /** For serialization */
   private static final long serialVersionUID = 1L;
+  /** Must be serializable, thus a long rather than an XMLGregorianCalendar. */
+  private long start; 
   
   /**
    * Creates a panel to display summary information. 
    * @param id The wicket ID. 
-   * @param page The page associated with this panel.
+   * @param summaryList The list of SensorDataSummary instances to be displayed in this panel.
+   * @param startTime The time this summary information started.
    */
-  public SdtSummaryPanel(String id, SensorDataPage page) {
+  public SdtSummaryPanel(String id, List<SensorDataSummary> summaryList, 
+      XMLGregorianCalendar startTime) {
     super(id);
-    //this.page = page;
-    SensorDataSession session = ProjectBrowserSession.get().getSensorDataSession();
-    SdtSummaryModel model = session.getSdtSummaryModel();
+    this.start = startTime.toGregorianCalendar().getTimeInMillis();
     // Set up the table
-    add(new Label("projectName", new PropertyModel(session, "project.name")));
-    add(new Label("dateString", new PropertyModel(session, "dateString")));
-    add(new ListView("SdtSummaryList", new PropertyModel(model, "SdtList")) {
+    add(new ListView("ToolInfoList", summaryList) {
       /** For serialization */
       private static final long serialVersionUID = 1L;
 
       /** 
        * How to populate the table.
-       * @param item The summary item.  
+       * @param item The ProjectSummary item.  
        */
       @Override
       protected void populateItem(ListItem item) {
-        SdtSummary summary = (SdtSummary) item.getModelObject();
-        String sdtName = summary.getSdtName();
+        SensorDataSummary summary = (SensorDataSummary)item.getModelObject();
         String tool = summary.getTool();
-        String count = String.valueOf(summary.getCount());
-        item.add(new Label("sdtName", sdtName));
-        item.add(new Label("tool", tool));
-        item.add(new SdtSummaryPanelLink("link", count, sdtName, tool) {
-          /** For serialization. */
-          private static final long serialVersionUID = 1L;
-          @Override
-          public void onClick() {
-            SensorDataSession session = ProjectBrowserSession.get().getSensorDataSession();
-            session.getSensorDataDetailsProvider().setSensorDataDetailsProvider(sdtName, tool);
-            session.setSdtName(sdtName);
-            session.setTool(tool);
-          }
-        });
+        String sdt = summary.getSensorDataType();
+        String info = String.format("%d:%s ", summary.getNumInstances().intValue(), tool); 
+        SensorDataPopupPanel sdtPopup = new SensorDataPopupPanel("SdtPopup", "SDT Info", info, sdt, 
+            tool, start);
+        item.add(sdtPopup);
       }
     });
-  }
-
-  /**
-   * Display this panel only if the SdtSummaryModel contains information. 
-   * @return True if this panel should be displayed.
-   */
-  @Override
-  public boolean isVisible() {
-    SensorDataSession session = ProjectBrowserSession.get().getSensorDataSession();
-    SdtSummaryModel model = session.getSdtSummaryModel();
-    return !model.isEmpty();
   }
 }

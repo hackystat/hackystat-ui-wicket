@@ -1,7 +1,7 @@
 package org.hackystat.projectbrowser.page.sensordata;
 
+import org.apache.wicket.ajax.markup.html.navigation.paging.AjaxPagingNavigator;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.navigation.paging.PagingNavigator;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
@@ -19,7 +19,9 @@ public class SensorDataDetailsPanel extends Panel {
   private static final long serialVersionUID = 1L;
   
   /**
-   * Creates a panel to display a table of sensor data instances for a given SDT. 
+   * Creates a page to display a table of sensor data instances for a given SDT.
+   * This is a page rather than a panel because it is added to a modal window, and modal
+   * windows apparently want pages, not panels.  
    * @param id The wicket ID. 
    */
   public SensorDataDetailsPanel(String id) {
@@ -52,18 +54,7 @@ public class SensorDataDetailsPanel extends Panel {
       getProjectBrowserProperties().getSensorDataItemsPerPage();
     dataView.setItemsPerPage(itemsPerPage);
     add(dataView);
-    add(new PagingNavigator("navigator", dataView));
-  }
-  
-  /**
-   * Display this panel only if the SensorDataDetailsProvider contains information. 
-   * @return True if this panel should be displayed.
-   */
-  @Override
-  public boolean isVisible() {
-    SensorDataSession session = ProjectBrowserSession.get().getSensorDataSession();
-    SensorDataDetailsProvider provider = session.getSensorDataDetailsProvider();
-    return !provider.isEmpty();
+    add(new AjaxPagingNavigator("navigator", dataView));
   }
 
 }

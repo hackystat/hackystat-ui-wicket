@@ -139,9 +139,13 @@ public class ProjectBrowserSession extends WebSession {
   public boolean signin(String email, String password) {
     try {
       String host = ((ProjectBrowserApplication)getApplication()).getSensorBaseHost();
+      int timeout = 1000 * 60 * 60; 
+      //HACK!  This shouldn't be required! I'm doing it because I get a timeout in SensorData
+      // when trying to retrieve Hackystat data summaries for a month. 
+      System.getProperties().setProperty("sensorbaseclient.timeout", String.valueOf(timeout));
       SensorBaseClient client = new SensorBaseClient(host, email, password);
       // Set timeout to 60 minutes.
-      client.setTimeout(1000 * 60 * 60);
+      client.setTimeout(timeout);
       client.authenticate();
       this.email = email;
       this.password = password;

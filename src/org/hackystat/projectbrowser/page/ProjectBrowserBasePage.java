@@ -61,13 +61,7 @@ public class ProjectBrowserBasePage extends WebPage {
     add(new Label("title", app.getApplicationName()));
     add(new ImageUrl("application-logo", app.getApplicationLogo()));
     add(new Label("application-name", (app.hasApplicationLogo() ? "" : app.getApplicationName())));
-    // Provide a default value for the projectName field.
-    /* moved to each page session.
-    List<String> projectNames = ProjectBrowserSession.get().getProjectNames();
-    if ((projectNames != null) && !projectNames.isEmpty()) {
-      this.projectName = projectNames.get(0);
-    }
-    */
+    
     add(new BookmarkablePageLink("SensorDataPageLink", SensorDataPage.class));
     add(new BookmarkablePageLink("ProjectsPageLink", ProjectsPage.class) {
       private static final long serialVersionUID = 1L;
@@ -155,23 +149,6 @@ public class ProjectBrowserBasePage extends WebPage {
     time.setTime(0, 0, 0);
     return time.toGregorianCalendar().getTime();
   }
-  
-  /**
-   * @param project the project to set
-   */
-  /*
-  public void setProject(Project project) {
-    this.project = project;
-  }
-  */
-  /**
-   * @return the project
-   */
-  /*
-  public Project getProject() {
-    return project;
-  }
-  */
 
   /**
    * @param date the date to set
