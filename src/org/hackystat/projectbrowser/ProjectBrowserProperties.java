@@ -110,6 +110,7 @@ public class ProjectBrowserProperties {
     properties.setProperty(AVAILABLEPAGE_KEY + ".dailyprojectdata", trueString);
     properties.setProperty(AVAILABLEPAGE_KEY + ".telemetry", trueString);
     properties.setProperty(BACKGROUND_PROCESS_KEY + ".telemetry", trueString);
+    properties.setProperty(BACKGROUND_PROCESS_KEY + ".projectportfolio", trueString);
 
     // Now read in the properties file, and override the defaults if supplied. 
     FileInputStream stream = null;
