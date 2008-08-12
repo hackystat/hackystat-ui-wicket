@@ -6,6 +6,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.ProjectChoiceRenderer;
 import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
+import org.hackystat.projectbrowser.page.popupwindow.PopupWindowPanel;
 import org.hackystat.projectbrowser.page.projectportfolio.ProjectPortfolioSession;
 
 /**
@@ -52,6 +53,13 @@ public class ProjectPortfolioInputForm extends Form {
     };
     projectMenu.setRequired(true);
     add(projectMenu);
+
+    //add the popup window
+    PopupWindowPanel configurationPopup = 
+      new PopupWindowPanel("configurationPopup", "Project Portfolio Configurations");
+    configurationPopup.getModalWindow().setContent(
+        new ProjectPortfolioConfigurationPanel(configurationPopup.getModalWindow().getContentId()));
+    add(configurationPopup);
   }
 
   /**

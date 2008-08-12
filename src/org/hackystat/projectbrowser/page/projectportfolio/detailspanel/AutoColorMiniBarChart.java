@@ -10,12 +10,6 @@ public class AutoColorMiniBarChart extends MiniBarChart {
 
   /** Support serialization. */
   private static final long serialVersionUID = -4913386312346727222L;
-  /** RGB String format of red. */
-  public static final String red = "ff0000";
-  /** RGB String format of green. */
-  public static final String green = "00ff00";
-  /** RGB String format of yellow. */
-  public static final String yellow = "ffff00";
   /** RGB String format of yellow. */
   public static final String black = "000000";
   
@@ -28,12 +22,7 @@ public class AutoColorMiniBarChart extends MiniBarChart {
    */
   public AutoColorMiniBarChart(TelemetryStream stream, MeasureConfiguration configuration) {
     super(stream);
-    if (configuration == null) {
-      this.configuration = new MeasureConfiguration(40, 90, true);
-    }
-    else {
-      this.configuration = configuration;
-    }
+    this.configuration = configuration;
     this.setChartColor(getAutoColor());
   }
 
@@ -45,38 +34,33 @@ public class AutoColorMiniBarChart extends MiniBarChart {
    * @return a string of color.
    */
   private String getAutoColor() { 
-    boolean increasing = false;
-    boolean decreasing = false;
+    boolean increased = false;
+    boolean decreased = false;
     for (int i = 1; i < this.streamData.size(); ++i) {
       if (this.streamData.get(i) >= 0) {
         if (this.streamData.get(i - 1) > this.streamData.get(i)) {
-          decreasing = true;
+          decreased = true;
         }
         else if (this.streamData.get(i - 1) < this.streamData.get(i)) {
-          increasing = true;
+          increased = true;
         }
       }
     }
-    if (!increasing && !decreasing) {
-      return green;
-    }
-    if (increasing && !decreasing) {
+    if (!increased && !decreased) {
       if (configuration.isHigherTheBetter()) {
-        return green;
+        return configuration.getHigherColor();
       }
       else {
-        return red;
+        return configuration.getLowerColor();
       }
     }
-    if (decreasing && !increasing) {
-      if (configuration.isHigherTheBetter()) {
-        return red;
-      }
-      else {
-        return green;
-      }
+    if (increased && !decreased) {
+      return configuration.getHigherColor();
     }
-    return yellow;
+    if (decreased && !increased) {
+      return configuration.getLowerColor();
+    }
+    return configuration.getMiddleColor();
   }
   
   /**
@@ -87,22 +71,12 @@ public class AutoColorMiniBarChart extends MiniBarChart {
       return black;
     }
     if (this.getLatestValue() >= this.configuration.getHigherThreshold()) {
-      if (configuration.isHigherTheBetter()) {
-        return green;
-      }
-      else {
-        return red;
-      }
+      return configuration.getHigherColor();
     }
     if (this.getLatestValue() < this.configuration.getLowerThreshold()) {
-      if (configuration.isHigherTheBetter()) {
-        return red;
-      }
-      else {
-        return green;
-      }
+      return configuration.getLowerColor();
     }
-    return yellow;
+    return configuration.getMiddleColor();
   }
 
   /**

@@ -2,7 +2,6 @@ package org.hackystat.projectbrowser.page.projectportfolio.detailspanel;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,28 +46,31 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
   
   /** The projects this user has selected. */
   private List<Project> selectedProjects = new ArrayList<Project>();
-  /** Measures in Project Portfolio. */
-  private String[] measures = {"Coverage", "CyclomaticComplexity", "Coupling" ,"Churn", 
-                                "Commit", "CodeIssue", "FileMetric"};
-  /** Measures that will be colored. */
-  private String[] coloringMeasures = {"Coverage", "CyclomaticComplexity", "Coupling" ,"Churn"};
   /** The charts in this model. */
   private Map<Project, List<MiniBarChart>> measuresCharts = 
         new HashMap<Project, List<MiniBarChart>>();
-  /** Telemetry parameters. */
-  private Map<String, String> parameters = new HashMap<String, String>();
   /** The thresholds. */
-  private Map<String, MeasureConfiguration> configurations = 
-    new HashMap<String, MeasureConfiguration>();
+  private List<MeasureConfiguration> measures = new ArrayList<MeasureConfiguration>();
+
+  /** Measures in Project Portfolio. */
+  //private String[] measures = {"Coverage", "CyclomaticComplexity", "Coupling" ,"Churn", 
+  //                              "Commit", "CodeIssue", "FileMetric"};
+  /** Measures that will be colored. */
+  //private String[] coloringMeasures = {"Coverage", "CyclomaticComplexity", "Coupling" ,"Churn"};
+  /** Telemetry parameters. */
+  //private Map<String, String> parameters = new HashMap<String, String>();
   
   /**
    * Initialize the measure configurations
    */
   public ProjectPortfolioDataModel() {
-    configurations.put("Coverage" , new MeasureConfiguration(40, 90, true));
-    configurations.put("CyclomaticComplexity" , new MeasureConfiguration(10, 20, false));
-    configurations.put("Coupling" , new MeasureConfiguration(15, 25, false));
-    configurations.put("Churn" , new MeasureConfiguration(35, 85, true));
+    measures.add(new MeasureConfiguration("Coverage", true, 40, 90, true));
+    measures.add(new MeasureConfiguration("CyclomaticComplexity", true, 10, 20, false));
+    measures.add(new MeasureConfiguration("Coupling", true, 15, 25, false));
+    measures.add(new MeasureConfiguration("Churn", true, 35, 85, true));
+    measures.add(new MeasureConfiguration("Commit", false));
+    measures.add(new MeasureConfiguration("CodeIssue", false));
+    measures.add(new MeasureConfiguration("FileMetric", false));
   }
   
   /**
@@ -100,7 +102,6 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
     try {
       measuresCharts.clear();
       TelemetryClient telemetryClient = new TelemetryClient(telemetryHost, email, password);
-      List<String> colorMeasures = Arrays.asList(this.coloringMeasures);
       for (int i = 0; i < this.selectedProjects.size() && inProcess; i++) {
         //prepare project's information
         Project project = this.selectedProjects.get(i);
@@ -112,21 +113,33 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
         
         //get charts of this project
         List<MiniBarChart> charts = new ArrayList<MiniBarChart>();
-        for (int j = 0; j < measures.length; ++j) {
-          String measure = measures[j];
-          this.processingMessage += "---> Retrieve " + measure + 
-              " (" + (j + 1) + " of " + measures.length + ").\n";
-          TelemetryChartData chartData = telemetryClient.getChart(measure, owner, projectName, 
-              telemetryGranularity, Tstamp.makeTimestamp(startDate), Tstamp.makeTimestamp(endDate),
-              getParameters().get(measure));
+        for (int j = 0; j < measures.size(); ++j) {
+          MeasureConfiguration measure = measures.get(j);
+          this.processingMessage += "---> Retrieve " + measure.getName() + 
+              " (" + (i + 1) + " .. " + (j + 1) + " of " + measures.size() + ").\n";
+          
+          //set default parameter if no parameter is assigned.
+          if (measure.getParameters().isEmpty()) {
+            List<String> params = new ArrayList<String>();
+            List<ParameterDefinition> paramDefList = getParameterDefinitions(measure.getName());
+            for (ParameterDefinition paramDef : paramDefList) {
+              params.add(paramDef.getType().getDefault());
+            }
+            measure.setParameters(params);
+          }
+          //get data from hackystat
+          TelemetryChartData chartData = telemetryClient.getChart(measure.getName(), 
+              owner, projectName, telemetryGranularity, Tstamp.makeTimestamp(startDate), 
+              Tstamp.makeTimestamp(endDate), measure.getParamtersString());
+          
           MiniBarChart chart;
-          if (colorMeasures.contains(measure)) {
-            chart = new AutoColorMiniBarChart(chartData.getTelemetryStream().get(0),
-                this.configurations.get(measure));
+          if (measure.isColorable()) {
+            chart = new AutoColorMiniBarChart(chartData.getTelemetryStream().get(0), measure);
           }
           else {
             chart = new MiniBarChart(chartData.getTelemetryStream().get(0));
           }
+
           chart.setTelemetryPageParameters(getTelemetryPageParameters(measure, project));
           charts.add(chart);
         }
@@ -155,16 +168,16 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
    * @param project the project
    * @return the PagaParameters object
    */
-  private PageParameters getTelemetryPageParameters(String measure, Project project) {
+  private PageParameters getTelemetryPageParameters(MeasureConfiguration measure, Project project) {
     PageParameters parameters = new PageParameters();
     
-    parameters.put(TelemetrySession.TELEMETRY_KEY, measure);
+    parameters.put(TelemetrySession.TELEMETRY_KEY, measure.getName());
     parameters.put(TelemetrySession.START_DATE_KEY, Tstamp.makeTimestamp(startDate).toString());
     parameters.put(TelemetrySession.END_DATE_KEY, Tstamp.makeTimestamp(endDate).toString());
     parameters.put(TelemetrySession.SELECTED_PROJECTS_KEY, 
         project.getName() + TelemetrySession.PROJECT_NAME_OWNER_SEPARATR + project.getOwner());
     parameters.put(TelemetrySession.GRANULARITY_KEY, this.telemetryGranularity);
-    parameters.put(TelemetrySession.TELEMETRY_PARAMERTERS_KEY, this.getParameters().get(measure));
+    parameters.put(TelemetrySession.TELEMETRY_PARAMERTERS_KEY, measure.getParamtersString());
     
     return parameters;
   }
@@ -214,31 +227,37 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
 
 
   /**
-   * @return the parameters
+   * Return the default parameters of the given measure.
+   * @param measure the given measure
+   * @return the parameters in a String
    */
-  public Map<String, String> getParameters() {
-    if (parameters.isEmpty()) {
-      TelemetryClient telemetryClient = new TelemetryClient(telemetryHost, email, password);
-      try {
-        for (String analysis : this.measures) {
-          List<ParameterDefinition> paramDefList =  
-          telemetryClient.getChartDefinition(analysis).getParameterDefinition();
-          StringBuffer param = new StringBuffer();
-            for (int i = 0; i < paramDefList.size(); ++i) {
-              ParameterDefinition paramDef = paramDefList.get(i);
-              param.append(paramDef.getType().getDefault());
-              if (i < paramDefList.size() - 1) {
-                param.append(',');
-              }
-            }
-            parameters.put(analysis, param.toString());
+  public String getDefaultParametersString(String measure) {
+    List<ParameterDefinition> paramDefList = getParameterDefinitions(measure);
+      StringBuffer param = new StringBuffer();
+      for (int i = 0; i < paramDefList.size(); ++i) {
+        ParameterDefinition paramDef = paramDefList.get(i);          
+        param.append(paramDef.getType().getDefault());
+          if (i < paramDefList.size() - 1) {
+            param.append(',');
+          }
         }
-      }
-      catch (TelemetryClientException e) {
-        e.printStackTrace();
-      }
-    }
-    return parameters;
+      return param.toString();
   }
 
+  /**
+   * Return the parameter definitions of the given measure.
+   * @param measure the given measure
+   * @return the parameter definitions.
+   */
+  public List<ParameterDefinition> getParameterDefinitions(String measure) {
+    TelemetryClient telemetryClient = new TelemetryClient(telemetryHost, email, password);
+    try {
+        return telemetryClient.getChartDefinition(measure).getParameterDefinition();
+    }
+    catch (TelemetryClientException e) {
+      e.printStackTrace();
+    }
+    return new ArrayList<ParameterDefinition>();
+    
+  }
 }
