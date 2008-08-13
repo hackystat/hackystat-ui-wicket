@@ -12,7 +12,6 @@ import java.util.logging.Logger;
 import org.apache.wicket.model.IModel;
 import org.hackystat.projectbrowser.googlechart.ChartType;
 import org.hackystat.projectbrowser.googlechart.GoogleChart;
-import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
 import org.hackystat.projectbrowser.page.loadingprocesspanel.Processable;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
 import org.hackystat.telemetry.service.client.TelemetryClient;
@@ -36,8 +35,6 @@ public class TelemetryChartDataModel implements Serializable, Processable {
   private long endDate = 0;
   /** The granularity of the chart. Either Day, Week, or Month. */
   private String granularity = "Day";
-  /** The project this user has selected. */
-  private Map<Project, String> projectCharts = new HashMap<Project, String>();
   /** The projects this user has selected. */
   private List<Project> selectedProjects = new ArrayList<Project>();
   /** The analysis this user has selected. */
@@ -45,14 +42,14 @@ public class TelemetryChartDataModel implements Serializable, Processable {
   /** The parameters for this telemetry chart. */
   private List<String> parameters = new ArrayList<String>();
   /** Store the data retrieved from telemetry service. */
-  private Map<Project, List<SelectableTelemetryStream>> projectStreamData = 
+  private final Map<Project, List<SelectableTelemetryStream>> projectStreamData = 
     new HashMap<Project, List<SelectableTelemetryStream>>();
   /** Chart with selected project streams. */
   private String selectedChart = null;
   /** the width of this chart. */
-  private int width = 1000;
+  private final int width = 1000;
   /** the height of this chart. */
-  private int height = 300;
+  private final int height = 300;
   /** state of data loading process. */
   private volatile boolean inProcess = false;
   /** result of data loading. */
@@ -90,9 +87,7 @@ public class TelemetryChartDataModel implements Serializable, Processable {
     this.endDate = endDate.getTime();
     this.granularity = granularity;
     this.selectedProjects = selectedProjects;
-    // this.project = selectedProjects.get(0);
     this.telemetryName = telemetryName;
-    this.projectCharts.clear();
     this.projectStreamData.clear();
     this.parameters.clear();
     for (IModel model : parameters) {
@@ -163,48 +158,13 @@ public class TelemetryChartDataModel implements Serializable, Processable {
     this.processingMessage += "Process Cancelled.\n";
     this.inProcess = false;
   }
-  /**
-   * Returns the start date in yyyy-MM-dd format.
-   * 
-   * @return The date as a simple string.
-   */
-  public String getStartDateString() {
-    SimpleDateFormat format = 
-      new SimpleDateFormat(ProjectBrowserBasePage.DATA_FORMAT, Locale.ENGLISH);
-    return format.format(new Date(this.startDate));
-  }
-
-  /**
-   * Returns the end date in yyyy-MM-dd format.
-   * 
-   * @return The date as a simple string.
-   */
-  public String getEndDateString() {
-    SimpleDateFormat format = 
-      new SimpleDateFormat(ProjectBrowserBasePage.DATA_FORMAT, Locale.ENGLISH);
-    return format.format(new Date(this.endDate));
-  }
-
-  /**
-   * @return the project
-   */
-  /*
-   * public Project getProject() { return project; }
-   */
-
+  
   /**
    * @return the telemetryName
    */
   public String getTelemetryName() {
     return telemetryName;
   }
-
-  /**
-   * @return the chartUrl
-   */
-  /*
-   * public String getChartUrl() { return chartUrl; }
-   */
 
   /**
    * Returns true if this model does not contain any data.
@@ -236,7 +196,7 @@ public class TelemetryChartDataModel implements Serializable, Processable {
    * @return the URL string of the chart.
    */
   public String getChartUrl(List<SelectableTelemetryStream> streams) {
-    GoogleChart googleChart = new GoogleChart(ChartType.LINE, this.width, this.height);
+    GoogleChart googleChart = new GoogleChart(ChartType.LINE, this.getWidth(), this.getHeight());
     Map<String, TelemetryStreamYAxis> streamAxisMap = new HashMap<String, TelemetryStreamYAxis>();
     
     //combine streams Y axes.
@@ -405,23 +365,6 @@ public class TelemetryChartDataModel implements Serializable, Processable {
   }
 
   /**
-   * Return the chart for the given project
-   * 
-   * @param project the given project.
-   * @return the chart link.
-   */
-  /*
-  public String getProjectChart(Project project) {
-    String chartLink = this.projectCharts.get(project);
-    if (chartLink == null) {
-      chartLink = this.getChartUrl(project);
-      this.projectCharts.put(project, chartLink);
-    }
-    return chartLink;
-  }
-  */
-
-  /**
    * Return the comma-separated list of parameters in String
    * 
    * @return the parameters as String
@@ -438,46 +381,12 @@ public class TelemetryChartDataModel implements Serializable, Processable {
     }
     return param;
   }
-
-  /**
-   * @return the overallChart
-   */
-  /*
-  public String getOverallChart() {
-    if (overallChart == null) {
-      List<TelemetryStream> streams = new ArrayList<TelemetryStream>();
-      List<String> projectNames = new ArrayList<String>();
-      for (Project project : this.selectedProjects) {
-        List<SelectableTelemetryStream> streamList = this.getTelemetryStream(project);
-        for (int i = 0; i < streamList.size(); ++i) {
-          streams.add(streamList.get(i).getTelemetryStream());
-          projectNames.add(project.getName());
-        }
-      }
-      overallChart = this.getChartUrl(projectNames, streams);
-    }
-    return overallChart;
-  }
-  */
-  /**
-   * @param width the width to set
-   */
-  public void setWidth(int width) {
-    this.width = width;
-  }
-
+  
   /**
    * @return the width
    */
   public int getWidth() {
     return width;
-  }
-
-  /**
-   * @param height the height to set
-   */
-  public void setHeight(int height) {
-    this.height = height;
   }
 
   /**

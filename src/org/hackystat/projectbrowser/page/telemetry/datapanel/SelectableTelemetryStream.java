@@ -19,7 +19,7 @@ public class SelectableTelemetryStream implements Serializable {
   /** Determine this stream is selected or not. */
   private boolean selected = false;
   /** The TelemetryStream of this stream. */
-  private TelemetryStream telemetryStream;
+  private final TelemetryStream telemetryStream;
   /** The color associated with this stream */
   private String color = "";
   /** the marker of this stream. */
@@ -81,12 +81,6 @@ public class SelectableTelemetryStream implements Serializable {
    */
   public boolean isSelected() {
     return selected;
-  }
-  /**
-   * @param telemetryStream the telemetryStream to set
-   */
-  public void setTelemetryStream(TelemetryStream telemetryStream) {
-    this.telemetryStream = telemetryStream;
   }
   /**
    * @return the telemetryStream

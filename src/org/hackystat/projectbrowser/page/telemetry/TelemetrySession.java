@@ -58,28 +58,30 @@ public class TelemetrySession implements Serializable {
   public static final String PARAMETER_VALUE_SEPARATOR = ",";
   /** The separator between project name and its onwer. */
   public static final String PROJECT_NAME_OWNER_SEPARATR = "-";
-  
+
+  /** The analysis this user has selected. */
+  private String telemetryName = null;
+  /** The granularity of the chart. Either Day, Week, or Month. */
+  private String granularity = "Day";
   /** The start date this user has selected. */
   private long startDate = ProjectBrowserBasePage.getDateBefore(7).getTime();
   /** The end date this user has selected. */
   private long endDate = ProjectBrowserBasePage.getDateBefore(1).getTime();
   /** The projects this user has selected. */
   private List<Project> selectedProjects = new ArrayList<Project>();
-  /** The analysis this user has selected. */
-  private String telemetryName = null;
+  
   /** The descriptions for all telemetries. */
   private final Map<String, TelemetryChartDefinition> telemetrys = 
                             new HashMap<String, TelemetryChartDefinition>();
-  /** The granularity of the chart. Either Day, Week, or Month. */
-  private String granularity = "Day";
   /** The available granularities. */
   private final List<String> granularityList = new ArrayList<String>();
+  /** The parameters for telemetry chart. */
+  private final List<IModel> parameters = new ArrayList<IModel>();
+  /** The data model to hold state for data panel */
+  private final TelemetryChartDataModel dataModel = new TelemetryChartDataModel();
+  
   /** the feedback string. */
   private String feedback = "";
-  /** The parameters for telemetry chart. */
-  private List<IModel> parameters = new ArrayList<IModel>();
-  /** The data model to hold state for data panel */
-  private TelemetryChartDataModel dataModel = new TelemetryChartDataModel();
   /** Error message when parsing page paramters. */
   private String paramErrorMessage = "";
   
@@ -403,7 +405,7 @@ public class TelemetrySession implements Serializable {
   }
 
   /**
-   * Returns a Project instance that is available to current user and 
+   * Returns a Project instance that available to current user and 
    * is matched to the given project name and project owner.
    * @param projectName the given project name.
    * @param projectOwner the given project owner.
