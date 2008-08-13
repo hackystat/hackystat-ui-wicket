@@ -29,6 +29,11 @@ import org.hackystat.utilities.tstamp.Tstamp;
 public class TelemetryChartDataModel implements Serializable, Processable {
   /** Support serialization. */
   private static final long serialVersionUID = 1L;
+  /** the width of this chart. */
+  private static final int WIDTH = 1000;
+  /** the height of this chart. */
+  private static final int HEIGHT = 300;
+  
   /** The start date this user has selected. */
   private long startDate = 0;
   /** The end date this user has selected. */
@@ -46,10 +51,6 @@ public class TelemetryChartDataModel implements Serializable, Processable {
     new HashMap<Project, List<SelectableTelemetryStream>>();
   /** Chart with selected project streams. */
   private String selectedChart = null;
-  /** the width of this chart. */
-  private final int width = 1000;
-  /** the height of this chart. */
-  private final int height = 300;
   /** state of data loading process. */
   private volatile boolean inProcess = false;
   /** result of data loading. */
@@ -386,14 +387,14 @@ public class TelemetryChartDataModel implements Serializable, Processable {
    * @return the width
    */
   public int getWidth() {
-    return width;
+    return WIDTH;
   }
 
   /**
    * @return the height
    */
   public int getHeight() {
-    return height;
+    return HEIGHT;
   }
 
   /**
