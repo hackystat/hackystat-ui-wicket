@@ -25,7 +25,7 @@ public class MeasureConfiguration implements Serializable {
   /** If this measure is colorable. */
   private boolean colorable;
   /** If this measure is enabled. */
-  private boolean enable = true;
+  private boolean enabled = true;
   
   /** The threshold of high value. */
   private double higherThreshold;
@@ -118,10 +118,10 @@ public class MeasureConfiguration implements Serializable {
   }
 
   /**
-   * @param isIncreasingGood the isIncreasingGood to set
+   * @param isHigherTheBetter the isIncreasingGood to set
    */
-  public void setIncreasingGood(boolean isIncreasingGood) {
-    this.isHigherTheBetter = isIncreasingGood;
+  public void setHigherTheBetter(boolean isHigherTheBetter) {
+    this.isHigherTheBetter = isHigherTheBetter;
   }
 
   /**
@@ -160,17 +160,17 @@ public class MeasureConfiguration implements Serializable {
   }
 
   /**
-   * @param enable the enable to set
+   * @param enabled the enable to set
    */
-  public void setEnable(boolean enable) {
-    this.enable = enable;
+  public void setEnabled(boolean enabled) {
+    this.enabled = enabled;
   }
 
   /**
    * @return the enable
    */
-  public boolean isEnable() {
-    return enable;
+  public boolean isEnabled() {
+    return enabled;
   }
 
   /**

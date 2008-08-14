@@ -1,7 +1,7 @@
 package org.hackystat.projectbrowser.page.projectportfolio.inputpanel;
 
 import org.apache.wicket.markup.html.panel.Panel;
-import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
+import org.hackystat.projectbrowser.page.projectportfolio.ProjectPortfolioPage;
 
 /**
  * Panel to let user select the project to display.
@@ -16,7 +16,7 @@ public class ProjectPortfolioInputPanel extends Panel {
    * @param id the wicket id.
    * @param page the page this panel is attached to.
    */
-  public ProjectPortfolioInputPanel(String id, ProjectBrowserBasePage page) {
+  public ProjectPortfolioInputPanel(String id, ProjectPortfolioPage page) {
     super(id);
     add(new ProjectPortfolioInputForm("inputForm", page));
   }

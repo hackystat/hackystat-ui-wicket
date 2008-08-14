@@ -5,6 +5,8 @@ import org.apache.wicket.model.PropertyModel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
 import org.hackystat.projectbrowser.page.loadingprocesspanel.LoadingProcessPanel;
+import org.hackystat.projectbrowser.page.projectportfolio.configurationpanel.
+                                                ProjectPortfolioConfigurationPanel;
 import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.ProjectPortfolioDetailsPanel;
 import org.hackystat.projectbrowser.page.projectportfolio.inputpanel.ProjectPortfolioInputPanel;
 
@@ -23,6 +25,8 @@ public class ProjectPortfolioPage extends ProjectBrowserBasePage {
   private LoadingProcessPanel loadingProcessPanel;
   /** the ProjectPortfolioInputPanel in this page. */
   private ProjectPortfolioInputPanel inputPanel;
+  /** the ProjectPortfolioConfigurationPanel in this page. */
+  private ProjectPortfolioConfigurationPanel configurationPanel;
   /** the ProjectPortfolioDetailsPanel in this page. */
   private ProjectPortfolioDetailsPanel detailsPanel;
   
@@ -32,6 +36,12 @@ public class ProjectPortfolioPage extends ProjectBrowserBasePage {
   public ProjectPortfolioPage () {
     super();
 
+    configurationPanel = new ProjectPortfolioConfigurationPanel("configurationPanel",
+                                                                session.getDataModel());
+    configurationPanel.setOutputMarkupId(true);
+    configurationPanel.setVisible(false);
+    add(configurationPanel);
+    
     inputPanel = new ProjectPortfolioInputPanel("inputPanel", this);
     inputPanel.setOutputMarkupId(true);
     add(inputPanel);
@@ -50,11 +60,26 @@ public class ProjectPortfolioPage extends ProjectBrowserBasePage {
     };
     loadingProcessPanel.setOutputMarkupId(true);
     add(loadingProcessPanel);
+
     
     this.get("FooterFeedback").setModel(new PropertyModel(session, "feedback"));
     this.get("FooterFeedback").setOutputMarkupId(true);
   }
 
+  /**
+   * @return true if ConfigurationPanel is visible.
+   */
+  public boolean isConfigurationPanelVisible() {
+    return configurationPanel.isVisible();
+  }
+  
+  /**
+   * @param visible the visible boolean to set.
+   */
+  public void setConfigurationPanelVisible(boolean visible) {
+    configurationPanel.setVisible(visible);
+  }
+  
   /**
    * The action to be performed when the user has set the Project and Date fields. 
    */

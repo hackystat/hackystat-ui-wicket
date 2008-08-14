@@ -18,7 +18,7 @@ public class ProjectPortfolioSession implements Serializable {
   /** Support serialization. */
   private static final long serialVersionUID = 1L;
   /** The data model to hold state for details panel */
-  private ProjectPortfolioDataModel dataModel = new ProjectPortfolioDataModel();
+  private final ProjectPortfolioDataModel dataModel = new ProjectPortfolioDataModel();
   /** The start date this user has selected. */
   private long startDate = ProjectBrowserBasePage.getDateBefore(28).getTime();
   /** The end date this user has selected. */

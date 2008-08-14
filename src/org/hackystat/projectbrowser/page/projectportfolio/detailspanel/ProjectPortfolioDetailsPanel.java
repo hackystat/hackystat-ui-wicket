@@ -36,6 +36,17 @@ public class ProjectPortfolioDetailsPanel extends Panel {
   public ProjectPortfolioDetailsPanel(String id) {
     super(id);
 
+    ListView measureHeads = new ListView("measureHeads", dataModel.getEnabledMeasuresName()) {
+      /** Support serialization. */
+      private static final long serialVersionUID = -6222175445067187421L;
+
+      @Override
+      protected void populateItem(ListItem item) {
+        item.add(new Label("measureName", item.getModelObjectAsString()));
+      }
+    };
+    add(measureHeads);
+    
     ListView dateList = new ListView("projectTable", dataModel.getSelectedProjects()) {
       /** Support serialization. */
       public static final long serialVersionUID = 1L;

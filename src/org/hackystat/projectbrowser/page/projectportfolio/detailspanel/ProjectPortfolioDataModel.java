@@ -50,7 +50,7 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
   private Map<Project, List<MiniBarChart>> measuresCharts = 
         new HashMap<Project, List<MiniBarChart>>();
   /** The thresholds. */
-  private List<MeasureConfiguration> measures = new ArrayList<MeasureConfiguration>();
+  private final List<MeasureConfiguration> measures = new ArrayList<MeasureConfiguration>();
 
   /** Measures in Project Portfolio. */
   //private String[] measures = {"Coverage", "CyclomaticComplexity", "Coupling" ,"Churn", 
@@ -113,10 +113,13 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
         
         //get charts of this project
         List<MiniBarChart> charts = new ArrayList<MiniBarChart>();
-        for (int j = 0; j < measures.size(); ++j) {
-          MeasureConfiguration measure = measures.get(j);
+        
+        List<MeasureConfiguration> enableMeasures = getEnabledMeasures();
+        
+        for (int j = 0; j < enableMeasures.size(); ++j) {
+          MeasureConfiguration measure = enableMeasures.get(j);
           this.processingMessage += "---> Retrieve " + measure.getName() + 
-              " (" + (i + 1) + " .. " + (j + 1) + " of " + measures.size() + ").\n";
+              " (" + (i + 1) + " .. " + (j + 1) + " of " + enableMeasures.size() + ").\n";
           
           //set default parameter if no parameter is assigned.
           if (measure.getParameters().isEmpty()) {
@@ -259,5 +262,38 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
     }
     return new ArrayList<ParameterDefinition>();
     
+  }
+
+  /**
+   * @return the measures
+   */
+  public List<MeasureConfiguration> getMeasures() {
+    return measures;
+  }
+  
+  /**
+   * @return the enabled measures
+   */
+  public List<MeasureConfiguration> getEnabledMeasures() {
+    List<MeasureConfiguration> enableMeasures = new ArrayList<MeasureConfiguration>();
+    for (MeasureConfiguration measure : measures) {
+      if (measure.isEnabled()) {
+        enableMeasures.add(measure);
+      }
+    }
+    return enableMeasures;
+  }
+  
+  /**
+   * @return the names of the enabled measures.
+   */
+  public List<String> getEnabledMeasuresName() {
+    List<String> names = new ArrayList<String>();
+    for (MeasureConfiguration measure : measures) {
+      if (measure.isEnabled()) {
+        names.add(measure.getName());
+      }
+    }
+    return names;
   }
 }

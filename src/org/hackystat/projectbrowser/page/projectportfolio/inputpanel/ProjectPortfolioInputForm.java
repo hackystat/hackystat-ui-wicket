@@ -1,12 +1,13 @@
 package org.hackystat.projectbrowser.page.projectportfolio.inputpanel;
 
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.ListMultipleChoice;
+import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.PropertyModel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.ProjectChoiceRenderer;
-import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
-import org.hackystat.projectbrowser.page.popupwindow.PopupWindowPanel;
+import org.hackystat.projectbrowser.page.projectportfolio.ProjectPortfolioPage;
 import org.hackystat.projectbrowser.page.projectportfolio.ProjectPortfolioSession;
 
 /**
@@ -19,7 +20,7 @@ public class ProjectPortfolioInputForm extends Form {
   /** Support serialization. */
   public static final long serialVersionUID = 1L;
   /** The page containing this form. */
-  private ProjectBrowserBasePage page = null;
+  private final ProjectPortfolioPage page;
   /** ProjectPortfolioSession that holds page state for Project Portfolio. */
   private ProjectPortfolioSession session = 
     ProjectBrowserSession.get().getProjectPortfolioSession();
@@ -30,7 +31,7 @@ public class ProjectPortfolioInputForm extends Form {
    * @param id The wicket:id.
    * @param p the page this form is attached to.
    */
-  public ProjectPortfolioInputForm(String id, ProjectBrowserBasePage p) {
+  public ProjectPortfolioInputForm(String id, ProjectPortfolioPage p) {
     super(id);
     this.page = p;
 
@@ -54,12 +55,16 @@ public class ProjectPortfolioInputForm extends Form {
     projectMenu.setRequired(true);
     add(projectMenu);
 
-    //add the popup window
-    PopupWindowPanel configurationPopup = 
-      new PopupWindowPanel("configurationPopup", "Project Portfolio Configurations");
-    configurationPopup.getModalWindow().setContent(
-        new ProjectPortfolioConfigurationPanel(configurationPopup.getModalWindow().getContentId()));
-    add(configurationPopup);
+    Link configurationLink = new Link("configuration") {
+      /** Support serialization. */
+      private static final long serialVersionUID = 0L;
+      @Override
+      public void onClick() {
+        page.setConfigurationPanelVisible(!page.isConfigurationPanelVisible());
+      }
+    };
+    configurationLink.add(new Label("label", new PropertyModel(this, "labelMessage")));
+    add(configurationLink);
   }
 
   /**
@@ -69,6 +74,20 @@ public class ProjectPortfolioInputForm extends Form {
   public void onSubmit() {
     session.updateDataModel();
     page.onProjectDateSubmit();
+  }
+  
+  /**
+   * @return the configuration label message
+   */
+  public String getLabelMessage() {
+    String labelMessage;
+    if (page.isConfigurationPanelVisible()) {
+      labelMessage = "Hide Configuration";
+    }
+    else {
+      labelMessage = "Show Configuration";
+    }
+    return labelMessage;
   }
   
   /**

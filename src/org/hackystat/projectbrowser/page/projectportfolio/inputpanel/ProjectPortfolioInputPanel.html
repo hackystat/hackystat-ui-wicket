@@ -3,8 +3,10 @@
       <table>
     <form wicket:id="inputForm">
         <tr>
+          <td><b>Select Project:</b></td>
+        </tr>
+        <tr>
           <td>
-          Project:
             <select style="width: 10em" wicket:id="projectMenu">
               <option value="Default">Default</option>
             </select>
@@ -16,7 +18,9 @@
           </td>
         </tr>
         <tr>
-          <td wicket:id="configurationPopup"/>
+          <td style="text-align:center">
+            <a style="text-align:center" wicket:id="configuration"><b wicket:id="label"/></a>
+          </td>
         </tr>
     </form>
       </table>

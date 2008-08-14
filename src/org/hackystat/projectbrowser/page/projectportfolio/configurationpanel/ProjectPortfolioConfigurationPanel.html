@@ -1,0 +1,31 @@
+<html xmlns:wicket>
+  <wicket:panel>
+    <form wicket:id="configurationForm">
+      <table>
+        <tr>
+          <td>Enable</td>
+          <td>Name</td>
+          <td>Colorable</td>
+          <td>Higher Threshold</td>
+          <td>Lower Threshold</td>
+          <td>IsHigherTheBetter?</td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr wicket:id="measureList">
+          <td><input type="checkbox" wicket:id="enableCheckBox"/></td>
+          <td wicket:id="measureNameLabel"/>
+          <td><input type="checkbox" wicket:id="colorableCheckBox"/></td>
+          <td><input type="text" style="width: 3em" wicket:id="higherThresholdTextField"/></td>
+          <td><input type="text" style="width: 3em" wicket:id="lowerThresholdTextField"/></td>
+          <td><input type="checkbox" wicket:id="isHigherTheBetterCheckBox"/></td>
+        </tr>
+        <tr>
+          <td style="text-align:center">
+            <input type="submit" value="OK"/>
+          </td>
+        </tr>
+      </table>
+    </form>
+  </wicket:panel>
+</html>
