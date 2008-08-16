@@ -3,22 +3,50 @@
     <form wicket:id="configurationForm">
       <table>
         <tr>
-          <td>Enable</td>
-          <td>Name</td>
-          <td>Colorable</td>
-          <td>Higher Threshold</td>
-          <td>Lower Threshold</td>
-          <td>IsHigherTheBetter?</td>
-          <td></td>
-          <td></td>
+          <th>Enable</th>
+          <th>Name</th>
+          <th>Colorable</th>
+          <th>Higher Color</th>
+          <th>Higher Threshold</th>
+          <th>Middle Color</th>
+          <th>Lower Threshold</th>
+          <th>Lower Color</th>
+          <th>Stable Color</th>
         </tr>
         <tr wicket:id="measureList">
           <td><input type="checkbox" wicket:id="enableCheckBox"/></td>
           <td wicket:id="measureNameLabel"/>
           <td><input type="checkbox" wicket:id="colorableCheckBox"/></td>
+          <td>
+            <select width="20" wicket:id="higherColorSelect">
+              <span wicket:id="higherColorOptionList">
+                <option wicket:id="option"></option>
+              </span>
+            </select>
+          </td>
           <td><input type="text" style="width: 3em" wicket:id="higherThresholdTextField"/></td>
+          <td>
+            <select wicket:id="middleColorSelect">
+              <span wicket:id="middleColorOptionList">
+                <option wicket:id="option">option n</option>
+              </span>
+            </select>
+          </td>
           <td><input type="text" style="width: 3em" wicket:id="lowerThresholdTextField"/></td>
-          <td><input type="checkbox" wicket:id="isHigherTheBetterCheckBox"/></td>
+          <td>
+            <select wicket:id="lowerColorSelect">
+              <span wicket:id="lowerColorOptionList">
+                <option wicket:id="option">option n</option>
+              </span>
+            </select>
+          </td>
+          <td>
+            <select wicket:id="stableColorSelect">
+              <span wicket:id="stableColorOptionList">
+                <option wicket:id="option">option n</option>
+              </span>
+            </select>
+          </td>
         </tr>
         <tr>
           <td style="text-align:center">

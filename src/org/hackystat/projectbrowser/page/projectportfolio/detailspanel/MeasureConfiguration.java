@@ -6,8 +6,9 @@ import java.util.List;
 
 /**
  * Configuration for project portfolio measures.
+ * 
  * @author Shaoxuan Zhang
- *
+ * 
  */
 public class MeasureConfiguration implements Serializable {
   /** Support serialization. */
@@ -19,116 +20,112 @@ public class MeasureConfiguration implements Serializable {
   public static final String green = "00ff00";
   /** RGB String format of yellow. */
   public static final String yellow = "ffff00";
-  
+
   /** The name of the measure. */
   private String measureName;
   /** If this measure is colorable. */
   private boolean colorable;
   /** If this measure is enabled. */
   private boolean enabled = true;
-  
+
   /** The threshold of high value. */
   private double higherThreshold;
   /** The threshold of high value. */
   private double lowerThreshold;
-  /** If higher value means better. */
-  private boolean isHigherTheBetter;
   /** The color for higher value and increasing trend. */
   private String higherColor;
   /** The color for middle value and unstable trend. */
   private String middleColor;
   /** The color for lower value and decreasing trend. */
   private String lowerColor;
-  
+  /** The color for stable trend. */
+  private String stableColor;
+
   /** This meausre's parameter list. */
   private List<String> parameters = new ArrayList<String>();
-  
+
   /**
-   * Constructor with default value;
+   * Constructor with all default value;
+   * 
    * @param name The name of the measure.
    * @param colorable If this measure is colorable.
    */
   public MeasureConfiguration(String name, boolean colorable) {
-    this(name, colorable, 40, 90, true, green, yellow, red);
+    this(name, colorable, 40, 90, green, yellow, red, green);
   }
 
   /**
+   * Create an instance with default colors green yellow red. higher color will be green if
+   * isHigherTheBetter is true, otherwise will be red. lower color will be red if isHigherTheBetter
+   * is true, otherwise will be green.
+   * 
    * @param name The name of the measure.
    * @param colorable If this measure is colorable.
    * @param higherThreshold The threshold of high value.
    * @param lowerThreshold The threshold of high value.
    * @param isHigherTheBetter If higher value means better.
    */
-  public MeasureConfiguration(String name, boolean colorable, double lowerThreshold, 
+  public MeasureConfiguration(String name, boolean colorable, double lowerThreshold,
       double higherThreshold, boolean isHigherTheBetter) {
-    this(name, colorable, lowerThreshold, higherThreshold, isHigherTheBetter, green, yellow, red);
-    if (!this.isHigherTheBetter) {
+    this(name, colorable, lowerThreshold, higherThreshold, green, yellow, red, green);
+    if (!isHigherTheBetter) {
       this.higherColor = red;
       this.lowerColor = green;
     }
-  
+
   }
+
   /**
    * Full parameter constructor.
+   * 
    * @param name The name of the measure.
    * @param colorable If this measure is colorable.
    * @param higherThreshold The threshold of high value.
    * @param lowerThreshold The threshold of high value.
-   * @param isHigherTheBetter If higher value means better.
    * @param higherColor The color for higher value and increasing trend.
    * @param middleColor The color for middle value and unstable trend.
    * @param lowerColor The color for lower value and decreasing trend.
+   * @param stableColor The color for stable trend.
    */
-  public MeasureConfiguration(String name, boolean colorable, double lowerThreshold, 
-      double higherThreshold, boolean isHigherTheBetter, 
-      String higherColor, String middleColor, String lowerColor) {
+  public MeasureConfiguration(String name, boolean colorable, double lowerThreshold,
+      double higherThreshold, String higherColor, String middleColor, String lowerColor,
+      String stableColor) {
     this.measureName = name;
     this.colorable = colorable;
     this.lowerThreshold = lowerThreshold;
     this.higherThreshold = higherThreshold;
-    this.isHigherTheBetter = isHigherTheBetter;
     this.higherColor = higherColor;
     this.middleColor = middleColor;
     this.lowerColor = lowerColor;
+    this.stableColor = stableColor;
   }
-  
+
   /**
    * @param higherThreshold the higherThreshold to set
    */
   public void setHigherThreshold(double higherThreshold) {
     this.higherThreshold = higherThreshold;
   }
+
   /**
    * @return the higherThreshold
    */
   public double getHigherThreshold() {
     return higherThreshold;
   }
+
   /**
    * @param lowerThreshold the lowerThreshold to set
    */
   public void setLowerThreshold(double lowerThreshold) {
     this.lowerThreshold = lowerThreshold;
   }
+
   /**
    * @return the lowerThreshold
    */
   public double getLowerThreshold() {
     return lowerThreshold;
-  }
-
-  /**
-   * @param isHigherTheBetter the isIncreasingGood to set
-   */
-  public void setHigherTheBetter(boolean isHigherTheBetter) {
-    this.isHigherTheBetter = isHigherTheBetter;
-  }
-
-  /**
-   * @return the isIncreasingGood
-   */
-  public boolean isHigherTheBetter() {
-    return isHigherTheBetter;
   }
 
   /**
@@ -214,9 +211,10 @@ public class MeasureConfiguration implements Serializable {
   public String getLowerColor() {
     return lowerColor;
   }
-  
-  /** 
+
+  /**
    * Return the parameters in a single String.
+   * 
    * @return parameters separated by ',' in a single String.
    */
   public String getParamtersString() {
@@ -224,12 +222,12 @@ public class MeasureConfiguration implements Serializable {
       return "";
     }
     StringBuffer param = new StringBuffer();
-      for (int i = 0; i < this.parameters.size(); ++i) {
-        param.append(this.parameters.get(i));
-        if (i < this.parameters.size() - 1) {
-          param.append(',');
-        }
+    for (int i = 0; i < this.parameters.size(); ++i) {
+      param.append(this.parameters.get(i));
+      if (i < this.parameters.size() - 1) {
+        param.append(',');
       }
+    }
     return param.toString();
   }
 
@@ -245,5 +243,19 @@ public class MeasureConfiguration implements Serializable {
    */
   public List<String> getParameters() {
     return parameters;
+  }
+
+  /**
+   * @param stableColor the stableColor to set
+   */
+  public void setStableColor(String stableColor) {
+    this.stableColor = stableColor;
+  }
+
+  /**
+   * @return the stableColor
+   */
+  public String getStableColor() {
+    return stableColor;
   }
 }

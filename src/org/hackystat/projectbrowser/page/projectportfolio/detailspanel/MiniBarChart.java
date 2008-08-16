@@ -21,6 +21,9 @@ public class MiniBarChart implements Serializable {
 
   /** Support serialization. */
   private static final long serialVersionUID = 1213447209533926430L;
+  /** RGB String format of black. */
+  public static final String black = "000000";
+  
   /** The stream of this chart. */
   protected List<Double> streamData;
   /** The latest value of the stream. */
@@ -30,28 +33,13 @@ public class MiniBarChart implements Serializable {
   /** The height of the chart. */
   public static final int height = 15;
   
-  /** 
-   * Color of the chart. 
-   * Default to be black.
-   */
-  private String chartColor = "000000";
   /** The PageParameters to construct the link. */
   private PageParameters telemetryPageParameters;
-  
   
   /**
    * @param stream The stream of this chart.
    */
   public MiniBarChart(TelemetryStream stream) {
-    this(stream, "000000");
-  }
-  
-  /**
-   * @param stream The stream of this chart.
-   * @param color The color of this chart.
-   */
-  public MiniBarChart(TelemetryStream stream, String color) {
-    this.chartColor = color;
     this.streamData = getStreamData(stream);
     for (int i = streamData.size() - 1; i >= 0; --i) {
       this.latestValue = streamData.get(i);
@@ -98,22 +86,16 @@ public class MiniBarChart implements Serializable {
     googleChart.getChartData().add(streamData);
     googleChart.getChartDataScale().
             add(Arrays.asList(new Double[]{ 0.0, max}));
-    googleChart.getColors().add(this.chartColor);
+    googleChart.getColors().add(this.getChartColor());
     return googleChart.getUrl();
   }
 
-  /**
-   * @param color the color to set
-   */
-  public void setChartColor(String color) {
-    this.chartColor = color;
-  }
 
   /**
    * @return the color
    */
   public String getChartColor() {
-    return chartColor;
+    return black;
   }
 
   /**
@@ -127,7 +109,7 @@ public class MiniBarChart implements Serializable {
    * @return the valueColor
    */
   public String getValueColor() {
-    return "000000";
+    return black;
   }
 
   /**

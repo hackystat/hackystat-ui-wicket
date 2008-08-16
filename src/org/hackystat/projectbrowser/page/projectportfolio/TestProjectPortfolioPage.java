@@ -1,15 +1,19 @@
 package org.hackystat.projectbrowser.page.projectportfolio;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import java.util.Properties;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.ListMultipleChoice;
+import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
 import org.hackystat.projectbrowser.ProjectBrowserApplication;
 import org.hackystat.projectbrowser.ProjectBrowserProperties;
 import org.hackystat.projectbrowser.authentication.SigninPage;
+import org.hackystat.projectbrowser.page.projectportfolio.configurationpanel.
+            ProjectPortfolioConfigurationPanel;
 import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.ProjectPortfolioDetailsPanel;
 import org.hackystat.projectbrowser.page.projectportfolio.inputpanel.ProjectPortfolioInputPanel;
 import org.hackystat.projectbrowser.test.ProjectBrowserTestHelper;
@@ -32,13 +36,18 @@ public class TestProjectPortfolioPage extends ProjectBrowserTestHelper {
   private String testUserEmail = "TestProjectPortfolioUser@hackystat.org";
   /** the test project. */
   private String testProject = "TestProjectPortfolioProject";
+  
+  /** The word of "true". */
+  private static final String TRUE = "true";
+  /** The word of "false". */
+  private static final String FALSE = "false";
 
   /**
    * Initialize data for testing.
    */
   @Before
   public void setUp() {
-    this.generateSimData(testUser, testProject, Tstamp.makeTimestamp(), 2);
+    this.generateSimData(testUser, testProject, Tstamp.makeTimestamp(), 0);
   }
   
   /**
@@ -46,11 +55,12 @@ public class TestProjectPortfolioPage extends ProjectBrowserTestHelper {
    */
   @Test 
   public void testProjectPortfolioPage() {  //NOPMD WicketTester has its own assert classes.
+    this.generateSimData(testUser, testProject, Tstamp.makeTimestamp(), 1);
     //prepare test properties.
     Properties testProperties = getTestProperties();
-    testProperties.put(ProjectBrowserProperties.AVAILABLEPAGE_KEY + ".projectportfolio", "true");
+    testProperties.put(ProjectBrowserProperties.AVAILABLEPAGE_KEY + ".projectportfolio", TRUE);
     testProperties.put(
-        ProjectBrowserProperties.BACKGROUND_PROCESS_KEY + ".projectportfolio", "false");
+        ProjectBrowserProperties.BACKGROUND_PROCESS_KEY + ".projectportfolio", FALSE);
     WicketTester tester = new WicketTester(new ProjectBrowserApplication(testProperties));
     
     tester.startPage(SigninPage.class); 
@@ -62,6 +72,23 @@ public class TestProjectPortfolioPage extends ProjectBrowserTestHelper {
     //first, go to daily project data page.
     tester.clickLink("ProjectPortfolioPageLink");
     tester.assertRenderedPage(ProjectPortfolioPage.class);
+    
+    tester.assertInvisible("configurationPanel");
+    tester.clickLink("inputPanel:inputForm:configuration");
+    tester.assertComponent("configurationPanel", ProjectPortfolioConfigurationPanel.class);
+
+    FormTester configurationForm = tester.newFormTester("configurationPanel:configurationForm");
+    ListView measureList = (ListView)configurationForm.getForm().get("measureList");
+    assertEquals("There should be 7 measures.", 7, measureList.getList().size());
+    configurationForm.setValue("measureList:1:colorableCheckBox", FALSE);
+    configurationForm.setValue("measureList:2:enableCheckBox", FALSE);
+    configurationForm.setValue("measureList:3:enableCheckBox", FALSE);
+    configurationForm.setValue("measureList:4:enableCheckBox", FALSE);
+    configurationForm.setValue("measureList:5:enableCheckBox", FALSE);
+    configurationForm.setValue("measureList:6:enableCheckBox", FALSE);
+    configurationForm.submit();
+    tester.assertInvisible("configurationPanel");
+
     tester.assertComponent("inputPanel", ProjectPortfolioInputPanel.class);
     FormTester inputForm = tester.newFormTester("inputPanel:inputForm");
 

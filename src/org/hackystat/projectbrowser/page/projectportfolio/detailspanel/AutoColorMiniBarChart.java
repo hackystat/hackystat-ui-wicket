@@ -10,8 +10,6 @@ public class AutoColorMiniBarChart extends MiniBarChart {
 
   /** Support serialization. */
   private static final long serialVersionUID = -4913386312346727222L;
-  /** RGB String format of yellow. */
-  public static final String black = "000000";
   
   /** The configuration of this chart. */
   private MeasureConfiguration configuration;
@@ -23,7 +21,13 @@ public class AutoColorMiniBarChart extends MiniBarChart {
   public AutoColorMiniBarChart(TelemetryStream stream, MeasureConfiguration configuration) {
     super(stream);
     this.configuration = configuration;
-    this.setChartColor(getAutoColor());
+  }
+
+  /**
+   * @return the color
+   */
+  public String getChartColor() {
+    return getAutoColor();
   }
 
   /**
@@ -47,12 +51,7 @@ public class AutoColorMiniBarChart extends MiniBarChart {
       }
     }
     if (!increased && !decreased) {
-      if (configuration.isHigherTheBetter()) {
-        return configuration.getHigherColor();
-      }
-      else {
-        return configuration.getLowerColor();
-      }
+      return configuration.getStableColor();
     }
     if (increased && !decreased) {
       return configuration.getHigherColor();
@@ -66,6 +65,7 @@ public class AutoColorMiniBarChart extends MiniBarChart {
   /**
    * @return the valueColor
    */
+  @Override
   public String getValueColor() {
     if (this.getLatestValue() < 0) {
       return black;
