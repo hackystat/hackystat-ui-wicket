@@ -13,12 +13,14 @@ import org.apache.wicket.extensions.markup.html.form.select.SelectOption;
 import org.apache.wicket.markup.MarkupStream;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.hackystat.projectbrowser.page.popupwindow.PopupWindowPanel;
 import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.MeasureConfiguration;
 import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.ProjectPortfolioDataModel;
 
@@ -32,17 +34,28 @@ public class ProjectPortfolioConfigurationForm extends Form {
   /** Support serialization. */
   private static final long serialVersionUID = 447730202032199770L;
   /** The colors to choose from. */
-  private static final String[] colors = {"ffff00",  //yellow
-                                          "ffc800", //orange
-                                          "ffafaf", //pink
-                                          "ff00ff", //magenta
-                                          "ff0000", //red
-                                          "808080", //gray
-                                          "00ffff", //cyan
-                                          "00ff00", //green
-                                          "0000ff", //blue
-                                          "000000", //black
-                                          };
+  private static final String[] colors = { "ffff00", // yellow
+      "ffc800", // orange
+      "ffafaf", // pink
+      "ff00ff", // magenta
+      "ff0000", // red
+      "808080", // gray
+      "00ffff", // cyan
+      "00ff00", // green
+      "0000ff", // blue
+      "000000", // black
+  };
+  /** The introductions. */
+  private static final String introductions = 
+    "Enabled : Only enabled measure will be shown in detail panel\n\n"
+    + "Colorable : Colorable measure's chart and value will be colored according to the following"
+    + " setting. Noncolorable measure's chart and value will be black.\n\n"
+    + "Higher Color : Color for increasing trend and values higher than higher threshould.\n\n"
+    + "Higher Threshold : The threshold of high value. \n\n"
+    + "Middle Color : Color for unstable trend and values between higher and lower threshoulds.\n\n"
+    + "Lower Threshold : The threshold of low value.\n\n"
+    + "Lower Color : Color for decreasing trend and values lower than lower threshould.\n\n"
+    + "Stable Color : Color for stable trend.\n";
   /** The word style. */
   private static final String STYLE_KEY = "style";
   /** THe preceding of HTTP background color style setting. */
@@ -186,6 +199,11 @@ public class ProjectPortfolioConfigurationForm extends Form {
     };
     add(measureList);
 
+    PopupWindowPanel parameterPopup = new PopupWindowPanel("instructionPopup",
+        "Configuration instruction", "Configuration instruction");
+    parameterPopup.getModalWindow().setContent(
+        new MultiLineLabel(parameterPopup.getModalWindow().getContentId(), introductions));
+    add(parameterPopup);
   }
 
   /**

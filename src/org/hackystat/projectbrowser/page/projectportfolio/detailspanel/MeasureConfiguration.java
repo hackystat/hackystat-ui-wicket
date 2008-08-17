@@ -30,7 +30,7 @@ public class MeasureConfiguration implements Serializable {
 
   /** The threshold of high value. */
   private double higherThreshold;
-  /** The threshold of high value. */
+  /** The threshold of low value. */
   private double lowerThreshold;
   /** The color for higher value and increasing trend. */
   private String higherColor;
