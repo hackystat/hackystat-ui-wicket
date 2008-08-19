@@ -178,7 +178,7 @@ public class ProjectBrowserTestHelper {
       client.deleteSensorData(user);
       for (ProjectRef ref : client.getProjectIndex(user).getProjectRef()) {
         Project project = client.getProject(ref);
-        //System.out.println("Removing project " + project.getName() + project.getOwner());
+        System.err.println("Removing project " + project.getName() + project.getOwner());
         if (user.equals(project.getOwner()) && !"Default".equals(project.getName())) {
           client.deleteProject(user, project.getName());
         }

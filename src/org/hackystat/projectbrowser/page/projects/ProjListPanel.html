@@ -1,0 +1,35 @@
+ <html xmlns:wicket>
+  <wicket:panel>
+    <form wicket:id="projListForm" class="hform">
+      <input style="width: 5em" wicket:id="newButton" type="submit" value="new"/>
+      <table>
+        <tr>
+          <th>Action</th>
+          <th>Name</th>
+          <th>Owner</th>
+          <th>Description</th>
+          <th>Start/Stop</th>
+          <th>Members(M),Invitees(I),Spectators(S)</th>
+          <th>URI Patterns</th>
+          <th>Properties</th>
+        </tr>
+        <tr wicket:id="projectTable">
+          <td style="width: 6em">
+            <input style="width: 5em" wicket:id="editButton" type="submit" value="edit"/>
+            <input style="width: 5em" wicket:id="renameButton" type="submit" value="rename"/>
+            <input style="width: 5em" wicket:id="deleteButton" type="submit" value="delete"/>
+            <input style="width: 5em" wicket:id="leaveButton" type="submit" value="leave"/>
+            <input style="width: 5em" wicket:id="replyButton" type="submit" value="reply"/>
+          </td>
+          <td wicket:id="projectName">Name</td>
+          <td wicket:id="projectOwner">Owner</td>
+          <td wicket:id="projectDesc" style="width: 12em" >Description</td>
+          <td wicket:id="projectSpan">Span</td> 
+          <td wicket:id="projectMembers">Members</td> 
+          <td wicket:id="projectUriPatterns">UriPatterns</td> 
+          <td wicket:id="projectProperties">Properties</td>
+        </tr>
+      </table>  
+    </form>
+  </wicket:panel>
+</html>

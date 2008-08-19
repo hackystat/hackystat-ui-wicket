@@ -1,0 +1,12 @@
+<html xmlns:wicket>
+  <wicket:panel>
+    <form wicket:id="projDeleteForm" class="hform">
+      <table>
+        <tr><td><label>Are you sure you wish to delete the following project? </label></td><td><input wicket:id="projectName" type="text" /></td></tr>
+      </table>
+      <input style="width: 4em" wicket:id="deleteButton" type="submit" value="delete"/>
+      <input style="width: 4em" wicket:id="cancelButton" type="submit" value="cancel"/>
+      <div id="feedback"><span wicket:id="deleteFeedback">[Delete Feedback]</span></div>
+    </form>
+  </wicket:panel>
+</html>

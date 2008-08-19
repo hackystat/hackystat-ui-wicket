@@ -1,0 +1,84 @@
+<html xmlns:wicket>
+  <wicket:panel>
+    <form wicket:id="projEditForm" class="hform">
+      <table>
+        <tr>
+          <td><label>Name:</label></td>
+          <td><label>Owner:</label></td>
+          <td>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <label>Start Date:</label>
+          </td>
+          <td><label>End Data:</label></td>
+        </tr>
+        <tr>      
+          <td><input style="width: 16em" wicket:id="projectName" type="text" /></td>
+          <td><div style="width: 16em" wicket:id="projectOwner" type="text" /></td>
+          <td>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <input wicket:id="projectStartDate" type="text" />
+          </td>
+          <td><input wicket:id="projectEndDate" type="text" /></td>
+        </tr>
+      </table>
+      <table>
+        <tr><td><label>Description:</label></td></tr>
+        <tr><td><textarea wicket:id="projectDesc" style="font-size: 1em" rows="1" cols="144"></textarea></td></tr>
+      </table>
+      <table>
+        <tr>
+          <td><label>Members:</label>&nbsp;&nbsp;
+            <a href="#" wicket:id="deleteMemberLink">Delete selected member(s)</a>
+          </td>
+          <td><label>Invitations:</label></td>
+          <td><label>Spectators:</label></td>
+        </tr>      
+        <tr>
+          <td>
+            <select wicket:id="memberSelection" style="font-size: 1em; width: 21em"></select>
+            <textarea wicket:id="projectMemberHelp" style="font-size: 1em" rows="3" cols="38"></textarea>
+          </td>
+          <td><textarea wicket:id="projectInvitations" style="font-size: 1em" rows="3" cols="38"></textarea></td>
+          <td><textarea wicket:id="projectSpectators" style="font-size: 1em" rows="3" cols="38"></textarea></td>
+        </tr>      
+      </table>
+      <table>
+        <tr>
+          <td><label>Properties:</label>&nbsp;&nbsp;
+            <a href="#" wicket:id="addPropUriLink">Add row</a>
+          </td>
+          <td><label>&nbsp;&nbsp;&nbsp;URI Patterns:</label></td>
+        </tr>      
+        <tr><td>
+          Key
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          Value
+        </td></tr>      
+        <tr wicket:id="propertyUriRowsTable">
+          <td>
+            <input style="width: 6em" wicket:id="propertyLabel" type="text">&nbsp;
+            <input style="width: 10em" wicket:id="propertyValue" type="text">&nbsp;
+          </td>
+          <td>
+            &nbsp;&nbsp;&nbsp;
+            <input style="width: 15em" wicket:id="uriPattern1" type="text">&nbsp;
+            <input style="width: 15em" wicket:id="uriPattern2" type="text">&nbsp;
+            <input style="width: 15em" wicket:id="uriPattern3" type="text">&nbsp;
+          </td>
+        </tr>      
+      </table>
+      <table>
+        <tr>
+          <td><input style="width: 5em" wicket:id="saveButton" type="submit" value="save"/></td>
+          <td><input style="width: 5em" wicket:id="cancelButton" type="submit" value="cancel"/></td>
+          <td><div wicket:id="helpPopup"/></td>
+        </tr>
+      </table>
+      <div id="feedback"><span wicket:id="saveFeedback">[Save Feedback]</span></div>
+    </form>
+  </wicket:panel>
+</html>

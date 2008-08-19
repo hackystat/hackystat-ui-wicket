@@ -12,6 +12,7 @@ import org.apache.wicket.protocol.http.WebSession;
 import org.hackystat.dailyprojectdata.client.DailyProjectDataClient;
 import org.hackystat.projectbrowser.page.dailyprojectdata.DailyProjectDataSession;
 import org.hackystat.projectbrowser.page.projectportfolio.ProjectPortfolioSession;
+import org.hackystat.projectbrowser.page.projects.ProjectsSession;
 import org.hackystat.projectbrowser.page.sensordata.SensorDataSession;
 import org.hackystat.projectbrowser.page.telemetry.TelemetrySession;
 import org.hackystat.sensorbase.client.SensorBaseClient;
@@ -58,6 +59,10 @@ public class ProjectBrowserSession extends WebSession {
   private TelemetrySession telemetrySession = new TelemetrySession();
   /** ProjectPortfolioSession that holds page state for Project Portfolio page. */
   private ProjectPortfolioSession projectPortfolioSession = new ProjectPortfolioSession();
+  /** ProjectBrowserSession that holds the page state for the Project page. */
+  private ProjectsSession projectsSession = new ProjectsSession();
+
+
   
   /**
    * Provide a constructor that initializes WebSession.
@@ -255,6 +260,15 @@ public class ProjectBrowserSession extends WebSession {
   */
   
   /**
+   * Clear project list.
+   */
+  public void clearProjectList() {
+    if (this.projectList != null) {
+      this.projectList.clear();
+    }
+  }
+  
+  /**
    * Returns the list of Projects associated with this user. 
    * @return The list of Projects. 
    */
@@ -321,7 +335,15 @@ public class ProjectBrowserSession extends WebSession {
   public TelemetrySession getTelemetrySession() {
     return this.telemetrySession;
   }
-
+  
+  /**
+   * Returns the ProjectsDataSession instance. 
+   * @return The session state for the projects data page. 
+   */
+  public ProjectsSession getProjectsSession() {
+    return this.projectsSession;
+  }
+  
   /**
    * @return the password
    */

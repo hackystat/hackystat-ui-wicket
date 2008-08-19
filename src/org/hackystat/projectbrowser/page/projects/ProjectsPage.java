@@ -1,11 +1,13 @@
 package org.hackystat.projectbrowser.page.projects;
 
-import org.apache.wicket.markup.html.basic.Label;
+import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
 
 /**
- * Provide a page with Project management functions. 
+ * Provides a page with information about Projects.
+ * 
  * @author Philip Johnson
+ * @author Randy Cox
  */
 public class ProjectsPage extends ProjectBrowserBasePage {
 
@@ -13,9 +15,12 @@ public class ProjectsPage extends ProjectBrowserBasePage {
   private static final long serialVersionUID = 1L;
 
   /**
-   * The constructor for this page. 
+   * Creates this page.
    */
   public ProjectsPage() {
-    add(new Label("PageContents", "Projects Page contents here."));
-  }
+    ProjectsForm form = new ProjectsForm("projectsForm", this);
+    add(form);
+    ProjectsSession session = ProjectBrowserSession.get().getProjectsSession();
+    session.setProjPage(this);
+  };
 }

@@ -1,0 +1,13 @@
+<html xmlns:wicket>
+  <wicket:panel>
+    <form wicket:id="projReplyForm" class="hform">
+      <table>
+        <tr><td><label>You have been invited to join the following project:</label></td><td><input wicket:id="projectName" type="text" /></td></tr>
+      </table>
+      <input style="width: 5em" wicket:id="acceptButton" type="submit" value="accept"/>
+      <input style="width: 5em" wicket:id="declineButton" type="submit" value="decline"/>
+      <input style="width: 5em" wicket:id="cancelButton" type="submit" value="cancel"/>
+      <div id="feedback"><span wicket:id="replyFeedback">[Reply Feedback]</span></div>
+    </form>
+  </wicket:panel>
+</html>
