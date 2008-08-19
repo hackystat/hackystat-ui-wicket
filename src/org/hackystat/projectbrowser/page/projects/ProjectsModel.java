@@ -334,17 +334,16 @@ public class ProjectsModel implements Serializable, IClusterable {
    * @return list of members with (N) attached to denote type.
    */
   private String buildMemberList(List<String> members, String type) {
-    String result = "";
+    StringBuffer result = new StringBuffer();
     for (String member : members) {
-      if (result.isEmpty()) {
-        result = member + " (" + type + ")";
+      if (result.length() == 0) {
+        result.append(member).append(" (").append(type).append(')');
       }
       else {
-        result = result + "\n" + member + " (" + type + ")";
+        result.append('\n').append(member).append(" (").append(type).append(')');
       }
     }
-    result = convertUserEmailToBold(result);
-    return result;
+    return convertUserEmailToBold(result.toString());
   }
 
   /**
@@ -355,16 +354,16 @@ public class ProjectsModel implements Serializable, IClusterable {
    * @return List of project members in comma delimited form.
    */
   public String buildMembersStr(List<String> members, String delimitor) {
-    String result = "";
+    StringBuffer result = new StringBuffer();
     for (String member : members) {
-      if (result.isEmpty()) {
-        result = member;
+      if (result.length() == 0) {
+        result.append(member);
       }
       else {
-        result = result + delimitor + member;
+        result.append(delimitor).append(member);
       }
     }
-    return result;
+    return result.toString();
   }
 
   /**
@@ -376,7 +375,7 @@ public class ProjectsModel implements Serializable, IClusterable {
    */
   public List<String> parseMembersStr(String membersStr, String delimitor) {
     List<String> result = new ArrayList<String>();
-    if ((membersStr != null) && (!membersStr.isEmpty())) {
+    if ((membersStr != null) && (!"".equals(membersStr))) {
       for (String member : membersStr.split(delimitor)) {
         result.add(member);
       }
@@ -864,19 +863,19 @@ public class ProjectsModel implements Serializable, IClusterable {
         logger.info("  row = " + row.getPropertyLabel() + "," + row.getPropertyValue() + ","
             + row.getUriPattern1() + "," + row.getUriPattern2() + "," + row.getUriPattern3());
 
-        if ((row.propertyLabel != null) && (!row.propertyLabel.isEmpty())) {
+        if ((row.propertyLabel != null) && (!"".equals(row.propertyLabel))) {
           Property property = new Property();
           property.setKey(row.propertyLabel);
           property.setValue(row.propertyValue);
           properties.add(property);
         }
-        if ((row.uriPattern1 != null) && (!row.uriPattern1.isEmpty())) {
+        if ((row.uriPattern1 != null) && (!"".equals(row.uriPattern1))) {
           uris.add(row.uriPattern1);
         }
-        if ((row.uriPattern2 != null) && (!row.uriPattern2.isEmpty())) {
+        if ((row.uriPattern2 != null) && (!"".equals(row.uriPattern2))) {
           uris.add(row.uriPattern2);
         }
-        if ((row.uriPattern3 != null) && (!row.uriPattern3.isEmpty())) {
+        if ((row.uriPattern3 != null) && (!"".equals(row.uriPattern3))) {
           uris.add(row.uriPattern3);
         }
       }
