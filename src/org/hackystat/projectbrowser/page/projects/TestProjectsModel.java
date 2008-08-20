@@ -6,6 +6,7 @@ import org.apache.wicket.util.tester.WicketTester;
 import org.hackystat.projectbrowser.ProjectBrowserApplication;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.test.ProjectBrowserTestHelper;
+import org.hackystat.sensorbase.resource.projects.jaxb.Property;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -88,22 +89,80 @@ public class TestProjectsModel extends ProjectBrowserTestHelper {
     ProjectsModel model = session.getProjectsModel();
     model.createProject();
     
+    String member1 = "member1";
+    String member2 = "member2";
+    String member3 = "member3";
+    
     List<String> members = new ArrayList<String>();
-    members.add("member1");
-    members.add("member2");
-    members.add("member3");
+    members.add(member1);
+    members.add(member2);
+    members.add(member3);
     model.setProjectMembers(members);
     
     Assert.assertEquals(3, model.getProjectMembers().size());
-    Assert.assertEquals("member1", model.getProjectMembers().get(0));
-    Assert.assertEquals("member2", model.getProjectMembers().get(1));
-    Assert.assertEquals("member3", model.getProjectMembers().get(2));
+    Assert.assertEquals(member1, model.getProjectMembers().get(0));
+    Assert.assertEquals(member2, model.getProjectMembers().get(1));
+    Assert.assertEquals(member3, model.getProjectMembers().get(2));
     
     members.remove(1);
 
     model.removeMembers(members);
     Assert.assertEquals(1, model.getProjectMembers().size());
-    Assert.assertEquals("member2", model.getProjectMembers().get(0));
+    Assert.assertEquals(member2, model.getProjectMembers().get(0));
+    
+    Assert.assertEquals(member2, model.getProjectMembersStr());
+    model.setProjectMembersStr("one,two,three");
+    Assert.assertEquals("one, two, three", model.getProjectMembersStr());
+  }
+  
+  /**
+   * Test project access.
+   */
+  @Test
+  public void testProjectAccess() { //NOPMD Wicket has its own asserts
+    new WicketTester(new ProjectBrowserApplication(getTestProperties()));
+    ProjectsSession session = ProjectBrowserSession.get().getProjectsSession();
+    ProjectsModel model = session.getProjectsModel();
+    model.createProject();
+    String name = "name";
+    String owner = "owner";
+    String desc = "desc";
+    model.setProjectName(name);
+    model.setProjectOwner(owner);
+    model.setProjectDesc(desc);
+    String start = model.getProjectStartDate().toString();
+    String end = model.getProjectEndDate().toString();
+    String expected = "Project = \n  name = name\n  owner = owner\n  desc = desc\n" +
+    		"  start = " + start + "\n  end = " + end + "\n  members = \n  invitations = \n" +
+ 				"  spectators = \n  properties = \n  uris = *\n";
+    Assert.assertEquals(expected, model.getProjectStr());
   }
 
+  /** 
+   * Test project properites access.
+   */
+  @Test
+  public void testProjectProperiesAccess() { //NOPMD Wicket has its own asserts
+    new WicketTester(new ProjectBrowserApplication(getTestProperties()));
+    ProjectsSession session = ProjectBrowserSession.get().getProjectsSession();
+    ProjectsModel model = session.getProjectsModel();
+    model.createProject();
+    
+    List<Property> items = new ArrayList<Property>();
+    Property one = new Property();
+    one.setKey("key1");
+    one.setValue("value1");
+    Property two = new Property();
+    two.setKey("key2");
+    two.setValue("value2");
+    Property three = new Property();
+    three.setKey("key3");
+    three.setValue("value3");
+    items.add(one);
+    items.add(two);
+    items.add(three);
+    model.setProjectProperties(items);
+    String expected = "key1=value1\nkey2=value2\nkey3=value3";
+    Assert.assertEquals(expected, model.getProjectPropertiesStr());
+  }
 }

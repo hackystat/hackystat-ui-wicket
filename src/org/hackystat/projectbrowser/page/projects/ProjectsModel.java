@@ -213,7 +213,6 @@ public class ProjectsModel implements Serializable, IClusterable {
    * @return project owner.
    */
   public String getProjectOwner() {
-    assert (getProject() != null);
     String result = getProject().getOwner();
     return result;
   }
@@ -224,7 +223,6 @@ public class ProjectsModel implements Serializable, IClusterable {
    * @return project owner.
    */
   public String getProjectOwnerBold() {
-    assert (getProject() != null);
     String result = getProject().getOwner();
     result = convertUserEmailToBold(result);
     return result;
@@ -236,7 +234,6 @@ public class ProjectsModel implements Serializable, IClusterable {
    * @param owner Project owner
    */
   public void setProjectOwner(String owner) {
-    assert (getProject() != null);
     getProject().setOwner(removeBold(owner));
   }
 
@@ -246,7 +243,6 @@ public class ProjectsModel implements Serializable, IClusterable {
    * @return project start date in GregorianCalendar date format.
    */
   public Date getProjectStartDate() {
-    assert (getProject() != null);
     Project project = getProject();
     Calendar startTime = project.getStartTime().toGregorianCalendar();
     return startTime.getTime();
@@ -258,7 +254,6 @@ public class ProjectsModel implements Serializable, IClusterable {
    * @param newDate start date in GregorianCalendar date format.
    */
   public void setProjectStartDate(Date newDate) {
-    assert (getProject() != null);
     XMLGregorianCalendar startTime = Tstamp.makeTimestamp(newDate.getTime());
     getProject().setStartTime(startTime);
   }
@@ -269,7 +264,6 @@ public class ProjectsModel implements Serializable, IClusterable {
    * @return project start date in GregorianCalendar date format.
    */
   public Date getProjectEndDate() {
-    assert (getProject() != null);
     Project project = getProject();
     Calendar endTime = project.getEndTime().toGregorianCalendar();
     return endTime.getTime();
@@ -281,7 +275,6 @@ public class ProjectsModel implements Serializable, IClusterable {
    * @param newDate project end date in GregorianCalendar date format.
    */
   public void setProjectEndDate(Date newDate) {
-    assert (getProject() != null);
     XMLGregorianCalendar endTime = Tstamp.makeTimestamp(newDate.getTime());
     getProject().setEndTime(endTime);
   }
@@ -292,7 +285,6 @@ public class ProjectsModel implements Serializable, IClusterable {
    * @return project date span
    */
   public String getProjectSpan() {
-    assert (getProject() != null);
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
     String result = dateFormat.format(getProjectStartDate()) + "\n"
         + dateFormat.format(getProjectEndDate());
@@ -305,7 +297,6 @@ public class ProjectsModel implements Serializable, IClusterable {
    * @return project description.
    */
   public String getProjectDesc() {
-    assert (getProject() != null);
     return getProject().getDescription();
   }
 
@@ -384,7 +375,6 @@ public class ProjectsModel implements Serializable, IClusterable {
    * @param members List of project members to remove.
    */
   public void removeMembers(List<String> members) {
-    assert (getProject() != null);
     getProject().getMembers().getMember().removeAll(members);
   }
 
@@ -410,7 +400,6 @@ public class ProjectsModel implements Serializable, IClusterable {
    * @param members list of project members.
    */
   public void setProjectMembers(List<String> members) {
-    assert (getProject() != null);
     getProject().getMembers().getMember().clear();
     getProject().getMembers().getMember().addAll(members);
   }
@@ -452,7 +441,6 @@ public class ProjectsModel implements Serializable, IClusterable {
    * @return Invitations.
    */
   public List<String> getProjectInvitations() {
-    assert (getProject() != null);
     return getProject().getInvitations().getInvitation();
   }
 
@@ -462,7 +450,6 @@ public class ProjectsModel implements Serializable, IClusterable {
    * @param members list of project invitations.
    */
   public void setProjectInvitations(List<String> members) {
-    assert (getProject() != null);
     getProject().getInvitations().getInvitation().clear();
     getProject().getInvitations().getInvitation().addAll(members);
   }
@@ -491,7 +478,6 @@ public class ProjectsModel implements Serializable, IClusterable {
    * @return Spectators.
    */
   public List<String> getProjectSpectators() {
-    assert (getProject() != null);
     return getProject().getSpectators().getSpectator();
   }
 
@@ -501,7 +487,6 @@ public class ProjectsModel implements Serializable, IClusterable {
    * @param members list of project invitations.
    */
   public void setProjectSpectators(List<String> members) {
-    assert (getProject() != null);
     getProject().getSpectators().getSpectator().clear();
     getProject().getSpectators().getSpectator().addAll(members);
   }
@@ -542,7 +527,6 @@ public class ProjectsModel implements Serializable, IClusterable {
    * @return list of properties.
    */
   public List<Property> getProjectProperties() {
-    assert (getProject() != null);
     return getProject().getProperties().getProperty();
   }
 
@@ -552,7 +536,6 @@ public class ProjectsModel implements Serializable, IClusterable {
    * @param items list of project properties.
    */
   public void setProjectProperties(List<Property> items) {
-    assert (getProject() != null);
     getProject().getProperties().getProperty().clear();
     getProject().getProperties().getProperty().addAll(items);
   }
@@ -576,7 +559,6 @@ public class ProjectsModel implements Serializable, IClusterable {
    * @return UriPattern.
    */
   public List<String> getProjectUriPatterns() {
-    assert (getProject() != null);
     return getProject().getUriPatterns().getUriPattern();
   }
 
@@ -586,7 +568,6 @@ public class ProjectsModel implements Serializable, IClusterable {
    * @param items Uri patterns to update.
    */
   public void setProjectUriPatterns(List<String> items) {
-    assert (getProject() != null);
     getProject().getUriPatterns().getUriPattern().clear();
     getProject().getUriPatterns().getUriPattern().addAll(items);
   }
