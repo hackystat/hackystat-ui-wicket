@@ -40,13 +40,13 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
   private static String TEST_NEW_ENDDATE = "2008-12-31";
   private static String TEST_NEW_DESC = "Test description.";
   private static String TEST_NEW_INVITEE = TEST_INVITEE;
-  private static String TEST_NEW_SPECTATOR = "TestSpectator@hackysat.org";
+  private static String TEST_NEW_SPECTATOR = "TestSpectator@hackystat.org";
 
   private static String TEST_EDIT_STARTDATE = "2008-01-01";
   private static String TEST_EDIT_ENDDATE = "2008-12-31";
   private static String TEST_EDIT_DESC = "Test description.";
   private static String TEST_EDIT_INVITEE = TEST_INVITEE;
-  private static String TEST_EDIT_SPECTATOR = "TestSpectator@hackysat.org";
+  private static String TEST_EDIT_SPECTATOR = "TestSpectator@hackystat.org";
 
   private static String TEST_RENAME_NAME = "TestRenameProject";
 
