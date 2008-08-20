@@ -69,7 +69,7 @@ public class TestProjectsModel extends ProjectBrowserTestHelper {
    * Test remove bold.
    */
   @Test
-  public void testRemoveBold() { // NOPMD WicketTester has its own assert classes.
+  public void testRemoveBold() { //NOPMD Wicket has its own asserts
     new WicketTester(new ProjectBrowserApplication(getTestProperties()));
     ProjectsSession session = ProjectBrowserSession.get().getProjectsSession();
     ProjectsModel model = session.getProjectsModel();
@@ -77,4 +77,33 @@ public class TestProjectsModel extends ProjectBrowserTestHelper {
     String boldLine = "<b>" + line + "</b>";
     Assert.assertEquals(line, model.removeBold(boldLine));
   }
+
+  /**
+   * Test remove bold.
+   */
+  @Test
+  public void testProjectMembers() { //NOPMD Wicket has its own asserts
+    new WicketTester(new ProjectBrowserApplication(getTestProperties()));
+    ProjectsSession session = ProjectBrowserSession.get().getProjectsSession();
+    ProjectsModel model = session.getProjectsModel();
+    model.createProject();
+    
+    List<String> members = new ArrayList<String>();
+    members.add("member1");
+    members.add("member2");
+    members.add("member3");
+    model.setProjectMembers(members);
+    
+    Assert.assertEquals(3, model.getProjectMembers().size());
+    Assert.assertEquals("member1", model.getProjectMembers().get(0));
+    Assert.assertEquals("member2", model.getProjectMembers().get(1));
+    Assert.assertEquals("member3", model.getProjectMembers().get(2));
+    
+    members.remove(1);
+
+    model.removeMembers(members);
+    Assert.assertEquals(1, model.getProjectMembers().size());
+    Assert.assertEquals("member2", model.getProjectMembers().get(0));
+  }
+
 }
