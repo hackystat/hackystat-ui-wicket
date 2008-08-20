@@ -8,12 +8,10 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
-import java.util.logging.Logger;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.wicket.IClusterable;
-import org.hackystat.projectbrowser.ProjectBrowserApplication;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.sensorbase.resource.projects.jaxb.Invitations;
 import org.hackystat.sensorbase.resource.projects.jaxb.Members;
@@ -38,9 +36,6 @@ public class ProjectsModel implements Serializable, IClusterable {
   /** Default project name */
   private static final String DEFAULT_PROJECT = "Default";
   
-  /** String prefix for logging. */
-  private static final String ROW_PREFIX = "  row count = ";
-
   /** The projects for this user. */
   private List<Project> projects = null;
 
@@ -773,9 +768,6 @@ public class ProjectsModel implements Serializable, IClusterable {
    * @return the propertyUriRows
    */
   public List<PropUriRowModel> getPropUriRowsView() {
-    Logger logger = ((ProjectBrowserApplication) ProjectBrowserApplication.get()).getLogger();
-    logger.info("ProjectsModel.getPropUriRowsView()");
-    logger.info(ROW_PREFIX + this.propUriRowsView.size());
     return propUriRowsView;
   }
 
@@ -785,19 +777,13 @@ public class ProjectsModel implements Serializable, IClusterable {
    * @param propertyUriRows the propertyUriRows to set
    */
   public void setPropUriRowsView(List<PropUriRowModel> propertyUriRows) {
-    Logger logger = ((ProjectBrowserApplication) ProjectBrowserApplication.get()).getLogger();
-    logger.info("ProjectsModel.setPropUriRowsView()");
     this.propUriRowsView = propertyUriRows;
-    logger.info(ROW_PREFIX + this.propUriRowsView.size());
   }
 
   /**
    * Load propertyUriRows from project data
    */
   public void loadPropUriRowsView() {
-    Logger logger = ((ProjectBrowserApplication) ProjectBrowserApplication.get()).getLogger();
-    logger.info("ProjectsModel.loadPropRowsView()");
-
     if (this.project != null) {
       this.propUriRowsView.clear();
 
@@ -838,30 +824,21 @@ public class ProjectsModel implements Serializable, IClusterable {
         }
       }
     }
-    logger.info("  view row count = " + this.propUriRowsView.size());
   }
 
   /**
    * Save data from property rows into the project object.
    */
   public void savePropUriRowsSave() {
-    Logger logger = ((ProjectBrowserApplication) ProjectBrowserApplication.get()).getLogger();
-    logger.info("ProjectsModel.savePropRowsSave()");
-
     Properties projectProperties = new Properties();
     List<Property> properties = projectProperties.getProperty();
     UriPatterns projectUris = new UriPatterns();
     List<String> uris = projectUris.getUriPattern();
 
-    logger.info("  PropUriRowModel count = " + getPropUriRowsView().size());
-
     for (PropUriRowModel row : getPropUriRowsView()) {
       if ((row.getPropertyLabel() != null) || (row.getPropertyValue() != null)
           || (row.getUriPattern1() != null) || (row.getUriPattern2() != null)
           || (row.getUriPattern3() != null)) {
-
-        logger.info("  row = " + row.getPropertyLabel() + "," + row.getPropertyValue() + ","
-            + row.getUriPattern1() + "," + row.getUriPattern2() + "," + row.getUriPattern3());
 
         if ((row.propertyLabel != null) && (!"".equals(row.propertyLabel))) {
           Property property = new Property();
@@ -882,18 +859,13 @@ public class ProjectsModel implements Serializable, IClusterable {
     }
     this.getProject().setProperties(projectProperties);
     this.getProject().setUriPatterns(projectUris);
-
-    logger.info(ROW_PREFIX + this.propUriRowsView.size());
   }
 
   /**
    * Add one row to bottom of Properties and URI pattern rows.
    */
   public void addPropUriRow() {
-    Logger logger = ((ProjectBrowserApplication) ProjectBrowserApplication.get()).getLogger();
-    logger.info("ProjectsModel.addPropUriRow()");
     getPropUriRowsView().add(new PropUriRowModel());
-    logger.info(ROW_PREFIX + this.propUriRowsView.size());
   }
 
   /**

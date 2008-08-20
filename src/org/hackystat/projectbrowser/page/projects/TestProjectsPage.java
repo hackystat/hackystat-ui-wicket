@@ -11,7 +11,6 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
 import org.hackystat.projectbrowser.ProjectBrowserApplication;
-import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.authentication.SigninPage;
 import org.hackystat.projectbrowser.page.sensordata.SensorDataPage;
 import org.hackystat.projectbrowser.test.ProjectBrowserTestHelper;
@@ -74,9 +73,6 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
   private String USER = "user";
   private String PASSWORD = "password";
   private String SIGNIN = "Signin";
-  private String PREVIOUS = "Previous project list count = ";
-  private String CURRENT = "Current project list count = ";
-  private String GOT = ", got ";
   private String NOT_FOUND = " project not found in table list.";
   
 
@@ -87,13 +83,10 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
    */
   @After
   public void cleanup() throws Exception { 
-    Logger logger = ((ProjectBrowserApplication) ProjectBrowserApplication.get()).getLogger();
-    logger.info("TestProjectsPage.cleanup()");
     SensorBaseClient client = new SensorBaseClient(getSensorBaseHostName(), TEST_USER, TEST_USER);
     for (ProjectRef ref : client.getProjectIndex(TEST_USER).getProjectRef()) {
       Project project = client.getProject(ref);
       if (TEST_USER.equals(project.getOwner()) && !DEFAULT_NAME.equals(project.getName())) {
-        logger.info("  Removing project " + project.getName() + project.getOwner());
         client.deleteProject(TEST_USER, project.getName());
       }
     }
@@ -131,7 +124,7 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
    * 
    * @param project to log.
    */
-  private void logProject(Project project) {
+  public void logProject(Project project) {
     Logger logger = ((ProjectBrowserApplication) ProjectBrowserApplication.get()).getLogger();
     logger.info("  Name = " + project.getName());
     logger.info("  Owner = " + project.getOwner());
@@ -197,8 +190,7 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
    * 
    * @throws SensorBaseClientException when communication error occurs.
    */
-  @Test
-  public void testDumpComponentTree() throws SensorBaseClientException { // NOPMD WicketTester has
+  public void dumpComponentTree() throws SensorBaseClientException { // NOPMD WicketTester has
                                                                           // its own assert classes.
     WicketTester tester = new WicketTester(new ProjectBrowserApplication(getTestProperties()));
     login(tester);
@@ -214,7 +206,6 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
   public void testProjectsPage() throws SensorBaseClientException { // NOPMD WicketTester has its
                                                                     // own assert classes.
     WicketTester tester = new WicketTester(new ProjectBrowserApplication(getTestProperties()));
-    Logger logger = ((ProjectBrowserApplication) ProjectBrowserApplication.get()).getLogger();
 
     // Login
     login(tester);
@@ -228,7 +219,6 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
 
       // Log project
       Project project = (Project) object;
-      logger.info("ListView row index = " + index.toString());
 
       // Check for default project and make sure all buttons are invisible
       if (TestProjectsPage.DEFAULT_NAME.equals(project.getName())) {
@@ -254,7 +244,6 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
    * @throws Exception when communication error occurs.
    */
   private void createNewProject(WicketTester tester) throws Exception {
-    Logger logger = ((ProjectBrowserApplication) ProjectBrowserApplication.get()).getLogger();
 
     // Register intended invitees and spectators
     SensorBaseClient.registerUser(getSensorBaseHostName(), TEST_NEW_INVITEE);
@@ -307,8 +296,6 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
     ListView listViewAfter = (ListView) tester
         .getComponentFromLastRenderedPage(PROJECT_TABLE);
     Integer projectListCount = listViewAfter.getList().size();
-    logger.info(PREVIOUS + previousListCount.toString());
-    logger.info(CURRENT + projectListCount.toString());
     Assert.assertEquals("An addtional project should be added to project list.",
         (int) previousListCount + 1, (int) projectListCount);
 
@@ -317,8 +304,6 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
     Boolean found = false;
     for (Object object : listViewAfter.getList()) {
       Project project = (Project) object;
-      logger.info("Create new project, after save table row index = " + index.toString());
-      logProject(project);
 
       // Check data within model backing the test project
       if (TestProjectsPage.TEST_NEW_NAME.equals(project.getName())) {
@@ -335,14 +320,12 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
         SimpleDateFormat format = new SimpleDateFormat(DATE_PATTERN, Locale.ENGLISH);
         Date startDate = format.parse(TestProjectsPage.TEST_NEW_STARTDATE);
         XMLGregorianCalendar startTime = Tstamp.makeTimestamp(startDate.getTime());
-        logger.info("Start date expected " + startTime + GOT + project.getStartTime());
         Assert.assertEquals("Start date should be " + TEST_NEW_STARTDATE, DatatypeConstants.EQUAL,
             project.getStartTime().compare(startTime));
 
         // Check start date.
         Date endDate = format.parse(TestProjectsPage.TEST_NEW_ENDDATE);
         XMLGregorianCalendar endTime = Tstamp.makeTimestamp(endDate.getTime());
-        logger.info("End date expected " + endTime + GOT + project.getEndTime());
         Assert.assertEquals("End date should be " + TEST_NEW_ENDDATE, DatatypeConstants.EQUAL,
             project.getEndTime().compare(endTime));
 
@@ -388,7 +371,6 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
   public void testProjectsEditPage() throws Exception { // NOPMD WicketTester has its own assert
                                                         // classes.
     WicketTester tester = new WicketTester(new ProjectBrowserApplication(getTestProperties()));
-    Logger logger = ((ProjectBrowserApplication) ProjectBrowserApplication.get()).getLogger();
 
     login(tester);
     createNewProject(tester);
@@ -431,8 +413,6 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
     listView = (ListView) tester
         .getComponentFromLastRenderedPage(PROJECT_TABLE);
     Integer projectListCount = listView.getList().size();
-    logger.info(PREVIOUS + previousListCount.toString());
-    logger.info(CURRENT + projectListCount.toString());
     Assert.assertEquals("No additional project should be added to project list.",
         (int) previousListCount, (int) projectListCount);
 
@@ -450,14 +430,12 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
         SimpleDateFormat format = new SimpleDateFormat(DATE_PATTERN, Locale.ENGLISH);
         Date startDate = format.parse(TEST_EDIT_STARTDATE);
         XMLGregorianCalendar startTime = Tstamp.makeTimestamp(startDate.getTime());
-        logger.info("Start date expected " + startTime + GOT + project.getStartTime());
         Assert.assertEquals("Start date should be " + TEST_EDIT_STARTDATE, DatatypeConstants.EQUAL,
             project.getStartTime().compare(startTime));
 
         // Check start date.
         Date endDate = format.parse(TEST_EDIT_ENDDATE);
         XMLGregorianCalendar endTime = Tstamp.makeTimestamp(endDate.getTime());
-        logger.info("End date expected " + endTime + GOT + project.getEndTime());
         Assert.assertEquals("End date should be " + TEST_EDIT_ENDDATE, DatatypeConstants.EQUAL,
             project.getEndTime().compare(endTime));
 
@@ -486,7 +464,6 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
                                                           // classes.
 
     WicketTester tester = new WicketTester(new ProjectBrowserApplication(getTestProperties()));
-    Logger logger = ((ProjectBrowserApplication) ProjectBrowserApplication.get()).getLogger();
 
     login(tester);
     createNewProject(tester);
@@ -525,8 +502,6 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
     listView = (ListView) tester
         .getComponentFromLastRenderedPage(PROJECT_TABLE);
     Integer projectListCount = listView.getList().size();
-    logger.info(PREVIOUS + previousListCount.toString());
-    logger.info(CURRENT + projectListCount.toString());
     Assert.assertEquals("No additional project should be added to project list.",
         (int) previousListCount, (int) projectListCount);
 
@@ -544,14 +519,12 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
         SimpleDateFormat format = new SimpleDateFormat(DATE_PATTERN, Locale.ENGLISH);
         Date startDate = format.parse(TestProjectsPage.TEST_NEW_STARTDATE);
         XMLGregorianCalendar startTime = Tstamp.makeTimestamp(startDate.getTime());
-        logger.info("Start date expected " + startTime + GOT + project.getStartTime());
         Assert.assertEquals("Start date should be " + TEST_NEW_STARTDATE, DatatypeConstants.EQUAL,
             project.getStartTime().compare(startTime));
 
         // Check start date.
         Date endDate = format.parse(TestProjectsPage.TEST_NEW_ENDDATE);
         XMLGregorianCalendar endTime = Tstamp.makeTimestamp(endDate.getTime());
-        logger.info("End date expected " + endTime + GOT + project.getEndTime());
         Assert.assertEquals("End date should be " + TEST_NEW_ENDDATE, DatatypeConstants.EQUAL,
             project.getEndTime().compare(endTime));
 
@@ -576,10 +549,8 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
    */
   @Test
   public void testProjectsDeletePage() throws Exception { // NOPMD WicketTester has its own assert
-                                                          // classes.
 
     WicketTester tester = new WicketTester(new ProjectBrowserApplication(getTestProperties()));
-    Logger logger = ((ProjectBrowserApplication) ProjectBrowserApplication.get()).getLogger();
 
     login(tester);
     createNewProject(tester);
@@ -635,8 +606,6 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
     listView = (ListView) tester
         .getComponentFromLastRenderedPage(PROJECT_TABLE);
     Integer projectListCount = listView.getList().size();
-    logger.info(PREVIOUS + previousListCount.toString());
-    logger.info(CURRENT + projectListCount.toString());
     Assert.assertEquals("One project should be reomoved to project list.",
         (int) previousListCount - 1, (int) projectListCount);
 
@@ -663,7 +632,6 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
                                                                 // assert classes.
 
     WicketTester tester = new WicketTester(new ProjectBrowserApplication(getTestProperties()));
-    Logger logger = ((ProjectBrowserApplication) ProjectBrowserApplication.get()).getLogger();
 
     // Login and create new record with a test invitee
     login(tester);
@@ -748,16 +716,9 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
     listView = (ListView) tester
         .getComponentFromLastRenderedPage(PROJECT_TABLE);
     Integer projectListCount = listView.getList().size();
-    logger.info(PREVIOUS + previousListCount.toString());
-    logger.info(CURRENT + projectListCount.toString());
     Assert.assertEquals("Should have same amount of projects.", (int) previousListCount,
         (int) projectListCount);
-
-    ProjectBrowserSession session = ProjectBrowserSession.get();
-    logger.info("User = " + session.getEmail());
-
     Project project = findProjectInList(tester, TEST_NEW_NAME);
-    logProject(project);
 
     // Check if project found and check buttons
     index = findProjectIndexInList(tester, TEST_NEW_NAME);
@@ -797,7 +758,6 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
                                                                 // assert classes.
 
     WicketTester tester = new WicketTester(new ProjectBrowserApplication(getTestProperties()));
-    Logger logger = ((ProjectBrowserApplication) ProjectBrowserApplication.get()).getLogger();
 
     // Login and create new record with a test invitee
     login(tester);
@@ -861,8 +821,6 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
     listView = (ListView) tester
         .getComponentFromLastRenderedPage(PROJECT_TABLE);
     Integer projectListCount = listView.getList().size();
-    logger.info(PREVIOUS + previousListCount.toString());
-    logger.info(CURRENT + projectListCount.toString());
     Assert.assertEquals("Should have one less project.", (int) previousListCount - 1,
         (int) projectListCount);
 
@@ -899,7 +857,6 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
                                                           // classes.
 
     WicketTester tester = new WicketTester(new ProjectBrowserApplication(getTestProperties()));
-    Logger logger = ((ProjectBrowserApplication) ProjectBrowserApplication.get()).getLogger();
 
     // Login and create new record with a test invitee
     login(tester);
@@ -962,16 +919,10 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
     listView = (ListView) tester
         .getComponentFromLastRenderedPage(PROJECT_TABLE);
     Integer projectListCount = listView.getList().size();
-    logger.info(PREVIOUS + previousListCount.toString());
-    logger.info(CURRENT + projectListCount.toString());
     Assert.assertEquals("Should have same amount of projects.", (int) previousListCount,
         (int) projectListCount);
 
-    ProjectBrowserSession session = ProjectBrowserSession.get();
-    logger.info("User = " + session.getEmail());
-
     Project project = findProjectInList(tester, TEST_NEW_NAME);
-    logProject(project);
 
     // Check if project found and check buttons
     index = findProjectIndexInList(tester, TEST_NEW_NAME);

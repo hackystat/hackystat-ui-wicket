@@ -1,6 +1,5 @@
 package org.hackystat.projectbrowser.page.projects;
 
-import java.util.logging.Logger;
 import org.apache.wicket.extensions.markup.html.form.DateTextField;
 import org.apache.wicket.extensions.yui.calendar.DatePicker;
 import org.apache.wicket.markup.html.basic.Label;
@@ -14,7 +13,6 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
-import org.hackystat.projectbrowser.ProjectBrowserApplication;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.page.popupwindow.PopupWindowPanel;
 import org.hackystat.sensorbase.client.SensorBaseClient;
@@ -130,8 +128,6 @@ public class ProjEditPanel extends Panel {
       /** Add row */
       @Override
       public void onSubmit() {
-        Logger logger = ((ProjectBrowserApplication) ProjectBrowserApplication.get()).getLogger();
-        logger.info("ProjEditPanel.addPropUriLink.OnSubmit()");
         ProjectsSession session = ProjectBrowserSession.get().getProjectsSession();
         ProjectsModel model = session.getProjectsModel();
         model.addPropUriRow();
@@ -164,18 +160,13 @@ public class ProjEditPanel extends Panel {
       /** Save project. */
       @Override
       public void onSubmit() {
-        Logger logger = ((ProjectBrowserApplication) ProjectBrowserApplication.get()).getLogger();
-        logger.info("ProjEditPanel.saveButton.onSubmit()");
-
         ProjectsSession session = ProjectBrowserSession.get().getProjectsSession();
         ProjectsModel model = session.getProjectsModel();
-        logger.info(model.getProjectStr());
         model.savePropUriRowsSave();
 
         if (model.isSemanticCheckOk()) {
           Project project = model.getProject();
           SensorBaseClient client = ProjectBrowserSession.get().getSensorBaseClient();
-          logger.info(model.getProjectStr());
 
           try {
             client.putProject(project);
@@ -183,7 +174,6 @@ public class ProjEditPanel extends Panel {
             session.getProjListPanel().setVisible(true);
           }
           catch (SensorBaseClientException e) {
-            logger.info("Feedback = " + e.getMessage());
             model.setFeedback(e.getMessage());
           }
         }
