@@ -44,7 +44,7 @@ public class TestProjectsModel extends ProjectBrowserTestHelper {
 
     int testValue = 11;
     model.setExtraPropertyUriRows(testValue);
-    Assert.assertEquals("getExtraUriRows get/set should be same.", testValue, model
+    Assert.assertEquals("getExtraUriRows get/set should be equal.", testValue, model
         .getExtraPropertyUriRows());
   }
 
