@@ -241,13 +241,26 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
    * Create a new project, used by multiple tests.
    * 
    * @param tester Wicket tester
+   * @throws Exception 
    * @throws Exception when communication error occurs.
    */
-  private void createNewProject(WicketTester tester) throws Exception {
+  private void createNewProject(WicketTester tester) throws Exception  {
 
-    // Register intended invitees and spectators
-    SensorBaseClient.registerUser(getSensorBaseHostName(), TEST_NEW_INVITEE);
-    SensorBaseClient.registerUser(getSensorBaseHostName(), TEST_NEW_SPECTATOR);
+    // Register intended invitee, on error try again, then throw exception
+    try {
+      SensorBaseClient.registerUser(getSensorBaseHostName(), TEST_NEW_INVITEE);
+    }
+    catch (SensorBaseClientException e) {
+      SensorBaseClient.registerUser(getSensorBaseHostName(), TEST_NEW_INVITEE);
+    }
+    
+    // Register intended spectator, on error try again, then throw exception
+    try {
+      SensorBaseClient.registerUser(getSensorBaseHostName(), TEST_NEW_SPECTATOR);
+    }
+    catch (SensorBaseClientException e) {
+      SensorBaseClient.registerUser(getSensorBaseHostName(), TEST_NEW_SPECTATOR);
+    }
 
     // Store project count for later testing
     ListView listView = (ListView) tester
