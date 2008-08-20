@@ -251,7 +251,8 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
       SensorBaseClient.registerUser(getSensorBaseHostName(), TEST_NEW_INVITEE);
     }
     catch (SensorBaseClientException e) {
-      SensorBaseClient.registerUser(getSensorBaseHostName(), TEST_NEW_INVITEE);
+      // See if JUnit JVM arg fixes this problem.
+      //SensorBaseClient.registerUser(getSensorBaseHostName(), TEST_NEW_INVITEE);
     }
     
     // Register intended spectator, on error try again, then throw exception
@@ -259,7 +260,8 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
       SensorBaseClient.registerUser(getSensorBaseHostName(), TEST_NEW_SPECTATOR);
     }
     catch (SensorBaseClientException e) {
-      SensorBaseClient.registerUser(getSensorBaseHostName(), TEST_NEW_SPECTATOR);
+      // See if JUnit JVM arg fixes this problem.
+      //SensorBaseClient.registerUser(getSensorBaseHostName(), TEST_NEW_SPECTATOR);
     }
 
     // Store project count for later testing
