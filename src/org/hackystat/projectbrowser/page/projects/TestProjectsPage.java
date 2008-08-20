@@ -246,23 +246,8 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
    */
   private void createNewProject(WicketTester tester) throws Exception  {
 
-    // Register intended invitee, on error try again, then throw exception
-    try {
-      SensorBaseClient.registerUser(getSensorBaseHostName(), TEST_NEW_INVITEE);
-    }
-    catch (SensorBaseClientException e) {
-      // See if JUnit JVM arg fixes this problem.
-      //SensorBaseClient.registerUser(getSensorBaseHostName(), TEST_NEW_INVITEE);
-    }
-    
-    // Register intended spectator, on error try again, then throw exception
-    try {
-      SensorBaseClient.registerUser(getSensorBaseHostName(), TEST_NEW_SPECTATOR);
-    }
-    catch (SensorBaseClientException e) {
-      // See if JUnit JVM arg fixes this problem.
-      //SensorBaseClient.registerUser(getSensorBaseHostName(), TEST_NEW_SPECTATOR);
-    }
+    SensorBaseClient.registerUser(getSensorBaseHostName(), TEST_NEW_INVITEE);
+    SensorBaseClient.registerUser(getSensorBaseHostName(), TEST_NEW_SPECTATOR);
 
     // Store project count for later testing
     ListView listView = (ListView) tester
