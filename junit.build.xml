@@ -16,6 +16,7 @@
     <!-- Fork is on until I can figure out how to stop the sensorbase and unbind the port. -->
     <!-- Note that emma is forking in its JUnit as well. -->
     <junit printsummary="withOutAndErr" haltonfailure="${junit.haltonfailure}" fork="yes" failureproperty="junit.failed">
+      <jvmarg value="-Dsensorbaseclient.timeout=1000000"/>
       <classpath>
         <path refid="run.classpath" />
         <fileset file="${env.JAVAMAIL_HOME}/mail.jar"/> 

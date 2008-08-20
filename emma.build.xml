@@ -35,6 +35,7 @@
     <!-- Run JUnit with the instrumented class files. -->
     <mkdir dir="${junit.dir}" />
     <junit printsummary="withOutAndErr" fork="yes">
+      <jvmarg value="-Dsensorbaseclient.timeout=1000000"/>
       <classpath path="${build.dir}/classes;${java.class.path}">
         <path refid="emma.lib.dir" />
         <path refid="run.classpath" />
