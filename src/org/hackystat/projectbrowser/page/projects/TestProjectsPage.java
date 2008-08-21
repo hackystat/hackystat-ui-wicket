@@ -3,6 +3,7 @@ package org.hackystat.projectbrowser.page.projects;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Properties;
 import java.util.logging.Logger;
 import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -11,6 +12,7 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
 import org.hackystat.projectbrowser.ProjectBrowserApplication;
+import org.hackystat.projectbrowser.ProjectBrowserProperties;
 import org.hackystat.projectbrowser.authentication.SigninPage;
 import org.hackystat.projectbrowser.page.sensordata.SensorDataPage;
 import org.hackystat.projectbrowser.test.ProjectBrowserTestHelper;
@@ -52,6 +54,8 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
 
   private static String PREFIX_LIST = "projectsForm:projListPanel:projListForm:projectTable:";
   private static String DATE_PATTERN = "yyyy-MM-dd";
+  private static String PROJECTS = ".projects";
+  private static String TRUE = "true";
   
   private String PROJECTS_LINK = "ProjectsPageLink";
 //  private String LOGOUT_LINK = "LogoutLink";
@@ -192,7 +196,10 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
    */
   public void dumpComponentTree() throws SensorBaseClientException { // NOPMD WicketTester has
                                                                           // its own assert classes.
-    WicketTester tester = new WicketTester(new ProjectBrowserApplication(getTestProperties()));
+    Properties testProperties = getTestProperties();
+    testProperties.put(ProjectBrowserProperties.AVAILABLEPAGE_KEY + PROJECTS, TRUE);
+    WicketTester tester = new WicketTester(new ProjectBrowserApplication(testProperties));
+
     login(tester);
     tester.debugComponentTrees();
   }
@@ -205,7 +212,9 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
   @Test
   public void testProjectsPage() throws SensorBaseClientException { // NOPMD WicketTester has its
                                                                     // own assert classes.
-    WicketTester tester = new WicketTester(new ProjectBrowserApplication(getTestProperties()));
+    Properties testProperties = getTestProperties();
+    testProperties.put(ProjectBrowserProperties.AVAILABLEPAGE_KEY + PROJECTS, TRUE);
+    WicketTester tester = new WicketTester(new ProjectBrowserApplication(testProperties));
 
     // Login
     login(tester);
@@ -353,7 +362,9 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
   @Test
   public void testProjectsNewPage() throws Exception { // NOPMD WicketTester has its own assert
                                                         // classes.
-    WicketTester tester = new WicketTester(new ProjectBrowserApplication(getTestProperties()));
+    Properties testProperties = getTestProperties();
+    testProperties.put(ProjectBrowserProperties.AVAILABLEPAGE_KEY + PROJECTS, TRUE);
+    WicketTester tester = new WicketTester(new ProjectBrowserApplication(testProperties));
 
     // Login
     login(tester);
@@ -370,7 +381,9 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
   @Test
   public void testProjectsEditPage() throws Exception { // NOPMD WicketTester has its own assert
                                                         // classes.
-    WicketTester tester = new WicketTester(new ProjectBrowserApplication(getTestProperties()));
+    Properties testProperties = getTestProperties();
+    testProperties.put(ProjectBrowserProperties.AVAILABLEPAGE_KEY + PROJECTS, TRUE);
+    WicketTester tester = new WicketTester(new ProjectBrowserApplication(testProperties));
 
     login(tester);
     createNewProject(tester);
@@ -463,7 +476,9 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
   public void testProjectsRenamePage() throws Exception { // NOPMD WicketTester has its own assert
                                                           // classes.
 
-    WicketTester tester = new WicketTester(new ProjectBrowserApplication(getTestProperties()));
+    Properties testProperties = getTestProperties();
+    testProperties.put(ProjectBrowserProperties.AVAILABLEPAGE_KEY + PROJECTS, TRUE);
+    WicketTester tester = new WicketTester(new ProjectBrowserApplication(testProperties));
 
     login(tester);
     createNewProject(tester);
@@ -550,7 +565,9 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
   @Test
   public void testProjectsDeletePage() throws Exception { // NOPMD WicketTester has its own assert
 
-    WicketTester tester = new WicketTester(new ProjectBrowserApplication(getTestProperties()));
+    Properties testProperties = getTestProperties();
+    testProperties.put(ProjectBrowserProperties.AVAILABLEPAGE_KEY + PROJECTS, TRUE);
+    WicketTester tester = new WicketTester(new ProjectBrowserApplication(testProperties));
 
     login(tester);
     createNewProject(tester);
@@ -631,7 +648,9 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
   public void testProjectsReplyAcceptPage() throws Exception { // NOPMD WicketTester has its own
                                                                 // assert classes.
 
-    WicketTester tester = new WicketTester(new ProjectBrowserApplication(getTestProperties()));
+    Properties testProperties = getTestProperties();
+    testProperties.put(ProjectBrowserProperties.AVAILABLEPAGE_KEY + PROJECTS, TRUE);
+    WicketTester tester = new WicketTester(new ProjectBrowserApplication(testProperties));
 
     // Login and create new record with a test invitee
     login(tester);
@@ -756,8 +775,9 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
   @Test
   public void testProjectsReplyDeclinePage() throws Exception { // NOPMD WicketTester has its own
                                                                 // assert classes.
-
-    WicketTester tester = new WicketTester(new ProjectBrowserApplication(getTestProperties()));
+    Properties testProperties = getTestProperties();
+    testProperties.put(ProjectBrowserProperties.AVAILABLEPAGE_KEY + PROJECTS, TRUE);
+    WicketTester tester = new WicketTester(new ProjectBrowserApplication(testProperties));
 
     // Login and create new record with a test invitee
     login(tester);
@@ -856,7 +876,9 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
   public void testProjectsLeavePage() throws Exception { // NOPMD WicketTester has its own assert
                                                           // classes.
 
-    WicketTester tester = new WicketTester(new ProjectBrowserApplication(getTestProperties()));
+    Properties testProperties = getTestProperties();
+    testProperties.put(ProjectBrowserProperties.AVAILABLEPAGE_KEY + PROJECTS, TRUE);
+    WicketTester tester = new WicketTester(new ProjectBrowserApplication(testProperties));
 
     // Login and create new record with a test invitee
     login(tester);
