@@ -21,25 +21,29 @@ public class MiniBarChart implements Serializable {
 
   /** Support serialization. */
   private static final long serialVersionUID = 1213447209533926430L;
-  /** RGB String format of black. */
-  public static final String black = "000000";
   
   /** The stream of this chart. */
   protected List<Double> streamData;
   /** The latest value of the stream. */
   private double latestValue;
-  /** The width of the chart. */
-  public static final int width = 30;
+  /** The width of a bar. */
+  public static final int BAR_WIDTH = 5;
+  /** The max width of the chart. */
+  public static final int MAX_WIDTH = 50;
   /** The height of the chart. */
-  public static final int height = 15;
+  public static final int CHART_HEIGHT = 15;
   
   /** The PageParameters to construct the link. */
   private PageParameters telemetryPageParameters;
+
+  /** The configuration of this chart. */
+  private final MeasureConfiguration configuration;
   
   /**
    * @param stream The stream of this chart.
+   * @param configuration The configuration of this chart.
    */
-  public MiniBarChart(TelemetryStream stream) {
+  public MiniBarChart(TelemetryStream stream, MeasureConfiguration configuration) {
     this.streamData = getStreamData(stream);
     for (int i = streamData.size() - 1; i >= 0; --i) {
       this.latestValue = streamData.get(i);
@@ -47,6 +51,7 @@ public class MiniBarChart implements Serializable {
         break;
       }
     }
+    this.configuration = configuration;
   }
 
   /**
@@ -81,12 +86,16 @@ public class MiniBarChart implements Serializable {
       return "";
     }
     GoogleChart googleChart;
-    googleChart = new GoogleChart(ChartType.VERTICAL_SERIES_BAR, width, height);
+    int chartSize = streamData.size();
+    int width = chartSize * BAR_WIDTH;
+    width = (width > MAX_WIDTH) ? MAX_WIDTH : width;
+    googleChart = new GoogleChart(ChartType.VERTICAL_SERIES_BAR, width, CHART_HEIGHT);
     googleChart.setBarChartSize((width - streamData.size()) / streamData.size(), 1, 0);
     googleChart.getChartData().add(streamData);
     googleChart.getChartDataScale().
             add(Arrays.asList(new Double[]{ 0.0, max}));
     googleChart.getColors().add(this.getChartColor());
+    googleChart.setBackgroundColor(this.configuration.getDataModel().getBackgroundColor());
     return googleChart.getUrl();
   }
 
@@ -95,7 +104,33 @@ public class MiniBarChart implements Serializable {
    * @return the color
    */
   public String getChartColor() {
-    return black;
+    if (configuration.isColorable()) {
+      boolean increased = false;
+      boolean decreased = false;
+      for (int i = 1; i < this.streamData.size(); ++i) {
+        if (this.streamData.get(i) >= 0) {
+          if (this.streamData.get(i - 1) > this.streamData.get(i)) {
+            decreased = true;
+          }
+          else if (this.streamData.get(i - 1) < this.streamData.get(i)) {
+            increased = true;
+          }
+        }
+      }
+      if (!increased && !decreased) {
+        return configuration.getStableColor();
+      }
+      if (increased && !decreased) {
+        return configuration.getHigherColor();
+      }
+      if (decreased && !increased) {
+        return configuration.getLowerColor();
+      }
+      return configuration.getMiddleColor();
+    }
+    else {
+      return configuration.getDataModel().getFontColor();
+    }
   }
 
   /**
@@ -109,7 +144,21 @@ public class MiniBarChart implements Serializable {
    * @return the valueColor
    */
   public String getValueColor() {
-    return black;
+    if (configuration.isColorable()) {
+      if (this.getLatestValue() < 0) {
+        return configuration.getDataModel().getFontColor();
+      }
+      if (this.getLatestValue() >= this.configuration.getHigherThreshold()) {
+        return configuration.getHigherColor();
+      }
+      if (this.getLatestValue() < this.configuration.getLowerThreshold()) {
+        return configuration.getLowerColor();
+      }
+      return configuration.getMiddleColor();
+    }
+    else {
+      return configuration.getDataModel().getFontColor();
+    }
   }
 
   /**
@@ -124,6 +173,13 @@ public class MiniBarChart implements Serializable {
    */
   public PageParameters getTelemetryPageParameters() {
     return telemetryPageParameters;
+  }
+
+  /**
+   * @return the configuration
+   */
+  public MeasureConfiguration getConfiguration() {
+    return configuration;
   }
 
 }

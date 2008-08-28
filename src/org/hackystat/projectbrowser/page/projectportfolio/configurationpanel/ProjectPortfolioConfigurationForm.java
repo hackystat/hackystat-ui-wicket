@@ -14,10 +14,12 @@ import org.apache.wicket.markup.MarkupStream;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.basic.MultiLineLabel;
+import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.hackystat.projectbrowser.page.popupwindow.PopupWindowPanel;
@@ -35,27 +37,30 @@ public class ProjectPortfolioConfigurationForm extends Form {
   private static final long serialVersionUID = 447730202032199770L;
   /** The colors to choose from. */
   private static final String[] colors = { "ffff00", // yellow
-      "ffc800", // orange
-      "ffafaf", // pink
+      "ff6600", // orange
+      //"ff8080", // pink
       "ff00ff", // magenta
       "ff0000", // red
-      "808080", // gray
+      "6600ff", //purple
+      //"808080", // gray
       "00ffff", // cyan
       "00ff00", // green
-      "0000ff", // blue
-      "000000", // black
+      "0066ff", 
+      //"0000ff", // blue
+      //"000000", // black
   };
   /** The introductions. */
   private static final String introductions = 
-    "Enabled : Only enabled measure will be shown in detail panel\n\n"
+    "Time phase: the time phase to analyse."
+    + "Good color: the color for good values and trends."
+    + "Soso color: the color for middle values and unstable trends."
+    + "Bad color: the color for bad values and trends."
+    + "Enabled : Only enabled measure will be shown in detail panel\n\n"
     + "Colorable : Colorable measure's chart and value will be colored according to the following"
     + " setting. Noncolorable measure's chart and value will be black.\n\n"
-    + "Higher Color : Color for increasing trend and values higher than higher threshould.\n\n"
+    + "Is Higher Better: If higher value means better."
     + "Higher Threshold : The threshold of high value. \n\n"
-    + "Middle Color : Color for unstable trend and values between higher and lower threshoulds.\n\n"
-    + "Lower Threshold : The threshold of low value.\n\n"
-    + "Lower Color : Color for decreasing trend and values lower than lower threshould.\n\n"
-    + "Stable Color : Color for stable trend.\n";
+    + "Lower Threshold : The threshold of low value.\n\n";
   /** The word style. */
   private static final String STYLE_KEY = "style";
   /** THe preceding of HTTP background color style setting. */
@@ -67,6 +72,41 @@ public class ProjectPortfolioConfigurationForm extends Form {
    */
   public ProjectPortfolioConfigurationForm(String id, ProjectPortfolioDataModel dataModel) {
     super(id);
+    
+    add(new FeedbackPanel("configurationFeedback")); 
+
+    add(new TextField("timePhrase", new PropertyModel(dataModel, "timePhrase")));
+    add(new DropDownChoice("granularity", 
+                           new PropertyModel(dataModel, "telemetryGranularity"), 
+                           dataModel.getGranularities()));
+    
+    final Select goodColorSelect = new Select("goodColorSelect", new PropertyModel(dataModel,
+    "goodColor"));
+    goodColorSelect.add(new ColorSelectOptionList("goodColorOptionList", Arrays.asList(colors)));
+    goodColorSelect.add(new AttributeModifier(STYLE_KEY, true, new Model(
+        BACKGROUND_COLOR_PRECEDING + dataModel.getGoodColor())));
+    goodColorSelect.setOutputMarkupId(true);
+    goodColorSelect.add(new AjaxColorSelectChangeBackgroundColorBehavior(goodColorSelect));
+    add(goodColorSelect);
+
+    final Select sosoColorSelect = new Select("sosoColorSelect", new PropertyModel(dataModel,
+    "sosoColor"));
+    sosoColorSelect.add(new ColorSelectOptionList("sosoColorOptionList", Arrays.asList(colors)));
+    sosoColorSelect.add(new AttributeModifier(STYLE_KEY, true, new Model(
+        BACKGROUND_COLOR_PRECEDING + dataModel.getSosoColor())));
+    sosoColorSelect.setOutputMarkupId(true);
+    sosoColorSelect.add(new AjaxColorSelectChangeBackgroundColorBehavior(goodColorSelect));
+    add(sosoColorSelect);
+
+    final Select badColorSelect = new Select("badColorSelect", new PropertyModel(dataModel,
+    "badColor"));
+    badColorSelect.add(new ColorSelectOptionList("badColorOptionList", Arrays.asList(colors)));
+    badColorSelect.add(new AttributeModifier(STYLE_KEY, true, new Model(
+        BACKGROUND_COLOR_PRECEDING + dataModel.getBadColor())));
+    badColorSelect.setOutputMarkupId(true);
+    badColorSelect.add(new AjaxColorSelectChangeBackgroundColorBehavior(goodColorSelect));
+    add(badColorSelect);
+    
     ListView measureList = new ListView("measureList", dataModel.getMeasures()) {
       /** Support serialization. */
       public static final long serialVersionUID = 1L;
@@ -102,6 +142,22 @@ public class ProjectPortfolioConfigurationForm extends Form {
           }
         });
 
+        item.add(new AjaxCheckBox("isHigherBetterCheckBox", 
+            new PropertyModel(measure, "higherBetter")) {
+          /** Support serialization. */
+          public static final long serialVersionUID = 1L;
+
+          @Override
+          protected void onUpdate(AjaxRequestTarget arg0) {
+            arg0.addComponent(this.getForm());
+          }
+
+          @Override
+          public boolean isEnabled() {
+            return measure.isEnabled();
+          }
+        });
+        
         item.add(new TextField("higherThresholdTextField", new PropertyModel(measure,
             "higherThreshold")) {
           /** Support serialization. */
@@ -122,78 +178,6 @@ public class ProjectPortfolioConfigurationForm extends Form {
             return measure.isEnabled() && measure.isColorable();
           }
         });
-
-        final Select higherColorSelect = new Select("higherColorSelect", new PropertyModel(measure,
-            "higherColor")) {
-          /** Support serialization. */
-          private static final long serialVersionUID = -5112893030387208238L;
-
-          @Override
-          public boolean isEnabled() {
-            return measure.isEnabled() && measure.isColorable();
-          }
-        };
-        higherColorSelect.add(new ColorSelectOptionList("higherColorOptionList", Arrays
-            .asList(colors)));
-        higherColorSelect.add(new AttributeModifier(STYLE_KEY, true, new Model(
-            BACKGROUND_COLOR_PRECEDING + measure.getHigherColor())));
-        higherColorSelect.setOutputMarkupId(true);
-        higherColorSelect.add(new AjaxColorSelectChangeBackgroundColorBehavior(higherColorSelect));
-        item.add(higherColorSelect);
-
-        final Select middleColorSelect = new Select("middleColorSelect", new PropertyModel(measure,
-            "middleColor")) {
-          /** Support serialization. */
-          private static final long serialVersionUID = 7655043151666349981L;
-
-          @Override
-          public boolean isEnabled() {
-            return measure.isEnabled() && measure.isColorable();
-          }
-        };
-        middleColorSelect.add(new ColorSelectOptionList("middleColorOptionList", Arrays
-            .asList(colors)));
-        middleColorSelect.add(new AttributeModifier(STYLE_KEY, true, new Model(
-            BACKGROUND_COLOR_PRECEDING + measure.getMiddleColor())));
-        middleColorSelect.setOutputMarkupId(true);
-        middleColorSelect.add(new AjaxColorSelectChangeBackgroundColorBehavior(middleColorSelect));
-        item.add(middleColorSelect);
-
-        final Select lowerColorSelect = new Select("lowerColorSelect", new PropertyModel(measure,
-            "lowerColor")) {
-          /** Support serialization. */
-          private static final long serialVersionUID = -2727213099700785976L;
-
-          @Override
-          public boolean isEnabled() {
-            return measure.isEnabled() && measure.isColorable();
-          }
-        };
-        lowerColorSelect.add(new ColorSelectOptionList("lowerColorOptionList", Arrays
-            .asList(colors)));
-        lowerColorSelect.add(new AttributeModifier(STYLE_KEY, true, new Model(
-            BACKGROUND_COLOR_PRECEDING + measure.getLowerColor())));
-        lowerColorSelect.setOutputMarkupId(true);
-        lowerColorSelect.add(new AjaxColorSelectChangeBackgroundColorBehavior(lowerColorSelect));
-        item.add(lowerColorSelect);
-
-        final Select stableColorSelect = new Select("stableColorSelect", new PropertyModel(measure,
-            "stableColor")) {
-          /** Support serialization. */
-          private static final long serialVersionUID = 4133327290826205101L;
-
-          @Override
-          public boolean isEnabled() {
-            return measure.isEnabled() && measure.isColorable();
-          }
-        };
-        stableColorSelect.add(new ColorSelectOptionList("stableColorOptionList", Arrays
-            .asList(colors)));
-        stableColorSelect.add(new AttributeModifier(STYLE_KEY, true, new Model(
-            BACKGROUND_COLOR_PRECEDING + measure.getStableColor())));
-        stableColorSelect.setOutputMarkupId(true);
-        stableColorSelect.add(new AjaxColorSelectChangeBackgroundColorBehavior(stableColorSelect));
-        item.add(stableColorSelect);
       }
 
     };

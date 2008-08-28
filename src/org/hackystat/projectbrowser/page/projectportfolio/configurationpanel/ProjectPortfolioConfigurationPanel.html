@@ -1,52 +1,60 @@
 <html xmlns:wicket>
   <wicket:panel>
     <form wicket:id="configurationForm">
+      <div wicket:id="configurationFeedback"></div>
+      <table>
+        <tr>
+          Time phrase: last 
+          <input type="text" style="width: 3em" wicket:id="timePhrase"/>
+          <select style="width: 10em" wicket:id="granularity">
+            <option value="Day">Day</option>
+            <option value="Week">Week</option>
+            <option value="Month">Month</option>
+          </select>
+        </tr>
+        <tr>
+          <td>
+          Good Color
+            <select wicket:id="goodColorSelect">
+              <span wicket:id="goodColorOptionList">
+                <option wicket:id="option">option n</option>
+              </span>
+            </select>
+          </td>
+          <td>
+          Soso Color
+            <select wicket:id="sosoColorSelect">
+              <span wicket:id="sosoColorOptionList">
+                <option wicket:id="option">option n</option>
+              </span>
+            </select>
+          </td>
+          <td>
+          Bad Color
+            <select wicket:id="badColorSelect">
+              <span wicket:id="badColorOptionList">
+                <option wicket:id="option">option n</option>
+              </span>
+            </select>
+          </td>
+        </tr>
+      </table>
       <table>
         <tr>
           <th>Enabled</th>
           <th>Name</th>
           <th>Colorable</th>
-          <th>Higher Color</th>
+          <th>Is Higher Better</th>
           <th>Higher Threshold</th>
-          <th>Middle Color</th>
           <th>Lower Threshold</th>
-          <th>Lower Color</th>
-          <th>Stable Color</th>
         </tr>
         <tr wicket:id="measureList">
           <td><input type="checkbox" wicket:id="enableCheckBox"/></td>
           <td wicket:id="measureNameLabel"/>
           <td><input type="checkbox" wicket:id="colorableCheckBox"/></td>
-          <td>
-            <select width="20" wicket:id="higherColorSelect">
-              <span wicket:id="higherColorOptionList">
-                <option wicket:id="option"></option>
-              </span>
-            </select>
-          </td>
+          <td><input type="checkbox" wicket:id="isHigherBetterCheckBox"/></td>
           <td><input type="text" style="width: 3em" wicket:id="higherThresholdTextField"/></td>
-          <td>
-            <select wicket:id="middleColorSelect">
-              <span wicket:id="middleColorOptionList">
-                <option wicket:id="option">option n</option>
-              </span>
-            </select>
-          </td>
           <td><input type="text" style="width: 3em" wicket:id="lowerThresholdTextField"/></td>
-          <td>
-            <select wicket:id="lowerColorSelect">
-              <span wicket:id="lowerColorOptionList">
-                <option wicket:id="option">option n</option>
-              </span>
-            </select>
-          </td>
-          <td>
-            <select wicket:id="stableColorSelect">
-              <span wicket:id="stableColorOptionList">
-                <option wicket:id="option">option n</option>
-              </span>
-            </select>
-          </td>
         </tr>
         <tr>
           <td style="text-align:center">

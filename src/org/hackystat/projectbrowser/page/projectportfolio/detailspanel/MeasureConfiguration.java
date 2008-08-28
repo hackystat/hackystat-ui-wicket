@@ -14,13 +14,6 @@ public class MeasureConfiguration implements Serializable {
   /** Support serialization. */
   private static final long serialVersionUID = -6799287509742157998L;
 
-  /** RGB String format of red. */
-  public static final String red = "ff0000";
-  /** RGB String format of green. */
-  public static final String green = "00ff00";
-  /** RGB String format of yellow. */
-  public static final String yellow = "ffff00";
-
   /** The name of the measure. */
   private String measureName;
   /** If this measure is colorable. */
@@ -28,31 +21,19 @@ public class MeasureConfiguration implements Serializable {
   /** If this measure is enabled. */
   private boolean enabled = true;
 
+  /** If higher value means better. */
+  private boolean higherBetter;
+  
   /** The threshold of high value. */
   private double higherThreshold;
   /** The threshold of low value. */
   private double lowerThreshold;
-  /** The color for higher value and increasing trend. */
-  private String higherColor;
-  /** The color for middle value and unstable trend. */
-  private String middleColor;
-  /** The color for lower value and decreasing trend. */
-  private String lowerColor;
-  /** The color for stable trend. */
-  private String stableColor;
+
+  /** The data model this measure belongs to. */
+  private final ProjectPortfolioDataModel dataModel;
 
   /** This meausre's parameter list. */
   private List<String> parameters = new ArrayList<String>();
-
-  /**
-   * Constructor with all default value;
-   * 
-   * @param name The name of the measure.
-   * @param colorable If this measure is colorable.
-   */
-  public MeasureConfiguration(String name, boolean colorable) {
-    this(name, colorable, 40, 90, green, yellow, red, green);
-  }
 
   /**
    * Create an instance with default colors green yellow red. higher color will be green if
@@ -63,41 +44,17 @@ public class MeasureConfiguration implements Serializable {
    * @param colorable If this measure is colorable.
    * @param higherThreshold The threshold of high value.
    * @param lowerThreshold The threshold of high value.
-   * @param isHigherTheBetter If higher value means better.
+   * @param higherBetter If higher value means better.
+   * @param dataModel The data model this measure belongs to.
    */
   public MeasureConfiguration(String name, boolean colorable, double lowerThreshold,
-      double higherThreshold, boolean isHigherTheBetter) {
-    this(name, colorable, lowerThreshold, higherThreshold, green, yellow, red, green);
-    if (!isHigherTheBetter) {
-      this.higherColor = red;
-      this.lowerColor = green;
-    }
-
-  }
-
-  /**
-   * Full parameter constructor.
-   * 
-   * @param name The name of the measure.
-   * @param colorable If this measure is colorable.
-   * @param higherThreshold The threshold of high value.
-   * @param lowerThreshold The threshold of high value.
-   * @param higherColor The color for higher value and increasing trend.
-   * @param middleColor The color for middle value and unstable trend.
-   * @param lowerColor The color for lower value and decreasing trend.
-   * @param stableColor The color for stable trend.
-   */
-  public MeasureConfiguration(String name, boolean colorable, double lowerThreshold,
-      double higherThreshold, String higherColor, String middleColor, String lowerColor,
-      String stableColor) {
+      double higherThreshold, boolean higherBetter, ProjectPortfolioDataModel dataModel) {
     this.measureName = name;
     this.colorable = colorable;
     this.lowerThreshold = lowerThreshold;
     this.higherThreshold = higherThreshold;
-    this.higherColor = higherColor;
-    this.middleColor = middleColor;
-    this.lowerColor = lowerColor;
-    this.stableColor = stableColor;
+    this.higherBetter = higherBetter;
+    this.dataModel = dataModel;
   }
 
   /**
@@ -171,45 +128,45 @@ public class MeasureConfiguration implements Serializable {
   }
 
   /**
-   * @param higherColor the higherColor to set
-   */
-  public void setHigherColor(String higherColor) {
-    this.higherColor = higherColor;
-  }
-
-  /**
-   * @return the higherColor
+   * Return the color for higher value or increasing trend.
+   * @return the color
    */
   public String getHigherColor() {
-    return higherColor;
+    if (this.isHigherBetter()) {
+      return dataModel.getGoodColor();
+    }
+    else {
+      return dataModel.getBadColor();
+    }
   }
-
+  
   /**
-   * @param middleColor the middleColor to set
-   */
-  public void setMiddleColor(String middleColor) {
-    this.middleColor = middleColor;
-  }
-
-  /**
-   * @return the middleColor
+   * Return the color for middle value or unstable trend.
+   * @return the color
    */
   public String getMiddleColor() {
-    return middleColor;
+    return dataModel.getSosoColor();
   }
 
   /**
-   * @param lowerColor the lowerColor to set
-   */
-  public void setLowerColor(String lowerColor) {
-    this.lowerColor = lowerColor;
-  }
-
-  /**
-   * @return the lowerColor
+   * Return the color for lower value or decreasing trend.
+   * @return the color
    */
   public String getLowerColor() {
-    return lowerColor;
+    if (this.isHigherBetter()) {
+      return dataModel.getBadColor();
+    }
+    else {
+      return dataModel.getGoodColor();
+    }
+  }
+
+  /**
+   * Return the color for stable trend.
+   * @return the color
+   */
+  public String getStableColor() {
+    return dataModel.getGoodColor();
   }
 
   /**
@@ -246,16 +203,23 @@ public class MeasureConfiguration implements Serializable {
   }
 
   /**
-   * @param stableColor the stableColor to set
+   * @param higherBetter the higherBetter to set
    */
-  public void setStableColor(String stableColor) {
-    this.stableColor = stableColor;
+  public void setHigherBetter(boolean higherBetter) {
+    this.higherBetter = higherBetter;
   }
 
   /**
-   * @return the stableColor
+   * @return the higherBetter
    */
-  public String getStableColor() {
-    return stableColor;
+  public boolean isHigherBetter() {
+    return higherBetter;
+  }
+
+  /**
+   * @return the dataModel
+   */
+  public ProjectPortfolioDataModel getDataModel() {
+    return dataModel;
   }
 }

@@ -1,6 +1,7 @@
 package org.hackystat.projectbrowser.page.projectportfolio;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import java.util.Properties;
@@ -14,6 +15,7 @@ import org.hackystat.projectbrowser.ProjectBrowserProperties;
 import org.hackystat.projectbrowser.authentication.SigninPage;
 import org.hackystat.projectbrowser.page.projectportfolio.configurationpanel.
             ProjectPortfolioConfigurationPanel;
+import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.MiniBarChart;
 import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.ProjectPortfolioDetailsPanel;
 import org.hackystat.projectbrowser.page.projectportfolio.inputpanel.ProjectPortfolioInputPanel;
 import org.hackystat.projectbrowser.test.ProjectBrowserTestHelper;
@@ -80,6 +82,8 @@ public class TestProjectPortfolioPage extends ProjectBrowserTestHelper {
     FormTester configurationForm = tester.newFormTester("configurationPanel:configurationForm");
     ListView measureList = (ListView)configurationForm.getForm().get("measureList");
     assertEquals("There should be 7 measures.", 7, measureList.getList().size());
+    configurationForm.select("granularity", 0);
+    configurationForm.setValue("timePhrase", "10");
     configurationForm.setValue("measureList:1:colorableCheckBox", FALSE);
     configurationForm.setValue("measureList:2:enableCheckBox", FALSE);
     configurationForm.setValue("measureList:3:enableCheckBox", FALSE);
@@ -116,6 +120,18 @@ public class TestProjectPortfolioPage extends ProjectBrowserTestHelper {
     
     tester.isInvisible("loadingProcessPanel");
     tester.assertComponent("detailPanel", ProjectPortfolioDetailsPanel.class);
+    ListView measures = 
+      (ListView)tester.getComponentFromLastRenderedPage("detailPanel:projectTable:0:measures");
+    assertEquals("Should be only 2 measures there.", 2, measures.size());
+    MiniBarChart coverage = (MiniBarChart)measures.getList().get(0);
+    assertEquals("Check measure name.", "Coverage", coverage.getConfiguration().getName());
+    assertTrue("Coverage should be colorable", coverage.getConfiguration().isColorable());
+    
+    MiniBarChart complexity = (MiniBarChart)measures.getList().get(1);
+    assertEquals("Check measure name.", "CyclomaticComplexity", 
+        complexity.getConfiguration().getName());
+    assertFalse("Complexity should be uncolorable", complexity.getConfiguration().isColorable());
+    
   }
   
   /**

@@ -28,6 +28,8 @@ public class GoogleChart implements Serializable {
   private int width;
   /** height in pixel. */
   private int height;
+  /** the background color. */
+  private String backgroundColor;
   /** data to display. */
   private List<List<Double>> chartData = new ArrayList<List<Double>>();
   /** scale of the data. */
@@ -187,6 +189,9 @@ public class GoogleChart implements Serializable {
         dataString = dataString.substring(0, dataString.lastIndexOf(DATASET_SEPARATOR));
       }
       url += PARAMETER_SEPARATOR + "chdl=" + dataString;
+    }
+    if (backgroundColor != null && backgroundColor.length() > 0) {
+      url += PARAMETER_SEPARATOR + "chf=bg,s," + backgroundColor;
     }
     return url;
   }
@@ -477,5 +482,19 @@ public class GoogleChart implements Serializable {
     barChartSize.add(barHeight);
     barChartSize.add(groupSpace);
     barChartSize.add(barSpace);
+  }
+
+  /**
+   * @param backgroundColor the backgroundColor to set
+   */
+  public void setBackgroundColor(String backgroundColor) {
+    this.backgroundColor = backgroundColor;
+  }
+
+  /**
+   * @return the backgroundColor
+   */
+  public String getBackgroundColor() {
+    return backgroundColor;
   }
 }

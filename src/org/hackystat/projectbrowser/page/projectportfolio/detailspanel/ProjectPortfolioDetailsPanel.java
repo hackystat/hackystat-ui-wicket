@@ -61,11 +61,6 @@ public class ProjectPortfolioDetailsPanel extends Panel {
           protected void populateItem(ListItem item) {
             MiniBarChart chart = (MiniBarChart)item.getModelObject();
             
-            Link chartLink = new BookmarkablePageLink("chartLink", 
-                TelemetryPage.class, chart.getTelemetryPageParameters());
-            chartLink.add(new ImageUrl("chart", chart.getImageUrl()));
-            item.add(chartLink);
-            
             String value;
             if (chart.getLatestValue() >= 0) {
               value = String.valueOf(chart.getLatestValue());
@@ -81,6 +76,11 @@ public class ProjectPortfolioDetailsPanel extends Panel {
             String colorString = "color:#" + chart.getValueColor();
             valueLabel.add(new AttributeModifier("style", true, new Model(colorString)));
             item.add(valueLabel);
+
+            Link chartLink = new BookmarkablePageLink("chartLink", 
+                TelemetryPage.class, chart.getTelemetryPageParameters());
+            chartLink.add(new ImageUrl("chart", chart.getImageUrl()));
+            item.add(chartLink);
           }
         };
         item.add(dateList);
