@@ -84,6 +84,7 @@ public class ProjectBrowserTestHelper {
     testProperties.put(ProjectBrowserProperties.DAILYPROJECTDATA_HOST_KEY, 
         getDailyProjectDataHostName());
     testProperties.put(ProjectBrowserProperties.TELEMETRY_HOST_KEY, getTelemetryHostName());
+    testProperties.put(ProjectBrowserProperties.WICKET_CONFIGURATION_KEY, "development");
     return testProperties;
   }
 
