@@ -31,8 +31,11 @@
   </target>
   
   <target name="hudson.daily.build" 
-     depends="clean, compile, checkstyle.tool, junit.tool, findbugs.tool, pmd.tool, jar" 
-     description="Builds and runs all QA stuff in preparation for sending sensor data.">
+     depends="clean, compile, checkstyle.tool, findbugs.tool, pmd.tool, jar" 
+     description="Builds and runs all QA stuff in preparation for sending sensor data.
+    Note that the JUnit task is missing, since we get a DiskPageStore exception.  See Aug 29,2008
+    builds for examples. This error does not occur when building the project directly, only as
+    part of the hudson 'integrated' builds.">
   </target>
 
   <target name="hudson.daily.junit"  
