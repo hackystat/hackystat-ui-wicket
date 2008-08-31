@@ -319,17 +319,34 @@ public class ProjectsModel implements Serializable, IClusterable {
    * @param type Member type (M = member, I = Invitee, O = Observer).
    * @return list of members with (N) attached to denote type.
    */
-  private String buildMemberList(List<String> members, String type) {
-    StringBuffer result = new StringBuffer();
+//  private String buildMemberList(List<String> members, String type) {
+//    StringBuffer result = new StringBuffer();
+//    for (String member : members) {
+//      if (result.length() == 0) {
+//        result.append(member).append(" (").append(type).append(')');
+//      }
+//      else {
+//        result.append('\n').append(member).append(" (").append(type).append(')');
+//      }
+//    }
+//    return convertUserEmailToBold(result.toString());
+//  }
+
+  /**
+   * Builds a string list of members with a suffix of "(N)". N is the member type passed in by
+   * "type".
+   * 
+   * @param members List of member names.
+   * @param type Member type (M = member, I = Invitee, O = Observer).
+   * @return list of members with (N) attached to denote type.
+   */
+  private List<String> buildMemberList(List<String> members, String type) {
+    List<String> list = new ArrayList<String>();
     for (String member : members) {
-      if (result.length() == 0) {
-        result.append(member).append(" (").append(type).append(')');
-      }
-      else {
-        result.append('\n').append(member).append(" (").append(type).append(')');
-      }
+      String result = member + " (" + type + ')';
+      list.add(result);
     }
-    return convertUserEmailToBold(result.toString());
+    return list;
   }
 
   /**
@@ -514,11 +531,24 @@ public class ProjectsModel implements Serializable, IClusterable {
    * 
    * @return String representation of project members, comma delimited.
    */
-  public String getProjectConsolidatedMembersStr() {
-    String result = buildMemberList(getProjectMembers(), "M");
-    result += "\n" + buildMemberList(getProjectInvitations(), "I");
-    result += "\n" + buildMemberList(getProjectSpectators(), "S");
-    return result;
+//  public String getProjectConsolidatedMembersStr() {
+//    String result = buildMemberList(getProjectMembers(), "M");
+//    result += "\n" + buildMemberList(getProjectInvitations(), "I");
+//    result += "\n" + buildMemberList(getProjectSpectators(), "S");
+//    return result;
+//  }
+
+  /**
+   * Get string representation of project members.
+   * 
+   * @return List representation of project members, invitees and spectators.
+   */
+  public List<String> getProjectConsolidatedMembers() {
+    List<String> list = new ArrayList<String>();
+    list.addAll(buildMemberList(getProjectMembers(), "M"));
+    list.addAll(buildMemberList(getProjectInvitations(), "I"));
+    list.addAll(buildMemberList(getProjectSpectators(), "S"));
+    return list;
   }
 
   /**

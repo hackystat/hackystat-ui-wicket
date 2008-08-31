@@ -29,6 +29,8 @@ public class ProjectBrowserProperties {
   public static final String APPLICATION_NAME_KEY =  "projectbrowser.application.name";
   /** Optional items per page */
   public static final String SENSORDATA_ITEMSPERPAGE_KEY = "projectbrowser.sensordata.itemsperpage";
+  /** Optional max height of text area in Projects Page. */
+  public static final String PROJECTS_TEXTMAXHEIGHT_KEY = "projectbrowser.projects.maxtextheight";
   /** Key for tabs of pages. */
   public static final String AVAILABLEPAGE_KEY = "projectbrowser.availablepage";
   /** If background process enable for pages. */
@@ -40,7 +42,8 @@ public class ProjectBrowserProperties {
   private int defaultItemsPerPage = 50;
   /** The default port as an int. */
   private int defaultPort = 9879;
-  
+  /** The default text max height in the projects page.  */
+  private int defaultTextMaxHeight = 5;
   
   // Not sure yet if we need the following.
   /** The projectbrowser hostname key. */
@@ -105,6 +108,7 @@ public class ProjectBrowserProperties {
     properties.setProperty(WICKET_CONFIGURATION_KEY, "deployment");
     properties.setProperty(APPLICATION_NAME_KEY, "Hackystat ProjectBrowser");
     properties.setProperty(SENSORDATA_ITEMSPERPAGE_KEY, String.valueOf(defaultItemsPerPage));
+    properties.setProperty(PROJECTS_TEXTMAXHEIGHT_KEY, String.valueOf(defaultTextMaxHeight));
     String trueString = "true";
     properties.setProperty(AVAILABLEPAGE_KEY + ".sensordata", trueString);
     properties.setProperty(AVAILABLEPAGE_KEY + ".dailyprojectdata", trueString);
@@ -169,6 +173,7 @@ public class ProjectBrowserProperties {
       pad + CONTEXT_ROOT_KEY   + eq + get(CONTEXT_ROOT_KEY) + cr +
       pad + PORT_KEY   + eq + get(PORT_KEY) + cr +
       pad + SENSORDATA_ITEMSPERPAGE_KEY   + eq + get(SENSORDATA_ITEMSPERPAGE_KEY) + cr +
+      pad + PROJECTS_TEXTMAXHEIGHT_KEY + eq + get(PROJECTS_TEXTMAXHEIGHT_KEY) + cr +
       pad + ADMIN_EMAIL_KEY   + eq + get(ADMIN_EMAIL_KEY);
   }
   

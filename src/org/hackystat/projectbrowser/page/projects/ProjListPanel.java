@@ -7,10 +7,13 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.ListMultipleChoice;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
+import org.hackystat.projectbrowser.ProjectBrowserApplication;
+import org.hackystat.projectbrowser.ProjectBrowserProperties;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
 
@@ -286,11 +289,28 @@ public class ProjListPanel extends Panel {
 
         item.add(new Label("projectDesc", new PropertyModel(model, "projectDesc")));
         item.add(new MultiLineLabel("projectSpan", new PropertyModel(model, "projectSpan")));
+        
+        ListMultipleChoice projectMembers = new ListMultipleChoice("projectMembers",
+            new PropertyModel(model, "projectConsolidatedMembers")) {
+          /** Support serialization. */
+          public static final long serialVersionUID = 1L;
 
-        MultiLineLabel projectMembers = new MultiLineLabel("projectMembers", new PropertyModel(
-            model, "projectConsolidatedMembersStr"));
+          /** Turns this choice box off when no members are present. */
+          @Override
+          public boolean isVisible() {
+            return (!model.getProjectConsolidatedMembers().isEmpty());
+          }
+        };
+        projectMembers.setEnabled(false);
+        String maxHeight = ((ProjectBrowserApplication) ProjectBrowserApplication.get())
+          .getProjectBrowserProperty(ProjectBrowserProperties.PROJECTS_TEXTMAXHEIGHT_KEY);
+        projectMembers.setMaxRows(Integer.parseInt(maxHeight));
         projectMembers.setEscapeModelStrings(false);
         item.add(projectMembers);
+        
+        
+        
+        
 
         item.add(new MultiLineLabel("projectUriPatterns", new PropertyModel(model,
             "projectUriPatternsStr")));
