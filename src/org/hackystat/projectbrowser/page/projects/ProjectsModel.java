@@ -312,25 +312,25 @@ public class ProjectsModel implements Serializable, IClusterable {
   }
 
   /**
-   * Builds a string list of members with a suffix of "(N)". N is the member type passed in by
+   * Builds a string of members with a suffix of "(N)". N is the member type passed in by
    * "type".
    * 
    * @param members List of member names.
    * @param type Member type (M = member, I = Invitee, O = Observer).
    * @return list of members with (N) attached to denote type.
    */
-//  private String buildMemberList(List<String> members, String type) {
-//    StringBuffer result = new StringBuffer();
-//    for (String member : members) {
-//      if (result.length() == 0) {
-//        result.append(member).append(" (").append(type).append(')');
-//      }
-//      else {
-//        result.append('\n').append(member).append(" (").append(type).append(')');
-//      }
-//    }
-//    return convertUserEmailToBold(result.toString());
-//  }
+  private String buildMemberListStr(List<String> members, String type) {
+    StringBuffer result = new StringBuffer();
+    for (String member : members) {
+      if (result.length() == 0) {
+        result.append(member).append(" (").append(type).append(')');
+      }
+      else {
+        result.append('\n').append(member).append(" (").append(type).append(')');
+      }
+    }
+    return convertUserEmailToBold(result.toString());
+  }
 
   /**
    * Builds a string list of members with a suffix of "(N)". N is the member type passed in by
@@ -380,7 +380,8 @@ public class ProjectsModel implements Serializable, IClusterable {
     List<String> result = new ArrayList<String>();
     if ((membersStr != null) && (!"".equals(membersStr))) {
       for (String member : membersStr.split(delimitor)) {
-        result.add(member);
+        member = member.replace("\n", "");
+        result.add(member.trim());
       }
     }
     return result;
@@ -531,12 +532,14 @@ public class ProjectsModel implements Serializable, IClusterable {
    * 
    * @return String representation of project members, comma delimited.
    */
-//  public String getProjectConsolidatedMembersStr() {
-//    String result = buildMemberList(getProjectMembers(), "M");
-//    result += "\n" + buildMemberList(getProjectInvitations(), "I");
-//    result += "\n" + buildMemberList(getProjectSpectators(), "S");
-//    return result;
-//  }
+  public String getProjectConsolidatedMembersStr() {
+    String result = buildMemberListStr(getProjectMembers(), "M");
+    result += (result.isEmpty() ? "" : "\n" );
+    result += buildMemberListStr(getProjectInvitations(), "I");
+    result += (result.isEmpty() ? "" : "\n" );
+    result += buildMemberListStr(getProjectSpectators(), "S");
+    return result;
+  }
 
   /**
    * Get string representation of project members.

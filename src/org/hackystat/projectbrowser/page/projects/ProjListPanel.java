@@ -289,7 +289,11 @@ public class ProjListPanel extends Panel {
 
         item.add(new Label("projectDesc", new PropertyModel(model, "projectDesc")));
         item.add(new MultiLineLabel("projectSpan", new PropertyModel(model, "projectSpan")));
-        
+
+        String maxHeightStr = ((ProjectBrowserApplication) ProjectBrowserApplication.get())
+          .getProjectBrowserProperty(ProjectBrowserProperties.PROJECTS_TEXTMAXHEIGHT_KEY);
+        final int maxHeight = Integer.parseInt(maxHeightStr);
+
         ListMultipleChoice projectMembers = new ListMultipleChoice("projectMembers",
             new PropertyModel(model, "projectConsolidatedMembers")) {
           /** Support serialization. */
@@ -298,19 +302,27 @@ public class ProjListPanel extends Panel {
           /** Turns this choice box off when no members are present. */
           @Override
           public boolean isVisible() {
-            return (!model.getProjectConsolidatedMembers().isEmpty());
+            return ((model.getProjectConsolidatedMembers().size() > maxHeight));
           }
         };
         projectMembers.setEnabled(false);
-        String maxHeight = ((ProjectBrowserApplication) ProjectBrowserApplication.get())
-          .getProjectBrowserProperty(ProjectBrowserProperties.PROJECTS_TEXTMAXHEIGHT_KEY);
-        projectMembers.setMaxRows(Integer.parseInt(maxHeight));
+        projectMembers.setMaxRows(maxHeight);
         projectMembers.setEscapeModelStrings(false);
         item.add(projectMembers);
         
-        
-        
-        
+        MultiLineLabel projectMembersLabel = new MultiLineLabel("projectMembersLabel", 
+            new PropertyModel(model, "projectConsolidatedMembersStr")) {
+          /** Support serialization. */
+          public static final long serialVersionUID = 1L;
+
+          /** Turns this choice box off when no members are present. */
+          @Override
+          public boolean isVisible() {
+            return ((model.getProjectConsolidatedMembers().size() <= maxHeight));
+          }
+        };
+        projectMembersLabel.setEscapeModelStrings(false);
+        item.add(projectMembersLabel);
 
         item.add(new MultiLineLabel("projectUriPatterns", new PropertyModel(model,
             "projectUriPatternsStr")));
