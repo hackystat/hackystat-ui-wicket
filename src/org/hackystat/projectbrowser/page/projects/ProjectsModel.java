@@ -534,9 +534,9 @@ public class ProjectsModel implements Serializable, IClusterable {
    */
   public String getProjectConsolidatedMembersStr() {
     String result = buildMemberListStr(getProjectMembers(), "M");
-    result += (result.isEmpty() ? "" : "\n" );
+    result += ("".equals(result) ? "" : "\n" );
     result += buildMemberListStr(getProjectInvitations(), "I");
-    result += (result.isEmpty() ? "" : "\n" );
+    result += ("".equals(result) ? "" : "\n" );
     result += buildMemberListStr(getProjectSpectators(), "S");
     return result;
   }
