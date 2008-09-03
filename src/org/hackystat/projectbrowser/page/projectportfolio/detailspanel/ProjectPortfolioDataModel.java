@@ -6,10 +6,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.wicket.PageParameters;
 import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
 import org.hackystat.projectbrowser.page.loadingprocesspanel.Processable;
 import org.hackystat.projectbrowser.page.telemetry.TelemetrySession;
+import org.hackystat.sensorbase.resource.projects.ProjectUtils;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
 import org.hackystat.telemetry.service.client.TelemetryClient;
 import org.hackystat.telemetry.service.client.TelemetryClientException;
@@ -78,9 +80,9 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
     measures.add(new MeasureConfiguration("CyclomaticComplexity", true, 10, 20, false, this));
     measures.add(new MeasureConfiguration("Coupling", true, 15, 25, false, this));
     measures.add(new MeasureConfiguration("Churn", true, 35, 85, true, this));
-    measures.add(new MeasureConfiguration("Commit", false, 0, 0, false, this));
-    measures.add(new MeasureConfiguration("CodeIssue", false, 0, 0, false, this));
-    measures.add(new MeasureConfiguration("FileMetric", false, 0, 0, false, this));
+    measures.add(new MeasureConfiguration("Commit", false, 0, 0, true, this));
+    measures.add(new MeasureConfiguration("CodeIssue", false, 0, 0, true, this));
+    measures.add(new MeasureConfiguration("FileMetric", false, 0, 0, true, this));
   }
   
   /**
@@ -139,9 +141,14 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
             measure.setParameters(params);
           }
           //get data from hackystat
+          XMLGregorianCalendar startTime = Tstamp.makeTimestamp(getStartDate());
+          XMLGregorianCalendar endTime = Tstamp.makeTimestamp(getEndDate());
+          if (!ProjectUtils.isValidStartTime(project, startTime)) {
+            startTime = project.getStartTime();
+          }
           TelemetryChartData chartData = telemetryClient.getChart(measure.getName(), 
-              owner, projectName, telemetryGranularity, Tstamp.makeTimestamp(getStartDate()), 
-              Tstamp.makeTimestamp(getEndDate()), measure.getParamtersString());
+              owner, projectName, telemetryGranularity, startTime, endTime, 
+              measure.getParamtersString());
           
           MiniBarChart chart = new MiniBarChart(chartData.getTelemetryStream().get(0), measure);
           chart.setTelemetryPageParameters(getTelemetryPageParameters(measure, project));

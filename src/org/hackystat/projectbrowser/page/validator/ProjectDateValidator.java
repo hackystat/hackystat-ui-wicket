@@ -93,6 +93,7 @@ public class ProjectDateValidator extends AbstractFormValidator {
    * Performs the validation. 
    * Note that this validation must handle a projectMenu plus a single date, or a 
    * projectMenu plus two dates (start and end date). 
+   * This method is ran if all components returned by getDependentFormComponents() are valid.
    * @param projectDateForm The form to validate. 
    */
   @SuppressWarnings("unchecked")

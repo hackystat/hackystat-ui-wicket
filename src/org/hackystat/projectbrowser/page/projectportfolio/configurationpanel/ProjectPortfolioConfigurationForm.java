@@ -2,7 +2,9 @@ package org.hackystat.projectbrowser.page.projectportfolio.configurationpanel;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
@@ -16,6 +18,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.StatelessForm;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -32,7 +35,7 @@ import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.ProjectPo
  * @author Shaoxuan Zhang
  * 
  */
-public class ProjectPortfolioConfigurationForm extends Form {
+public class ProjectPortfolioConfigurationForm extends StatelessForm {
   /** Support serialization. */
   private static final long serialVersionUID = 447730202032199770L;
   /** The colors to choose from. */
@@ -65,7 +68,10 @@ public class ProjectPortfolioConfigurationForm extends Form {
   private static final String STYLE_KEY = "style";
   /** THe preceding of HTTP background color style setting. */
   private static final String BACKGROUND_COLOR_PRECEDING = "background-color:#";
-
+  /** The validators for measures' higher and lower thresholds. */
+  private Map<String, ConfigurationValueValidator> validators = 
+    new HashMap<String, ConfigurationValueValidator>();
+  
   /**
    * @param id the wicket component id.
    * @param dataModel the data model that will be configure here.
@@ -106,6 +112,8 @@ public class ProjectPortfolioConfigurationForm extends Form {
     badColorSelect.setOutputMarkupId(true);
     badColorSelect.add(new AjaxColorSelectChangeBackgroundColorBehavior(goodColorSelect));
     add(badColorSelect);
+    
+    final Form form = this;
     
     ListView measureList = new ListView("measureList", dataModel.getMeasures()) {
       /** Support serialization. */
@@ -158,8 +166,8 @@ public class ProjectPortfolioConfigurationForm extends Form {
           }
         });
         
-        item.add(new TextField("higherThresholdTextField", new PropertyModel(measure,
-            "higherThreshold")) {
+        final TextField higherThresholdTextField = 
+          new TextField("higherThresholdTextField", new PropertyModel(measure, "higherThreshold")) {
           /** Support serialization. */
           private static final long serialVersionUID = -7434510173892738329L;
 
@@ -167,9 +175,11 @@ public class ProjectPortfolioConfigurationForm extends Form {
           public boolean isEnabled() {
             return measure.isEnabled() && measure.isColorable();
           }
-        });
-        item.add(new TextField("lowerThresholdTextField", new PropertyModel(measure,
-            "lowerThreshold")) {
+        };
+        item.add(higherThresholdTextField);
+        
+        final TextField lowerThresholdTextField = 
+          new TextField("lowerThresholdTextField", new PropertyModel(measure, "lowerThreshold")) {
           /** Support serialization. */
           private static final long serialVersionUID = -1675316116473661403L;
 
@@ -177,12 +187,23 @@ public class ProjectPortfolioConfigurationForm extends Form {
           public boolean isEnabled() {
             return measure.isEnabled() && measure.isColorable();
           }
-        });
+        };
+        item.add(lowerThresholdTextField);
+        
+        if (measure.isEnabled() && measure.isColorable()) {
+          ConfigurationValueValidator validator = new ConfigurationValueValidator(measure.getName(),
+              higherThresholdTextField, lowerThresholdTextField);
+          form.add(validator);
+          //add the validator to the validators map and remove the old existed one from the form.
+          ConfigurationValueValidator oldValidator = validators.put(measure.getName(), validator);
+          if (oldValidator != null) {
+            form.remove(oldValidator);
+          }
+        }
+        
       }
-
     };
     add(measureList);
-
     PopupWindowPanel parameterPopup = new PopupWindowPanel("instructionPopup",
         "Configuration instruction", "Configuration instruction");
     parameterPopup.getModalWindow().setContent(
