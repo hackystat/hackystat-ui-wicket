@@ -167,7 +167,7 @@ public class ProjectPortfolioConfigurationForm extends StatelessForm {
         });
         
         final TextField higherThresholdTextField = 
-          new TextField("higherThresholdTextField", new PropertyModel(measure, "higherThreshold")) {
+          new TextField("higherThreshold", new PropertyModel(measure, "higherThreshold")) {
           /** Support serialization. */
           private static final long serialVersionUID = -7434510173892738329L;
 
@@ -179,7 +179,7 @@ public class ProjectPortfolioConfigurationForm extends StatelessForm {
         item.add(higherThresholdTextField);
         
         final TextField lowerThresholdTextField = 
-          new TextField("lowerThresholdTextField", new PropertyModel(measure, "lowerThreshold")) {
+          new TextField("lowerThreshold", new PropertyModel(measure, "lowerThreshold")) {
           /** Support serialization. */
           private static final long serialVersionUID = -1675316116473661403L;
 
