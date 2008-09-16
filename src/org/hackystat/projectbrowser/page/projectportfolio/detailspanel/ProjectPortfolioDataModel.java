@@ -65,6 +65,8 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
   private String backgroundColor = "000000";
   /** The font color for table cells. */
   private String fontColor = "ffffff";
+  /** The font color for N/A. */
+  private String naColor = "888888";
   /** The color for good state. */
   private String goodColor = "00ff00";
   /** The color for soso state. */
@@ -79,12 +81,12 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
     measures.add(new MeasureConfiguration("Coverage", true, 40, 90, true, this));
     measures.add(new MeasureConfiguration("CyclomaticComplexity", true, 10, 20, false, this));
     measures.add(new MeasureConfiguration("Coupling", true, 10, 20, false, this));
-    measures.add(new MeasureConfiguration("Churn", true, 35, 85, false, this));
+    measures.add(new MeasureConfiguration("Churn", true, 300, 800, false, this));
     measures.add(new MeasureConfiguration("DevTime", false, 0, 0, true, this));
     measures.add(new MeasureConfiguration("Build", false, 0, 0, true, this));
     measures.add(new MeasureConfiguration("UnitTest", false, 0, 0, true, this));
     measures.add(new MeasureConfiguration("Commit", false, 0, 0, true, this));
-    measures.add(new MeasureConfiguration("CodeIssue", false, 0, 0, true, this));
+    measures.add(new MeasureConfiguration("CodeIssue", false, 0, 0, false, this));
     measures.add(new MeasureConfiguration("FileMetric", false, 0, 0, true, this));
   }
   
@@ -411,6 +413,13 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
    */
   public String getFontColor() {
     return fontColor;
+  }
+
+  /**
+   * @return the naColor
+   */
+  public String getNAColor() {
+    return naColor;
   }
 
   /**

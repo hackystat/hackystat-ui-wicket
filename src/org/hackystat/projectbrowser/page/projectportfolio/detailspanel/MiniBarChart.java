@@ -144,10 +144,10 @@ public class MiniBarChart implements Serializable {
    * @return the valueColor
    */
   public String getValueColor() {
+    if (this.getLatestValue() < 0) {
+      return configuration.getDataModel().getNAColor();
+    }
     if (configuration.isColorable()) {
-      if (this.getLatestValue() < 0) {
-        return configuration.getDataModel().getFontColor();
-      }
       if (this.getLatestValue() >= this.configuration.getHigherThreshold()) {
         return configuration.getHigherColor();
       }
