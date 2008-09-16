@@ -3,6 +3,7 @@ package org.hackystat.projectbrowser.page.projectportfolio.detailspanel;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.wicket.model.IModel;
 
 /**
  * Configuration for project portfolio measures.
@@ -33,7 +34,9 @@ public class MeasureConfiguration implements Serializable {
   private final ProjectPortfolioDataModel dataModel;
 
   /** This meausre's parameter list. */
-  private List<String> parameters = new ArrayList<String>();
+  //private List<String> parameters = new ArrayList<String>();
+  /** The parameters for telemetry chart. */
+  private final List<IModel> parameters = new ArrayList<IModel>();
 
   /**
    * Create an instance with default colors green yellow red. higher color will be green if
@@ -180,26 +183,22 @@ public class MeasureConfiguration implements Serializable {
     }
     StringBuffer param = new StringBuffer();
     for (int i = 0; i < this.parameters.size(); ++i) {
-      param.append(this.parameters.get(i));
-      if (i < this.parameters.size() - 1) {
-        param.append(',');
+      IModel model = this.parameters.get(i);
+      if (model != null) {
+        param.append(model.getObject());
+        if (i < this.parameters.size() - 1) {
+          param.append(',');
+        }
       }
     }
     return param.toString();
   }
 
   /**
-   * @param parameters the parameters to set
-   */
-  public void setParameters(List<String> parameters) {
-    this.parameters = parameters;
-  }
-
-  /**
    * @return the parameters
    */
-  public List<String> getParameters() {
-    return parameters;
+  public List<IModel> getParameters() {
+    return this.parameters;
   }
 
   /**

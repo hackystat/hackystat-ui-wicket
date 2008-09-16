@@ -114,7 +114,7 @@ public class TestProjectPortfolioPage extends ProjectBrowserTestHelper {
     }
     //select that choice.
     inputForm.select("projectMenu", index);
-    inputForm.submit();
+    inputForm.submit("submit");
     //check the result.
     tester.assertRenderedPage(ProjectPortfolioPage.class);
     

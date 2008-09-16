@@ -1,6 +1,7 @@
 package org.hackystat.projectbrowser.page.projectportfolio.inputpanel;
 
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.ListMultipleChoice;
 import org.apache.wicket.markup.html.link.Link;
@@ -62,20 +63,30 @@ public class ProjectPortfolioInputForm extends Form {
       public void onClick() {
         page.setConfigurationPanelVisible(!page.isConfigurationPanelVisible());
       }
+      @Override
+      public boolean isEnabled() {
+        return getIsEnable();
+      }
     };
     configurationLink.add(new Label("label", new PropertyModel(this, "labelMessage")));
     add(configurationLink);
+
+    Button submitButton = new Button("submit") {
+      /** Support serialization. */
+      public static final long serialVersionUID = 1L;
+      @Override
+      public void onSubmit() {
+        session.updateDataModel();
+        page.onProjectDateSubmit();
+      }
+      @Override
+      public boolean isEnabled() {
+        return getIsEnable();
+      }
+    };
+    add(submitButton);
   }
 
-  /**
-   * Actions that take place when this form is submit.
-   */
-  @Override
-  public void onSubmit() {
-    session.updateDataModel();
-    page.onProjectDateSubmit();
-  }
-  
   /**
    * @return the configuration label message
    */
@@ -94,7 +105,7 @@ public class ProjectPortfolioInputForm extends Form {
    * @return true if the form is enabled.
    */
   protected boolean getIsEnable() {
-    return true;
+    return !session.getDataModel().isInProcess();
   }
   
 }

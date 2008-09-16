@@ -71,7 +71,7 @@ public class TelemetrySession implements Serializable {
   private List<Project> selectedProjects = new ArrayList<Project>();
   
   /** The descriptions for all telemetries. */
-  private final Map<String, TelemetryChartDefinition> telemetrys = 
+  private final Map<String, TelemetryChartDefinition> telemetryDefs = 
                             new HashMap<String, TelemetryChartDefinition>();
   /** The available granularities. */
   private final List<String> granularityList = new ArrayList<String>();
@@ -161,26 +161,33 @@ public class TelemetrySession implements Serializable {
    * @return the telemetryList
    */
   public List<String> getTelemetryList() {
-    Logger logger = getLogger();
     List<String> telemetryList = new ArrayList<String>();
-    if (this.getTelemetrys().isEmpty()) {
-      TelemetryClient client  = ProjectBrowserSession.get().getTelemetryClient();
-      try {
-        logger.info("Retrieving data for Telemetry chart definitions.");
-        for (TelemetryChartRef chartRef : client.getChartIndex().getTelemetryChartRef()) {
-          getTelemetrys().put(chartRef.getName(), client.getChartDefinition(chartRef.getName()));
-        }
-        logger.info("Finished retrieving data for Telemetry chart definitions.");
-      }
-      catch (TelemetryClientException e) {
-        this.feedback = "Exception when retrieving Telemetry chart definition: " + e.getMessage();
-        logger.warning("Error when retrieving Telemetry chart definition: " 
-                                      + e.getMessage());
-      }
+    if (this.getTelemetryDefs().isEmpty()) {
+      this.initializeTelemetryList();
     }
-    telemetryList.addAll(this.getTelemetrys().keySet());
+    telemetryList.addAll(this.getTelemetryDefs().keySet());
     Collections.sort(telemetryList);
     return telemetryList;
+  }
+  
+  /**
+   * Initialize the telemetry definition list.
+   */
+  private void initializeTelemetryList() {
+    Logger logger = getLogger();
+    TelemetryClient client  = ProjectBrowserSession.get().getTelemetryClient();
+    try {
+      logger.info("Retrieving data for Telemetry chart definitions.");
+      for (TelemetryChartRef chartRef : client.getChartIndex().getTelemetryChartRef()) {
+        getTelemetryDefs().put(chartRef.getName(), client.getChartDefinition(chartRef.getName()));
+      }
+      logger.info("Finished retrieving data for Telemetry chart definitions.");
+    }
+    catch (TelemetryClientException e) {
+      this.feedback = "Exception when retrieving Telemetry chart definition: " + e.getMessage();
+      logger.warning("Error when retrieving Telemetry chart definition: " 
+                                    + e.getMessage());
+    }
   }
 
   /**
@@ -188,16 +195,28 @@ public class TelemetrySession implements Serializable {
    * @return list of ParameterDefinition.
    */
   public List<ParameterDefinition> getParameterList() {
+    return this.getParameterList(this.telemetryName);
+  }
+  
+  /**
+   * Return the list of ParameterDefinition under the given telemetry.
+   * @param telemetryName the telemetry
+   * @return list of ParameterDefinition.
+   */
+  public List<ParameterDefinition> getParameterList(String telemetryName) {
     Logger logger = getLogger();
-    if (this.telemetryName != null) {
+    if (this.telemetryDefs.isEmpty()) {
+      this.initializeTelemetryList();
+    }
+    if (telemetryName != null) {
       TelemetryChartDefinition teleDef = 
-        this.getTelemetrys().get(telemetryName);
+        this.getTelemetryDefs().get(telemetryName);
       if (teleDef == null) {
         TelemetryClient client  = ProjectBrowserSession.get().getTelemetryClient();
         try {
-          logger.info("Retrieving chart definition of telemetry: " + this.telemetryName);
-          teleDef = client.getChartDefinition(this.telemetryName);
-          this.getTelemetrys().put(telemetryName, teleDef);
+          logger.info("Retrieving telemetry chart definition: " + telemetryName);
+          teleDef = client.getChartDefinition(telemetryName);
+          this.getTelemetryDefs().put(telemetryName, teleDef);
           return teleDef.getParameterDefinition();
         }
         catch (TelemetryClientException e) {
@@ -389,8 +408,8 @@ public class TelemetrySession implements Serializable {
   /**
    * @return the telemetrys
    */
-  public Map<String, TelemetryChartDefinition> getTelemetrys() {
-    return telemetrys;
+  public Map<String, TelemetryChartDefinition> getTelemetryDefs() {
+    return telemetryDefs;
   }
   
   /**
@@ -399,7 +418,7 @@ public class TelemetrySession implements Serializable {
   public List<TelemetryChartDefinition> getChartDescriptions() {
     List<TelemetryChartDefinition> chartDef = new ArrayList<TelemetryChartDefinition>();
     for (String telemetryName : this.getTelemetryList()) {
-      chartDef.add(this.telemetrys.get(telemetryName));
+      chartDef.add(this.telemetryDefs.get(telemetryName));
     }
     return chartDef;
   }
@@ -566,7 +585,7 @@ public class TelemetrySession implements Serializable {
       this.parameters.clear();
       if (isTelemetryLoaded) {
         List<ParameterDefinition> paramDefList = 
-          this.getTelemetrys().get(this.telemetryName).getParameterDefinition();
+          this.getTelemetryDefs().get(this.telemetryName).getParameterDefinition();
         if (paramStringArray.length == paramDefList.size()) {
           for (int i = 0; i < paramStringArray.length; ++i) {
             if (isValueMatchType(paramStringArray[i], paramDefList.get(i).getType())) {

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
@@ -16,6 +17,7 @@ import org.apache.wicket.markup.MarkupStream;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.basic.MultiLineLabel;
+import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.StatelessForm;
@@ -25,9 +27,13 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.page.popupwindow.PopupWindowPanel;
 import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.MeasureConfiguration;
 import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.ProjectPortfolioDataModel;
+import org.hackystat.projectbrowser.page.telemetry.TelemetrySession;
+import org.hackystat.telemetry.service.resource.chart.jaxb.ParameterDefinition;
+import org.hackystat.telemetry.service.resource.chart.jaxb.Type;
 
 /**
  * Form in Project Portfolio configuration panel to input data.
@@ -76,7 +82,7 @@ public class ProjectPortfolioConfigurationForm extends StatelessForm {
    * @param id the wicket component id.
    * @param dataModel the data model that will be configure here.
    */
-  public ProjectPortfolioConfigurationForm(String id, ProjectPortfolioDataModel dataModel) {
+  public ProjectPortfolioConfigurationForm(String id, final ProjectPortfolioDataModel dataModel) {
     super(id);
     
     add(new FeedbackPanel("configurationFeedback")); 
@@ -200,7 +206,32 @@ public class ProjectPortfolioConfigurationForm extends StatelessForm {
             form.remove(oldValidator);
           }
         }
-        
+     // Add parameter List
+        TelemetrySession telemetrySession = ProjectBrowserSession.get().getTelemetrySession();
+        ListView parameterList = 
+          new ListView("parameterList", telemetrySession.getParameterList(measure.getName())) {
+          /** Support serialization. */
+          public static final long serialVersionUID = 1L;
+          @Override
+          protected void populateItem(ListItem item) {
+            ParameterDefinition paramDef = (ParameterDefinition)item.getModelObject();
+            item.add(new Label("name", paramDef.getName()));
+            Component component = getComponent("field", paramDef.getType());
+            if (item.getIndex() >= measure.getParameters().size() && component.getModel() != null) {
+              measure.getParameters().add(component.getModel());
+            }
+            else {
+              component.setModel(measure.getParameters().get(item.getIndex()));
+            }
+            item.add(component);
+          }
+          
+          @Override
+          public boolean isVisible() {
+            return measure.isEnabled();
+          }
+        };
+        item.add(parameterList);
       }
     };
     add(measureList);
@@ -292,4 +323,69 @@ public class ProjectPortfolioConfigurationForm extends StatelessForm {
     }
   }
 
+  /**
+   * Return a FormComponent according to the parameter type.
+   * DropDownChoice for Enumerated.
+   * CheckBox for Boolean.
+   * TextField for Text and Integer.
+   * @param id the wicket component id.
+   * @param type the parameter type.
+   * @return a FormComponent.
+   */
+  public Component getComponent(String id, Type type) {
+    Component component;
+    if ("Enumerated".equals(type.getName())) {
+      DropDownChoice choice = 
+        new DropDownChoice(id, new Model(type.getDefault()), type.getValue()) {           
+        /** Support serialization. */
+        public static final long serialVersionUID = 1L; 
+        /**
+         * Called any time a component that has this behavior registered is rendering the 
+         * component tag.
+         * @param tag the tag that is rendered
+         */
+        @Override 
+        protected void onComponentTag(ComponentTag tag) { 
+          tag.setName("select");
+          super.onComponentTag(tag);
+        } 
+      };
+      //choice.setPersistent(true);
+      component = choice;
+    }
+    else if ("Boolean".equals(type.getName())) {
+      CheckBox checkBox = new CheckBox(id, new Model(type.getDefault())) {           
+        /** Support serialization. */
+        public static final long serialVersionUID = 1L; 
+        @Override 
+        protected void onComponentTag(ComponentTag tag) { 
+          tag.setName("input");
+          tag.put("type", "checkbox");
+          tag.remove("style"); //need for firefox on mac.
+          super.onComponentTag(tag);
+        } 
+      };
+      //checkBox.setPersistent(true);
+      component = checkBox;
+    }
+    else if ("Text".equals(type.getName()) || "Integer".equals(type.getName())) {
+      TextField textField = new TextField(id, new Model(type.getDefault())) {           
+        /** Support serialization. */
+        public static final long serialVersionUID = 1L; 
+        @Override 
+        protected void onComponentTag(ComponentTag tag) { 
+          tag.setName("input");
+          tag.put("type", "text");
+          super.onComponentTag(tag);
+        } 
+      };
+      //textField.setPersistent(true);
+      component = textField;
+    }
+    else {
+      component = new Label(id, new Model("Parameter Type " + type.getName() + " not recognized."));
+    }
+    return component;
+  }
+  
 }

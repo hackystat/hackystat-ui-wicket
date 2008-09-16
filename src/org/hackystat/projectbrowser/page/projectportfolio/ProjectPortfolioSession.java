@@ -36,7 +36,7 @@ public class ProjectPortfolioSession implements Serializable {
     boolean backgroundProcessEnable = ((ProjectBrowserApplication)ProjectBrowserApplication.get()).
       isBackgroundProcessEnable("projectportfolio");
     
-    this.dataModel.setModel(startDate, endDate, selectedProjects,
+    this.dataModel.setModel(startDate, endDate, selectedProjects, 
         ((ProjectBrowserApplication)ProjectBrowserApplication.get()).getTelemetryHost(),
         ProjectBrowserSession.get().getEmail(),
         ProjectBrowserSession.get().getPassword());
@@ -54,7 +54,7 @@ public class ProjectPortfolioSession implements Serializable {
       dataModel.loadData();
     }
   }
-
+  
   /**
    * @param selectedProjects the selectedProjects to set
    */

@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.wicket.PageParameters;
+import org.apache.wicket.model.Model;
+import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
 import org.hackystat.projectbrowser.page.loadingprocesspanel.Processable;
 import org.hackystat.projectbrowser.page.telemetry.TelemetrySession;
@@ -41,6 +43,8 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
   private String email;
   /** password of the user. */
   private String password;
+  /** The telemetry session. */
+  private TelemetrySession telemetrySession;
   
   /** the granularity this data model focus. */
   private String telemetryGranularity = "Week";
@@ -60,6 +64,7 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
         new HashMap<Project, List<MiniBarChart>>();
   /** The thresholds. */
   private final List<MeasureConfiguration> measures = new ArrayList<MeasureConfiguration>();
+  
 
   /** The background color for table cells. */
   private String backgroundColor = "000000";
@@ -104,6 +109,10 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
     this.email = email;
     this.password = password;
     this.selectedProjects = selectedProjects;
+    telemetrySession = ProjectBrowserSession.get().getTelemetrySession();
+    for (MeasureConfiguration measure : getEnabledMeasures()) {
+      checkMeasureParameters(measure);
+    }
   }
 
   /**
@@ -133,10 +142,11 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
         
         for (int j = 0; j < enableMeasures.size(); ++j) {
           MeasureConfiguration measure = enableMeasures.get(j);
-          this.processingMessage += "---> Retrieve " + measure.getName() + 
-              " (" + (i + 1) + " .. " + (j + 1) + " of " + enableMeasures.size() + ").\n";
           
-          //set default parameter if no parameter is assigned.
+          this.processingMessage += "---> Retrieve " + measure.getName() + "<" + 
+          measure.getParamtersString() + ">" + " (" + (i + 1) + " .. " + (j + 1) + 
+          " of " + enableMeasures.size() + ").\n";
+          /*
           if (measure.getParameters().isEmpty()) {
             List<String> params = new ArrayList<String>();
             List<ParameterDefinition> paramDefList = getParameterDefinitions(measure.getName());
@@ -145,6 +155,7 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
             }
             measure.setParameters(params);
           }
+          */
           //get data from hackystat
           XMLGregorianCalendar startTime = Tstamp.makeTimestamp(getStartDate());
           XMLGregorianCalendar endTime = Tstamp.makeTimestamp(getEndDate());
@@ -178,6 +189,21 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
     this.inProcess = false;
   }
 
+  /**
+   * Check the parameter in the given measure configuration.
+   * Set the parameter to default if it is incorrect.
+   * @param measure the given MeasureConfiguration.
+   */
+  private void checkMeasureParameters(MeasureConfiguration measure) {
+    List<ParameterDefinition> paramDefList = telemetrySession.getParameterList(measure.getName());
+    if (measure.getParameters().size() != paramDefList.size()) {
+      measure.getParameters().clear();
+      for (ParameterDefinition paramDef : paramDefList) {
+        measure.getParameters().add(new Model(paramDef.getType().getDefault()));
+      }
+    }
+  }
+  
   /**
    * Cancel the data loading process.
    */
@@ -282,6 +308,7 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
    * @param measure the given measure
    * @return the parameters in a String
    */
+  /*
   public String getDefaultParametersString(String measure) {
     List<ParameterDefinition> paramDefList = getParameterDefinitions(measure);
       StringBuffer param = new StringBuffer();
@@ -294,23 +321,7 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
         }
       return param.toString();
   }
-
-  /**
-   * Return the parameter definitions of the given measure.
-   * @param measure the given measure
-   * @return the parameter definitions.
-   */
-  public List<ParameterDefinition> getParameterDefinitions(String measure) {
-    TelemetryClient telemetryClient = new TelemetryClient(telemetryHost, email, password);
-    try {
-        return telemetryClient.getChartDefinition(measure).getParameterDefinition();
-    }
-    catch (TelemetryClientException e) {
-      e.printStackTrace();
-    }
-    return new ArrayList<ParameterDefinition>();
-    
-  }
+  */
 
   /**
    * @return the measures
