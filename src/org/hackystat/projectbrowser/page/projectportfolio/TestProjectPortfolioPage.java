@@ -71,7 +71,7 @@ public class TestProjectPortfolioPage extends ProjectBrowserTestHelper {
     signinForm.setValue("user", testUserEmail);
     signinForm.setValue("password", testUserEmail);
     signinForm.submit("Signin");
-    //first, go to daily project data page.
+    //first, go to project portfolio page.
     tester.clickLink("ProjectPortfolioPageLink");
     tester.assertRenderedPage(ProjectPortfolioPage.class);
     
@@ -81,15 +81,15 @@ public class TestProjectPortfolioPage extends ProjectBrowserTestHelper {
 
     FormTester configurationForm = tester.newFormTester("configurationPanel:configurationForm");
     ListView measureList = (ListView)configurationForm.getForm().get("measureList");
-    assertEquals("There should be 7 measures.", 7, measureList.getList().size());
+    assertTrue("There should be 10 measures.", measureList.getList().size() > 2);
     configurationForm.select("granularity", 0);
     configurationForm.setValue("timePhrase", "10");
+    //set the second measure to be uncolorable.
     configurationForm.setValue("measureList:1:colorableCheckBox", FALSE);
-    configurationForm.setValue("measureList:2:enableCheckBox", FALSE);
-    configurationForm.setValue("measureList:3:enableCheckBox", FALSE);
-    configurationForm.setValue("measureList:4:enableCheckBox", FALSE);
-    configurationForm.setValue("measureList:5:enableCheckBox", FALSE);
-    configurationForm.setValue("measureList:6:enableCheckBox", FALSE);
+    //set all others to be disable.
+    for (int i = 2; i < measureList.getList().size(); i++) {
+      configurationForm.setValue("measureList:" + i + ":enableCheckBox", FALSE);
+    }
     configurationForm.submit();
     tester.assertInvisible("configurationPanel");
 

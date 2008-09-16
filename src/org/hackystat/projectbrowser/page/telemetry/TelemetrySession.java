@@ -339,7 +339,7 @@ public class TelemetrySession implements Serializable {
   /**
    * Cancel data model's update.
    */
-  public void canelDataUpdate() {
+  public void cancelDataUpdate() {
     dataModel.cancelDataLoading();
   }
   

@@ -78,8 +78,11 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
   public ProjectPortfolioDataModel() {
     measures.add(new MeasureConfiguration("Coverage", true, 40, 90, true, this));
     measures.add(new MeasureConfiguration("CyclomaticComplexity", true, 10, 20, false, this));
-    measures.add(new MeasureConfiguration("Coupling", true, 15, 25, false, this));
-    measures.add(new MeasureConfiguration("Churn", true, 35, 85, true, this));
+    measures.add(new MeasureConfiguration("Coupling", true, 10, 20, false, this));
+    measures.add(new MeasureConfiguration("Churn", true, 35, 85, false, this));
+    measures.add(new MeasureConfiguration("DevTime", false, 0, 0, true, this));
+    measures.add(new MeasureConfiguration("Build", false, 0, 0, true, this));
+    measures.add(new MeasureConfiguration("UnitTest", false, 0, 0, true, this));
     measures.add(new MeasureConfiguration("Commit", false, 0, 0, true, this));
     measures.add(new MeasureConfiguration("CodeIssue", false, 0, 0, true, this));
     measures.add(new MeasureConfiguration("FileMetric", false, 0, 0, true, this));
@@ -173,6 +176,14 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
     this.inProcess = false;
   }
 
+  /**
+   * Cancel the data loading process.
+   */
+  public void cancelDataUpdate() {
+    this.processingMessage += "Process Cancelled.\n";
+    this.inProcess = false;
+  }
+  
   /**
    * Return a PageParameters instance that include necessary information for telemetry.
    * @param measure the telemetry analysis

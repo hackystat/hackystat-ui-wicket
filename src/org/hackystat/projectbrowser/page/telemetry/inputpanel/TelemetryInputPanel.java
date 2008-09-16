@@ -30,7 +30,7 @@ public class TelemetryInputPanel extends Panel {
       public static final long serialVersionUID = 1L;
       @Override
       public void onSubmit() {
-        ProjectBrowserSession.get().getTelemetrySession().canelDataUpdate();
+        ProjectBrowserSession.get().getTelemetrySession().cancelDataUpdate();
       }
       @Override
       public boolean isEnabled() {
