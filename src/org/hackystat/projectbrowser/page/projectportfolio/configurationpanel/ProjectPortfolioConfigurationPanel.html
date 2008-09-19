@@ -4,13 +4,20 @@
       <div wicket:id="configurationFeedback"></div>
       <table>
         <tr>
-          Time phrase: last 
-          <input type="text" style="width: 3em" wicket:id="timePhrase"/>
-          <select style="width: 10em" wicket:id="granularity">
-            <option value="Day">Day</option>
-            <option value="Week">Week</option>
-            <option value="Month">Month</option>
-          </select>
+          <td colspan="3">
+            Time phrase: last 
+            <input type="text" style="width: 3em" wicket:id="timePhrase"/>
+            <select style="width: 10em" wicket:id="granularity">
+              <option value="Day">Day</option>
+              <option value="Week">Week</option>
+              <option value="Month">Month</option>
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3">
+            <input type="checkbox" wicket:id="includeCurrentWeek"/> Include current day/week/month?
+          </td>
         </tr>
         <tr>
           <td>

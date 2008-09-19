@@ -87,11 +87,14 @@ public class ProjectPortfolioConfigurationForm extends StatelessForm {
     
     add(new FeedbackPanel("configurationFeedback")); 
 
+    //General settings
     add(new TextField("timePhrase", new PropertyModel(dataModel, "timePhrase")));
     add(new DropDownChoice("granularity", 
                            new PropertyModel(dataModel, "telemetryGranularity"), 
                            dataModel.getGranularities()));
+    add(new CheckBox("includeCurrentWeek", new PropertyModel(dataModel, "includeCurrentWeek")));
     
+    //General color settings.
     final Select goodColorSelect = new Select("goodColorSelect", new PropertyModel(dataModel,
     "goodColor"));
     goodColorSelect.add(new ColorSelectOptionList("goodColorOptionList", Arrays.asList(colors)));
@@ -119,6 +122,7 @@ public class ProjectPortfolioConfigurationForm extends StatelessForm {
     badColorSelect.add(new AjaxColorSelectChangeBackgroundColorBehavior(goodColorSelect));
     add(badColorSelect);
     
+    //measure specified settings.
     final Form form = this;
     
     ListView measureList = new ListView("measureList", dataModel.getMeasures()) {

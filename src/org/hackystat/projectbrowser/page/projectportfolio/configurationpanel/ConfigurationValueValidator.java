@@ -52,8 +52,8 @@ public class ConfigurationValueValidator extends AbstractFormValidator {
    * @param form - form this validator is added to
    */
   public void validate(Form form) {
-    double higherValue = Double.valueOf(higherValueTextField.getInput());
-    double lowerValue = Double.valueOf(lowerValueTextField.getInput());
+    double higherValue = Double.valueOf(higherValueTextField.getInput().replaceAll(",", ""));
+    double lowerValue = Double.valueOf(lowerValueTextField.getInput().replaceAll(",", ""));
     if (higherValue <= lowerValue) {
       error(higherValueTextField, "HigherValueSmallerThanLowerValue");
     }

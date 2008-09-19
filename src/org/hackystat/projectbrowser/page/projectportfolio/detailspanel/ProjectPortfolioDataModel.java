@@ -3,6 +3,8 @@ package org.hackystat.projectbrowser.page.projectportfolio.detailspanel;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +52,8 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
   private String telemetryGranularity = "Week";
   /** The available granularities. */
   private final String[] granularities = {"Day", "Week", "Month"};
+  /** If current day, week or month will be included in portfolio. */
+  private boolean includeCurrentWeek = true;
   
   /** 
    * the time phrase this data model focus. 
@@ -64,6 +68,8 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
         new HashMap<Project, List<MiniBarChart>>();
   /** The thresholds. */
   private final List<MeasureConfiguration> measures = new ArrayList<MeasureConfiguration>();
+  /** Alias for measure. Maps names from definition to names for display. */
+  private Map<String, String> measureAlias = new HashMap<String, String>();
   
 
   /** The background color for table cells. */
@@ -86,13 +92,15 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
     measures.add(new MeasureConfiguration("Coverage", true, 40, 90, true, this));
     measures.add(new MeasureConfiguration("CyclomaticComplexity", true, 10, 20, false, this));
     measures.add(new MeasureConfiguration("Coupling", true, 10, 20, false, this));
-    measures.add(new MeasureConfiguration("Churn", true, 300, 800, false, this));
-    measures.add(new MeasureConfiguration("DevTime", false, 0, 0, true, this));
+    measures.add(new MeasureConfiguration("Churn", true, 400, 900, false, this));
+    measures.add(new MeasureConfiguration("CodeIssue", true, 10, 30, false, this));
+    measures.add(new MeasureConfiguration("Commit", false, 0, 0, true, this));
     measures.add(new MeasureConfiguration("Build", false, 0, 0, true, this));
     measures.add(new MeasureConfiguration("UnitTest", false, 0, 0, true, this));
-    measures.add(new MeasureConfiguration("Commit", false, 0, 0, true, this));
-    measures.add(new MeasureConfiguration("CodeIssue", false, 0, 0, false, this));
     measures.add(new MeasureConfiguration("FileMetric", false, 0, 0, true, this));
+    measures.add(new MeasureConfiguration("DevTime", false, 0, 0, true, this));
+    
+    measureAlias.put("CyclomaticComplexity", "Complexity");
   }
   
   /**
@@ -126,6 +134,9 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
     try {
       measuresCharts.clear();
       TelemetryClient telemetryClient = new TelemetryClient(telemetryHost, email, password);
+      //prepare start and end time.
+      XMLGregorianCalendar startTime = getStartTimestamp();
+      XMLGregorianCalendar endTime = getEndTimestamp();
       for (int i = 0; i < this.selectedProjects.size() && inProcess; i++) {
         //prepare project's information
         Project project = this.selectedProjects.get(i);
@@ -146,19 +157,7 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
           this.processingMessage += "---> Retrieve " + measure.getName() + "<" + 
           measure.getParamtersString() + ">" + " (" + (i + 1) + " .. " + (j + 1) + 
           " of " + enableMeasures.size() + ").\n";
-          /*
-          if (measure.getParameters().isEmpty()) {
-            List<String> params = new ArrayList<String>();
-            List<ParameterDefinition> paramDefList = getParameterDefinitions(measure.getName());
-            for (ParameterDefinition paramDef : paramDefList) {
-              params.add(paramDef.getType().getDefault());
-            }
-            measure.setParameters(params);
-          }
-          */
           //get data from hackystat
-          XMLGregorianCalendar startTime = Tstamp.makeTimestamp(getStartDate());
-          XMLGregorianCalendar endTime = Tstamp.makeTimestamp(getEndDate());
           if (!ProjectUtils.isValidStartTime(project, startTime)) {
             startTime = project.getStartTime();
           }
@@ -223,8 +222,8 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
     
     parameters.put(TelemetrySession.TELEMETRY_KEY, measure.getName());
     parameters.put(
-        TelemetrySession.START_DATE_KEY, Tstamp.makeTimestamp(getStartDate()).toString());
-    parameters.put(TelemetrySession.END_DATE_KEY, Tstamp.makeTimestamp(getEndDate()).toString());
+        TelemetrySession.START_DATE_KEY, getStartTimestamp().toString());
+    parameters.put(TelemetrySession.END_DATE_KEY, getEndTimestamp().toString());
     parameters.put(TelemetrySession.SELECTED_PROJECTS_KEY, 
         project.getName() + TelemetrySession.PROJECT_NAME_OWNER_SEPARATR + project.getOwner());
     parameters.put(TelemetrySession.GRANULARITY_KEY, this.telemetryGranularity);
@@ -234,29 +233,40 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
   }
 
   /**
-   * Return the end date for analysis.
-   * @return the number of milliseconds since January 1, 1970, 00:00:00 GMT.
+   * Return the end time stamp for analysis.
+   * If includeCurrentWeek, it will return the time stamp of yesterday.
+   * If !includeCurrentWeek, it will return the time stamp of last Saturday.
+   * @return the XMLGregorianCalendar instance.
    */
-  private long getEndDate() {
-    return ProjectBrowserBasePage.getDateBefore(1).getTime();
+  private XMLGregorianCalendar getEndTimestamp() {
+    if (!this.includeCurrentWeek) {
+      GregorianCalendar date = new GregorianCalendar();
+      date.setTime(ProjectBrowserBasePage.getDateBefore(1));
+      date.setFirstDayOfWeek(Calendar.MONDAY);
+      int dayOfWeek = date.get(Calendar.DAY_OF_WEEK);
+      XMLGregorianCalendar endTime = Tstamp.makeTimestamp(date.getTimeInMillis());
+      endTime = Tstamp.incrementDays(endTime, - dayOfWeek);
+      return endTime;
+    }
+    return Tstamp.makeTimestamp(ProjectBrowserBasePage.getDateBefore(1).getTime());
   }
 
   /**
-   * Return the end date for analysis.
-   * @return the number of milliseconds since January 1, 1970, 00:00:00 GMT.
+   * Return the start time stamp for analysis.
+   * @return the XMLGregorianCalendar instance.
    */
-  private long getStartDate() {
-    int daysInGranularity;
+  private XMLGregorianCalendar getStartTimestamp() {
+    int days;
     if ("Month".equals(this.telemetryGranularity)) {
-      daysInGranularity = 30;
+      days = this.timePhrase * 30;
     }
     else if ("Week".equals(this.telemetryGranularity)) {
-      daysInGranularity = 7;
+      days = this.timePhrase * 7;
     }
     else {
-      daysInGranularity = 1;
+      days = this.timePhrase;
     }
-    return ProjectBrowserBasePage.getDateBefore(this.timePhrase * daysInGranularity).getTime();
+    return Tstamp.makeTimestamp(ProjectBrowserBasePage.getDateBefore(days).getTime());
   }
 
   /**
@@ -344,13 +354,22 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
   }
   
   /**
+   * Return the names of enabled measures. 
+   * If alias available for the measure, alias will be returned.
+   * Otherwise, name in measure's definition will be returned.
    * @return the names of the enabled measures.
    */
   public List<String> getEnabledMeasuresName() {
     List<String> names = new ArrayList<String>();
     for (MeasureConfiguration measure : measures) {
       if (measure.isEnabled()) {
-        names.add(measure.getName());
+        //Convert to alias if available.
+        if (this.measureAlias.containsKey(measure.getName())) {
+          names.add(this.measureAlias.get(measure.getName()));
+        }
+        else {
+          names.add(measure.getName());
+        }
       }
     }
     return names;
@@ -452,5 +471,19 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
    */
   public List<String> getGranularities() {
     return Arrays.asList(this.granularities);
+  }
+
+  /**
+   * @param includeCurrentWeek the includeCurrentWeek to set
+   */
+  public void setIncludeCurrentWeek(boolean includeCurrentWeek) {
+    this.includeCurrentWeek = includeCurrentWeek;
+  }
+
+  /**
+   * @return the includeCurrentWeek
+   */
+  public boolean isIncludeCurrentWeek() {
+    return includeCurrentWeek;
   }
 }
