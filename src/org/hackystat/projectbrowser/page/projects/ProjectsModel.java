@@ -373,14 +373,15 @@ public class ProjectsModel implements Serializable, IClusterable {
    * Parse the project members in comma delimited form into a collection.
    * 
    * @param membersStr string to parse
-   * @param delimitor between members
    * @return List of project members in comma delimited form.
    */
-  public List<String> parseMembersStr(String membersStr, String delimitor) {
+  public List<String> parseMembersStr(String membersStr) {
+    String comma = ",";
     List<String> result = new ArrayList<String>();
     if ((membersStr != null) && (!"".equals(membersStr))) {
-      for (String member : membersStr.split(delimitor)) {
-        member = member.replace("\n", "");
+      String str = membersStr.replace("\n", comma);
+      str = str.replace(",,", comma);
+      for (String member : str.split(comma)) {
         result.add(member.trim());
       }
     }
@@ -437,7 +438,7 @@ public class ProjectsModel implements Serializable, IClusterable {
    * @param memberStr comma delimited member string to parse.
    */
   public void setProjectMembersStr(String memberStr) {
-    setProjectMembers(parseMembersStr(memberStr, ","));
+    setProjectMembers(parseMembersStr(memberStr));
   }
 
   /**
@@ -487,7 +488,7 @@ public class ProjectsModel implements Serializable, IClusterable {
    * @param memberStr comma delimited invitation string to parse.
    */
   public void setProjectInvitationsStr(String memberStr) {
-    setProjectInvitations(parseMembersStr(memberStr, ","));
+    setProjectInvitations(parseMembersStr(memberStr));
   }
 
   /**
@@ -524,7 +525,7 @@ public class ProjectsModel implements Serializable, IClusterable {
    * @param memberStr comma delimited spectator string to parse.
    */
   public void setProjectSpectatorsStr(String memberStr) {
-    setProjectSpectators(parseMembersStr(memberStr, ","));
+    setProjectSpectators(parseMembersStr(memberStr));
   }
 
   /**

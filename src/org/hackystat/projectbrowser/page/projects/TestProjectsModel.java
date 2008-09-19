@@ -165,4 +165,30 @@ public class TestProjectsModel extends ProjectBrowserTestHelper {
     String expected = "key1=value1\nkey2=value2\nkey3=value3";
     Assert.assertEquals(expected, model.getProjectPropertiesStr());
   }
+  
+  /**
+   * Test parsing of member comma or cr delimited string.
+   */
+  @Test
+  public void testParseMembersStr() { //NOPMD Wicket has its own asserts
+    String one = "one";
+    String two = "two";
+    String three = "three";
+    String comma = ",";
+    String cr = "\n";
+    String testCommaStr = one + comma + two + comma + " " + three;
+    String testCrStr = one + cr + two + cr + " " + three;
+    ProjectsModel model = new ProjectsModel();
+    
+    List<String> result;
+    result = model.parseMembersStr(testCommaStr);
+    Assert.assertEquals(one, result.get(0));
+    Assert.assertEquals(two, result.get(1));
+    Assert.assertEquals(three, result.get(2));
+
+    result = model.parseMembersStr(testCrStr);
+    Assert.assertEquals(one, result.get(0));
+    Assert.assertEquals(two, result.get(1));
+    Assert.assertEquals(three, result.get(2));
+  }
 }
