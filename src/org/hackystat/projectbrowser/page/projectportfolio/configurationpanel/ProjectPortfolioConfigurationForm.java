@@ -210,6 +210,7 @@ public class ProjectPortfolioConfigurationForm extends StatelessForm {
             form.remove(oldValidator);
           }
         }
+        
      // Add parameter List
         TelemetrySession telemetrySession = ProjectBrowserSession.get().getTelemetrySession();
         ListView parameterList = 

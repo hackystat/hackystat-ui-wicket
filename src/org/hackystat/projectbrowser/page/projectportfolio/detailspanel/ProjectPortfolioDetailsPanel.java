@@ -54,6 +54,8 @@ public class ProjectPortfolioDetailsPanel extends Panel {
       protected void populateItem(ListItem item) {
         Project project = (Project)item.getModelObject();
         item.add(new Label("projectName", project.getName()));
+        item.add(new Label("members", String.valueOf(project.getMembers().getMember().size() + 1)));
+        
         ListView dateList = new ListView("measures", dataModel.getMeasuresCharts().get(project)) {
           /** Support serialization. */
           public static final long serialVersionUID = 1L;
