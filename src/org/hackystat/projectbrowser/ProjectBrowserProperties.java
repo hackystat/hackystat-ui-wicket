@@ -114,6 +114,7 @@ public class ProjectBrowserProperties {
     properties.setProperty(AVAILABLEPAGE_KEY + ".dailyprojectdata", trueString);
     properties.setProperty(AVAILABLEPAGE_KEY + ".telemetry", trueString);
     properties.setProperty(AVAILABLEPAGE_KEY + ".projects", trueString);
+    properties.setProperty(AVAILABLEPAGE_KEY + ".projectportfolio", trueString);
     properties.setProperty(BACKGROUND_PROCESS_KEY + ".telemetry", trueString);
     properties.setProperty(BACKGROUND_PROCESS_KEY + ".projectportfolio", trueString);
 
