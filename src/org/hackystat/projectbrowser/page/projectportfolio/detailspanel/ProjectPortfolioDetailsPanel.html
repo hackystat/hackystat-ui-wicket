@@ -10,12 +10,14 @@
         </th>
         <tr wicket:id="projectTable">
           <td wicket:id="projectName">project name</td>
-          <td wicket:id="members">members</td>
+          <td><div align="center" wicket:id="members">members</div></td>
           <span wicket:id="measures">
             <td>
-              <a wicket:id="chartLink"><img wicket:id="chart"></img></a>
+              <div align="right">
+                <a wicket:id="chartLink"><img wicket:id="chart"></img></a>
+              </div>
             </td>
-              <td align="center" wicket:id="value"></td>
+            <td><span wicket:id="value"></span></td>
           </span>
         </tr>
       </table>

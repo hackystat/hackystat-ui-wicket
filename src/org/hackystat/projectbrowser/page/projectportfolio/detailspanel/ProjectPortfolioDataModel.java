@@ -69,7 +69,7 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
   /** The thresholds. */
   private final List<MeasureConfiguration> measures = new ArrayList<MeasureConfiguration>();
   /** Alias for measure. Maps names from definition to names for display. */
-  private Map<String, String> measureAlias = new HashMap<String, String>();
+  private final Map<String, String> measureAlias = new HashMap<String, String>();
   
 
   /** The background color for table cells. */
@@ -485,5 +485,12 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
    */
   public boolean isIncludeCurrentWeek() {
     return includeCurrentWeek;
+  }
+
+  /**
+   * @return the measureAlias
+   */
+  public Map<String, String> getMeasureAlias() {
+    return measureAlias;
   }
 }

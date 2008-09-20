@@ -19,7 +19,7 @@
             <input type="checkbox" wicket:id="includeCurrentWeek"/> Include current day/week/month?
           </td>
         </tr>
-        <tr>
+        <!--tr>
           <td>
           Good Color
             <select wicket:id="goodColorSelect">
@@ -44,7 +44,7 @@
               </span>
             </select>
           </td>
-        </tr>
+        </tr-->
       </table>
       <table>
         <tr>
@@ -56,17 +56,19 @@
           <th>Lower Threshold</th>
         </tr>
         <tr wicket:id="measureList">
-          <td><input type="checkbox" wicket:id="enableCheckBox"/></td>
-          <td wicket:id="measureNameLabel"/>
-          <td><input type="checkbox" wicket:id="colorableCheckBox"/></td>
-          <td><input type="checkbox" wicket:id="isHigherBetterCheckBox"/></td>
-          <td><input type="text" style="width: 3em" wicket:id="higherThreshold"/></td>
-          <td><input type="text" style="width: 3em" wicket:id="lowerThreshold"/></td>
-          <span wicket:id="parameterList">
-            <td>
-              <span wicket:id="name" />: <span style="width: 8em" wicket:id="field"/>
+          <td style="vertical-align:middle"><input type="checkbox" wicket:id="enableCheckBox"/></td>
+          <td style="vertical-align:middle" wicket:id="measureNameLabel"/>
+          <td style="vertical-align:middle"><input type="checkbox" wicket:id="colorableCheckBox"/></td>
+          <td style="vertical-align:middle"><input type="checkbox" wicket:id="isHigherBetterCheckBox"/></td>
+          <td style="vertical-align:middle"><input type="text" style="width: 3em" wicket:id="higherThreshold"/></td>
+          <td style="vertical-align:middle"><input type="text" style="width: 3em" wicket:id="lowerThreshold"/></td>
+          <div wicket:id="parameterList">
+            <td style="vertical-align:middle">
+              <div>
+              <span wicket:id="name" />:<span style="width: 8em" wicket:id="field"/>
+              </div>
             </td>
-          </span>
+          </div>
         </tr>
         <tr>
           <td style="text-align:center">

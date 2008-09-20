@@ -1,7 +1,6 @@
 package org.hackystat.projectbrowser.page.projectportfolio.configurationpanel;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +44,7 @@ public class ProjectPortfolioConfigurationForm extends StatelessForm {
   /** Support serialization. */
   private static final long serialVersionUID = 447730202032199770L;
   /** The colors to choose from. */
+  /*
   private static final String[] colors = { "ffff00", // yellow
       "ff6600", // orange
       //"ff8080", // pink
@@ -58,6 +58,7 @@ public class ProjectPortfolioConfigurationForm extends StatelessForm {
       //"0000ff", // blue
       //"000000", // black
   };
+  */
   /** The introductions. */
   private static final String introductions = 
     "Time phase: the time phase to analyse."
@@ -94,7 +95,8 @@ public class ProjectPortfolioConfigurationForm extends StatelessForm {
                            dataModel.getGranularities()));
     add(new CheckBox("includeCurrentWeek", new PropertyModel(dataModel, "includeCurrentWeek")));
     
-    //General color settings.
+    //Color settings.
+    /*
     final Select goodColorSelect = new Select("goodColorSelect", new PropertyModel(dataModel,
     "goodColor"));
     goodColorSelect.add(new ColorSelectOptionList("goodColorOptionList", Arrays.asList(colors)));
@@ -121,6 +123,7 @@ public class ProjectPortfolioConfigurationForm extends StatelessForm {
     badColorSelect.setOutputMarkupId(true);
     badColorSelect.add(new AjaxColorSelectChangeBackgroundColorBehavior(goodColorSelect));
     add(badColorSelect);
+    */
     
     //measure specified settings.
     final Form form = this;
@@ -133,7 +136,11 @@ public class ProjectPortfolioConfigurationForm extends StatelessForm {
       protected void populateItem(ListItem item) {
         final MeasureConfiguration measure = (MeasureConfiguration) item.getModelObject();
 
-        item.add(new Label("measureNameLabel", new PropertyModel(measure, "measureName")));
+        String measureName = measure.getName();
+        if (dataModel.getMeasureAlias().containsKey(measureName)) {
+          measureName = dataModel.getMeasureAlias().get(measureName);
+        }
+        item.add(new Label("measureNameLabel", measureName));
 
         item.add(new AjaxCheckBox("enableCheckBox", new PropertyModel(measure, "enabled")) {
           /** Support serialization. */
