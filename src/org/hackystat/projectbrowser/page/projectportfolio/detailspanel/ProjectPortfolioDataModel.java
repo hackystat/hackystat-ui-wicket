@@ -101,6 +101,7 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
     measures.add(new MeasureConfiguration("DevTime", false, 0, 0, true, this));
     
     measureAlias.put("CyclomaticComplexity", "Complexity");
+    measureAlias.put("FileMetric", "Size(LOC)");
   }
   
   /**
