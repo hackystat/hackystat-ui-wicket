@@ -43,13 +43,19 @@ public class TestProjectPortfolioPage extends ProjectBrowserTestHelper {
   private static final String TRUE = "true";
   /** The word of "false". */
   private static final String FALSE = "false";
+  
+  /** The start date. */
+  private static final String testStartDate = "2007-01-01";
+  /** The end date. */
+  private static final String testEndDate = "2007-01-10";
 
   /**
    * Initialize data for testing.
+   * @throws Exception when error occur.
    */
   @Before
-  public void setUp() {
-    this.generateSimData(testUser, testProject, Tstamp.makeTimestamp(), 0);
+  public void setUp() throws Exception {
+    this.generateSimData(testUser, testProject, Tstamp.makeTimestamp(testEndDate), 0);
   }
   
   /**
@@ -82,8 +88,6 @@ public class TestProjectPortfolioPage extends ProjectBrowserTestHelper {
     FormTester configurationForm = tester.newFormTester("configurationPanel:configurationForm");
     ListView measureList = (ListView)configurationForm.getForm().get("measureList");
     assertTrue("There should be 10 measures.", measureList.getList().size() > 2);
-    configurationForm.select("granularity", 0);
-    configurationForm.setValue("timePhrase", "10");
     //set the second measure to be uncolorable.
     configurationForm.setValue("measureList:1:colorableCheckBox", FALSE);
     //set all others to be disable.
@@ -114,6 +118,9 @@ public class TestProjectPortfolioPage extends ProjectBrowserTestHelper {
     }
     //select that choice.
     inputForm.select("projectMenu", index);
+    inputForm.select("granularity", 0);
+    inputForm.setValue("startDate", testStartDate);
+    inputForm.setValue("endDate", testEndDate);
     inputForm.submit("submit");
     //check the result.
     tester.assertRenderedPage(ProjectPortfolioPage.class);

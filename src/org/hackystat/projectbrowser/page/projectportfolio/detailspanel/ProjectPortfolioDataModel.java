@@ -2,9 +2,6 @@ package org.hackystat.projectbrowser.page.projectportfolio.detailspanel;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +9,6 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.model.Model;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
-import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
 import org.hackystat.projectbrowser.page.loadingprocesspanel.Processable;
 import org.hackystat.projectbrowser.page.telemetry.TelemetrySession;
 import org.hackystat.sensorbase.resource.projects.ProjectUtils;
@@ -49,17 +45,19 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
   private TelemetrySession telemetrySession;
   
   /** the granularity this data model focus. */
-  private String telemetryGranularity = "Week";
-  /** The available granularities. */
-  private final String[] granularities = {"Day", "Week", "Month"};
+  private String granularity = "Week";
   /** If current day, week or month will be included in portfolio. */
-  private boolean includeCurrentWeek = true;
+  //private boolean includeCurrentWeek = true;
+  /** The start date this user has selected. */
+  private long startDate = 0;
+  /** The end date this user has selected. */
+  private long endDate = 0;
   
   /** 
    * the time phrase this data model focus. 
    * In scale of telemetryGranularity, from current to the past. 
    * */
-  private int timePhrase = 5;
+  //private int timePhrase = 5;
   
   /** The projects this user has selected. */
   private List<Project> selectedProjects = new ArrayList<Project>();
@@ -108,13 +106,17 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
    * @param startDate the start date.
    * @param endDate the end date.
    * @param selectedProjects the selected projects.
+   * @param granularity the granularity this data model focus.
    * @param telemetryHost the telemetry host
    * @param email the user's email
    * @param password the user's passowrd
    */
   public void setModel(long startDate, long endDate, List<Project> selectedProjects, 
-      String telemetryHost, String email, String password) {
+      String granularity, String telemetryHost, String email, String password) {
     this.telemetryHost = telemetryHost;
+    this.startDate = startDate;
+    this.endDate = endDate;
+    this.granularity = granularity;
     this.email = email;
     this.password = password;
     this.selectedProjects = selectedProjects;
@@ -163,7 +165,7 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
             startTime = project.getStartTime();
           }
           TelemetryChartData chartData = telemetryClient.getChart(measure.getName(), 
-              owner, projectName, telemetryGranularity, startTime, endTime, 
+              owner, projectName, granularity, startTime, endTime, 
               measure.getParamtersString());
           
           MiniBarChart chart = new MiniBarChart(chartData.getTelemetryStream().get(0), measure);
@@ -227,7 +229,7 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
     parameters.put(TelemetrySession.END_DATE_KEY, getEndTimestamp().toString());
     parameters.put(TelemetrySession.SELECTED_PROJECTS_KEY, 
         project.getName() + TelemetrySession.PROJECT_NAME_OWNER_SEPARATR + project.getOwner());
-    parameters.put(TelemetrySession.GRANULARITY_KEY, this.telemetryGranularity);
+    parameters.put(TelemetrySession.GRANULARITY_KEY, this.granularity);
     parameters.put(TelemetrySession.TELEMETRY_PARAMERTERS_KEY, measure.getParamtersString());
     
     return parameters;
@@ -240,6 +242,7 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
    * @return the XMLGregorianCalendar instance.
    */
   private XMLGregorianCalendar getEndTimestamp() {
+	/*
     if (!this.includeCurrentWeek) {
       GregorianCalendar date = new GregorianCalendar();
       date.setTime(ProjectBrowserBasePage.getDateBefore(1));
@@ -250,6 +253,8 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
       return endTime;
     }
     return Tstamp.makeTimestamp(ProjectBrowserBasePage.getDateBefore(1).getTime());
+    */
+	return Tstamp.makeTimestamp(this.endDate);
   }
 
   /**
@@ -257,6 +262,7 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
    * @return the XMLGregorianCalendar instance.
    */
   private XMLGregorianCalendar getStartTimestamp() {
+	  /*
     int days;
     if ("Month".equals(this.telemetryGranularity)) {
       days = this.timePhrase * 30;
@@ -268,6 +274,8 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
       days = this.timePhrase;
     }
     return Tstamp.makeTimestamp(ProjectBrowserBasePage.getDateBefore(days).getTime());
+    */
+	return Tstamp.makeTimestamp(this.startDate);
   }
 
   /**
@@ -451,41 +459,6 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
    */
   public String getNAColor() {
     return naColor;
-  }
-
-  /**
-   * @param telemetryGranularity the telemetryGranularity to set
-   */
-  public void setTelemetryGranularity(String telemetryGranularity) {
-    this.telemetryGranularity = telemetryGranularity;
-  }
-
-  /**
-   * @return the telemetryGranularity
-   */
-  public String getTelemetryGranularity() {
-    return telemetryGranularity;
-  }
-
-  /**
-   * @return the granularities
-   */
-  public List<String> getGranularities() {
-    return Arrays.asList(this.granularities);
-  }
-
-  /**
-   * @param includeCurrentWeek the includeCurrentWeek to set
-   */
-  public void setIncludeCurrentWeek(boolean includeCurrentWeek) {
-    this.includeCurrentWeek = includeCurrentWeek;
-  }
-
-  /**
-   * @return the includeCurrentWeek
-   */
-  public boolean isIncludeCurrentWeek() {
-    return includeCurrentWeek;
   }
 
   /**

@@ -88,12 +88,14 @@ public class ProjectPortfolioConfigurationForm extends StatelessForm {
     
     add(new FeedbackPanel("configurationFeedback")); 
 
+    /*
     //General settings
     add(new TextField("timePhrase", new PropertyModel(dataModel, "timePhrase")));
     add(new DropDownChoice("granularity", 
                            new PropertyModel(dataModel, "telemetryGranularity"), 
                            dataModel.getGranularities()));
     add(new CheckBox("includeCurrentWeek", new PropertyModel(dataModel, "includeCurrentWeek")));
+    */
     
     //Color settings.
     /*

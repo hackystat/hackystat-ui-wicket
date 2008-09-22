@@ -1,13 +1,17 @@
 package org.hackystat.projectbrowser.page.projectportfolio.inputpanel;
 
+import org.apache.wicket.extensions.markup.html.form.DateTextField;
+import org.apache.wicket.extensions.yui.calendar.DatePicker;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.ListMultipleChoice;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.PropertyModel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.ProjectChoiceRenderer;
+import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
 import org.hackystat.projectbrowser.page.projectportfolio.ProjectPortfolioPage;
 import org.hackystat.projectbrowser.page.projectportfolio.ProjectPortfolioSession;
 
@@ -56,6 +60,48 @@ public class ProjectPortfolioInputForm extends Form {
     projectMenu.setRequired(true);
     add(projectMenu);
 
+    //StartDateTextField
+    DateTextField startDateTextField = 
+      new DateTextField("startDateTextField", new PropertyModel(session, "startDate"), 
+          ProjectBrowserBasePage.DATA_FORMAT) {
+      /** Support serialization. */
+      public static final long serialVersionUID = 1L;
+      @Override
+      public boolean isEnabled() {
+        return getIsEnable();
+      }
+    };
+    startDateTextField.add(new DatePicker());
+    startDateTextField.setRequired(true);
+    add(startDateTextField);
+    
+    //EndDateTextField
+    DateTextField endDateTextField = 
+      new DateTextField("endDateTextField", new PropertyModel(session, "endDate"), 
+          ProjectBrowserBasePage.DATA_FORMAT) {
+      /** Support serialization. */
+      public static final long serialVersionUID = 1L;
+      @Override
+      public boolean isEnabled() {
+        return getIsEnable();
+      }
+    };
+    endDateTextField.add(new DatePicker());
+    endDateTextField.setRequired(true);
+    add(endDateTextField);
+    
+    //granularity
+    add(new DropDownChoice("granularity", 
+                           new PropertyModel(session, "granularity"), 
+                           session.getGranularities()) {
+      /** Support serialization. */
+      public static final long serialVersionUID = 1L;
+      @Override
+      public boolean isEnabled() {
+        return getIsEnable();
+      }
+    });
+    
     Link configurationLink = new Link("configuration") {
       /** Support serialization. */
       private static final long serialVersionUID = 0L;

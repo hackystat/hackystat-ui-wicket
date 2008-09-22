@@ -23,7 +23,7 @@ public class LoadingProcessPanel extends Panel {
   private static final long serialVersionUID = 1L;
   /** the data model. */
   private Processable dataModel;
-
+  
   /**
    * @param id the wicket component id.
    * @param model the data model associating with this panel.
@@ -39,7 +39,9 @@ public class LoadingProcessPanel extends Panel {
     this.dataModel = model;
     MultiLineLabel label = 
       new MultiLineLabel("processingMessage", new PropertyModel(dataModel, "processingMessage"));
+    label.setOutputMarkupId(true);
     add(label);
+    
     //add loading image
     Image loadingImage = new Image("loadingImage", 
         new ResourceReference(LoadingProcessPanel.class, "loading21-1.gif")) {
@@ -62,7 +64,7 @@ public class LoadingProcessPanel extends Panel {
    */
   public final void start() {
     AjaxSelfUpdatingTimerBehavior selfUpdateBehavior = 
-      new AjaxSelfUpdatingTimerBehavior(Duration.ONE_SECOND) {
+      new AjaxSelfUpdatingTimerBehavior(Duration.milliseconds(200)) {
       /** Support serialization. */
       private static final long serialVersionUID = 1L;
       @Override
