@@ -89,6 +89,7 @@ public class TelemetryChartDataModel implements Serializable, Processable {
     this.granularity = granularity;
     this.selectedProjects = selectedProjects;
     this.telemetryName = telemetryName;
+    //clear old data.
     this.projectStreamData.clear();
     this.parameters.clear();
     for (IModel model : parameters) {
@@ -111,8 +112,9 @@ public class TelemetryChartDataModel implements Serializable, Processable {
     Logger logger = HackystatLogger.getLogger("org.hackystat.projectbrowser", "projectbrowser");
     try {
       TelemetryClient client = new TelemetryClient(this.telemetryHost, this.email, this.password);
-
+      //for each selected project
       for (int i = 0; i < this.selectedProjects.size() && inProcess; i++) {
+        //prepare
         Project project = this.selectedProjects.get(i);
         this.processingMessage += "Retrieving data for project: " + project.getName() + 
             " (" + (i + 1) + " of " + this.selectedProjects.size() + ").\n";
@@ -121,7 +123,7 @@ public class TelemetryChartDataModel implements Serializable, Processable {
             + "> for project: " + project.getName());
         
         List<SelectableTelemetryStream> streamList = new ArrayList<SelectableTelemetryStream>();
-        
+        //retrieve data from server.
         List<TelemetryStream> streams = client.getChart(this.getTelemetryName(),
             project.getOwner(), project.getName(), granularity,
             Tstamp.makeTimestamp(startDate), Tstamp.makeTimestamp(endDate), 
@@ -211,7 +213,6 @@ public class TelemetryChartDataModel implements Serializable, Processable {
       TelemetryStreamYAxis axis = streamAxisMap.get(streamUnitName);
       if (axis == null) {
         axis = newYAxis(streamUnitName, streamMax, streamMin);
-        stream.setColor(axis.getColor());
         streamAxisMap.put(streamUnitName, axis);
       }
       else {
@@ -219,7 +220,6 @@ public class TelemetryChartDataModel implements Serializable, Processable {
         double axisMin = axis.getMinimum();
         axis.setMaximum((axisMax > streamMax) ? axisMax : streamMax);
         axis.setMinimum((axisMin < streamMin) ? axisMin : streamMin);
-        stream.setColor(axis.getColor());
       }
     }
     //add the y axis and extend the range if it contains only one horizontal line.
@@ -242,6 +242,7 @@ public class TelemetryChartDataModel implements Serializable, Processable {
     //add streams to the chart.
     for (int i = 0; i < streams.size(); ++i) {
       SelectableTelemetryStream stream = streams.get(i);
+      stream.setColor(streamAxisMap.get(stream.getUnitName()).getColor());
       if (!stream.isEmpty()) {
         TelemetryStreamYAxis axis = streamAxisMap.get(stream.getUnitName());
         this.addStreamToChart(stream, axis.getMinimum(), axis.getMaximum(), googleChart);
