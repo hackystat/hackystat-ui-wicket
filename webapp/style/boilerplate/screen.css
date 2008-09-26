@@ -49,7 +49,7 @@ hr { color : #3366CC; background-color : #3366CC; height : 2px; }
 --------------------------------------------------------------- */
 
 #sensordata-left     { float: left; width: 200px;}
-#sensordata-right    { float: all; width: 80%;}
+#sensordata-right    { float: all; margin-left: 200px; width: auto}
 #loadingpanelmessage { height: 300px; overflow: auto;}
 
 

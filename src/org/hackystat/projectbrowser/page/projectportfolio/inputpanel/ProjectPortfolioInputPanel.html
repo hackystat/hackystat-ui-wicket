@@ -5,19 +5,19 @@
     <form wicket:id="inputForm">
         <tr>
           <td>
-          Start Date: <br/>
+          <label>From Date:</label> <br/>
             <input style="width: 8em" wicket:id="startDateTextField" type="text" />
           </td>
         </tr>
         <tr>
           <td colspan="2">
-          End Date: <br/>
+          <label>To Date:</label> <br/>
             <input style="width: 8em" wicket:id="endDateTextField" type="text" />
           </td>
         </tr>
         <tr>
           <td>
-          Granularity: <br/>
+          <label>Granularity:</label> <br/>
             <select style="width: 8em" wicket:id="granularity">
               <option value="Day">Day</option>
               <option value="Week">Week</option>
@@ -27,7 +27,7 @@
         </tr>
         <tr>
           <td>
-          Project(s): <br/>
+          <label>Project(s):</label> <br/>
             <select style="width: 10em" wicket:id="projectMenu">
               <option value="Default">Default</option>
             </select>
