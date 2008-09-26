@@ -57,7 +57,7 @@ public class TelemetrySession implements Serializable {
   /** The separator for parameter values. */
   public static final String PARAMETER_VALUE_SEPARATOR = ",";
   /** The separator between project name and its onwer. */
-  public static final String PROJECT_NAME_OWNER_SEPARATR = "-";
+  public static final String PROJECT_NAME_OWNER_SEPARATR = "::";
 
   /** The analysis this user has selected. */
   private String telemetryName = null;
@@ -540,26 +540,27 @@ public class TelemetrySession implements Serializable {
     }
     //load seletecd project
     if (parameters.containsKey(SELECTED_PROJECTS_KEY)) {
-      String projectsString = parameters.getString(SELECTED_PROJECTS_KEY);
-      String[] projectsStringArray = projectsString.split(PARAMETER_VALUE_SEPARATOR);
+      String[] projectsStringArray = 
+        parameters.getString(SELECTED_PROJECTS_KEY).split(PARAMETER_VALUE_SEPARATOR);
       List<Project> projectsList = new ArrayList<Project>();
-      for (String string : projectsStringArray) {
-        String[] projectInfo = string.split(PROJECT_NAME_OWNER_SEPARATR, 2);
-        if (projectInfo.length <= 1) {
+      for (String projectString : projectsStringArray) {
+        int index = projectString.lastIndexOf(PROJECT_NAME_OWNER_SEPARATR);
+        if (index < 0 || index > projectString.length()) {
           isLoadSucceed = false;
-          String error = "Error URL parameter: project: " + string + 
+          String error = "Error URL parameter: project: " + projectString + 
               " >> project name and owner are missing or not formatted correctly.";
           logger.warning(error);
           errorMessage.append(error);
           errorMessage.append('\n');
           continue;
         }
-        String projectName = projectInfo[0];
-        String projectOwner = projectInfo[1];
+        String projectName = projectString.substring(0, index);
+        String projectOwner = projectString.substring(index + PROJECT_NAME_OWNER_SEPARATR.length());
+        System.out.println(projectName + " " + projectOwner);
         Project project = this.getProject(projectName, projectOwner);
         if (project == null) {
           isLoadSucceed = false;
-          String error = "Error URL parameter: project: " + string +
+          String error = "Error URL parameter: project: " + projectString +
               " >> matching project not found under user: " + 
               ProjectBrowserSession.get().getEmail();
           logger.warning(error);
