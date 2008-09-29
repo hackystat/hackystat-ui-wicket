@@ -1,7 +1,6 @@
 <html xmlns:wicket>
   <wicket:panel>
     <form wicket:id="configurationForm">
-      <div wicket:id="configurationFeedback"></div>
       <!-- table>
         <tr>
           <td colspan="3">
@@ -48,24 +47,25 @@
       </table-->
       <table>
         <tr>
-          <th>Enabled</th>
-          <th>Name</th>
-          <th>Colorable</th>
-          <th>Is Higher Better</th>
-          <th>Higher Threshold</th>
-          <th>Lower Threshold</th>
+          <th style="text-align:center">Enabled</th>
+          <th style="text-align:center">Name</th>
+          <th style="text-align:center">Colorable</th>
+          <th style="text-align:center">Is Higher Better</th>
+          <th style="text-align:center">Higher Threshold</th>
+          <th style="text-align:center">Lower Threshold</th>
+          <th colspan="5">Telemetry Parameters</th>
         </tr>
         <tr wicket:id="measureList">
-          <td style="vertical-align:middle"><input type="checkbox" wicket:id="enableCheckBox"/></td>
+          <td style="vertical-align:middle; text-align:center"><input type="checkbox" wicket:id="enableCheckBox"/></td>
           <td style="vertical-align:middle" wicket:id="measureNameLabel"/>
-          <td style="vertical-align:middle"><input type="checkbox" wicket:id="colorableCheckBox"/></td>
-          <td style="vertical-align:middle"><input type="checkbox" wicket:id="isHigherBetterCheckBox"/></td>
-          <td style="vertical-align:middle"><input type="text" style="width: 3em" wicket:id="higherThreshold"/></td>
-          <td style="vertical-align:middle"><input type="text" style="width: 3em" wicket:id="lowerThreshold"/></td>
+          <td style="vertical-align:middle; text-align:center"><input type="checkbox" wicket:id="colorableCheckBox"/></td>
+          <td style="vertical-align:middle; text-align:center"><input type="checkbox" wicket:id="isHigherBetterCheckBox"/></td>
+          <td style="vertical-align:middle; text-align:center"><input type="text" style="width: 3em" wicket:id="higherThreshold"/></td>
+          <td style="vertical-align:middle; text-align:center"><input type="text" style="width: 3em" wicket:id="lowerThreshold"/></td>
           <div wicket:id="parameterList">
-            <td style="vertical-align:middle">
+            <td style="vertical-align:middle; text-align:right; white-space:nowrap">
               <div>
-              <span wicket:id="name" />:<span style="width: 8em" wicket:id="field"/>
+              <b wicket:id="name" />:<span style="width: 8em" wicket:id="field"/>
               </div>
             </td>
           </div>
@@ -74,7 +74,7 @@
           <td style="text-align:center">
             <input type="submit" value="OK"/>
           </td>
-          <td>
+          <td colspan="3">
             <span wicket:id="instructionPopup"/>
           </td>
         </tr>

@@ -1,6 +1,7 @@
 package org.hackystat.projectbrowser.page.projectportfolio;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.PropertyModel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
@@ -35,6 +36,7 @@ public class ProjectPortfolioPage extends ProjectBrowserBasePage {
    */
   public ProjectPortfolioPage () {
     super();
+    add(new FeedbackPanel("feedback"));
 
     configurationPanel = new ProjectPortfolioConfigurationPanel("configurationPanel",
                                                                 session.getDataModel());

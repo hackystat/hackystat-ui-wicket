@@ -1,15 +1,27 @@
 package org.hackystat.projectbrowser.page.projectportfolio.detailspanel;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.model.Model;
+import org.hackystat.projectbrowser.ProjectBrowserApplication;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.page.loadingprocesspanel.Processable;
+import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.jaxb.Measure;
+import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.jaxb.
+  PortfolioMeasureConfiguration;
+import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.jaxb.Measure.DefaultValues;
 import org.hackystat.projectbrowser.page.telemetry.TelemetrySession;
 import org.hackystat.sensorbase.resource.projects.ProjectUtils;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
@@ -18,6 +30,7 @@ import org.hackystat.telemetry.service.client.TelemetryClientException;
 import org.hackystat.telemetry.service.resource.chart.jaxb.ParameterDefinition;
 import org.hackystat.telemetry.service.resource.chart.jaxb.TelemetryChartData;
 import org.hackystat.utilities.tstamp.Tstamp;
+import org.xml.sax.SAXException;
 
 /**
  * Data model to hold state of Project Portfolio.
@@ -68,6 +81,9 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
   private final List<MeasureConfiguration> measures = new ArrayList<MeasureConfiguration>();
   /** Alias for measure. Maps names from definition to names for display. */
   private final Map<String, String> measureAlias = new HashMap<String, String>();
+  /** The portfolio measure configuration loaded from xml file. */
+  private static final PortfolioMeasureConfiguration portfolioMeasureConfiguration = 
+                                                                      loadConfiguration();
   
 
   /** The background color for table cells. */
@@ -87,21 +103,79 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
    * Initialize the measure configurations
    */
   public ProjectPortfolioDataModel() {
-    measures.add(new MeasureConfiguration("Coverage", true, 40, 90, true, this));
-    measures.add(new MeasureConfiguration("CyclomaticComplexity", true, 10, 20, false, this));
-    measures.add(new MeasureConfiguration("Coupling", true, 10, 20, false, this));
-    measures.add(new MeasureConfiguration("Churn", true, 400, 900, false, this));
-    measures.add(new MeasureConfiguration("CodeIssue", true, 10, 30, false, this));
-    measures.add(new MeasureConfiguration("Commit", false, 0, 0, true, this));
-    measures.add(new MeasureConfiguration("Build", false, 0, 0, true, this));
-    measures.add(new MeasureConfiguration("UnitTest", false, 0, 0, true, this));
-    measures.add(new MeasureConfiguration("FileMetric", false, 0, 0, true, this));
-    measures.add(new MeasureConfiguration("DevTime", false, 0, 0, true, this));
+    PortfolioMeasureConfiguration config = portfolioMeasureConfiguration;
+    if (config == null) {
+      measures.add(new MeasureConfiguration("Coverage", true, 40, 90, true, this));
+      measures.add(new MeasureConfiguration("CyclomaticComplexity", true, 10, 20, false, this));
+      measures.add(new MeasureConfiguration("Coupling", true, 10, 20, false, this));
+      measures.add(new MeasureConfiguration("Churn", true, 400, 900, false, this));
+      measures.add(new MeasureConfiguration("CodeIssue", true, 10, 30, false, this));
+      measures.add(new MeasureConfiguration("Commit", false, 0, 0, true, this));
+      measures.add(new MeasureConfiguration("Build", false, 0, 0, true, this));
+      measures.add(new MeasureConfiguration("UnitTest", false, 0, 0, true, this));
+      measures.add(new MeasureConfiguration("FileMetric", false, 0, 0, true, this));
+      measures.add(new MeasureConfiguration("DevTime", false, 0, 0, true, this));
+      
+      measureAlias.put("CyclomaticComplexity", "Complexity");
+      measureAlias.put("FileMetric", "Size(LOC)");
+    }
+    else {
+      for (Measure measure : config.getMeasures()) {
+        DefaultValues defaultValues = measure.getDefaultValues();
+        measures.add(
+            new MeasureConfiguration(measure.getName(), 
+                                      defaultValues.isColorable(), 
+                                      defaultValues.getDefaultLowerThresold(), 
+                                      defaultValues.getDefaultHigherThresold(), 
+                                      defaultValues.isHigherBetter(), 
+                                      this));
+        if (measure.getAlias() != null && measure.getAlias().length() > 0) {
+          measureAlias.put(measure.getName(), measure.getAlias());
+        }
+      }
+    }
     
-    measureAlias.put("CyclomaticComplexity", "Complexity");
-    measureAlias.put("FileMetric", "Size(LOC)");
   }
   
+  /**
+   * Load the portfolio measure configuration from the xml file.
+   * @return a PortfolioMeasureConfiguration instance. null if fail to load the file.
+   */
+  private static PortfolioMeasureConfiguration loadConfiguration() {
+    PortfolioMeasureConfiguration portfolioMeasureConfiguration = null;
+    String userHome = System.getProperty("user.home");
+    String configFilePath = 
+      userHome + "/.hackystat/projectbrowser/portfoliomeasureconfiguration.xml";
+    
+    JAXBContext configurationJaxbContext;
+    try {
+      configurationJaxbContext = JAXBContext
+          .newInstance("org.hackystat.projectbrowser.page.projectportfolio.detailspanel.jaxb");
+      File configFile = new File(configFilePath);
+      Unmarshaller unmarshaller = configurationJaxbContext.createUnmarshaller();
+      //Add schema check.
+      SchemaFactory schemaFactory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
+      String schemaPath = 
+        System.getProperty("user.dir") + "/xml/schema/portfolioMeasureConfiguration.xsd";
+      File schemaFile = new File(schemaPath.replace("/", System.getProperty("file.separator")));
+      Schema schema = schemaFactory.newSchema(schemaFile);
+      unmarshaller.setSchema(schema);
+      //Unmarshal
+      portfolioMeasureConfiguration = 
+        (PortfolioMeasureConfiguration) unmarshaller.unmarshal(configFile);
+    }
+    catch (JAXBException e1) {
+      Logger  logger = ((ProjectBrowserApplication)ProjectBrowserApplication.get()).getLogger();
+      logger.severe("Error occurs when loading " + configFilePath + " > Can not parse with jaxb >" +
+      		e1.getMessage());
+    }
+    catch (SAXException e) {
+      Logger  logger = ((ProjectBrowserApplication)ProjectBrowserApplication.get()).getLogger();
+      logger.warning("Error occurs when loading schema file. > " + e.getMessage());
+    }
+    
+    return portfolioMeasureConfiguration;
+  }
   /**
    * @param startDate the start date.
    * @param endDate the end date.

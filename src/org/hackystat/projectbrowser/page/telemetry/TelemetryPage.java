@@ -3,6 +3,7 @@ package org.hackystat.projectbrowser.page.telemetry;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.MultiLineLabel;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.PropertyModel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
@@ -32,6 +33,7 @@ public class TelemetryPage extends ProjectBrowserBasePage {
    */
   public TelemetryPage() {
     //session.clearParamErrorMessage();
+    add(new FeedbackPanel("feedback"));
     
     inputPanel = new TelemetryInputPanel("inputPanel", this);
     inputPanel.setOutputMarkupId(true);

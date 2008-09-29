@@ -2,7 +2,6 @@ package org.hackystat.projectbrowser.page.projectportfolio.inputpanel;
 
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.page.projectportfolio.ProjectPortfolioPage;
@@ -22,7 +21,6 @@ public class ProjectPortfolioInputPanel extends Panel {
    */
   public ProjectPortfolioInputPanel(String id, ProjectPortfolioPage page) {
     super(id);
-    add(new FeedbackPanel("feedback"));
     add(new ProjectPortfolioInputForm("inputForm", page));
     
     Button cancelButton = new Button("cancel") {

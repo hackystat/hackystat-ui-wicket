@@ -23,7 +23,6 @@ import org.apache.wicket.markup.html.form.StatelessForm;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
-import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
@@ -86,8 +85,6 @@ public class ProjectPortfolioConfigurationForm extends StatelessForm {
   public ProjectPortfolioConfigurationForm(String id, final ProjectPortfolioDataModel dataModel) {
     super(id);
     
-    add(new FeedbackPanel("configurationFeedback")); 
-
     /*
     //General settings
     add(new TextField("timePhrase", new PropertyModel(dataModel, "timePhrase")));

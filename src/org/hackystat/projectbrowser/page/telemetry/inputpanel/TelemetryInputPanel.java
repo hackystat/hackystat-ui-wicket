@@ -2,7 +2,6 @@ package org.hackystat.projectbrowser.page.telemetry.inputpanel;
 
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
@@ -22,7 +21,6 @@ public class TelemetryInputPanel extends Panel {
    */
   public TelemetryInputPanel(String id, ProjectBrowserBasePage page) {
     super(id);
-    add(new FeedbackPanel("feedback"));
     add(new TelemetryInputForm("inputForm", page));
     
     Button cancelButton = new Button("cancel") {

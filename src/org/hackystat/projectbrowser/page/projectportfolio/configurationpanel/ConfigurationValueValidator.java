@@ -52,6 +52,13 @@ public class ConfigurationValueValidator extends AbstractFormValidator {
    * @param form - form this validator is added to
    */
   public void validate(Form form) {
+    if (higherValueTextField.getInput() == null && lowerValueTextField.getInput() == null) {
+      return;
+    }
+    if (higherValueTextField.getInput() == null || lowerValueTextField.getInput() == null) {
+      error(higherValueTextField, "HigherValueNotExisted");
+      return;
+    }
     double higherValue = Double.valueOf(higherValueTextField.getInput().replaceAll(",", ""));
     double lowerValue = Double.valueOf(lowerValueTextField.getInput().replaceAll(",", ""));
     if (higherValue <= lowerValue) {
