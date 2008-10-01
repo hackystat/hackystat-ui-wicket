@@ -140,7 +140,7 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
     PortfolioMeasureConfiguration portfolioMeasureConfiguration = null;
     String userHome = System.getProperty("user.home");
     String configFilePath = 
-      userHome + "/.hackystat/projectbrowser/portfoliomeasureconfiguration.xml";
+      userHome + "/.hackystat/projectbrowser/portfolio_site_configuration.xml";
     
     JAXBContext configurationJaxbContext;
     try {
