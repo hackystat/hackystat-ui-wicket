@@ -24,7 +24,7 @@ public class ProjectPortfolioSession implements Serializable {
   private String feedback = "";
   
   /** The data model to hold state for details panel */
-  private final ProjectPortfolioDataModel dataModel = new ProjectPortfolioDataModel();
+  private ProjectPortfolioDataModel dataModel;
   
   /** The start date this user has selected. */
   private long startDate = ProjectBrowserBasePage.getDateBefore(28).getTime();
@@ -148,6 +148,19 @@ public class ProjectPortfolioSession implements Serializable {
    */
   public List<String> getGranularities() {
     return Arrays.asList(this.granularities);
+  }
+
+  /**
+   * Initialize the dataModel.
+   * Only initialize it when it is null.
+   * @return true if the dataModel is initialized, otherwise false.
+   */
+  public boolean initializeDataModel() {
+    if (this.dataModel == null) {
+      this.dataModel = new ProjectPortfolioDataModel();
+      return true;
+    }
+    return false;
   }
   
 }

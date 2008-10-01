@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 
 /**
  * Configuration for project portfolio measures.
@@ -14,6 +15,9 @@ import org.apache.wicket.model.IModel;
 public class MeasureConfiguration implements Serializable {
   /** Support serialization. */
   private static final long serialVersionUID = -6799287509742157998L;
+  
+  /** The parameter separator. */
+  private static final String PARAMETER_SEPARATOR = ",";
 
   /** The name of the measure. */
   private String measureName;
@@ -60,6 +64,23 @@ public class MeasureConfiguration implements Serializable {
     this.dataModel = dataModel;
   }
 
+  /**
+   * Load configuration from a PortfolioMeasure object.
+   * @param measure the PortfolioMeasure object.
+   */
+  public void loadFrom(PortfolioMeasure measure) {
+    this.colorable = measure.isColorable();
+    this.enabled = measure.isEnabled();
+    this.higherBetter = measure.isHigherBetter();
+    this.higherThreshold = measure.getHigherThreshold();
+    this.lowerThreshold = measure.getLowerThreshold();
+    String parametersString = measure.getParameters();
+    this.parameters.clear();
+    for (String parameter : parametersString.split(PARAMETER_SEPARATOR)) {
+      this.parameters.add(new Model(parameter));
+    }
+  }
+  
   /**
    * @param higherThreshold the higherThreshold to set
    */
@@ -187,7 +208,7 @@ public class MeasureConfiguration implements Serializable {
       if (model != null) {
         param.append(model.getObject());
         if (i < this.parameters.size() - 1) {
-          param.append(',');
+          param.append(PARAMETER_SEPARATOR);
         }
       }
     }

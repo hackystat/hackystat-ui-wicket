@@ -37,6 +37,8 @@ public class ProjectPortfolioPage extends ProjectBrowserBasePage {
   public ProjectPortfolioPage () {
     super();
     add(new FeedbackPanel("feedback"));
+    
+    session.initializeDataModel();
 
     configurationPanel = new ProjectPortfolioConfigurationPanel("configurationPanel",
                                                                 session.getDataModel());

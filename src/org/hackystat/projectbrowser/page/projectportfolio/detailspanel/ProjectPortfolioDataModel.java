@@ -30,6 +30,7 @@ import org.hackystat.telemetry.service.client.TelemetryClientException;
 import org.hackystat.telemetry.service.resource.chart.jaxb.ParameterDefinition;
 import org.hackystat.telemetry.service.resource.chart.jaxb.TelemetryChartData;
 import org.hackystat.utilities.tstamp.Tstamp;
+import org.hackystat.utilities.uricache.UriCache;
 import org.xml.sax.SAXException;
 
 /**
@@ -84,7 +85,13 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
   /** The portfolio measure configuration loaded from xml file. */
   private static final PortfolioMeasureConfiguration portfolioMeasureConfiguration = 
                                                                       loadConfiguration();
-  
+
+  /** The configuration saving capacity. */
+  private static Long capacity = 1000L;
+  /** The max life of the saved configuration. */
+  private static Double maxLife = 300.0;
+  /** The user's email. */
+  private String userEmail = ProjectBrowserSession.get().getEmail();
 
   /** The background color for table cells. */
   private String backgroundColor = "000000";
@@ -100,10 +107,19 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
   private String badColor = "ff0000";
   
   /**
-   * Initialize the measure configurations
+   * Constructor that initialize the measures.
    */
   public ProjectPortfolioDataModel() {
+    this.initializeMeasures();
+    this.loadUserConfiguration();
+  }
+
+  /**
+   * Initialize the measure configurations
+   */
+  private void initializeMeasures() {
     //Load default measures
+    measures.clear();
     measures.add(new MeasureConfiguration("Coverage", true, 40, 90, true, this));
     measures.add(new MeasureConfiguration("CyclomaticComplexity", true, 10, 20, false, this));
     measures.add(new MeasureConfiguration("Coupling", true, 10, 20, false, this));
@@ -130,6 +146,41 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
         }
       }
     }
+    
+  }
+  
+  /**
+   * Save user's configuration to system's cache.
+   */
+  public void saveUserConfiguration() {
+    UriCache userCache = this.getUserConfiguartionCache();
+    for (MeasureConfiguration measure : this.measures) {
+      String uri = userEmail + "/" + measure.getName();
+      userCache.put(uri, new PortfolioMeasure(measure));
+    }
+  }
+  
+  /**
+   * Load user's configuration from system's cache.
+   */
+  private void loadUserConfiguration() {
+    UriCache userCache = this.getUserConfiguartionCache();
+    for (MeasureConfiguration measure : this.measures) {
+      String uri = userEmail + "/" + measure.getName();
+      PortfolioMeasure saved = (PortfolioMeasure)userCache.get(uri);
+      if (saved != null) {
+        measure.loadFrom(saved);
+      }
+    }
+  }
+  
+  /**
+   * Reset user's configuration cache.
+   */
+  public void resetUserConfiguration() {
+    UriCache userCache = this.getUserConfiguartionCache();
+    userCache.clearAll();
+    this.initializeMeasures();
   }
   
   /**
@@ -535,5 +586,12 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
    */
   public Map<String, String> getMeasureAlias() {
     return measureAlias;
+  }
+
+  /**
+   * @return the userConfiguartionCache
+   */
+  private UriCache getUserConfiguartionCache() {
+    return new UriCache(userEmail, "portfolio", maxLife, capacity);
   }
 }

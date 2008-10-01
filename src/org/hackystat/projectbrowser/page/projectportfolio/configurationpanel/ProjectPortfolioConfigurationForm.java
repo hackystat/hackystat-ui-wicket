@@ -8,6 +8,7 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.extensions.markup.html.form.select.Select;
@@ -42,6 +43,9 @@ import org.hackystat.telemetry.service.resource.chart.jaxb.Type;
 public class ProjectPortfolioConfigurationForm extends StatelessForm {
   /** Support serialization. */
   private static final long serialVersionUID = 447730202032199770L;
+  
+  /** The associtated ProjectPortfolioDataModel. */
+  private ProjectPortfolioDataModel dataModel;
   /** The colors to choose from. */
   /*
   private static final String[] colors = { "ffff00", // yellow
@@ -80,11 +84,12 @@ public class ProjectPortfolioConfigurationForm extends StatelessForm {
   
   /**
    * @param id the wicket component id.
-   * @param dataModel the data model that will be configure here.
+   * @param d the data model that will be configure here.
    */
-  public ProjectPortfolioConfigurationForm(String id, final ProjectPortfolioDataModel dataModel) {
+  public ProjectPortfolioConfigurationForm(String id, ProjectPortfolioDataModel d) {
     super(id);
     
+    this.dataModel = d;
     /*
     //General settings
     add(new TextField("timePhrase", new PropertyModel(dataModel, "timePhrase")));
@@ -166,19 +171,14 @@ public class ProjectPortfolioConfigurationForm extends StatelessForm {
           }
         });
 
-        item.add(new AjaxCheckBox("isHigherBetterCheckBox", 
+        item.add(new CheckBox("isHigherBetterCheckBox", 
             new PropertyModel(measure, "higherBetter")) {
           /** Support serialization. */
           public static final long serialVersionUID = 1L;
 
           @Override
-          protected void onUpdate(AjaxRequestTarget arg0) {
-            arg0.addComponent(this.getForm());
-          }
-
-          @Override
           public boolean isEnabled() {
-            return measure.isEnabled();
+            return measure.isEnabled() && measure.isColorable();
           }
         });
         
@@ -251,6 +251,17 @@ public class ProjectPortfolioConfigurationForm extends StatelessForm {
     parameterPopup.getModalWindow().setContent(
         new MultiLineLabel(parameterPopup.getModalWindow().getContentId(), introductions));
     add(parameterPopup);
+    
+    AjaxButton resetButton = new AjaxButton("reset") {
+      /** Support serialization. */
+      public static final long serialVersionUID = 1L;
+      @Override
+      public void onSubmit(AjaxRequestTarget target, Form form) {
+        dataModel.resetUserConfiguration();
+        target.addComponent(this.getForm());
+      }
+    };
+    add(resetButton);
   }
 
   /**
@@ -258,6 +269,7 @@ public class ProjectPortfolioConfigurationForm extends StatelessForm {
    */
   @Override
   public void onSubmit() {
+    this.dataModel.saveUserConfiguration();
     this.getParent().setVisible(false);
   }
 
