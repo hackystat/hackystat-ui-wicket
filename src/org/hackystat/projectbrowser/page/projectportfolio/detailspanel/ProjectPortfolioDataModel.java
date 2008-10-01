@@ -103,38 +103,33 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
    * Initialize the measure configurations
    */
   public ProjectPortfolioDataModel() {
-    PortfolioMeasureConfiguration config = portfolioMeasureConfiguration;
-    if (config == null) {
-      measures.add(new MeasureConfiguration("Coverage", true, 40, 90, true, this));
-      measures.add(new MeasureConfiguration("CyclomaticComplexity", true, 10, 20, false, this));
-      measures.add(new MeasureConfiguration("Coupling", true, 10, 20, false, this));
-      measures.add(new MeasureConfiguration("Churn", true, 400, 900, false, this));
-      measures.add(new MeasureConfiguration("CodeIssue", true, 10, 30, false, this));
-      measures.add(new MeasureConfiguration("Commit", false, 0, 0, true, this));
-      measures.add(new MeasureConfiguration("Build", false, 0, 0, true, this));
-      measures.add(new MeasureConfiguration("UnitTest", false, 0, 0, true, this));
-      measures.add(new MeasureConfiguration("FileMetric", false, 0, 0, true, this));
-      measures.add(new MeasureConfiguration("DevTime", false, 0, 0, true, this));
-      
-      measureAlias.put("CyclomaticComplexity", "Complexity");
-      measureAlias.put("FileMetric", "Size(LOC)");
-    }
-    else {
-      for (Measure measure : config.getMeasures()) {
+    //Load default measures
+    measures.add(new MeasureConfiguration("Coverage", true, 40, 90, true, this));
+    measures.add(new MeasureConfiguration("CyclomaticComplexity", true, 10, 20, false, this));
+    measures.add(new MeasureConfiguration("Coupling", true, 10, 20, false, this));
+    measures.add(new MeasureConfiguration("Churn", true, 400, 900, false, this));
+    measures.add(new MeasureConfiguration("CodeIssue", true, 10, 30, false, this));
+    measures.add(new MeasureConfiguration("Commit", false, 0, 0, true, this));
+    measures.add(new MeasureConfiguration("Build", false, 0, 0, true, this));
+    measures.add(new MeasureConfiguration("UnitTest", false, 0, 0, true, this));
+    measures.add(new MeasureConfiguration("FileMetric", false, 0, 0, true, this));
+    measures.add(new MeasureConfiguration("DevTime", false, 0, 0, true, this));
+    
+    measureAlias.put("CyclomaticComplexity", "Complexity");
+    measureAlias.put("FileMetric", "Size(LOC)");
+    
+    //Load additional user customized measures.
+    if (portfolioMeasureConfiguration != null) {
+      for (Measure measure : portfolioMeasureConfiguration.getMeasures()) {
         DefaultValues defaultValues = measure.getDefaultValues();
-        measures.add(
-            new MeasureConfiguration(measure.getName(), 
-                                      defaultValues.isColorable(), 
-                                      defaultValues.getDefaultLowerThresold(), 
-                                      defaultValues.getDefaultHigherThresold(), 
-                                      defaultValues.isHigherBetter(), 
-                                      this));
+        measures.add(new MeasureConfiguration(measure.getName(), defaultValues.isColorable(), 
+            defaultValues.getDefaultLowerThresold(), defaultValues.getDefaultHigherThresold(), 
+            defaultValues.isHigherBetter(), this));
         if (measure.getAlias() != null && measure.getAlias().length() > 0) {
           measureAlias.put(measure.getName(), measure.getAlias());
         }
       }
     }
-    
   }
   
   /**
@@ -156,7 +151,7 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
       //Add schema check.
       SchemaFactory schemaFactory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
       String schemaPath = 
-        System.getProperty("user.dir") + "/xml/schema/portfolioMeasureConfiguration.xsd";
+        System.getProperty("user.dir") + "/xml/schema/portfolioSiteConfiguration.xsd";
       File schemaFile = new File(schemaPath.replace("/", System.getProperty("file.separator")));
       Schema schema = schemaFactory.newSchema(schemaFile);
       unmarshaller.setSchema(schema);
