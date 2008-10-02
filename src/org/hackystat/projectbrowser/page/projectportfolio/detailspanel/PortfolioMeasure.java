@@ -42,12 +42,12 @@ public class PortfolioMeasure implements Serializable {
    */
   public PortfolioMeasure(MeasureConfiguration measure) {
     this.measureName = measure.getName();
-    this.colorable = measure.isColorable();
-    this.enabled = measure.isEnabled();
-    this.higherBetter = measure.isHigherBetter();
-    this.higherThreshold = measure.getHigherThreshold();
-    this.lowerThreshold = measure.getLowerThreshold();
-    this.parameters = measure.getParamtersString();
+    this.setColorable(measure.isColorable());
+    this.setEnabled(measure.isEnabled());
+    this.setHigherBetter(measure.isHigherBetter());
+    this.setHigherThreshold(measure.getHigherThreshold());
+    this.setLowerThreshold(measure.getLowerThreshold());
+    this.setParameters(measure.getParamtersString());
   }
   
   /**
@@ -60,7 +60,7 @@ public class PortfolioMeasure implements Serializable {
   /**
    * @param colorable the colorable to set
    */
-  public void setColorable(boolean colorable) {
+  public final void setColorable(boolean colorable) {
     this.colorable = colorable;
   }
 
@@ -74,7 +74,7 @@ public class PortfolioMeasure implements Serializable {
   /**
    * @param enabled the enabled to set
    */
-  public void setEnabled(boolean enabled) {
+  public final void setEnabled(boolean enabled) {
     this.enabled = enabled;
   }
 
@@ -88,7 +88,7 @@ public class PortfolioMeasure implements Serializable {
   /**
    * @param higherBetter the higherBetter to set
    */
-  public void setHigherBetter(boolean higherBetter) {
+  public final void setHigherBetter(boolean higherBetter) {
     this.higherBetter = higherBetter;
   }
 
@@ -102,7 +102,7 @@ public class PortfolioMeasure implements Serializable {
   /**
    * @param higherThreshold the higherThreshold to set
    */
-  public void setHigherThreshold(double higherThreshold) {
+  public final void setHigherThreshold(double higherThreshold) {
     this.higherThreshold = higherThreshold;
   }
 
@@ -116,7 +116,7 @@ public class PortfolioMeasure implements Serializable {
   /**
    * @param lowerThreshold the lowerThreshold to set
    */
-  public void setLowerThreshold(double lowerThreshold) {
+  public final void setLowerThreshold(double lowerThreshold) {
     this.lowerThreshold = lowerThreshold;
   }
 
@@ -130,7 +130,7 @@ public class PortfolioMeasure implements Serializable {
   /**
    * @param parameters the parameters to set
    */
-  public void setParameters(String parameters) {
+  public final void setParameters(String parameters) {
     this.parameters = parameters;
   }
 

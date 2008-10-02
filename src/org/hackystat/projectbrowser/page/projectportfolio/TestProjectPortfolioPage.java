@@ -35,7 +35,7 @@ public class TestProjectPortfolioPage extends ProjectBrowserTestHelper {
   /** the test user. */
   private String testUser = "TestProjectPortfolioUser";
   /** email of the test user. */
-  private String testUserEmail = "TestProjectPortfolioUser@hackystat.org";
+  private String testUserEmail = testUser + "@hackystat.org";
   /** the test project. */
   private String testProject = "TestProjectPortfolioProject";
   
@@ -48,6 +48,28 @@ public class TestProjectPortfolioPage extends ProjectBrowserTestHelper {
   private static final String testStartDate = "2007-01-01";
   /** The end date. */
   private static final String testEndDate = "2007-01-10";
+  
+  /** path of configuration panel. */
+  private static final String configurationPanelPath = "configurationPanel";
+  /** path of configuration form. */
+  private static final String configurationFormPath = configurationPanelPath + ":configurationForm";
+  /** path of input panel. */
+  private static final String inputPanelPath = "inputPanel";
+  /** path of input form. */
+  private static final String inputFormPath = inputPanelPath + ":inputForm";
+  /** path of configuration link. */
+  private static final String configurationLink = "inputPanel:inputForm:configuration";
+  
+  /** The test properties. */
+  private Properties testProperties;
+  
+  /** default HigherThreshold of Coverage.*/
+  String defaultCoverageHigherThreshold = "90";
+  /** default LowerThreshold of Coverage.*/
+  String defaultCoverageLowerThreshold = "40";
+  
+  /** The wicket tester. */
+  private WicketTester tester;
 
   /**
    * Initialize data for testing.
@@ -56,20 +78,12 @@ public class TestProjectPortfolioPage extends ProjectBrowserTestHelper {
   @Before
   public void setUp() throws Exception {
     this.generateSimData(testUser, testProject, Tstamp.makeTimestamp(testEndDate), 0);
-  }
-  
-  /**
-   * Test the daily project data page.
-   */
-  @Test 
-  public void testProjectPortfolioPage() {  //NOPMD WicketTester has its own assert classes.
-    this.generateSimData(testUser, testProject, Tstamp.makeTimestamp(), 1);
     //prepare test properties.
-    Properties testProperties = getTestProperties();
+    testProperties = getTestProperties();
     testProperties.put(ProjectBrowserProperties.AVAILABLEPAGE_KEY + ".projectportfolio", TRUE);
     testProperties.put(
         ProjectBrowserProperties.BACKGROUND_PROCESS_KEY + ".projectportfolio", FALSE);
-    WicketTester tester = new WicketTester(new ProjectBrowserApplication(testProperties));
+    tester = new WicketTester(new ProjectBrowserApplication(testProperties));
     
     tester.startPage(SigninPage.class); 
     // Let's sign in.
@@ -80,14 +94,27 @@ public class TestProjectPortfolioPage extends ProjectBrowserTestHelper {
     //first, go to project portfolio page.
     tester.clickLink("ProjectPortfolioPageLink");
     tester.assertRenderedPage(ProjectPortfolioPage.class);
+  }
+  
+  /**
+   * Test the daily project data page.
+   */
+  @Test 
+  public void testProjectPortfolioPage() {  //NOPMD WicketTester has its own assert classes.
+    this.generateSimData(testUser, testProject, Tstamp.makeTimestamp(), 2);
     
-    tester.assertInvisible("configurationPanel");
-    tester.clickLink("inputPanel:inputForm:configuration");
-    tester.assertComponent("configurationPanel", ProjectPortfolioConfigurationPanel.class);
+    tester.assertInvisible(configurationPanelPath);
+    tester.clickLink(configurationLink);
+    tester.assertComponent(configurationPanelPath, ProjectPortfolioConfigurationPanel.class);
 
-    FormTester configurationForm = tester.newFormTester("configurationPanel:configurationForm");
+    FormTester configurationForm = tester.newFormTester(configurationFormPath);
     ListView measureList = (ListView)configurationForm.getForm().get("measureList");
     assertTrue("There should be 10 measures.", measureList.getList().size() > 2);
+    //set the first measure(Coverage)'s granularity parameter to line.
+    assertEquals("Check measure name", "Coverage", tester.getComponentFromLastRenderedPage(
+        "configurationPanel:configurationForm:measureList:0:measureNameLabel")
+        .getModelObjectAsString());
+    configurationForm.setValue("measureList:0:parameterList:1:field", "line");
     //set the second measure to be uncolorable.
     configurationForm.setValue("measureList:1:colorableCheckBox", FALSE);
     //set all others to be disable.
@@ -95,10 +122,10 @@ public class TestProjectPortfolioPage extends ProjectBrowserTestHelper {
       configurationForm.setValue("measureList:" + i + ":enableCheckBox", FALSE);
     }
     configurationForm.submit();
-    tester.assertInvisible("configurationPanel");
+    tester.assertInvisible(configurationPanelPath);
 
-    tester.assertComponent("inputPanel", ProjectPortfolioInputPanel.class);
-    FormTester inputForm = tester.newFormTester("inputPanel:inputForm");
+    tester.assertComponent(inputPanelPath, ProjectPortfolioInputPanel.class);
+    FormTester inputForm = tester.newFormTester(inputFormPath);
 
     //check the project list content.
     Component component = inputForm.getForm().get("projectMenu");
@@ -116,7 +143,7 @@ public class TestProjectPortfolioPage extends ProjectBrowserTestHelper {
     if (!pass) {
       fail("Default project not found in project list.");
     }
-    //select that choice.
+    //select the default project.
     inputForm.select("projectMenu", index);
     inputForm.select("granularity", 0);
     inputForm.setValue("startDate", testStartDate);
@@ -127,9 +154,28 @@ public class TestProjectPortfolioPage extends ProjectBrowserTestHelper {
     
     tester.isInvisible("loadingProcessPanel");
     tester.assertComponent("detailPanel", ProjectPortfolioDetailsPanel.class);
+
+    ListView measureheads = 
+      (ListView)tester.getComponentFromLastRenderedPage("detailPanel:measureHeads");
+    assertEquals("Should be only 2 measure heads.", 2, measureheads.size());
+    assertEquals("Check the first measure's display name", "Coverage",
+        tester.getComponentFromLastRenderedPage("detailPanel:measureHeads:0:measureName")
+        .getModelObjectAsString());
+    assertEquals("Check the second measure's display name", "Complexity", 
+        tester.getComponentFromLastRenderedPage("detailPanel:measureHeads:1:measureName")
+        .getModelObjectAsString());
+    
     ListView measures = 
       (ListView)tester.getComponentFromLastRenderedPage("detailPanel:projectTable:0:measures");
     assertEquals("Should be only 2 measures there.", 2, measures.size());
+    //check value
+    assertEquals("Check Coverage value", "52.0", 
+        tester.getComponentFromLastRenderedPage("detailPanel:projectTable:0:measures:0:value")
+        .getModelObjectAsString());
+    assertEquals("Check Complexity value", "4.0", 
+        tester.getComponentFromLastRenderedPage("detailPanel:projectTable:0:measures:1:value")
+        .getModelObjectAsString());
+    //check inner data.
     MiniBarChart coverage = (MiniBarChart)measures.getList().get(0);
     assertEquals("Check measure name.", "Coverage", coverage.getConfiguration().getName());
     assertTrue("Coverage should be colorable", coverage.getConfiguration().isColorable());
@@ -139,6 +185,64 @@ public class TestProjectPortfolioPage extends ProjectBrowserTestHelper {
         complexity.getConfiguration().getName());
     assertFalse("Complexity should be uncolorable", complexity.getConfiguration().isColorable());
     
+  }
+  
+  /**
+   * Test the configuration panel.
+   */
+  @Test
+  public void testConfigurationPanel() {
+    tester.clickLink(configurationLink);
+    tester.assertComponent(configurationPanelPath, ProjectPortfolioConfigurationPanel.class);
+
+    String firstHigherThreshold = "measureList:0:higherThreshold";
+    String firstlowerThreshold = "measureList:0:lowerThreshold";
+    
+    //Test validator
+    FormTester configurationForm = tester.newFormTester(configurationFormPath);
+    configurationForm.setValue(firstHigherThreshold, "10");
+    configurationForm.setValue(firstlowerThreshold, "20");
+    configurationForm.submit();
+    tester.assertErrorMessages(new String[]{"Value of higherThreshold in Coverage " +
+    		                                    "is not bigger than that of lowerThreshold."});
+    //set new value
+    configurationForm = tester.newFormTester(configurationFormPath);
+    configurationForm.setValue(firstHigherThreshold, "40");
+    configurationForm.setValue(firstlowerThreshold, "20");
+    configurationForm.submit();
+    
+    //test persistance
+    tester.destroy();
+    tester = new WicketTester(new ProjectBrowserApplication(testProperties));
+    
+    tester.startPage(SigninPage.class); 
+    // sign in.
+    FormTester signinForm = tester.newFormTester("signinForm");
+    signinForm.setValue("user", testUserEmail);
+    signinForm.setValue("password", testUserEmail);
+    signinForm.submit("Signin");
+    //go to project portfolio page again.
+    tester.clickLink("ProjectPortfolioPageLink");
+    tester.assertRenderedPage(ProjectPortfolioPage.class);
+    //open configuration panel
+    tester.clickLink(configurationLink);
+    assertEquals("HigherThreshold should set to default value.", "40", 
+        configurationForm.getTextComponentValue(firstHigherThreshold));
+    assertEquals("LowerThreshold should set to default value.", "20", 
+        configurationForm.getTextComponentValue(firstlowerThreshold));
+    
+    //test reset
+    tester.executeAjaxEvent("configurationPanel:configurationForm:reset", "onclick");
+    tester.clickLink(configurationLink);
+    configurationForm = tester.newFormTester(configurationFormPath);
+    assertEquals("HigherThreshold should set to default value.", defaultCoverageHigherThreshold, 
+        configurationForm.getTextComponentValue(firstHigherThreshold));
+    assertEquals("LowerThreshold should set to default value.", defaultCoverageLowerThreshold, 
+        configurationForm.getTextComponentValue(firstlowerThreshold));
+
+    tester.clickLink("configurationPanel:configurationForm:instructionPopup:showModalWindow");
+    tester.assertComponentOnAjaxResponse(
+        "configurationPanel:configurationForm:instructionPopup:modalWindow");
   }
   
   /**

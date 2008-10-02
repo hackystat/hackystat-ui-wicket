@@ -1,19 +1,11 @@
 package org.hackystat.projectbrowser.page.projectportfolio.configurationpanel;
 
-import java.io.Serializable;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
-import org.apache.wicket.extensions.markup.html.form.select.Select;
-import org.apache.wicket.extensions.markup.html.form.select.SelectOption;
-import org.apache.wicket.markup.MarkupStream;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.basic.MultiLineLabel;
@@ -75,9 +67,9 @@ public class ProjectPortfolioConfigurationForm extends StatelessForm {
     + "Higher Threshold : The threshold of high value. \n\n"
     + "Lower Threshold : The threshold of low value.\n\n";
   /** The word style. */
-  private static final String STYLE_KEY = "style";
+  //private static final String STYLE_KEY = "style";
   /** THe preceding of HTTP background color style setting. */
-  private static final String BACKGROUND_COLOR_PRECEDING = "background-color:#";
+  //private static final String BACKGROUND_COLOR_PRECEDING = "background-color:#";
   /** The validators for measures' higher and lower thresholds. */
   private Map<String, ConfigurationValueValidator> validators = 
     new HashMap<String, ConfigurationValueValidator>();
@@ -278,31 +270,18 @@ public class ProjectPortfolioConfigurationForm extends StatelessForm {
    * 
    * @author Shaoxuan Zhang
    */
+  /*
   public static class ColorSelectOptionList extends ListView {
-
-    /**
-     * @param id the wicket component id.
-     * @param list the list of options.
-     */
     public ColorSelectOptionList(final String id, final List<?> list) {
       super(id, list);
     }
-
-    /** Support serialization. */
     private static final long serialVersionUID = -3842069135751729472L;
-
-    /**
-     * display the list item.
-     * 
-     * @param item the ListItem
-     */
     @Override
     protected void populateItem(final ListItem item) {
       item.setRenderBodyOnly(true);
       final String colorHex = item.getModelObjectAsString();
       final SelectOption colorSelectOption = new SelectOption("option", new Model(
           (Serializable) item.getModelObject())) {
-        /** Support serialization. */
         private static final long serialVersionUID = 4298345446185051771L;
 
         protected void onComponentTagBody(MarkupStream markupStream, ComponentTag openTag) {
@@ -314,30 +293,20 @@ public class ProjectPortfolioConfigurationForm extends StatelessForm {
       item.add(colorSelectOption);
     }
   }
+  */
 
   /**
    * Change the component's background color to the color value within the component.
    * 
    * @author Shaoxuan Zhang
    */
+  /*
   public static class AjaxColorSelectChangeBackgroundColorBehavior extends OnChangeAjaxBehavior {
-    /** Support serialization. */
     private static final long serialVersionUID = -5326547000439295241L;
-    /** The color select field component. */
     Select select;
-
-    /**
-     * @param select the color select field component
-     */
     public AjaxColorSelectChangeBackgroundColorBehavior(Select select) {
       this.select = select;
     }
-
-    /**
-     * Action take place on Update. Impelement the interface.
-     * 
-     * @param target the AjaxRequestTarget
-     */
     @Override
     protected void onUpdate(AjaxRequestTarget target) {
       select.add(new AttributeModifier(STYLE_KEY, true, new Model(BACKGROUND_COLOR_PRECEDING
@@ -345,6 +314,7 @@ public class ProjectPortfolioConfigurationForm extends StatelessForm {
       target.addComponent(select);
     }
   }
+  */
 
   /**
    * Return a FormComponent according to the parameter type.

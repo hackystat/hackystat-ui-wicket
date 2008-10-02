@@ -69,11 +69,11 @@ public class MeasureConfiguration implements Serializable {
    * @param measure the PortfolioMeasure object.
    */
   public void loadFrom(PortfolioMeasure measure) {
-    this.colorable = measure.isColorable();
-    this.enabled = measure.isEnabled();
-    this.higherBetter = measure.isHigherBetter();
-    this.higherThreshold = measure.getHigherThreshold();
-    this.lowerThreshold = measure.getLowerThreshold();
+    this.setColorable(measure.isColorable());
+    this.setEnabled(measure.isEnabled());
+    this.setHigherBetter(measure.isHigherBetter());
+    this.setHigherThreshold(measure.getHigherThreshold());
+    this.setLowerThreshold(measure.getLowerThreshold());
     String parametersString = measure.getParameters();
     this.parameters.clear();
     for (String parameter : parametersString.split(PARAMETER_SEPARATOR)) {
@@ -107,13 +107,6 @@ public class MeasureConfiguration implements Serializable {
    */
   public double getLowerThreshold() {
     return lowerThreshold;
-  }
-
-  /**
-   * @param measureName the measureName to set
-   */
-  public void setMeasureName(String measureName) {
-    this.measureName = measureName;
   }
 
   /**
