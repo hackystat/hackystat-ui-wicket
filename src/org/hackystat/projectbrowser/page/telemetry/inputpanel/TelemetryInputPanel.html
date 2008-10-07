@@ -5,13 +5,13 @@
         <tr>
           <td colspan="2">
           <label>From Date:</label> <br/>
-            <input style="width: 8em" wicket:id="startDateTextField" type="text" />
+            <input class="datefield" wicket:id="startDateTextField" type="text" />
           </td>
         </tr>
         <tr>
           <td colspan="2">
           <label>To Date:</label> <br/>
-            <input style="width: 8em" wicket:id="endDateTextField" type="text" />
+            <input class="datefield" wicket:id="endDateTextField" type="text" />
           </td>
         </tr>
         <tr>
@@ -27,9 +27,10 @@
         <tr>
           <td colspan="2">
           <label>Project(s):</label> <br/>
-            <select style="width: 10em" wicket:id="projectMenu">
-              <option value="Default">Default</option>
-            </select>
+            <div id="project_checkboxes">
+              <span wicket:id="projectMenu">
+              </span>
+            </div>
           </td>
         </tr>
         <tr>
@@ -39,14 +40,14 @@
               <option value="Default">Default</option>
             </select>
           </td>
-          <td wicket:id="chartDefPopup"/>
-        </tr>
+          <td align="center" valign="middle" wicket:id="chartDefPopup">Popup</td>
+      </tr>
         <tr wicket:id="parameterList">
           <td>
-            <label><span wicket:id="name" />:</label> <br/>
-            <span style="width: 8em" wicket:id="field"/>
+            <label><span wicket:id="name">parameter</span>:</label> <br/>
+            <span style="width: 8em" wicket:id="field"></span>
           </td>
-          <td wicket:id="parameterPopup"></td>
+          <td wicket:id="parameterPopup">Popup</td>
         </tr>
         <tr>
           <td colspan="2" style="text-align:center">

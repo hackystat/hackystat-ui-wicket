@@ -7,9 +7,9 @@ import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.CheckBox;
+import org.apache.wicket.markup.html.form.CheckBoxMultipleChoice;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.ListMultipleChoice;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -127,8 +127,8 @@ public class TelemetryInputForm extends Form {
     }
     
     // Now create the drop-down menu for projects. 
-    ListMultipleChoice projectMenu = 
-      new ListMultipleChoice ("projectMenu", 
+    CheckBoxMultipleChoice projectMenu = 
+      new CheckBoxMultipleChoice ("projectMenu", 
           new PropertyModel(session, "selectedProjects"),
           new PropertyModel(ProjectBrowserSession.get(), "projectList"),
           new ProjectChoiceRenderer()) {

@@ -291,8 +291,8 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
           if (chartData.getTelemetryStream().size() > 1 && i == 0) {
             Logger logger = getLogger();
             logger.warning("Telemetry chart:" + measure.getName() + " has more than 1 stream. " +
-            		"Should use chart than contain only one stream. Please check your portfolio and " +
-            		"telemetry definitions");
+            		"Should use chart than contain only one stream. " +
+            		"Please check your portfolio and telemetry definitions");
           }
           MiniBarChart chart = new MiniBarChart(chartData.getTelemetryStream().get(0), measure);
           chart.setTelemetryPageParameters(getTelemetryPageParameters(measure, project));

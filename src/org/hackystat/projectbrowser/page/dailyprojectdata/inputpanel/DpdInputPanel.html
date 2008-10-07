@@ -2,9 +2,11 @@
   <wicket:panel>
     <form wicket:id="dpdInputForm" class="hform">
         <p><label>Date:</label> <br/> <input style="width: 6em" wicket:id="dateTextField" type="text" /></p>
-        <p><label>Project:</label> <br/> <select style="width: 10em" wicket:id="projectMenu">
-                                     <option value="Default">[Default]</option>
-                                   </select> </p>
+        <p><label>Project:</label> <br/> 
+            <div id="project_checkboxes">
+              <span wicket:id="projectMenu">
+              </span>
+            </div> </p>
         <p><label>Analysis:</label> <br/> <select style="width: 10em" wicket:id="analysisMenu">
                                       <option value="Default">[Coverage]</option>
                                     </select> </p>

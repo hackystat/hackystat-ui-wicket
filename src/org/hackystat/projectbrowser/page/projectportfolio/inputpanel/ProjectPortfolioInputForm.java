@@ -4,9 +4,9 @@ import org.apache.wicket.extensions.markup.html.form.DateTextField;
 import org.apache.wicket.extensions.yui.calendar.DatePicker;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.markup.html.form.CheckBoxMultipleChoice;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.ListMultipleChoice;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.PropertyModel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
@@ -45,8 +45,8 @@ public class ProjectPortfolioInputForm extends Form {
       session.getSelectedProjects().add(ProjectBrowserSession.get().getDefaultProject());
     }
     // Now create the drop-down menu for projects. 
-    ListMultipleChoice projectMenu = 
-      new ListMultipleChoice ("projectMenu", 
+    CheckBoxMultipleChoice projectMenu = 
+      new CheckBoxMultipleChoice ("projectMenu", 
           new PropertyModel(session, "selectedProjects"),
           new PropertyModel(ProjectBrowserSession.get(), "projectList"),
           new ProjectChoiceRenderer()) {

@@ -2,9 +2,9 @@ package org.hackystat.projectbrowser.page.dailyprojectdata.inputpanel;
 
 import org.apache.wicket.extensions.markup.html.form.DateTextField;
 import org.apache.wicket.extensions.yui.calendar.DatePicker;
+import org.apache.wicket.markup.html.form.CheckBoxMultipleChoice;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.ListMultipleChoice;
 import org.apache.wicket.model.PropertyModel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.ProjectChoiceRenderer;
@@ -49,8 +49,8 @@ public class DpdInputForm extends Form {
     add(dateTextField);
     
     // [2] Create the multi-choice menu for projects, always visible, always required.
-    ListMultipleChoice projectMenu = 
-      new ListMultipleChoice ("projectMenu", 
+    CheckBoxMultipleChoice projectMenu = 
+      new CheckBoxMultipleChoice ("projectMenu", 
           new PropertyModel(session, "selectedProjects"),
           new PropertyModel(ProjectBrowserSession.get(), "projectList"),
           new ProjectChoiceRenderer())  ;
