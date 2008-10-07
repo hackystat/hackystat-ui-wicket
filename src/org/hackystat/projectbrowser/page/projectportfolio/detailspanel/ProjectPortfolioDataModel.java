@@ -211,12 +211,12 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
         (PortfolioMeasureConfiguration) unmarshaller.unmarshal(configFile);
     }
     catch (JAXBException e1) {
-      Logger  logger = ((ProjectBrowserApplication)ProjectBrowserApplication.get()).getLogger();
+      Logger  logger = getLogger();
       logger.severe("Error occurs when loading " + configFilePath + " > Can not parse with jaxb >" +
       		e1.getMessage());
     }
     catch (SAXException e) {
-      Logger  logger = ((ProjectBrowserApplication)ProjectBrowserApplication.get()).getLogger();
+      Logger  logger = getLogger();
       logger.warning("Error occurs when loading schema file. > " + e.getMessage());
     }
     
@@ -287,7 +287,13 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
           TelemetryChartData chartData = telemetryClient.getChart(measure.getName(), 
               owner, projectName, granularity, startTime, endTime, 
               measure.getParamtersString());
-          
+          //Log warning when portfolio definition refers to multi-stream telemetry chart.
+          if (chartData.getTelemetryStream().size() > 1 && i == 0) {
+            Logger logger = getLogger();
+            logger.warning("Telemetry chart:" + measure.getName() + " has more than 1 stream. " +
+            		"Should use chart than contain only one stream. Please check your portfolio and " +
+            		"telemetry definitions");
+          }
           MiniBarChart chart = new MiniBarChart(chartData.getTelemetryStream().get(0), measure);
           chart.setTelemetryPageParameters(getTelemetryPageParameters(measure, project));
           charts.add(chart);
@@ -593,5 +599,12 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
    */
   private UriCache getUserConfiguartionCache() {
     return new UriCache(userEmail, "portfolio", maxLife, capacity);
+  }
+
+  /**
+   * @return the logger that associated to this web application.
+   */
+  private static Logger getLogger() {
+    return ((ProjectBrowserApplication)ProjectBrowserApplication.get()).getLogger();
   }
 }
