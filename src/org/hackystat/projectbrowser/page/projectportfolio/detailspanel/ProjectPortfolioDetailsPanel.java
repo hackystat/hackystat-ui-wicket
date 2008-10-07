@@ -10,6 +10,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.imageurl.ImageUrl;
+import org.hackystat.projectbrowser.page.projectportfolio.ProjectPortfolioPage;
 import org.hackystat.projectbrowser.page.projectportfolio.ProjectPortfolioSession;
 import org.hackystat.projectbrowser.page.telemetry.TelemetryPage;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
@@ -36,6 +37,10 @@ public class ProjectPortfolioDetailsPanel extends Panel {
   public ProjectPortfolioDetailsPanel(String id) {
     super(id);
 
+    BookmarkablePageLink permalink = new BookmarkablePageLink("permalink", 
+        ProjectPortfolioPage.class, session.getPageParameters());
+    add(permalink);
+    
     ListView measureHeads = new ListView("measureHeads", dataModel.getEnabledMeasuresName()) {
       /** Support serialization. */
       private static final long serialVersionUID = -6222175445067187421L;

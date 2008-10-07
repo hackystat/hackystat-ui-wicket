@@ -1,6 +1,8 @@
 package org.hackystat.projectbrowser.page.projectportfolio;
 
+import org.apache.wicket.PageParameters;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.PropertyModel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
@@ -68,8 +70,24 @@ public class ProjectPortfolioPage extends ProjectBrowserBasePage {
     
     this.get("FooterFeedback").setModel(new PropertyModel(session, "feedback"));
     this.get("FooterFeedback").setOutputMarkupId(true);
+    
+    add(new MultiLineLabel("paramErrorMessage", new PropertyModel(session, "paramErrorMessage")));
   }
 
+  /**
+   * Constructs the telemetry page. 
+   * @param parameters the parameters from URL request.
+   */
+  public ProjectPortfolioPage(PageParameters parameters) {
+    this();
+    boolean isLoadSucceed = session.loadPageParameters(parameters);
+
+    if (isLoadSucceed) {
+      session.updateDataModel();
+      loadingProcessPanel.start();
+    }
+  }
+  
   /**
    * @return true if ConfigurationPanel is visible.
    */

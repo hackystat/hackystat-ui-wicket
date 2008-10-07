@@ -86,19 +86,19 @@ public class ProjectBrowserApplication extends WebApplication {
       mountBookmarkablePage("sensordata", SensorDataPage.class);
     }
     if (isPageAvailable("projects")) {
-    mountBookmarkablePage("projects", ProjectsPage.class);
+      mountBookmarkablePage("projects", ProjectsPage.class);
     }
     if (isPageAvailable("dailyprojectdata")) {
-    mountBookmarkablePage("dailyprojectdata", DailyProjectDataPage.class);
+      mountBookmarkablePage("dailyprojectdata", DailyProjectDataPage.class);
     }
     if (isPageAvailable("telemetry")) {
       mount(new IndexedParamUrlCodingStrategy("telemetry", TelemetryPage.class));
     }
     if (isPageAvailable("projectportfolio")) {
-    mountBookmarkablePage("projectportfolio", ProjectPortfolioPage.class);
+      mount(new IndexedParamUrlCodingStrategy("projectportfolio", ProjectPortfolioPage.class));
     }
     if (isPageAvailable("crap")) {
-    mountBookmarkablePage("crap", CrapPage.class);
+      mountBookmarkablePage("crap", CrapPage.class);
     }
     getSecuritySettings().setAuthorizationStrategy(new ProjectBrowserPageAuthentication());
     super.init();
