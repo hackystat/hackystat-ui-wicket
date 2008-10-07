@@ -10,7 +10,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Logger;
 import org.apache.wicket.model.IModel;
-import org.hackystat.projectbrowser.ProjectBrowserApplication;
 import org.hackystat.projectbrowser.googlechart.ChartType;
 import org.hackystat.projectbrowser.googlechart.GoogleChart;
 import org.hackystat.projectbrowser.page.loadingprocesspanel.Processable;
@@ -19,6 +18,7 @@ import org.hackystat.telemetry.service.client.TelemetryClient;
 import org.hackystat.telemetry.service.client.TelemetryClientException;
 import org.hackystat.telemetry.service.resource.chart.jaxb.TelemetryPoint;
 import org.hackystat.telemetry.service.resource.chart.jaxb.TelemetryStream;
+import org.hackystat.utilities.logger.HackystatLogger;
 import org.hackystat.utilities.tstamp.Tstamp;
 
 /**
@@ -109,7 +109,7 @@ public class TelemetryChartDataModel implements Serializable, Processable {
     this.complete = false;
     this.processingMessage = "Retrieving telemetry chart <" + getTelemetryName() + 
     "> from Hackystat Telemetry service.\n";
-    Logger logger = ((ProjectBrowserApplication)ProjectBrowserApplication.get()).getLogger();
+    Logger logger = HackystatLogger.getLogger("org.hackystat.projectbrowser", "projectbrowser");
     try {
       TelemetryClient client = new TelemetryClient(this.telemetryHost, this.email, this.password);
       //for each selected project
