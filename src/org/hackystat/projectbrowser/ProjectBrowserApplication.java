@@ -114,6 +114,13 @@ public class ProjectBrowserApplication extends WebApplication {
   }
   
   /**
+   * Return the directroy of portfolio definition xmls.
+   * @return the file path.
+   */
+  public String getPortfolioDefinitionDir() {
+    return properties.get(properties.PORTFOLIO_DEFINITION_DIR);
+  }
+  /**
    * @param pageName name of the page.
    * @return true if the user set the background process of the page enable.
    */

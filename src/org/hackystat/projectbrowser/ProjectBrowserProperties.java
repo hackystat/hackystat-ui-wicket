@@ -35,6 +35,8 @@ public class ProjectBrowserProperties {
   public static final String AVAILABLEPAGE_KEY = "projectbrowser.availablepage";
   /** If background process enable for pages. */
   public static final String BACKGROUND_PROCESS_KEY = "projectbrowser.backgroundprocess.enable";
+  /** Directory of portfolio definitions. */
+  public static final String PORTFOLIO_DEFINITION_DIR = "projectbrowser.portfolio.definitions.dir";
   /** Available pages. */
   public static final String[] PAGE_NAMES = {"projects", "dailyprojectdata", 
                                                  "telemetry", "projectportfolio", "crap"};

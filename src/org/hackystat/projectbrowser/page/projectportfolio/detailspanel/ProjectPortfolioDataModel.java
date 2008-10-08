@@ -18,13 +18,14 @@ import org.apache.wicket.model.Model;
 import org.hackystat.projectbrowser.ProjectBrowserApplication;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.page.loadingprocesspanel.Processable;
-import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.jaxb.Measure;
-import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.jaxb.
-  PortfolioMeasureConfiguration;
-import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.jaxb.Measure.DefaultValues;
+import org.hackystat.projectbrowser.page.projectportfolio.jaxb.Measures.Measure;
+import org.hackystat.projectbrowser.page.projectportfolio.jaxb.Measures;
+import org.hackystat.projectbrowser.page.projectportfolio.jaxb.PortfolioDefinitions;
+import org.hackystat.projectbrowser.page.projectportfolio.jaxb.Measures.Measure.DefaultValues;
 import org.hackystat.projectbrowser.page.telemetry.TelemetrySession;
 import org.hackystat.sensorbase.resource.projects.ProjectUtils;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
+import org.hackystat.telemetry.analyzer.configuration.ExtensionFileFilter;
 import org.hackystat.telemetry.service.client.TelemetryClient;
 import org.hackystat.telemetry.service.client.TelemetryClientException;
 import org.hackystat.telemetry.service.resource.chart.jaxb.ParameterDefinition;
@@ -83,8 +84,7 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
   /** Alias for measure. Maps names from definition to names for display. */
   private final Map<String, String> measureAlias = new HashMap<String, String>();
   /** The portfolio measure configuration loaded from xml file. */
-  private static final PortfolioMeasureConfiguration portfolioMeasureConfiguration = 
-                                                                      loadConfiguration();
+  private static final PortfolioDefinitions portfolioDefinitions = loadPortfolioDefinitions();
 
   /** The configuration saving capacity. */
   private static Long capacity = 1000L;
@@ -125,9 +125,9 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
     measures.add(new MeasureConfiguration("Coupling", true, 10, 20, false, this));
     measures.add(new MeasureConfiguration("Churn", true, 400, 900, false, this));
     measures.add(new MeasureConfiguration("CodeIssue", true, 10, 30, false, this));
-    measures.add(new MeasureConfiguration("Commit", false, 0, 0, true, this));
-    measures.add(new MeasureConfiguration("Build", false, 0, 0, true, this));
-    measures.add(new MeasureConfiguration("UnitTest", false, 0, 0, true, this));
+    //measures.add(new MeasureConfiguration("Commit", false, 0, 0, true, this));
+    //measures.add(new MeasureConfiguration("Build", false, 0, 0, true, this));
+    //measures.add(new MeasureConfiguration("UnitTest", false, 0, 0, true, this));
     measures.add(new MeasureConfiguration("FileMetric", false, 0, 0, true, this));
     measures.add(new MeasureConfiguration("DevTime", false, 0, 0, true, this));
     
@@ -135,8 +135,8 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
     measureAlias.put("FileMetric", "Size(LOC)");
     
     //Load additional user customized measures.
-    if (portfolioMeasureConfiguration != null) {
-      for (Measure measure : portfolioMeasureConfiguration.getMeasures()) {
+    if (portfolioDefinitions != null) {
+      for (Measure measure : portfolioDefinitions.getMeasures().getMeasure()) {
         DefaultValues defaultValues = measure.getDefaultValues();
         measures.add(new MeasureConfiguration(measure.getName(), defaultValues.isColorable(), 
             defaultValues.getDefaultLowerThresold(), defaultValues.getDefaultHigherThresold(), 
@@ -184,44 +184,64 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
   }
   
   /**
-   * Load the portfolio measure configuration from the xml file.
-   * @return a PortfolioMeasureConfiguration instance. null if fail to load the file.
+   * Load the portfolio definitions from the xml file.
+   * @return a PortfolioDefinitions instance. null if fail to load the file.
    */
-  private static PortfolioMeasureConfiguration loadConfiguration() {
-    PortfolioMeasureConfiguration portfolioMeasureConfiguration = null;
-    String userHome = System.getProperty("user.home");
-    String configFilePath = 
-      userHome + "/.hackystat/projectbrowser/portfolio_site_configuration.xml";
+  private static PortfolioDefinitions loadPortfolioDefinitions() {
+    PortfolioDefinitions portfolioDefinitions = new PortfolioDefinitions(); 
+    portfolioDefinitions.setMeasures(new Measures());
+    //load the basic default definitions.
+    String filePath = 
+      System.getProperty("user.dir") + "/xml/definitions/basic.portfolio.definition.xml";
+    File defFile = new File(filePath);
+    portfolioDefinitions.getMeasures().getMeasure().addAll(
+        getDefinitions(defFile).getMeasures().getMeasure());
     
-    JAXBContext configurationJaxbContext;
+    String defDirString = 
+      ((ProjectBrowserApplication)ProjectBrowserApplication.get()).getPortfolioDefinitionDir();
+    if (defDirString != null && defDirString.length() > 0) {
+      File defDir = new File(defDirString);
+      File[] xmlFiles = defDir.listFiles(new ExtensionFileFilter(".xml"));
+      for (File xmlFile : xmlFiles) {
+        portfolioDefinitions.getMeasures().getMeasure().addAll(
+            getDefinitions(xmlFile).getMeasures().getMeasure());
+      }
+    }
+    return portfolioDefinitions;
+  }
+  
+  /**
+   * Returns a TelemetryDefinitions object constructed from defStream, or null if unsuccessful.
+   * @param defFile The input stream containing a TelemetryDefinitions object in XML format.
+   * @return The TelemetryDefinitions object.
+   */
+  private static PortfolioDefinitions getDefinitions (File defFile) {
+    // Read in the definitions file.
     try {
-      configurationJaxbContext = JAXBContext
-          .newInstance("org.hackystat.projectbrowser.page.projectportfolio.detailspanel.jaxb");
-      File configFile = new File(configFilePath);
-      Unmarshaller unmarshaller = configurationJaxbContext.createUnmarshaller();
-      //Add schema check.
+      JAXBContext jaxbContext = JAXBContext
+      .newInstance(org.hackystat.projectbrowser.page.projectportfolio.jaxb.ObjectFactory.class);
+      Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+      //add schema checking
       SchemaFactory schemaFactory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
       String schemaPath = 
-        System.getProperty("user.dir") + "/xml/schema/portfolioSiteConfiguration.xsd";
+        System.getProperty("user.dir") + "/xml/schema/portfolioDefinitions.xsd";
       File schemaFile = new File(schemaPath.replace("/", System.getProperty("file.separator")));
       Schema schema = schemaFactory.newSchema(schemaFile);
       unmarshaller.setSchema(schema);
-      //Unmarshal
-      portfolioMeasureConfiguration = 
-        (PortfolioMeasureConfiguration) unmarshaller.unmarshal(configFile);
-    }
+      return (PortfolioDefinitions) unmarshaller.unmarshal(defFile);
+    } 
     catch (JAXBException e1) {
       Logger  logger = getLogger();
-      logger.severe("Error occurs when loading " + configFilePath + " > Can not parse with jaxb >" +
-      		e1.getMessage());
+      logger.severe("Error occurs when loading " + defFile.getName() + 
+          " > Can not parse with jaxb > " + e1.getMessage());
     }
     catch (SAXException e) {
       Logger  logger = getLogger();
       logger.warning("Error occurs when loading schema file. > " + e.getMessage());
     }
-    
-    return portfolioMeasureConfiguration;
+    return null;
   }
+  
   /**
    * @param startDate the start date.
    * @param endDate the end date.
