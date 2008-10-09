@@ -329,7 +329,12 @@ public class ProjectPortfolioSession implements Serializable {
       List<Project> projectsList = new ArrayList<Project>();
       for (String projectString : projectsStringArray) {
         int index = projectString.lastIndexOf(PROJECT_NAME_OWNER_SEPARATR);
-        if (index < 0 || index > projectString.length()) {
+        String projectName = projectString;
+        String projectOwner = null;
+        if (index > 0 && index < projectString.length()) {
+          projectName = projectString.substring(0, index);
+          projectOwner = projectString.substring(index + PROJECT_NAME_OWNER_SEPARATR.length());
+          /*
           isLoadSucceed = false;
           String error = "Error URL parameter: project: " + projectString + 
               " >> project name and owner are missing or not formatted correctly.";
@@ -337,10 +342,8 @@ public class ProjectPortfolioSession implements Serializable {
           errorMessage.append(error);
           errorMessage.append('\n');
           continue;
+          */
         }
-        String projectName = projectString.substring(0, index);
-        String projectOwner = projectString.substring(index + PROJECT_NAME_OWNER_SEPARATR.length());
-        System.out.println(projectName + " " + projectOwner);
         Project project = this.getProject(projectName, projectOwner);
         if (project == null) {
           isLoadSucceed = false;
@@ -380,12 +383,14 @@ public class ProjectPortfolioSession implements Serializable {
    * this user with the same project name and owner as the given ones.
    */
   public Project getProject(String projectName, String projectOwner) {
-    if (projectName == null || projectOwner == null) {
+    if (projectName == null) {
       return null;
     }
     for (Project project : ProjectBrowserSession.get().getProjectList()) {
-      if (projectName.equals(project.getName()) && projectOwner.equals(project.getOwner())) {
-        return project;
+      if (projectName.equals(project.getName()) && 
+          (projectOwner == null || projectOwner.equals(project.getOwner()))) { {
+          return project;
+        }
       }
     }
     return null;
