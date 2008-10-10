@@ -60,6 +60,18 @@ hr { color : #3366CC; background-color : #3366CC; height : 2px; }
     width: 6em;
 }
 
+
+/* Portfolio Detail Table
+--------------------------------------------------------------- */
+#portfolio_detail_table {
+     background: black;
+}
+#portfolio_detail_table.th {
+    padding: 1em;
+}
+#portfolio_detail_table.td {
+    padding: 1em;
+}
 /* Page arrangement
 --------------------------------------------------------------- */
 

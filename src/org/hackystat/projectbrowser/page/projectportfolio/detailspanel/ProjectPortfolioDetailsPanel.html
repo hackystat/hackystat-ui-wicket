@@ -1,25 +1,32 @@
 <html xmlns:wicket>
   <wicket:panel>
-    <b><a wicket:id="permalink">the Permalink</a></b><br>
-      <table bgcolor="#000000">
-        <th>Project</th>
-        <th>Members</th>
-        <th colspan="2" style="text-align:center" wicket:id="measureHeads">
+    <center>
+      <table style="padding:5px;" bgcolor="#000000">
+      <tr><td colspan="50" style="background-color:#FFFFFF;">
+        <b><a wicket:id="permalink">the Permalink</a></b><br>
+      </td></tr>
+        <th style="color:#0099FF; padding:5px;">Project (Members)</th>
+        <!--th style="padding:5px; border-left: 1px solid #ddd;">Members</th-->
+        <th colspan="2" style="min-width: 5em; color:#0099FF; padding:5px; border-left: 1px solid #ddd; text-align:center" wicket:id="measureHeads">
           <span wicket:id="measureName"/>
         </th>
         <tr wicket:id="projectTable">
-          <td wicket:id="projectName">project name</td>
-          <td><div align="center" wicket:id="members">members</div></td>
+          <td style="color:#0099FF; padding-left: 5px; white-space: nowrap"><b>
+            <span wicket:id="projectName">project name</span>
+            (<span align="center" wicket:id="members">members</span>)
+          </b></td>
           <span wicket:id="measures">
-            <td>
+            <td style="padding-left: 3px; border-left: 1px solid #ddd;">
               <div align="right">
                 <a wicket:id="chartLink"><img wicket:id="chart"></img></a>
               </div>
             </td>
-            <td><span wicket:id="value"></span></td>
+            <td style="padding-left: 3px; padding-right: 5px">
+              <span wicket:id="value"></span>
+            </td>
           </span>
         </tr>
       </table>
-
+    </center>
   </wicket:panel>
 </html>
