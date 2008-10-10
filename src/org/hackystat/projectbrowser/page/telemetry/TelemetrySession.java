@@ -148,13 +148,6 @@ public class TelemetrySession implements Serializable {
   public String getTelemetryName() {
     return this.telemetryName;
   }
-
-  /**
-   * @return the logger that associated to this web application.
-   */
-  private Logger getLogger() {
-    return ((ProjectBrowserApplication)ProjectBrowserApplication.get()).getLogger();
-  }
   
   /**
    * Return the TelemetryList. Initialize it if it is null.
@@ -174,7 +167,7 @@ public class TelemetrySession implements Serializable {
    * Initialize the telemetry definition list.
    */
   private void initializeTelemetryList() {
-    Logger logger = getLogger();
+    Logger logger = ProjectBrowserSession.get().getLogger();
     TelemetryClient client  = ProjectBrowserSession.get().getTelemetryClient();
     try {
       logger.info("Retrieving data for Telemetry chart definitions.");
@@ -204,7 +197,7 @@ public class TelemetrySession implements Serializable {
    * @return list of ParameterDefinition.
    */
   public List<ParameterDefinition> getParameterList(String telemetryName) {
-    Logger logger = getLogger();
+    Logger logger = ProjectBrowserSession.get().getLogger();
     if (this.telemetryDefs.isEmpty()) {
       this.initializeTelemetryList();
     }
@@ -333,11 +326,14 @@ public class TelemetrySession implements Serializable {
   public void updateDataModel() {
     boolean backgroundProcessEnable = ((ProjectBrowserApplication)ProjectBrowserApplication.get()).
       isBackgroundProcessEnable("telemetry");
+    String userEmail = ProjectBrowserSession.get().getEmail();
     dataModel.setModel(getStartDate(), getEndDate(), 
         selectedProjects, telemetryName, granularity, parameters,
         ((ProjectBrowserApplication)ProjectBrowserApplication.get()).getTelemetryHost(),
-        ProjectBrowserSession.get().getEmail(),
-        ProjectBrowserSession.get().getPassword());
+        userEmail, ProjectBrowserSession.get().getPassword());
+
+    ProjectBrowserSession.get().logUsage("TELEMETRY: {invoked} " + 
+        ProjectBrowserSession.get().printPageParameters(this.getPageParameters()));
     
     if (backgroundProcessEnable) {
       Thread thread = new Thread() {
@@ -454,7 +450,7 @@ public class TelemetrySession implements Serializable {
   public boolean loadPageParameters(PageParameters parameters) {
     boolean isLoadSucceed = true;
     boolean isTelemetryLoaded = false;
-    Logger logger = this.getLogger();
+    Logger logger = ProjectBrowserSession.get().getLogger();
     if (!parameters.containsKey(LAST_REQUIRED_KEY)) {
       isLoadSucceed = false;
       String error = "Some parameters are missing, should be " + LAST_REQUIRED_KEY + "\n" +

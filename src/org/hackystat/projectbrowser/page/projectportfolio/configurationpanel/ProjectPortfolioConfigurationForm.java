@@ -4,11 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.basic.MultiLineLabel;
+import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
@@ -20,6 +20,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.page.popupwindow.PopupWindowPanel;
+import org.hackystat.projectbrowser.page.projectportfolio.ProjectPortfolioPage;
 import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.MeasureConfiguration;
 import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.ProjectPortfolioDataModel;
 import org.hackystat.projectbrowser.page.telemetry.TelemetrySession;
@@ -243,14 +244,24 @@ public class ProjectPortfolioConfigurationForm extends StatelessForm {
     parameterPopup.getModalWindow().setContent(
         new MultiLineLabel(parameterPopup.getModalWindow().getContentId(), introductions));
     add(parameterPopup);
-    
-    AjaxButton resetButton = new AjaxButton("reset") {
+
+    Button okButton = new Button("submit") {
       /** Support serialization. */
       public static final long serialVersionUID = 1L;
       @Override
-      public void onSubmit(AjaxRequestTarget target, Form form) {
+      public void onSubmit() {
+        dataModel.saveUserConfiguration();
+        ((ProjectPortfolioPage)this.getPage()).setConfigurationPanelVisible(false);
+      }
+    };
+    add(okButton);
+    
+    Button resetButton = new Button("reset") {
+      /** Support serialization. */
+      public static final long serialVersionUID = 1L;
+      @Override
+      public void onSubmit() {
         dataModel.resetUserConfiguration();
-        target.addComponent(this.getForm());
       }
     };
     add(resetButton);
@@ -259,11 +270,13 @@ public class ProjectPortfolioConfigurationForm extends StatelessForm {
   /**
    * Set the panel to be invisible after form submitted.
    */
+  /*
   @Override
   public void onSubmit() {
     this.dataModel.saveUserConfiguration();
     this.getParent().setVisible(false);
   }
+  */
 
   /**
    * The list of select options for the color select field.

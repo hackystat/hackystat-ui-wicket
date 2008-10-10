@@ -118,8 +118,9 @@ public class ProjectBrowserApplication extends WebApplication {
    * @return the file path.
    */
   public String getPortfolioDefinitionDir() {
-    return properties.get(properties.PORTFOLIO_DEFINITION_DIR);
+    return properties.getPortfolioDefinitionDir();
   }
+  
   /**
    * @param pageName name of the page.
    * @return true if the user set the background process of the page enable.
@@ -202,4 +203,10 @@ public class ProjectBrowserApplication extends WebApplication {
     return this.properties.hasApplicationLogo();
   }
 
+  /**
+   * @return true if the user set to enable usage logging
+   */
+  public boolean isLoggingUserUsage() {
+    return this.properties.isLoggingUserUsage();
+  }
 }

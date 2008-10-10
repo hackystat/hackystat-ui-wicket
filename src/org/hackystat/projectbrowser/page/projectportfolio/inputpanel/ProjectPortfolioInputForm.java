@@ -122,6 +122,7 @@ public class ProjectPortfolioInputForm extends Form {
       public static final long serialVersionUID = 1L;
       @Override
       public void onSubmit() {
+        session.getDataModel().saveUserConfiguration();
         session.updateDataModel();
         page.onProjectDateSubmit();
       }

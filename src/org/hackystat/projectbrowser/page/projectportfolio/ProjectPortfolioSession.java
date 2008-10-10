@@ -70,14 +70,14 @@ public class ProjectPortfolioSession implements Serializable {
    */
   public void updateDataModel() {
 
+    
     boolean backgroundProcessEnable = ((ProjectBrowserApplication)ProjectBrowserApplication.get()).
       isBackgroundProcessEnable("projectportfolio");
-    
-    this.dataModel.setModel(startDate, endDate, selectedProjects, granularity,
-        ((ProjectBrowserApplication)ProjectBrowserApplication.get()).getTelemetryHost(),
-        ProjectBrowserSession.get().getEmail(),
-        ProjectBrowserSession.get().getPassword());
+    this.dataModel.setModel(startDate, endDate, selectedProjects, granularity);
 
+    ProjectBrowserSession.get().logUsage("PORTFOLIO: {invoked} " + 
+        ProjectBrowserSession.get().printPageParameters(this.getPageParameters()));
+    
     if (backgroundProcessEnable) {
       Thread thread = new Thread() {
         @Override
@@ -185,7 +185,9 @@ public class ProjectPortfolioSession implements Serializable {
    */
   public boolean initializeDataModel() {
     if (this.dataModel == null) {
-      this.dataModel = new ProjectPortfolioDataModel();
+      this.dataModel = new ProjectPortfolioDataModel(
+          ((ProjectBrowserApplication)ProjectBrowserApplication.get()).getTelemetryHost(),
+          ProjectBrowserSession.get().getEmail(), ProjectBrowserSession.get().getPassword());
       return true;
     }
     return false;
@@ -254,7 +256,7 @@ public class ProjectPortfolioSession implements Serializable {
    */
   public boolean loadPageParameters(PageParameters parameters) {
     boolean isLoadSucceed = true;
-    Logger logger = this.getLogger();
+    Logger logger = ProjectBrowserSession.get().getLogger();
     if (!parameters.containsKey(LAST_REQUIRED_KEY)) {
       isLoadSucceed = false;
       String error = "Some parameters are missing, should be " + LAST_REQUIRED_KEY + "\n" +
@@ -397,13 +399,6 @@ public class ProjectPortfolioSession implements Serializable {
   }
   
   /**
-   * @return the logger that associated to this web application.
-   */
-  private Logger getLogger() {
-    return ((ProjectBrowserApplication)ProjectBrowserApplication.get()).getLogger();
-  }
-  
-  /**
    * @return the paramErrorMessage
    */
   public String getParamErrorMessage() {
@@ -418,5 +413,5 @@ public class ProjectPortfolioSession implements Serializable {
   public void clearParamErrorMessage() {
     this.paramErrorMessage = "";
   }
-  
+
 }

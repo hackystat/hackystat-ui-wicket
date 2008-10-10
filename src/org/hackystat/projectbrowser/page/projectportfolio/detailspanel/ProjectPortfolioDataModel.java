@@ -30,6 +30,7 @@ import org.hackystat.telemetry.service.client.TelemetryClient;
 import org.hackystat.telemetry.service.client.TelemetryClientException;
 import org.hackystat.telemetry.service.resource.chart.jaxb.ParameterDefinition;
 import org.hackystat.telemetry.service.resource.chart.jaxb.TelemetryChartData;
+import org.hackystat.utilities.logger.HackystatLogger;
 import org.hackystat.utilities.tstamp.Tstamp;
 import org.hackystat.utilities.uricache.UriCache;
 import org.xml.sax.SAXException;
@@ -108,12 +109,37 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
   
   /**
    * Constructor that initialize the measures.
+   * @param telemetryHost the telemetry host
+   * @param email the user's email
+   * @param password the user's passowrd
    */
-  public ProjectPortfolioDataModel() {
+  public ProjectPortfolioDataModel(String telemetryHost, String email, String password) {
+    telemetrySession = ProjectBrowserSession.get().getTelemetrySession();
+    this.telemetryHost = telemetryHost;
+    this.email = email;
+    this.password = password;
     this.initializeMeasures();
     this.loadUserConfiguration();
+    //List<ParameterDefinition> paramDefList = telemetrySession.getParameterList(measure.getName());
   }
 
+  /**
+   * @param startDate the start date.
+   * @param endDate the end date.
+   * @param selectedProjects the selected projects.
+   * @param granularity the granularity this data model focus.
+   */
+  public void setModel(long startDate, long endDate, List<Project> selectedProjects, 
+      String granularity) {
+    this.startDate = startDate;
+    this.endDate = endDate;
+    this.granularity = granularity;
+    this.selectedProjects = selectedProjects;
+    for (MeasureConfiguration measure : getEnabledMeasures()) {
+      checkMeasureParameters(measure);
+    }
+  }
+  
   /**
    * Initialize the measure configurations
    */
@@ -146,18 +172,49 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
         }
       }
     }
-    
+
+    for (MeasureConfiguration measure : getEnabledMeasures()) {
+      checkMeasureParameters(measure);
+    }
+  }
+
+  /**
+   * Print the portfolio measure for logging purpose.
+   * @param measure the PortfolioMeasure to log.
+   * @return the string
+   */
+  private String printPortfolioMeasure(PortfolioMeasure measure) {
+    String s = "/";
+    return "<" + measure.getMeasureName() + ": " + 
+                s + measure.isEnabled() + 
+                s + measure.isColorable() + 
+                s + measure.isHigherBetter() + 
+                s + measure.getLowerThreshold() + 
+                s + measure.getHigherThreshold() + 
+                s + measure.getParameters() + "> ";
   }
   
   /**
    * Save user's configuration to system's cache.
+   * @return change maked in this saving.
    */
-  public void saveUserConfiguration() {
+  public String saveUserConfiguration() {
+    StringBuffer log = new StringBuffer();
     UriCache userCache = this.getUserConfiguartionCache();
     for (MeasureConfiguration measure : this.measures) {
       String uri = userEmail + "/" + measure.getName();
-      userCache.put(uri, new PortfolioMeasure(measure));
+      PortfolioMeasure oldMeasure = (PortfolioMeasure)userCache.get(uri);
+      PortfolioMeasure newMeasure = new PortfolioMeasure(measure);
+      if (oldMeasure == null || !oldMeasure.equals(newMeasure)) {
+        userCache.put(uri, newMeasure);
+        log.append(printPortfolioMeasure(newMeasure));
+      }
     }
+
+    if (log.length() > 0) {
+      ProjectBrowserSession.get().logUsage("CONFIGURATION: {changed} " + log.toString());
+    }
+    return log.toString();
   }
   
   /**
@@ -178,9 +235,13 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
    * Reset user's configuration cache.
    */
   public void resetUserConfiguration() {
-    UriCache userCache = this.getUserConfiguartionCache();
-    userCache.clearAll();
+    //UriCache userCache = this.getUserConfiguartionCache();
+    //userCache.clearAll();
     this.initializeMeasures();
+    String msg = this.saveUserConfiguration();
+    if (msg.length() > 0) {
+      ProjectBrowserSession.get().logUsage("CONFIGURATION: {reset to default} ");
+    }
   }
   
   /**
@@ -242,29 +303,6 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
     return null;
   }
   
-  /**
-   * @param startDate the start date.
-   * @param endDate the end date.
-   * @param selectedProjects the selected projects.
-   * @param granularity the granularity this data model focus.
-   * @param telemetryHost the telemetry host
-   * @param email the user's email
-   * @param password the user's passowrd
-   */
-  public void setModel(long startDate, long endDate, List<Project> selectedProjects, 
-      String granularity, String telemetryHost, String email, String password) {
-    this.telemetryHost = telemetryHost;
-    this.startDate = startDate;
-    this.endDate = endDate;
-    this.granularity = granularity;
-    this.email = email;
-    this.password = password;
-    this.selectedProjects = selectedProjects;
-    telemetrySession = ProjectBrowserSession.get().getTelemetrySession();
-    for (MeasureConfiguration measure : getEnabledMeasures()) {
-      checkMeasureParameters(measure);
-    }
-  }
 
   /**
    * Load data from Hackystat service.
@@ -304,6 +342,10 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
           if (!ProjectUtils.isValidStartTime(project, startTime)) {
             startTime = project.getStartTime();
           }
+          String s = "/";
+          getLogger().finest("retriving telemetry: " + measure.getName() + s + owner + s + 
+              projectName + s + granularity + s + startTime + s + endTime + s + 
+              measure.getParamtersString());
           TelemetryChartData chartData = telemetryClient.getChart(measure.getName(), 
               owner, projectName, granularity, startTime, endTime, 
               measure.getParamtersString());
@@ -498,7 +540,7 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
   /**
    * @return the enabled measures
    */
-  public List<MeasureConfiguration> getEnabledMeasures() {
+  public final List<MeasureConfiguration> getEnabledMeasures() {
     List<MeasureConfiguration> enableMeasures = new ArrayList<MeasureConfiguration>();
     for (MeasureConfiguration measure : measures) {
       if (measure.isEnabled()) {
@@ -625,6 +667,6 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
    * @return the logger that associated to this web application.
    */
   private static Logger getLogger() {
-    return ((ProjectBrowserApplication)ProjectBrowserApplication.get()).getLogger();
+    return HackystatLogger.getLogger("org.hackystat.projectbrowser", "projectbrowser");
   }
 }

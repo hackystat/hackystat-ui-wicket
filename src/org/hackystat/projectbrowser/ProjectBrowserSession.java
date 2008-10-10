@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.apache.wicket.PageParameters;
 import org.apache.wicket.Request;
 import org.apache.wicket.Session;
 import org.apache.wicket.protocol.http.WebSession;
@@ -21,6 +22,7 @@ import org.hackystat.sensorbase.resource.projects.jaxb.Project;
 import org.hackystat.sensorbase.resource.projects.jaxb.ProjectIndex;
 import org.hackystat.sensorbase.resource.projects.jaxb.ProjectRef;
 import org.hackystat.telemetry.service.client.TelemetryClient;
+import org.hackystat.utilities.logger.HackystatLogger;
 
 /**
  * Provides a session instance that holds authentication credentials.
@@ -364,5 +366,46 @@ public class ProjectBrowserSession extends WebSession {
   public ProjectPortfolioSession getProjectPortfolioSession() {
     return projectPortfolioSession;
   }
-
+  
+  /**
+   * Log the user usage to special file.
+   * @param log the log message
+   */
+  public void logUsage(String log) {
+    if (((ProjectBrowserApplication)getApplication()).isLoggingUserUsage()) {
+      Logger logger = 
+        HackystatLogger.getLogger("org.hackystat.projectbrowser.usage", "projectbrowser");
+      logger.info("[" + email + "]" + " " + log);
+    }
+  }
+  
+  /**
+   * Print the indexed page parameters in format of /parameter0/parameter1/.../.
+   * @param parameters the indexed page parameter
+   * @return the result string.
+   */
+  public String printPageParameters(PageParameters parameters) {
+    StringBuffer paramString = new StringBuffer();
+    int i = 0;
+    boolean end = false;
+    while (!end) {
+      String key = String.valueOf(i);
+      if (parameters.containsKey(key)) {
+        paramString.append('/');
+        paramString.append(parameters.get(key).toString());
+        ++i;
+      }
+      else {
+        end = true;
+      }
+    }
+    return paramString.toString();
+  }
+  
+  /**
+   * @return the logger that associated to this web application.
+   */
+  public Logger getLogger() {
+    return ((ProjectBrowserApplication)ProjectBrowserApplication.get()).getLogger();
+  }
 }

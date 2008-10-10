@@ -45,9 +45,9 @@ public class TestProjectPortfolioPage extends ProjectBrowserTestHelper {
   private static final String FALSE = "false";
   
   /** The start date. */
-  private static final String testStartDate = "2007-01-01";
+  private static final String testStartDate = "2007-01-06";
   /** The end date. */
-  private static final String testEndDate = "2007-01-10";
+  private static final String testEndDate = "2007-01-08";
   
   /** path of configuration panel. */
   private static final String configurationPanelPath = "configurationPanel";
@@ -98,16 +98,22 @@ public class TestProjectPortfolioPage extends ProjectBrowserTestHelper {
   
   /**
    * Test the daily project data page.
+   * @throws Exception error occur
    */
   @Test 
-  public void testProjectPortfolioPage() {  //NOPMD WicketTester has its own assert classes.
-    this.generateSimData(testUser, testProject, Tstamp.makeTimestamp(), 2);
+  public void testProjectPortfolioPage() throws Exception {  
+    //NOPMD WicketTester has its own assert classes.
+    this.generateSimData(testUser, testProject, Tstamp.makeTimestamp(testEndDate), 3);
     
     tester.assertInvisible(configurationPanelPath);
     tester.clickLink(configurationLink);
     tester.assertComponent(configurationPanelPath, ProjectPortfolioConfigurationPanel.class);
 
     FormTester configurationForm = tester.newFormTester(configurationFormPath);
+    configurationForm.submit("reset");
+    //tester.clickLink(configurationLink);
+    
+    configurationForm = tester.newFormTester(configurationFormPath);
     ListView measureList = (ListView)configurationForm.getForm().get("measureList");
     assertTrue("There should be 10 measures.", measureList.getList().size() > 2);
     //set the first measure(Coverage)'s granularity parameter to line.
@@ -118,10 +124,10 @@ public class TestProjectPortfolioPage extends ProjectBrowserTestHelper {
     //set the second measure to be uncolorable.
     configurationForm.setValue("measureList:1:colorableCheckBox", FALSE);
     //set all others to be disable.
-    for (int i = 2; i < measureList.getList().size(); i++) {
+    for (int i = 3; i < measureList.getList().size(); i++) {
       configurationForm.setValue("measureList:" + i + ":enableCheckBox", FALSE);
     }
-    configurationForm.submit();
+    configurationForm.submit("submit");
     tester.assertInvisible(configurationPanelPath);
 
     tester.assertComponent(inputPanelPath, ProjectPortfolioInputPanel.class);
@@ -146,8 +152,8 @@ public class TestProjectPortfolioPage extends ProjectBrowserTestHelper {
     //select the default project.
     inputForm.select("projectMenu", index);
     inputForm.select("granularity", 0);
-    inputForm.setValue("startDate", testStartDate);
-    inputForm.setValue("endDate", testEndDate);
+    inputForm.setValue("startDateTextField", testStartDate);
+    inputForm.setValue("endDateTextField", testEndDate);
     inputForm.submit("submit");
     //check the result.
     tester.assertRenderedPage(ProjectPortfolioPage.class);
@@ -157,23 +163,29 @@ public class TestProjectPortfolioPage extends ProjectBrowserTestHelper {
 
     ListView measureheads = 
       (ListView)tester.getComponentFromLastRenderedPage("detailPanel:measureHeads");
-    assertEquals("Should be only 2 measure heads.", 2, measureheads.size());
+    assertEquals("Should be only 2 measure heads.", 3, measureheads.size());
     assertEquals("Check the first measure's display name", "Coverage",
         tester.getComponentFromLastRenderedPage("detailPanel:measureHeads:0:measureName")
         .getModelObjectAsString());
     assertEquals("Check the second measure's display name", "Complexity", 
         tester.getComponentFromLastRenderedPage("detailPanel:measureHeads:1:measureName")
         .getModelObjectAsString());
+    assertEquals("Check the third measure's display name", "Coupling", 
+        tester.getComponentFromLastRenderedPage("detailPanel:measureHeads:2:measureName")
+        .getModelObjectAsString());
     
     ListView measures = 
       (ListView)tester.getComponentFromLastRenderedPage("detailPanel:projectTable:0:measures");
-    assertEquals("Should be only 2 measures there.", 2, measures.size());
+    assertEquals("Should be only 3 measures there.", 3, measures.size());
     //check value
-    assertEquals("Check Coverage value", "52.0", 
+    assertEquals("Check Coverage value", "50.0", 
         tester.getComponentFromLastRenderedPage("detailPanel:projectTable:0:measures:0:value")
         .getModelObjectAsString());
-    assertEquals("Check Complexity value", "4.0", 
+    assertEquals("Check Complexity value", "3.0", 
         tester.getComponentFromLastRenderedPage("detailPanel:projectTable:0:measures:1:value")
+        .getModelObjectAsString());
+    assertEquals("Check Coupling value", "N/A", 
+        tester.getComponentFromLastRenderedPage("detailPanel:projectTable:0:measures:2:value")
         .getModelObjectAsString());
     //check inner data.
     MiniBarChart coverage = (MiniBarChart)measures.getList().get(0);
@@ -232,8 +244,8 @@ public class TestProjectPortfolioPage extends ProjectBrowserTestHelper {
         configurationForm.getTextComponentValue(firstlowerThreshold));
     
     //test reset
-    tester.executeAjaxEvent("configurationPanel:configurationForm:reset", "onclick");
-    tester.clickLink(configurationLink);
+    configurationForm = tester.newFormTester(configurationFormPath);
+    configurationForm.submit("reset");
     configurationForm = tester.newFormTester(configurationFormPath);
     assertEquals("HigherThreshold should set to default value.", defaultCoverageHigherThreshold, 
         configurationForm.getTextComponentValue(firstHigherThreshold));

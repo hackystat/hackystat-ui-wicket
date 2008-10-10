@@ -49,6 +49,37 @@ public class PortfolioMeasure implements Serializable {
     this.setLowerThreshold(measure.getLowerThreshold());
     this.setParameters(measure.getParamtersString());
   }
+
+  /**
+   * Compare the with the given PortfolioMeasure.
+   * @param obj the given object, should be PortfolioMeasure.
+   * @return true if the given object is a PortfolioMeasure instance and
+   *  all fills are equals to this instance, false otherwise.
+   */
+  @Override
+  public boolean equals(Object obj) {
+    if (!(obj instanceof PortfolioMeasure)) {
+      return false;
+    }
+    PortfolioMeasure m = (PortfolioMeasure)obj;
+    return (this.getMeasureName().equals(m.getMeasureName())) 
+        && (this.isEnabled() == m.isEnabled()) 
+        && (this.isColorable() == m.isColorable())
+        && (this.isHigherBetter() == m.isHigherBetter())
+        && (this.getLowerThreshold() == m.getLowerThreshold())
+        && (this.getHigherThreshold() == m.getHigherThreshold()) 
+        && (this.getParameters().equals(m.getParameters()));
+  }
+  
+  /**
+   * @return the hash code.
+   */
+  @Override
+  public int hashCode() {
+    return (measureName + enabled + colorable + higherThreshold + 
+            lowerThreshold + higherThreshold + parameters).hashCode();
+    //return super.hashCode();
+  }
   
   /**
    * @return the measureName

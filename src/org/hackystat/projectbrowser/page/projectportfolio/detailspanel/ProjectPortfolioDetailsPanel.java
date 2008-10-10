@@ -66,7 +66,7 @@ public class ProjectPortfolioDetailsPanel extends Panel {
           public static final long serialVersionUID = 1L;
           @Override
           protected void populateItem(ListItem item) {
-            MiniBarChart chart = (MiniBarChart)item.getModelObject();
+            final MiniBarChart chart = (MiniBarChart)item.getModelObject();
             
             String value;
             if (chart.getLatestValue() >= 0) {
@@ -84,8 +84,22 @@ public class ProjectPortfolioDetailsPanel extends Panel {
             valueLabel.add(new AttributeModifier("style", true, new Model(colorString)));
             item.add(valueLabel);
 
+            /*
             Link chartLink = new BookmarkablePageLink("chartLink", 
-                TelemetryPage.class, chart.getTelemetryPageParameters());
+                TelemetryPage.class, chart.getTelemetryPageParameters()) ;
+                */
+            Link chartLink = new Link("chartLink") {
+                  /** Support serialization. */
+                  private static final long serialVersionUID = 32587804920775165L;
+                  @Override
+                  public void onClick() {
+
+                    ProjectBrowserSession.get().
+                      logUsage("click a chart on portfolio to invoke a telemtry analysis.");
+                    this.setResponsePage(TelemetryPage.class, chart.getTelemetryPageParameters());
+                  }
+              
+            };
             chartLink.add(new ImageUrl("chart", chart.getImageUrl()));
             item.add(chartLink);
           }

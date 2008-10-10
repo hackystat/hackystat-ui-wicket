@@ -37,6 +37,8 @@ public class ProjectBrowserProperties {
   public static final String BACKGROUND_PROCESS_KEY = "projectbrowser.backgroundprocess.enable";
   /** Directory of portfolio definitions. */
   public static final String PORTFOLIO_DEFINITION_DIR = "projectbrowser.portfolio.definitions.dir";
+  /** Directory of portfolio definitions. */
+  public static final String LOG_USAGE_KEY = "projectbrowser.usagelogging";
   /** Available pages. */
   public static final String[] PAGE_NAMES = {"projects", "dailyprojectdata", 
                                                  "telemetry", "projectportfolio", "crap"};
@@ -58,6 +60,8 @@ public class ProjectBrowserProperties {
   //public static final String SMTP_HOST_KEY =  "projectbrowser.smtp.host";
   /** The test install host key. */
   //public static final String TEST_INSTALL_KEY =  "projectbrowser.test.install";
+  /** true.*/
+  private static final String TRUE = "true";
   
   
   /** Where we store the properties. */
@@ -112,14 +116,14 @@ public class ProjectBrowserProperties {
     properties.setProperty(APPLICATION_NAME_KEY, "Hackystat ProjectBrowser");
     properties.setProperty(SENSORDATA_ITEMSPERPAGE_KEY, String.valueOf(defaultItemsPerPage));
     properties.setProperty(PROJECTS_TEXTMAXHEIGHT_KEY, String.valueOf(defaultTextMaxHeight));
-    String trueString = "true";
-    properties.setProperty(AVAILABLEPAGE_KEY + ".sensordata", trueString);
-    properties.setProperty(AVAILABLEPAGE_KEY + ".dailyprojectdata", trueString);
-    properties.setProperty(AVAILABLEPAGE_KEY + ".telemetry", trueString);
-    properties.setProperty(AVAILABLEPAGE_KEY + ".projects", trueString);
-    properties.setProperty(AVAILABLEPAGE_KEY + ".projectportfolio", trueString);
-    properties.setProperty(BACKGROUND_PROCESS_KEY + ".telemetry", trueString);
-    properties.setProperty(BACKGROUND_PROCESS_KEY + ".projectportfolio", trueString);
+    properties.setProperty(AVAILABLEPAGE_KEY + ".sensordata", TRUE);
+    properties.setProperty(AVAILABLEPAGE_KEY + ".dailyprojectdata", TRUE);
+    properties.setProperty(AVAILABLEPAGE_KEY + ".telemetry", TRUE);
+    properties.setProperty(AVAILABLEPAGE_KEY + ".projects", TRUE);
+    properties.setProperty(AVAILABLEPAGE_KEY + ".projectportfolio", TRUE);
+    properties.setProperty(BACKGROUND_PROCESS_KEY + ".telemetry", TRUE);
+    properties.setProperty(BACKGROUND_PROCESS_KEY + ".projectportfolio", TRUE);
+    properties.setProperty(LOG_USAGE_KEY, "false");
 
     // Now read in the properties file, and override the defaults if supplied. 
     FileInputStream stream = null;
@@ -217,7 +221,7 @@ public class ProjectBrowserProperties {
    */
   public boolean isPageAvailable (String pageName) {
     String pageKey = AVAILABLEPAGE_KEY + "." + pageName;
-    return "true".equals(get(pageKey));
+    return TRUE.equals(get(pageKey));
   }
 
   /**
@@ -226,7 +230,14 @@ public class ProjectBrowserProperties {
    */
   public boolean isBackgroundProcessEnable (String pageName) {
     String pageKey = BACKGROUND_PROCESS_KEY + "." + pageName;
-    return "true".equals(get(pageKey));
+    return TRUE.equals(get(pageKey));
+  }
+  
+  /**
+   * @return true if the user set to enable usage logging
+   */
+  public boolean isLoggingUserUsage() {
+    return TRUE.equals(get(LOG_USAGE_KEY));
   }
   
   /**
@@ -275,5 +286,13 @@ public class ProjectBrowserProperties {
    */
   public String getHost() {
     return "http://" + get(HOSTNAME_KEY) + ":" + getPort() + "/" + getContextRoot(); 
+  }
+
+  /**
+   * Return the directroy of portfolio definition xmls.
+   * @return the file path.
+   */
+  public String getPortfolioDefinitionDir() {
+    return get(PORTFOLIO_DEFINITION_DIR);
   }
 }
