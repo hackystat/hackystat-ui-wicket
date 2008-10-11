@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
+import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.wicket.PageParameters;
 import org.hackystat.projectbrowser.ProjectBrowserApplication;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
@@ -283,11 +284,61 @@ public class ProjectPortfolioSession implements Serializable {
     }
     else {
       isLoadSucceed = false;
-      errorMessage.append("granularity key is missing in URL parameters.\n");
+      errorMessage.append("granularity is missing in URL parameters.\n");
     }
-    //load start date
+    //load dates
+    String startDateString = "";
     if (parameters.containsKey(START_DATE_KEY)) {
-      String startDateString = parameters.getString(START_DATE_KEY);
+      startDateString = parameters.getString(START_DATE_KEY);
+    }
+    else {
+      isLoadSucceed = false;
+      errorMessage.append("startDate is missing in URL parameters.\n");
+    }
+    String endDateString = "";
+    if (parameters.containsKey(END_DATE_KEY)) {
+      endDateString = parameters.getString(END_DATE_KEY);
+    }
+    else {
+      isLoadSucceed = false;
+      errorMessage.append("endDate is missing in URL parameters.\n");
+    }
+    //check last X format first.
+    if ("last".equalsIgnoreCase(startDateString)) {
+      int time;
+      try {
+        time = Integer.valueOf(endDateString);
+        int interval = 1;
+        if ("Month".equalsIgnoreCase(this.granularity)) {
+          interval = 30;
+        }
+        else if ("Week".equalsIgnoreCase(this.granularity)) {
+          interval = 7;
+        }
+        time *= interval;
+        XMLGregorianCalendar today = Tstamp.makeTimestamp();
+        endDate = Tstamp.incrementDays(today, -interval).toGregorianCalendar().getTimeInMillis();
+        startDate = Tstamp.incrementDays(today, -time).toGregorianCalendar().getTimeInMillis();
+      }
+      catch (NumberFormatException e) {
+        String error = endDateString + " cannot be parsed as an integer.";
+        logger.warning(error + " > " + e.getMessage());
+        errorMessage.append(error);
+        errorMessage.append('\n');
+      }
+    }
+    else if (endDateString.length() > 0 && startDateString.length() > 0) {
+      try {
+        this.endDate = 
+          Tstamp.makeTimestamp(endDateString).toGregorianCalendar().getTimeInMillis();
+      }
+      catch (Exception e) {
+        isLoadSucceed = false;
+        String error = "Errors when parsing end date from URL parameter: " + endDateString;
+        logger.warning(error + " > " + e.getMessage());
+        errorMessage.append(error);
+        errorMessage.append('\n');
+      }
       try {
         this.startDate = 
           Tstamp.makeTimestamp(startDateString).toGregorianCalendar().getTimeInMillis();
@@ -301,29 +352,7 @@ public class ProjectPortfolioSession implements Serializable {
         errorMessage.append('\n');
       }
     }
-    else {
-      isLoadSucceed = false;
-      errorMessage.append("startDate key is missing in URL parameters.\n");
-    }
-    //load end date
-    if (parameters.containsKey(END_DATE_KEY)) {
-      String endDateString = parameters.getString(END_DATE_KEY);
-      try {
-        this.endDate = 
-          Tstamp.makeTimestamp(endDateString).toGregorianCalendar().getTimeInMillis();
-      }
-      catch (Exception e) {
-        isLoadSucceed = false;
-        String error = "Errors when parsing end date from URL parameter: " + endDateString;
-        logger.warning(error + " > " + e.getMessage());
-        errorMessage.append(error);
-        errorMessage.append('\n');
-      }
-    }
-    else {
-      isLoadSucceed = false;
-      errorMessage.append("endDate key is missing in URL parameters.\n");
-    }
+    
     //load seletecd project
     if (parameters.containsKey(SELECTED_PROJECTS_KEY)) {
       String[] projectsStringArray = 
@@ -366,11 +395,11 @@ public class ProjectPortfolioSession implements Serializable {
     }
     else {
       isLoadSucceed = false;
-      errorMessage.append("projects key is missing in URL parameters.\n");
+      errorMessage.append("projects is missing in URL parameters.\n");
     }
     
     if (errorMessage.length() > 0) {
-      this.paramErrorMessage = errorMessage.toString() + PARAMETER_ORDER_MESSAGE;
+      this.paramErrorMessage = errorMessage.append(PARAMETER_ORDER_MESSAGE).toString();
     }
     return isLoadSucceed;
   }
