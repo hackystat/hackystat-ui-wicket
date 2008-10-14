@@ -1,6 +1,9 @@
 package org.hackystat.projectbrowser.page.projectportfolio.detailspanel;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,11 +14,13 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.model.Model;
 import org.hackystat.projectbrowser.ProjectBrowserApplication;
+import org.hackystat.projectbrowser.ProjectBrowserProperties;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.page.loadingprocesspanel.Processable;
 import org.hackystat.projectbrowser.page.projectportfolio.jaxb.Measures.Measure;
@@ -85,7 +90,7 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
   /** Alias for measure. Maps names from definition to names for display. */
   private final Map<String, String> measureAlias = new HashMap<String, String>();
   /** The portfolio measure configuration loaded from xml file. */
-  private static final PortfolioDefinitions portfolioDefinitions = loadPortfolioDefinitions();
+  //private final PortfolioDefinitions portfolioDefinitions = loadPortfolioDefinitions();
 
   /** The configuration saving capacity. */
   private static Long capacity = 1000L;
@@ -161,6 +166,7 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
     measureAlias.put("FileMetric", "Size(LOC)");
     
     //Load additional user customized measures.
+    PortfolioDefinitions portfolioDefinitions = getPortfolioDefinitions();
     if (portfolioDefinitions != null) {
       for (Measure measure : portfolioDefinitions.getMeasures().getMeasure()) {
         DefaultValues defaultValues = measure.getDefaultValues();
@@ -248,35 +254,51 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
    * Load the portfolio definitions from the xml file.
    * @return a PortfolioDefinitions instance. null if fail to load the file.
    */
-  private static PortfolioDefinitions loadPortfolioDefinitions() {
+  private PortfolioDefinitions getPortfolioDefinitions() {
     PortfolioDefinitions portfolioDefinitions = new PortfolioDefinitions(); 
     portfolioDefinitions.setMeasures(new Measures());
     //load the basic default definitions.
-    String filePath = 
-      System.getProperty("user.dir") + "/xml/definitions/basic.portfolio.definition.xml";
-    File defFile = new File(filePath);
+    getLogger().info("Reading basic portfolio definitions from: basic.portfolio.definition.xml");
+    InputStream defStream = 
+      ProjectPortfolioDataModel.class.getResourceAsStream("basic.portfolio.definition.xml");
     portfolioDefinitions.getMeasures().getMeasure().addAll(
-        getDefinitions(defFile).getMeasures().getMeasure());
+        getDefinitions(defStream).getMeasures().getMeasure());
     
+    //load user defined definitions.
     String defDirString = 
       ((ProjectBrowserApplication)ProjectBrowserApplication.get()).getPortfolioDefinitionDir();
     if (defDirString != null && defDirString.length() > 0) {
       File defDir = new File(defDirString);
       File[] xmlFiles = defDir.listFiles(new ExtensionFileFilter(".xml"));
-      for (File xmlFile : xmlFiles) {
-        portfolioDefinitions.getMeasures().getMeasure().addAll(
-            getDefinitions(xmlFile).getMeasures().getMeasure());
+      if (xmlFiles.length > 0) {
+        getLogger().info("Reading portfolio definitions from: " + defDirString);
       }
+      else {
+        getLogger().info("No portfolio definitions found in: " + defDirString);
+      }
+      for (File xmlFile : xmlFiles) {
+        try {
+          getLogger().info("Reading portfolio definitions from: " + xmlFile);
+          portfolioDefinitions.getMeasures().getMeasure().addAll(
+              getDefinitions(new FileInputStream(xmlFile)).getMeasures().getMeasure());
+        }
+        catch (FileNotFoundException e) {
+          getLogger().info("Error reading definitions from: " + xmlFile + " " + e);
+        }
+      }
+    }
+    else {
+      getLogger().info(ProjectBrowserProperties.PORTFOLIO_DEFINITION_DIR + " not defined.");
     }
     return portfolioDefinitions;
   }
   
   /**
    * Returns a TelemetryDefinitions object constructed from defStream, or null if unsuccessful.
-   * @param defFile The input stream containing a TelemetryDefinitions object in XML format.
+   * @param defStream The input stream containing a TelemetryDefinitions object in XML format.
    * @return The TelemetryDefinitions object.
    */
-  private static PortfolioDefinitions getDefinitions (File defFile) {
+  private PortfolioDefinitions getDefinitions (InputStream defStream) {
     // Read in the definitions file.
     try {
       JAXBContext jaxbContext = JAXBContext
@@ -284,21 +306,23 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
       Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
       //add schema checking
       SchemaFactory schemaFactory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
-      String schemaPath = 
-        System.getProperty("user.dir") + "/xml/schema/portfolioDefinitions.xsd";
-      File schemaFile = new File(schemaPath.replace("/", System.getProperty("file.separator")));
-      Schema schema = schemaFactory.newSchema(schemaFile);
+
+      InputStream schemaStream = 
+        ProjectPortfolioDataModel.class.getResourceAsStream("portfolioDefinitions.xsd");
+      StreamSource schemaSources = new StreamSource(schemaStream);
+      Schema schema = schemaFactory.newSchema(schemaSources);
       unmarshaller.setSchema(schema);
-      return (PortfolioDefinitions) unmarshaller.unmarshal(defFile);
+      return (PortfolioDefinitions) unmarshaller.unmarshal(defStream);
     } 
     catch (JAXBException e1) {
       Logger  logger = getLogger();
-      logger.severe("Error occurs when loading " + defFile.getName() + 
-          " > Can not parse with jaxb > " + e1.getMessage());
+      logger.severe("Error occurs when parsing portfolio definition xml file with jaxb > " 
+          + e1.getMessage());
     }
     catch (SAXException e) {
       Logger  logger = getLogger();
-      logger.warning("Error occurs when loading schema file. > " + e.getMessage());
+      logger.warning("Error occurs when loading schema file: " + defStream.toString() + 
+          " > " + e.getMessage());
     }
     return null;
   }
