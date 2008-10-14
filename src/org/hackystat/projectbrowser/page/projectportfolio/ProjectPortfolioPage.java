@@ -26,12 +26,8 @@ public class ProjectPortfolioPage extends ProjectBrowserBasePage {
     ProjectBrowserSession.get().getProjectPortfolioSession();
   /** the LoadingProcessPanel in this page. */
   private LoadingProcessPanel loadingProcessPanel;
-  /** the ProjectPortfolioInputPanel in this page. */
-  private ProjectPortfolioInputPanel inputPanel;
   /** the ProjectPortfolioConfigurationPanel in this page. */
   private ProjectPortfolioConfigurationPanel configurationPanel;
-  /** the ProjectPortfolioDetailsPanel in this page. */
-  private ProjectPortfolioDetailsPanel detailsPanel;
   
   /**
    * Construct the page.
@@ -48,11 +44,11 @@ public class ProjectPortfolioPage extends ProjectBrowserBasePage {
     configurationPanel.setVisible(false);
     add(configurationPanel);
     
-    inputPanel = new ProjectPortfolioInputPanel("inputPanel", this);
+    ProjectPortfolioInputPanel inputPanel = new ProjectPortfolioInputPanel("inputPanel", this);
     inputPanel.setOutputMarkupId(true);
     add(inputPanel);
 
-    detailsPanel = new ProjectPortfolioDetailsPanel("detailPanel");
+    ProjectPortfolioDetailsPanel detailsPanel = new ProjectPortfolioDetailsPanel("detailPanel");
     detailsPanel.setOutputMarkupId(true);
     add(detailsPanel);
     

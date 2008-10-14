@@ -20,25 +20,25 @@ public class ProjectsSession implements Serializable {
   /** Holds the Project View model associated with this session. */
   private ProjectsModel projectsModel = new ProjectsModel();
 
-  /** Main projects page */
+  /** Main projects page. */
   private Page projPage;
 
-  /** Holds list panel */
+  /** Holds list panel. */
   private Panel projListPanel;
 
-  /** Holds edit panel */
+  /** Holds edit panel. */
   private Panel projEditPanel;
 
-  /** Holds rename panel */
+  /** Holds rename panel. */
   private Panel projRenamePanel;
 
-  /** Holds rename delete */
+  /** Holds rename delete. */
   private Panel projDeletePanel;
 
-  /** Holds leave panel */
+  /** Holds leave panel. */
   private Panel projLeavePanel;
 
-  /** Holds reply panel */
+  /** Holds reply panel. */
   private Panel projReplyPanel;
 
   /** The feedback string. */

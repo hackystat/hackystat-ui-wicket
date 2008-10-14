@@ -119,7 +119,7 @@ public class DailyProjectDataSession implements Serializable {
   }
   
   /**
-   * Sets the set of selected projects
+   * Sets the set of selected projects.
    * @param projects The projects.
    */
   public void setSelectedProjects(List<Project> projects) {

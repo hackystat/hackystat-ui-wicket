@@ -6,7 +6,7 @@ import java.util.List;
 import org.junit.Test;
 
 /**
- * Test cases for SimpleStreamTrendClassifier
+ * Test cases for SimpleStreamTrendClassifier.
  * @author Shaoxuan Zhang
  *
  */

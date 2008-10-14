@@ -14,7 +14,7 @@ import java.util.Random;
 public class GoogleChart implements Serializable {
   /** Support serialization. */
   private static final long serialVersionUID = 1L;
-  /** host of google chart service */
+  /** host of google chart service. */
   public static final String GOOGLECHART_API_URL = "http://chart.apis.google.com/chart?";
   /** character that separate parameter. */
   public static final String PARAMETER_SEPARATOR = "&";

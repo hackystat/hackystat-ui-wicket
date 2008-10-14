@@ -27,7 +27,7 @@ public class ProjectBrowserProperties {
   public static final String APPLICATION_LOGO_KEY =  "projectbrowser.application.logo";
   /** Optional name. */
   public static final String APPLICATION_NAME_KEY =  "projectbrowser.application.name";
-  /** Optional items per page */
+  /** Optional items per page. */
   public static final String SENSORDATA_ITEMSPERPAGE_KEY = "projectbrowser.sensordata.itemsperpage";
   /** Optional max height of text area in Projects Page. */
   public static final String PROJECTS_TEXTMAXHEIGHT_KEY = "projectbrowser.projects.maxtextheight";

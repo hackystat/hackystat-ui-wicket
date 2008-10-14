@@ -11,7 +11,7 @@ import org.apache.wicket.IClusterable;
  */
 public class PropUriRowModel implements Serializable, IClusterable {
 
-  /** For serialization */
+  /** For serialization. */
   private static final long serialVersionUID = 1L;
   /** Property Label. */
   public String propertyLabel;

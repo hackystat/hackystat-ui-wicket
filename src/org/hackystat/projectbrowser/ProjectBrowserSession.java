@@ -30,7 +30,7 @@ import org.hackystat.utilities.logger.HackystatLogger;
  *
  */
 public class ProjectBrowserSession extends WebSession {
-  /** Support serialization */
+  /** Support serialization. */
   private static final long serialVersionUID = 1L;
   /** The email used to connect to the SensorBase. */
   private String email = null;

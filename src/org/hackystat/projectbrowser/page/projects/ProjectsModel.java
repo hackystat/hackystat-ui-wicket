@@ -30,10 +30,10 @@ import org.hackystat.utilities.tstamp.Tstamp;
  */
 public class ProjectsModel implements Serializable, IClusterable {
 
-  /** For serialization */
+  /** For serialization. */
   private static final long serialVersionUID = 1L;
 
-  /** Default project name */
+  /** Default project name. */
   private static final String DEFAULT_PROJECT = "Default";
   
   /** The projects for this user. */
@@ -51,7 +51,7 @@ public class ProjectsModel implements Serializable, IClusterable {
   /** Feedback message. */
   private String projectRename = "";
 
-  /** Holds rows of property uris */
+  /** Holds rows of property uris. */
   private List<PropUriRowModel> propUriRowsView = new ArrayList<PropUriRowModel>();
 
   /** Extra property uri rows after data. */
@@ -85,7 +85,7 @@ public class ProjectsModel implements Serializable, IClusterable {
   }
 
   /**
-   * Sets the projects
+   * Sets the projects.
    * 
    * @param projects The projects.
    */
@@ -280,7 +280,7 @@ public class ProjectsModel implements Serializable, IClusterable {
   }
 
   /**
-   * Get project span: start and end date in one string
+   * Get project span: start and end date in one string.
    * 
    * @return project date span
    */
@@ -442,7 +442,7 @@ public class ProjectsModel implements Serializable, IClusterable {
   }
 
   /**
-   * Set help note for project members, display when no members present
+   * Set help note for project members, display when no members present.
    * @return help string
    */
   public String getProjectMemberHelp() {
@@ -796,7 +796,7 @@ public class ProjectsModel implements Serializable, IClusterable {
   }
 
   /**
-   * Load propertyUriRows from project data
+   * Load propertyUriRows from project data.
    */
   public void loadPropUriRowsView() {
     if (this.project != null) {

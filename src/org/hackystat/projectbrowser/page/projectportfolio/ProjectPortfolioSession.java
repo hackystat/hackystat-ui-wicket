@@ -49,7 +49,7 @@ public class ProjectPortfolioSession implements Serializable {
   /** the feedback string. */
   private String feedback = "";
   
-  /** The data model to hold state for details panel */
+  /** The data model to hold state for details panel. */
   private ProjectPortfolioDataModel dataModel;
   
   /** The start date this user has selected. */
@@ -419,9 +419,8 @@ public class ProjectPortfolioSession implements Serializable {
     }
     for (Project project : ProjectBrowserSession.get().getProjectList()) {
       if (projectName.equals(project.getName()) && 
-          (projectOwner == null || projectOwner.equals(project.getOwner()))) { {
+          (projectOwner == null || projectOwner.equals(project.getOwner()))) {
           return project;
-        }
       }
     }
     return null;

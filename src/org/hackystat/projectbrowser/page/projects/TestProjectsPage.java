@@ -149,7 +149,7 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
   }
 
   /**
-   * Loop through project list in List panel and find index of project
+   * Loop through project list in List panel and find index of project.
    * 
    * @param tester application
    * @param name to look for in list
@@ -170,7 +170,7 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
   }
 
   /**
-   * Loop through project list in List panel and find index of project
+   * Loop through project list in List panel and find index of project.
    * 
    * @param tester application
    * @param name to look for in list

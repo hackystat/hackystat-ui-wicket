@@ -18,8 +18,6 @@ public class DailyProjectDetailsPanel extends Panel {
   private static final long serialVersionUID = 1L;
   /** The modal window inside this panel. */
   private final ModalWindow modalWindow;
-  /** The link that bring up the popup window. */
-  private final AjaxLink link;
 
   /**
    * Provides a panel that displays details about a portion of the DailyProjectData. The panel
@@ -49,7 +47,7 @@ public class DailyProjectDetailsPanel extends Panel {
       }
     });
     // Create, configure, and add the link that displays the modal window to this panel.
-    this.link = new AjaxLink("showModalWindow") {
+    AjaxLink link = new AjaxLink("showModalWindow") {
       /** Support serialization. */
       private static final long serialVersionUID = 1L;
 
@@ -58,7 +56,7 @@ public class DailyProjectDetailsPanel extends Panel {
         modalWindow.show(target);
       }
     };
-    this.link.add(new Label("detailsLink", linkLabel));
+    link.add(new Label("detailsLink", linkLabel));
     add(link);
   }
 

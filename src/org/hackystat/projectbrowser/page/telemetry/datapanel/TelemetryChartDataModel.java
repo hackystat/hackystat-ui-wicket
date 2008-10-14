@@ -367,7 +367,7 @@ public class TelemetryChartDataModel implements Serializable, Processable {
   }
 
   /**
-   * Return the comma-separated list of parameters in String
+   * Return the comma-separated list of parameters in String.
    * 
    * @return the parameters as String
    */

@@ -15,7 +15,7 @@ import org.hackystat.projectbrowser.ProjectBrowserSession;
  */
 public class SensorDataDetailsPanel extends Panel {
   
-  /** For serialization */
+  /** For serialization. */
   private static final long serialVersionUID = 1L;
   
   /**

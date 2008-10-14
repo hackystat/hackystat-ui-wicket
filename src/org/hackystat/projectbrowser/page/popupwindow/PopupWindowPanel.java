@@ -17,9 +17,6 @@ public class PopupWindowPanel extends Panel {
   private static final long serialVersionUID = 1L;
   /** The modal window inside this panel. */
   private final ModalWindow modalWindow;
-  /** The link that bring up the popup window. */
-  private final AjaxLink link;
-
 
   /**
    * Create the pop up window link as a question mark.
@@ -54,7 +51,7 @@ public class PopupWindowPanel extends Panel {
         }
     });
     
-    link = new AjaxLink("showModalWindow") {
+    AjaxLink link = new AjaxLink("showModalWindow") {
       /** Support serialization. */
       private static final long serialVersionUID = 1L;
         @Override

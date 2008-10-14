@@ -54,7 +54,7 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
   private volatile boolean inProcess = false;
   /** result of data loading. */
   private volatile boolean complete = false;
-  /** message to display when data loading is in process.*/
+  /** message to display when data loading is in process. */
   private String processingMessage = "";
 
   /** host of the telemetry host. */
@@ -65,34 +65,32 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
   private String password;
   /** The telemetry session. */
   private TelemetrySession telemetrySession;
-  
+
   /** the granularity this data model focus. */
   private String granularity = "Week";
   /** If current day, week or month will be included in portfolio. */
-  //private boolean includeCurrentWeek = true;
+  // private boolean includeCurrentWeek = true;
   /** The start date this user has selected. */
   private long startDate = 0;
   /** The end date this user has selected. */
   private long endDate = 0;
-  
-  /** 
-   * the time phrase this data model focus. 
-   * In scale of telemetryGranularity, from current to the past. 
-   * */
-  //private int timePhrase = 5;
-  
+
+  /**
+   * the time phrase this data model focus. In scale of telemetryGranularity, from current to the
+   * past.
+   */
+  // private int timePhrase = 5;
   /** The projects this user has selected. */
   private List<Project> selectedProjects = new ArrayList<Project>();
   /** The charts in this model. */
   private Map<Project, List<MiniBarChart>> measuresCharts = 
-        new HashMap<Project, List<MiniBarChart>>();
+    new HashMap<Project, List<MiniBarChart>>();
   /** The thresholds. */
   private final List<MeasureConfiguration> measures = new ArrayList<MeasureConfiguration>();
   /** Alias for measure. Maps names from definition to names for display. */
   private final Map<String, String> measureAlias = new HashMap<String, String>();
   /** The portfolio measure configuration loaded from xml file. */
-  //private final PortfolioDefinitions portfolioDefinitions = loadPortfolioDefinitions();
-
+  // private final PortfolioDefinitions portfolioDefinitions = loadPortfolioDefinitions();
   /** The configuration saving capacity. */
   private static Long capacity = 1000L;
   /** The max life of the saved configuration. */
@@ -112,9 +110,10 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
   private String sosoColor = "ffff00";
   /** The color for bad state. */
   private String badColor = "ff0000";
-  
+
   /**
    * Constructor that initialize the measures.
+   * 
    * @param telemetryHost the telemetry host
    * @param email the user's email
    * @param password the user's passowrd
@@ -126,7 +125,8 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
     this.password = password;
     this.initializeMeasures();
     this.loadUserConfiguration();
-    //List<ParameterDefinition> paramDefList = telemetrySession.getParameterList(measure.getName());
+    // List<ParameterDefinition> paramDefList =
+    // telemetrySession.getParameterList(measure.getName());
   }
 
   /**
@@ -135,7 +135,7 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
    * @param selectedProjects the selected projects.
    * @param granularity the granularity this data model focus.
    */
-  public void setModel(long startDate, long endDate, List<Project> selectedProjects, 
+  public void setModel(long startDate, long endDate, List<Project> selectedProjects,
       String granularity) {
     this.startDate = startDate;
     this.endDate = endDate;
@@ -145,34 +145,34 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
       checkMeasureParameters(measure);
     }
   }
-  
+
   /**
-   * Initialize the measure configurations
+   * Initialize the measure configurations.
    */
   private void initializeMeasures() {
-    //Load default measures
+    // Load default measures
     measures.clear();
     measures.add(new MeasureConfiguration("Coverage", true, 40, 90, true, this));
     measures.add(new MeasureConfiguration("CyclomaticComplexity", true, 10, 20, false, this));
     measures.add(new MeasureConfiguration("Coupling", true, 10, 20, false, this));
     measures.add(new MeasureConfiguration("Churn", true, 400, 900, false, this));
     measures.add(new MeasureConfiguration("CodeIssue", true, 10, 30, false, this));
-    //measures.add(new MeasureConfiguration("Commit", false, 0, 0, true, this));
-    //measures.add(new MeasureConfiguration("Build", false, 0, 0, true, this));
-    //measures.add(new MeasureConfiguration("UnitTest", false, 0, 0, true, this));
+    // measures.add(new MeasureConfiguration("Commit", false, 0, 0, true, this));
+    // measures.add(new MeasureConfiguration("Build", false, 0, 0, true, this));
+    // measures.add(new MeasureConfiguration("UnitTest", false, 0, 0, true, this));
     measures.add(new MeasureConfiguration("FileMetric", false, 0, 0, true, this));
     measures.add(new MeasureConfiguration("DevTime", false, 0, 0, true, this));
-    
+
     measureAlias.put("CyclomaticComplexity", "Complexity");
     measureAlias.put("FileMetric", "Size(LOC)");
-    
-    //Load additional user customized measures.
+
+    // Load additional user customized measures.
     PortfolioDefinitions portfolioDefinitions = getPortfolioDefinitions();
     if (portfolioDefinitions != null) {
       for (Measure measure : portfolioDefinitions.getMeasures().getMeasure()) {
         DefaultValues defaultValues = measure.getDefaultValues();
-        measures.add(new MeasureConfiguration(measure.getName(), defaultValues.isColorable(), 
-            defaultValues.getDefaultLowerThresold(), defaultValues.getDefaultHigherThresold(), 
+        measures.add(new MeasureConfiguration(measure.getName(), defaultValues.isColorable(),
+            defaultValues.getDefaultLowerThresold(), defaultValues.getDefaultHigherThresold(),
             defaultValues.isHigherBetter(), this));
         if (measure.getAlias() != null && measure.getAlias().length() > 0) {
           measureAlias.put(measure.getName(), measure.getAlias());
@@ -187,22 +187,20 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
 
   /**
    * Print the portfolio measure for logging purpose.
+   * 
    * @param measure the PortfolioMeasure to log.
    * @return the string
    */
   private String printPortfolioMeasure(PortfolioMeasure measure) {
     String s = "/";
-    return "<" + measure.getMeasureName() + ": " + 
-                s + measure.isEnabled() + 
-                s + measure.isColorable() + 
-                s + measure.isHigherBetter() + 
-                s + measure.getLowerThreshold() + 
-                s + measure.getHigherThreshold() + 
-                s + measure.getParameters() + "> ";
+    return "<" + measure.getMeasureName() + ": " + s + measure.isEnabled() + s
+        + measure.isColorable() + s + measure.isHigherBetter() + s + measure.getLowerThreshold()
+        + s + measure.getHigherThreshold() + s + measure.getParameters() + "> ";
   }
-  
+
   /**
    * Save user's configuration to system's cache.
+   * 
    * @return change maked in this saving.
    */
   public String saveUserConfiguration() {
@@ -210,7 +208,7 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
     UriCache userCache = this.getUserConfiguartionCache();
     for (MeasureConfiguration measure : this.measures) {
       String uri = userEmail + "/" + measure.getName();
-      PortfolioMeasure oldMeasure = (PortfolioMeasure)userCache.get(uri);
+      PortfolioMeasure oldMeasure = (PortfolioMeasure) userCache.get(uri);
       PortfolioMeasure newMeasure = new PortfolioMeasure(measure);
       if (oldMeasure == null || !oldMeasure.equals(newMeasure)) {
         userCache.put(uri, newMeasure);
@@ -223,7 +221,7 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
     }
     return log.toString();
   }
-  
+
   /**
    * Load user's configuration from system's cache.
    */
@@ -231,43 +229,44 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
     UriCache userCache = this.getUserConfiguartionCache();
     for (MeasureConfiguration measure : this.measures) {
       String uri = userEmail + "/" + measure.getName();
-      PortfolioMeasure saved = (PortfolioMeasure)userCache.get(uri);
+      PortfolioMeasure saved = (PortfolioMeasure) userCache.get(uri);
       if (saved != null) {
         measure.loadFrom(saved);
       }
     }
   }
-  
+
   /**
    * Reset user's configuration cache.
    */
   public void resetUserConfiguration() {
-    //UriCache userCache = this.getUserConfiguartionCache();
-    //userCache.clearAll();
+    // UriCache userCache = this.getUserConfiguartionCache();
+    // userCache.clearAll();
     this.initializeMeasures();
     String msg = this.saveUserConfiguration();
     if (msg.length() > 0) {
       ProjectBrowserSession.get().logUsage("CONFIGURATION: {reset to default} ");
     }
   }
-  
+
   /**
    * Load the portfolio definitions from the xml file.
+   * 
    * @return a PortfolioDefinitions instance. null if fail to load the file.
    */
   private PortfolioDefinitions getPortfolioDefinitions() {
-    PortfolioDefinitions portfolioDefinitions = new PortfolioDefinitions(); 
+    PortfolioDefinitions portfolioDefinitions = new PortfolioDefinitions();
     portfolioDefinitions.setMeasures(new Measures());
-    //load the basic default definitions.
+    // load the basic default definitions.
     getLogger().info("Reading basic portfolio definitions from: basic.portfolio.definition.xml");
-    InputStream defStream = 
-      ProjectPortfolioDataModel.class.getResourceAsStream("basic.portfolio.definition.xml");
+    InputStream defStream = ProjectPortfolioDataModel.class
+        .getResourceAsStream("basic.portfolio.definition.xml");
     portfolioDefinitions.getMeasures().getMeasure().addAll(
         getDefinitions(defStream).getMeasures().getMeasure());
-    
-    //load user defined definitions.
-    String defDirString = 
-      ((ProjectBrowserApplication)ProjectBrowserApplication.get()).getPortfolioDefinitionDir();
+
+    // load user defined definitions.
+    String defDirString = ((ProjectBrowserApplication) ProjectBrowserApplication.get())
+        .getPortfolioDefinitionDir();
     if (defDirString != null && defDirString.length() > 0) {
       File defDir = new File(defDirString);
       File[] xmlFiles = defDir.listFiles(new ExtensionFileFilter(".xml"));
@@ -293,41 +292,41 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
     }
     return portfolioDefinitions;
   }
-  
+
   /**
    * Returns a TelemetryDefinitions object constructed from defStream, or null if unsuccessful.
+   * 
    * @param defStream The input stream containing a TelemetryDefinitions object in XML format.
    * @return The TelemetryDefinitions object.
    */
-  private PortfolioDefinitions getDefinitions (InputStream defStream) {
+  private PortfolioDefinitions getDefinitions(InputStream defStream) {
     // Read in the definitions file.
     try {
       JAXBContext jaxbContext = JAXBContext
-      .newInstance(org.hackystat.projectbrowser.page.projectportfolio.jaxb.ObjectFactory.class);
+          .newInstance(org.hackystat.projectbrowser.page.projectportfolio.jaxb.ObjectFactory.class);
       Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-      //add schema checking
+      // add schema checking
       SchemaFactory schemaFactory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
 
-      InputStream schemaStream = 
-        ProjectPortfolioDataModel.class.getResourceAsStream("portfolioDefinitions.xsd");
+      InputStream schemaStream = ProjectPortfolioDataModel.class
+          .getResourceAsStream("portfolioDefinitions.xsd");
       StreamSource schemaSources = new StreamSource(schemaStream);
       Schema schema = schemaFactory.newSchema(schemaSources);
       unmarshaller.setSchema(schema);
       return (PortfolioDefinitions) unmarshaller.unmarshal(defStream);
-    } 
+    }
     catch (JAXBException e1) {
-      Logger  logger = getLogger();
-      logger.severe("Error occurs when parsing portfolio definition xml file with jaxb > " 
+      Logger logger = getLogger();
+      logger.severe("Error occurs when parsing portfolio definition xml file with jaxb > "
           + e1.getMessage());
     }
     catch (SAXException e) {
-      Logger  logger = getLogger();
-      logger.warning("Error occurs when loading schema file: " + defStream.toString() + 
-          " > " + e.getMessage());
+      Logger logger = getLogger();
+      logger.warning("Error occurs when loading schema file: " + defStream.toString() + " > "
+          + e.getMessage());
     }
     return null;
   }
-  
 
   /**
    * Load data from Hackystat service.
@@ -340,46 +339,45 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
     try {
       measuresCharts.clear();
       TelemetryClient telemetryClient = new TelemetryClient(telemetryHost, email, password);
-      //prepare start and end time.
+      // prepare start and end time.
       XMLGregorianCalendar startTime = getStartTimestamp();
       XMLGregorianCalendar endTime = getEndTimestamp();
       for (int i = 0; i < this.selectedProjects.size() && inProcess; i++) {
-        //prepare project's information
+        // prepare project's information
         Project project = this.selectedProjects.get(i);
         String owner = project.getOwner();
         String projectName = project.getName();
 
-        this.processingMessage += "Retrieve data for project " + projectName + 
-        " (" + (i + 1) + " of " + this.selectedProjects.size() + ").\n";
-        
-        //get charts of this project
+        this.processingMessage += "Retrieve data for project " + projectName + " (" + (i + 1)
+            + " of " + this.selectedProjects.size() + ").\n";
+
+        // get charts of this project
         List<MiniBarChart> charts = new ArrayList<MiniBarChart>();
-        
+
         List<MeasureConfiguration> enableMeasures = getEnabledMeasures();
-        
+
         for (int j = 0; j < enableMeasures.size(); ++j) {
           MeasureConfiguration measure = enableMeasures.get(j);
-          
-          this.processingMessage += "---> Retrieve " + measure.getName() + "<" + 
-          measure.getParamtersString() + ">" + " (" + (i + 1) + " .. " + (j + 1) + 
-          " of " + enableMeasures.size() + ").\n";
-          //get data from hackystat
+
+          this.processingMessage += "---> Retrieve " + measure.getName() + "<"
+              + measure.getParamtersString() + ">" + " (" + (i + 1) + " .. " + (j + 1) + " of "
+              + enableMeasures.size() + ").\n";
+          // get data from hackystat
           if (!ProjectUtils.isValidStartTime(project, startTime)) {
             startTime = project.getStartTime();
           }
           String s = "/";
-          getLogger().finest("retriving telemetry: " + measure.getName() + s + owner + s + 
-              projectName + s + granularity + s + startTime + s + endTime + s + 
-              measure.getParamtersString());
-          TelemetryChartData chartData = telemetryClient.getChart(measure.getName(), 
-              owner, projectName, granularity, startTime, endTime, 
-              measure.getParamtersString());
-          //Log warning when portfolio definition refers to multi-stream telemetry chart.
+          getLogger().finest(
+              "retriving telemetry: " + measure.getName() + s + owner + s + projectName + s
+                  + granularity + s + startTime + s + endTime + s + measure.getParamtersString());
+          TelemetryChartData chartData = telemetryClient.getChart(measure.getName(), owner,
+              projectName, granularity, startTime, endTime, measure.getParamtersString());
+          // Log warning when portfolio definition refers to multi-stream telemetry chart.
           if (chartData.getTelemetryStream().size() > 1 && i == 0) {
             Logger logger = getLogger();
-            logger.warning("Telemetry chart:" + measure.getName() + " has more than 1 stream. " +
-            		"Should use chart than contain only one stream. " +
-            		"Please check your portfolio and telemetry definitions");
+            logger.warning("Telemetry chart:" + measure.getName() + " has more than 1 stream. "
+                + "Should use chart than contain only one stream. "
+                + "Please check your portfolio and telemetry definitions");
           }
           MiniBarChart chart = new MiniBarChart(chartData.getTelemetryStream().get(0), measure);
           chart.setTelemetryPageParameters(getTelemetryPageParameters(measure, project));
@@ -389,10 +387,10 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
       }
     }
     catch (TelemetryClientException e) {
-      String errorMessage = "Errors when retrieving telemetry data: " + e.getMessage() + ". " +
-      		"Please try again.";
+      String errorMessage = "Errors when retrieving telemetry data: " + e.getMessage() + ". "
+          + "Please try again.";
       this.processingMessage += errorMessage + "\n";
-      
+
       this.complete = false;
       this.inProcess = false;
       return;
@@ -405,8 +403,9 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
   }
 
   /**
-   * Check the parameter in the given measure configuration.
-   * Set the parameter to default if it is incorrect.
+   * Check the parameter in the given measure configuration. Set the parameter to default if it is
+   * incorrect.
+   * 
    * @param measure the given MeasureConfiguration.
    */
   private void checkMeasureParameters(MeasureConfiguration measure) {
@@ -418,7 +417,7 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
       }
     }
   }
-  
+
   /**
    * Cancel the data loading process.
    */
@@ -426,69 +425,59 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
     this.processingMessage += "Process Cancelled.\n";
     this.inProcess = false;
   }
-  
+
   /**
    * Return a PageParameters instance that include necessary information for telemetry.
+   * 
    * @param measure the telemetry analysis
    * @param project the project
    * @return the PagaParameters object
    */
   private PageParameters getTelemetryPageParameters(MeasureConfiguration measure, Project project) {
     PageParameters parameters = new PageParameters();
-    
+
     parameters.put(TelemetrySession.TELEMETRY_KEY, measure.getName());
-    parameters.put(
-        TelemetrySession.START_DATE_KEY, getStartTimestamp().toString());
+    parameters.put(TelemetrySession.START_DATE_KEY, getStartTimestamp().toString());
     parameters.put(TelemetrySession.END_DATE_KEY, getEndTimestamp().toString());
-    parameters.put(TelemetrySession.SELECTED_PROJECTS_KEY, 
-        project.getName() + TelemetrySession.PROJECT_NAME_OWNER_SEPARATR + project.getOwner());
+    parameters.put(TelemetrySession.SELECTED_PROJECTS_KEY, project.getName()
+        + TelemetrySession.PROJECT_NAME_OWNER_SEPARATR + project.getOwner());
     parameters.put(TelemetrySession.GRANULARITY_KEY, this.granularity);
     parameters.put(TelemetrySession.TELEMETRY_PARAMERTERS_KEY, measure.getParamtersString());
-    
+
     return parameters;
   }
 
   /**
-   * Return the end time stamp for analysis.
-   * If includeCurrentWeek, it will return the time stamp of yesterday.
-   * If !includeCurrentWeek, it will return the time stamp of last Saturday.
+   * Return the end time stamp for analysis. If includeCurrentWeek, it will return the time stamp of
+   * yesterday. If !includeCurrentWeek, it will return the time stamp of last Saturday.
+   * 
    * @return the XMLGregorianCalendar instance.
    */
   private XMLGregorianCalendar getEndTimestamp() {
-	/*
-    if (!this.includeCurrentWeek) {
-      GregorianCalendar date = new GregorianCalendar();
-      date.setTime(ProjectBrowserBasePage.getDateBefore(1));
-      date.setFirstDayOfWeek(Calendar.MONDAY);
-      int dayOfWeek = date.get(Calendar.DAY_OF_WEEK);
-      XMLGregorianCalendar endTime = Tstamp.makeTimestamp(date.getTimeInMillis());
-      endTime = Tstamp.incrementDays(endTime, - dayOfWeek);
-      return endTime;
-    }
-    return Tstamp.makeTimestamp(ProjectBrowserBasePage.getDateBefore(1).getTime());
-    */
-	return Tstamp.makeTimestamp(this.endDate);
+    /*
+     * if (!this.includeCurrentWeek) { GregorianCalendar date = new GregorianCalendar();
+     * date.setTime(ProjectBrowserBasePage.getDateBefore(1));
+     * date.setFirstDayOfWeek(Calendar.MONDAY); int dayOfWeek = date.get(Calendar.DAY_OF_WEEK);
+     * XMLGregorianCalendar endTime = Tstamp.makeTimestamp(date.getTimeInMillis()); endTime =
+     * Tstamp.incrementDays(endTime, - dayOfWeek); return endTime; } return
+     * Tstamp.makeTimestamp(ProjectBrowserBasePage.getDateBefore(1).getTime());
+     */
+    return Tstamp.makeTimestamp(this.endDate);
   }
 
   /**
    * Return the start time stamp for analysis.
+   * 
    * @return the XMLGregorianCalendar instance.
    */
   private XMLGregorianCalendar getStartTimestamp() {
-	  /*
-    int days;
-    if ("Month".equals(this.telemetryGranularity)) {
-      days = this.timePhrase * 30;
-    }
-    else if ("Week".equals(this.telemetryGranularity)) {
-      days = this.timePhrase * 7;
-    }
-    else {
-      days = this.timePhrase;
-    }
-    return Tstamp.makeTimestamp(ProjectBrowserBasePage.getDateBefore(days).getTime());
-    */
-	return Tstamp.makeTimestamp(this.startDate);
+    /*
+     * int days; if ("Month".equals(this.telemetryGranularity)) { days = this.timePhrase * 30; }
+     * else if ("Week".equals(this.telemetryGranularity)) { days = this.timePhrase * 7; } else {
+     * days = this.timePhrase; } return
+     * Tstamp.makeTimestamp(ProjectBrowserBasePage.getDateBefore(days).getTime());
+     */
+    return Tstamp.makeTimestamp(this.startDate);
   }
 
   /**
@@ -497,6 +486,7 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
   public boolean isInProcess() {
     return inProcess;
   }
+
   /**
    * @return the complete
    */
@@ -534,26 +524,19 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
     return this.selectedProjects.isEmpty();
   }
 
-
   /**
    * Return the default parameters of the given measure.
+   * 
    * @param measure the given measure
    * @return the parameters in a String
    */
   /*
-  public String getDefaultParametersString(String measure) {
-    List<ParameterDefinition> paramDefList = getParameterDefinitions(measure);
-      StringBuffer param = new StringBuffer();
-      for (int i = 0; i < paramDefList.size(); ++i) {
-        ParameterDefinition paramDef = paramDefList.get(i);          
-        param.append(paramDef.getType().getDefault());
-          if (i < paramDefList.size() - 1) {
-            param.append(',');
-          }
-        }
-      return param.toString();
-  }
-  */
+   * public String getDefaultParametersString(String measure) { List<ParameterDefinition>
+   * paramDefList = getParameterDefinitions(measure); StringBuffer param = new StringBuffer(); for
+   * (int i = 0; i < paramDefList.size(); ++i) { ParameterDefinition paramDef = paramDefList.get(i);
+   * param.append(paramDef.getType().getDefault()); if (i < paramDefList.size() - 1) {
+   * param.append(','); } } return param.toString(); }
+   */
 
   /**
    * @return the measures
@@ -561,7 +544,7 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
   public List<MeasureConfiguration> getMeasures() {
     return measures;
   }
-  
+
   /**
    * @return the enabled measures
    */
@@ -574,18 +557,18 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
     }
     return enableMeasures;
   }
-  
+
   /**
-   * Return the names of enabled measures. 
-   * If alias available for the measure, alias will be returned.
-   * Otherwise, name in measure's definition will be returned.
+   * Return the names of enabled measures. If alias available for the measure, alias will be
+   * returned. Otherwise, name in measure's definition will be returned.
+   * 
    * @return the names of the enabled measures.
    */
   public List<String> getEnabledMeasuresName() {
     List<String> names = new ArrayList<String>();
     for (MeasureConfiguration measure : measures) {
       if (measure.isEnabled()) {
-        //Convert to alias if available.
+        // Convert to alias if available.
         if (this.measureAlias.containsKey(measure.getName())) {
           names.add(this.measureAlias.get(measure.getName()));
         }

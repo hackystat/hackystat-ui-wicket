@@ -24,7 +24,7 @@ public class EnhancedStreamTrendClassifier extends SimpleStreamTrendClassifier {
   private static final double MINI_ERROR = 0.1;
 
   /** 
-   * Default constructor using e = 10%
+   * Default constructor using e = 10%.
    */
   public EnhancedStreamTrendClassifier() {
     this(0.1);

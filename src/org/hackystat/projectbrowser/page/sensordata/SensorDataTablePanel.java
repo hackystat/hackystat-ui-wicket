@@ -17,7 +17,7 @@ import org.apache.wicket.model.Model;
  */
 public class SensorDataTablePanel extends Panel {
   
-  /** For serialization */
+  /** For serialization. */
   private static final long serialVersionUID = 1L;
   
   /**

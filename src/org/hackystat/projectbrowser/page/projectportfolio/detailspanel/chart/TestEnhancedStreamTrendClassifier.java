@@ -6,7 +6,7 @@ import java.util.List;
 import org.junit.Test;
 
 /**
- * Test cases for EnhancedStreamTrendClassifier
+ * Test cases for EnhancedStreamTrendClassifier.
  * @author Shaoxuan Zhang
  *
  */

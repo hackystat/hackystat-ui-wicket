@@ -139,7 +139,7 @@ public class SensorDataSession implements Serializable {
   }
   
   /**
-   * Set the sensor data details IDataProvider
+   * Set the sensor data details IDataProvider.
    * @param model The sensor data details provider
    */
   public void setSensorDataDetailsProvider(SensorDataDetailsProvider model) {

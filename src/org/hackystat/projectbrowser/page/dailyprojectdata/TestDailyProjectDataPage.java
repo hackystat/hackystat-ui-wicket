@@ -20,7 +20,7 @@ import org.hackystat.utilities.tstamp.Tstamp;
 import org.junit.Test;
 
 /**
- * Test class for DailyProjectDataPage
+ * Test class for DailyProjectDataPage.
  * @author Shaoxuan Zhang
  *
  */

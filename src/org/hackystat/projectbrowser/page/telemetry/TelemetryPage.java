@@ -22,10 +22,6 @@ public class TelemetryPage extends ProjectBrowserBasePage {
   private static final long serialVersionUID = 1L;
   /** Telemetry session to hold up the state. */
   private TelemetrySession session = ProjectBrowserSession.get().getTelemetrySession();
-  /** the TelemetryInputPanel in this page. */
-  private TelemetryInputPanel inputPanel;
-  /** the TelemetryDataPanel in this page. */
-  private TelemetryDataPanel dataPanel;
   /** the LoadingProcessPanel in this page. */
   private LoadingProcessPanel loadingProcessPanel;
   /**
@@ -35,11 +31,11 @@ public class TelemetryPage extends ProjectBrowserBasePage {
     //session.clearParamErrorMessage();
     add(new FeedbackPanel("feedback"));
     
-    inputPanel = new TelemetryInputPanel("inputPanel", this);
+    TelemetryInputPanel inputPanel = new TelemetryInputPanel("inputPanel", this);
     inputPanel.setOutputMarkupId(true);
     add(inputPanel);
     
-    dataPanel = new TelemetryDataPanel("dataPanel", session);
+    TelemetryDataPanel dataPanel = new TelemetryDataPanel("dataPanel", session);
     dataPanel.setOutputMarkupId(true);
     add(dataPanel);
     

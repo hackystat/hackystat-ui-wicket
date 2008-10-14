@@ -9,7 +9,7 @@ import org.hackystat.telemetry.service.resource.chart.jaxb.TelemetryStream;
 
 /**
  * Group a selected flag with a TelemetryStream, 
- * so that this instance can be flaged as selected or not.
+ * so that this instance can be flagged as selected or not.
  * @author Shaoxuan
  *
  */
@@ -20,7 +20,7 @@ public class SelectableTelemetryStream implements Serializable {
   private boolean selected = false;
   /** The TelemetryStream of this stream. */
   private final TelemetryStream telemetryStream;
-  /** The color associated with this stream */
+  /** The color associated with this stream. */
   private String color = "";
   /** the marker of this stream. */
   private String marker = "";

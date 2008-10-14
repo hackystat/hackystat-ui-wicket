@@ -15,7 +15,7 @@ import org.hackystat.sensorbase.resource.projects.jaxb.SensorDataSummary;
  */
 public class SdtSummaryPanel extends Panel {
 
-  /** For serialization */
+  /** For serialization. */
   private static final long serialVersionUID = 1L;
   /** Must be serializable, thus a long rather than an XMLGregorianCalendar. */
   private long start; 

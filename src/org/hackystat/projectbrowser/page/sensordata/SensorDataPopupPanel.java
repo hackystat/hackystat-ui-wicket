@@ -21,7 +21,6 @@ public class SensorDataPopupPanel extends Panel {
   /** The modal window inside this panel. */
   private final ModalWindow modalWindow;
   /** The link that bring up the popup window. */
-  private final AjaxLink link;
   private long start;
   private String sdt;
   private String tool;
@@ -55,7 +54,7 @@ public class SensorDataPopupPanel extends Panel {
             return true;
         }
     });
-    link = new AjaxLink("showModalWindow") {
+    AjaxLink link = new AjaxLink("showModalWindow") {
       /** Support serialization. */
       private static final long serialVersionUID = 1L;
         @Override

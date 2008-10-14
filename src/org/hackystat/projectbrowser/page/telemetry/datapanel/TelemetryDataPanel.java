@@ -19,15 +19,17 @@ import org.hackystat.projectbrowser.page.telemetry.TelemetryPage;
 import org.hackystat.projectbrowser.page.telemetry.TelemetrySession;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
 import org.hackystat.telemetry.service.resource.chart.jaxb.TelemetryPoint;
+
 /**
  * Panel for showing telemetry content.
+ * 
  * @author Shaoxuan Zhang
- *
+ * 
  */
 public class TelemetryDataPanel extends Panel {
   /** Support serialization. */
   private static final long serialVersionUID = 1L;
-  /** TelemetrySession that hold the page state.*/
+  /** TelemetrySession that hold the page state. */
   TelemetrySession session;
 
   /**
@@ -38,104 +40,107 @@ public class TelemetryDataPanel extends Panel {
     super(id);
     this.session = s;
     IModel dataModel = new PropertyModel(session, "dataModel");
-    
-    BookmarkablePageLink restLink = 
-      new BookmarkablePageLink("restLink", TelemetryPage.class, session.getPageParameters());
-    
-    //restLink.add(new Label("restLinkLabel", new Model(restLink)));
+
+    BookmarkablePageLink restLink = new BookmarkablePageLink("restLink", TelemetryPage.class,
+        session.getPageParameters());
+
+    // restLink.add(new Label("restLinkLabel", new Model(restLink)));
     add(restLink);
-    
+
     Form streamForm = new Form("streamForm") {
       /** Support serialization. */
       private static final long serialVersionUID = 1L;
+
       @Override
       public void onSubmit() {
         if (!session.getDataModel().updateSelectedChart()) {
-          session.setFeedback("Failed to get a chart image. " +
-          		" Please check to make sure you've selected at least one stream!");
+          session.setFeedback("Failed to get a chart image. "
+              + " Please check to make sure you've selected at least one stream!");
         }
       }
     };
     add(streamForm);
-    //table headers
-    add(new Label("telemetryName", 
-                  new PropertyModel(dataModel, "telemetryName")));
+    // table headers
+    add(new Label("telemetryName", new PropertyModel(dataModel, "telemetryName")));
 
-    ListView dateList = new ListView("dateList", 
-                                     new PropertyModel(dataModel, "dateList")) {
+    ListView dateList = new ListView("dateList", new PropertyModel(dataModel, "dateList")) {
       /** Support serialization. */
       public static final long serialVersionUID = 1L;
+
       @Override
       protected void populateItem(ListItem item) {
-        String dateString = (String)item.getModelObject();
+        String dateString = (String) item.getModelObject();
         item.add(new Label("date", dateString));
       }
     };
     streamForm.add(dateList);
-    
-    //checkbox to select stream to display
+
+    // checkbox to select stream to display
     streamForm.add(new CheckBox("selectAll", new Model()) {
       /** Support serialization. */
       public static final long serialVersionUID = 1L;
+
       @Override
-      protected  void  onSelectionChanged(java.lang.Object newSelection) {
-        session.getDataModel().changeSelectionForAll((Boolean)newSelection);
+      protected void onSelectionChanged(java.lang.Object newSelection) {
+        session.getDataModel().changeSelectionForAll((Boolean) newSelection);
       }
+
       @Override
       protected boolean wantOnSelectionChangedNotifications() {
         return true;
       }
     });
-    
-    //stream data
-    ListView projectTable = 
-      new ListView("projectTable", new PropertyModel(dataModel, "selectedProjects")) {
+
+    // stream data
+    ListView projectTable = new ListView("projectTable", new PropertyModel(dataModel,
+        "selectedProjects")) {
       /** Support serialization. */
       public static final long serialVersionUID = 1L;
+
       @Override
       protected void populateItem(ListItem item) {
-        Project project = (Project)item.getModelObject();
+        Project project = (Project) item.getModelObject();
         Label projectNameLabel = new Label("projectName", project.getName());
-        List<SelectableTelemetryStream> streamList = 
-            session.getDataModel().getTelemetryStream(project);
+        List<SelectableTelemetryStream> streamList = session.getDataModel().getTelemetryStream(
+            project);
         projectNameLabel.add(new AttributeModifier("rowspan", new Model(streamList.size() + 1)));
         item.add(projectNameLabel);
-        
-        ListView projectStream = 
-          new ListView("projectStream", streamList) {
+
+        ListView projectStream = new ListView("projectStream", streamList) {
           /** Support serialization. */
           public static final long serialVersionUID = 1L;
+
           @Override
           protected void populateItem(ListItem item) {
-            SelectableTelemetryStream stream = (SelectableTelemetryStream)item.getModelObject();
+            SelectableTelemetryStream stream = (SelectableTelemetryStream) item.getModelObject();
             String streamName = stream.getTelemetryStream().getName();
             String streamUnit = stream.getTelemetryStream().getYAxis().getUnits();
-            
+
             item.add(new CheckBox("streamCheckBox", new PropertyModel(stream, "selected")));
             item.add(new Label("streamName", streamName));
             item.add(new Label("streamUnit", streamUnit));
 
             /*
-            WebComponent streamMarker = new WebComponent("streamMarker");
-            streamMarker.add(new AttributeModifier("src", true, 
-                new PropertyModel(stream, "markerImageUrl")));
-            item.add(streamMarker);
-            */
-            
+             * WebComponent streamMarker = new WebComponent("streamMarker"); streamMarker.add(new
+             * AttributeModifier("src", true, new PropertyModel(stream, "markerImageUrl")));
+             * item.add(streamMarker);
+             */
+
             item.add(new ImageUrl("streamMarker", stream.getMarkerImageUrl()));
-            
+
             WebComponent colorCell = new WebComponent("colorCell");
-            colorCell.add(new AttributeModifier("style", true, 
-                new PropertyModel(stream, "backgroundColorValue")));
+            colorCell.add(new AttributeModifier("style", true, new PropertyModel(stream,
+                "backgroundColorValue")));
             item.add(colorCell);
-            
-            ListView streamData = 
-              new ListView("streamData", stream.getTelemetryStream().getTelemetryPoint()) {
+
+            ListView streamData = new ListView("streamData", stream.getTelemetryStream()
+                .getTelemetryPoint()) {
               /** Support serialization. */
               public static final long serialVersionUID = 1L;
+
               @Override
               protected void populateItem(ListItem item) {
-                TelemetryPoint point = (TelemetryPoint)item.getModelObject();
+                TelemetryPoint point = (TelemetryPoint) item.getModelObject();
                 String value = point.getValue();
                 if (value == null) {
                   item.add(new Label("data", "N/A"));
@@ -157,42 +162,44 @@ public class TelemetryDataPanel extends Panel {
     };
     streamForm.add(projectTable);
 
-    //add the selected chart.
+    // add the selected chart.
     WebComponent selectedchartUrl = new WebComponent("selectedChart") {
       public static final long serialVersionUID = 1L;
+
       @Override
-      public boolean isVisible () {
+      public boolean isVisible() {
         return !session.getDataModel().isChartEmpty();
       }
     };
-    selectedchartUrl.add(new AttributeModifier("src", true, 
-        new PropertyModel(dataModel, "selectedChart")));
+    selectedchartUrl.add(new AttributeModifier("src", true, new PropertyModel(dataModel,
+        "selectedChart")));
     add(selectedchartUrl);
-    
-    
-    PopupWindowPanel selectedchartUrlWindow = 
-      new PopupWindowPanel("selectedChartUrlWindow", "Google Chart URL") {
+
+    PopupWindowPanel selectedchartUrlWindow = new PopupWindowPanel("selectedChartUrlWindow",
+        "Google Chart URL") {
       /** Support serialization. */
       public static final long serialVersionUID = 1L;
+
       @Override
-      public boolean isVisible () {
+      public boolean isVisible() {
         return !session.getDataModel().isChartEmpty();
       }
     };
     selectedchartUrlWindow.getModalWindow().setContent(
-        new Label(selectedchartUrlWindow.getModalWindow().getContentId(), 
-                  new PropertyModel(dataModel, "selectedChart")));
+        new Label(selectedchartUrlWindow.getModalWindow().getContentId(), new PropertyModel(
+            dataModel, "selectedChart")));
     add(selectedchartUrlWindow);
-    
+
   }
-  
+
   /**
    * Show the panel only when the data model is not empty and no loadin is in process.
+   * 
    * @return true when this panel should be shown.
    */
   @Override
   public boolean isVisible() {
     return !session.getDataModel().isEmpty() && session.getDataModel().isComplete();
   }
-  
+
 }
