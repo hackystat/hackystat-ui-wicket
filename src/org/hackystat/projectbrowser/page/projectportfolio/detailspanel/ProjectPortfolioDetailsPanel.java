@@ -12,6 +12,7 @@ import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.imageurl.ImageUrl;
 import org.hackystat.projectbrowser.page.projectportfolio.ProjectPortfolioPage;
 import org.hackystat.projectbrowser.page.projectportfolio.ProjectPortfolioSession;
+import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.chart.MiniBarChart;
 import org.hackystat.projectbrowser.page.telemetry.TelemetryPage;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
 

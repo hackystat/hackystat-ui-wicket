@@ -15,8 +15,8 @@ import org.hackystat.projectbrowser.ProjectBrowserProperties;
 import org.hackystat.projectbrowser.authentication.SigninPage;
 import org.hackystat.projectbrowser.page.projectportfolio.configurationpanel.
             ProjectPortfolioConfigurationPanel;
-import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.MiniBarChart;
 import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.ProjectPortfolioDetailsPanel;
+import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.chart.MiniBarChart;
 import org.hackystat.projectbrowser.page.projectportfolio.inputpanel.ProjectPortfolioInputPanel;
 import org.hackystat.projectbrowser.test.ProjectBrowserTestHelper;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;

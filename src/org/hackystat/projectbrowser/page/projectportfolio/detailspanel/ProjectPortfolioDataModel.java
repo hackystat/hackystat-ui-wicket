@@ -23,6 +23,7 @@ import org.hackystat.projectbrowser.ProjectBrowserApplication;
 import org.hackystat.projectbrowser.ProjectBrowserProperties;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.page.loadingprocesspanel.Processable;
+import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.chart.MiniBarChart;
 import org.hackystat.projectbrowser.page.projectportfolio.jaxb.Measures.Measure;
 import org.hackystat.projectbrowser.page.projectportfolio.jaxb.Measures;
 import org.hackystat.projectbrowser.page.projectportfolio.jaxb.PortfolioDefinitions;

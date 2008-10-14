@@ -1,4 +1,4 @@
-package org.hackystat.projectbrowser.page.projectportfolio.detailspanel;
+package org.hackystat.projectbrowser.page.projectportfolio.detailspanel.chart;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -8,6 +8,7 @@ import java.util.List;
 import org.apache.wicket.PageParameters;
 import org.hackystat.projectbrowser.googlechart.ChartType;
 import org.hackystat.projectbrowser.googlechart.GoogleChart;
+import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.MeasureConfiguration;
 import org.hackystat.telemetry.service.resource.chart.jaxb.TelemetryPoint;
 import org.hackystat.telemetry.service.resource.chart.jaxb.TelemetryStream;
 
@@ -38,6 +39,7 @@ public class MiniBarChart implements Serializable {
 
   /** The configuration of this chart. */
   private final MeasureConfiguration configuration;
+  
   
   /**
    * @param stream The stream of this chart.
@@ -105,34 +107,19 @@ public class MiniBarChart implements Serializable {
    */
   public String getChartColor() {
     if (configuration.isColorable()) {
-      boolean increased = false;
-      boolean decreased = false;
-      for (int i = 1; i < this.streamData.size(); ++i) {
-        if (this.streamData.get(i) >= 0) {
-          if (this.streamData.get(i - 1) > this.streamData.get(i)) {
-            decreased = true;
-          }
-          else if (this.streamData.get(i - 1) < this.streamData.get(i)) {
-            increased = true;
-          }
-        }
+      switch (configuration.getStreamTrend(this.streamData)) {
+      case STABLE: return configuration.getStableColor();
+      case INCREASING: return configuration.getHigherColor();
+      case DECREASING: return configuration.getLowerColor();
+      default: return configuration.getUnclassifiedTrendColor();
       }
-      if (!increased && !decreased) {
-        return configuration.getStableColor();
-      }
-      if (increased && !decreased) {
-        return configuration.getHigherColor();
-      }
-      if (decreased && !increased) {
-        return configuration.getLowerColor();
-      }
-      return configuration.getMiddleColor();
     }
     else {
       return configuration.getDataModel().getFontColor();
     }
   }
 
+  
   /**
    * @return the latestValue
    */

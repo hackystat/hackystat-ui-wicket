@@ -5,6 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.chart.
+         EnhancedStreamTrendClassifier;
+import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.chart.
+         SimpleStreamTrendClassifier;
+import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.chart.StreamTrend;
 
 /**
  * Configuration for project portfolio measures.
@@ -41,6 +46,9 @@ public class MeasureConfiguration implements Serializable {
   //private List<String> parameters = new ArrayList<String>();
   /** The parameters for telemetry chart. */
   private final List<IModel> parameters = new ArrayList<IModel>();
+  
+  /** The simple stream trend classifier.*/
+  private SimpleStreamTrendClassifier streamTrendClassifier = new EnhancedStreamTrendClassifier();
 
   /**
    * Create an instance with default colors green yellow red. higher color will be green if
@@ -79,6 +87,15 @@ public class MeasureConfiguration implements Serializable {
     for (String parameter : parametersString.split(PARAMETER_SEPARATOR)) {
       this.parameters.add(new Model(parameter));
     }
+  }
+
+  /**
+   * Parse the list of data and produce a StreamTrend result.
+   * @param stream the input list of data
+   * @return StreamTrend enumeration. 
+   */
+  public StreamTrend getStreamTrend(List<Double> stream) {
+    return this.streamTrendClassifier.getStreamTrend(stream);
   }
   
   /**
@@ -185,6 +202,14 @@ public class MeasureConfiguration implements Serializable {
   public String getStableColor() {
     return dataModel.getGoodColor();
   }
+  
+  /**
+   * Return the color for unstable trend.
+   * @return the color
+   */
+  public String getUnclassifiedTrendColor() {
+    return dataModel.getSosoColor();
+  }
 
   /**
    * Return the parameters in a single String.
@@ -234,5 +259,19 @@ public class MeasureConfiguration implements Serializable {
    */
   public ProjectPortfolioDataModel getDataModel() {
     return dataModel;
+  }
+
+  /**
+   * @param streamTrendClassifier the streamTrendClassifier to set
+   */
+  public void setStreamTrendClassifier(SimpleStreamTrendClassifier streamTrendClassifier) {
+    this.streamTrendClassifier = streamTrendClassifier;
+  }
+
+  /**
+   * @return the streamTrendClassifier
+   */
+  public SimpleStreamTrendClassifier getStreamTrendClassifier() {
+    return streamTrendClassifier;
   }
 }
