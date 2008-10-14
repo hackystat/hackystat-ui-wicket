@@ -242,8 +242,8 @@ public class TelemetryChartDataModel implements Serializable, Processable {
     //add streams to the chart.
     for (int i = 0; i < streams.size(); ++i) {
       SelectableTelemetryStream stream = streams.get(i);
-      stream.setColor(streamAxisMap.get(stream.getUnitName()).getColor());
       if (!stream.isEmpty()) {
+        stream.setColor(streamAxisMap.get(stream.getUnitName()).getColor());
         TelemetryStreamYAxis axis = streamAxisMap.get(stream.getUnitName());
         this.addStreamToChart(stream, axis.getMinimum(), axis.getMaximum(), googleChart);
       }
