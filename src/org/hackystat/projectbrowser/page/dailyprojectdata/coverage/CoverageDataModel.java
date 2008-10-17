@@ -53,11 +53,11 @@ public class CoverageDataModel implements Serializable {
     
     for (Project project : projects) {
       Logger logger = ((ProjectBrowserApplication)ProjectBrowserApplication.get()).getLogger();
-      logger.info("Getting DPD for project: " + project.getName());
+      logger.fine("Getting Coverage DPD for project: " + project.getName());
       try {
         CoverageDailyProjectData classData = dpdClient.getCoverage(project.getOwner(),
             project.getName(), Tstamp.makeTimestamp(session.getDate().getTime()), granularity);
-        logger.info("Finished getting DPD for project: " + project.getName());
+        logger.fine("Finished getting Coverage DPD for project: " + project.getName());
         // Create a CoverageData instance for this project.
         CoverageData coverageData = this.getCoverageData(project);
         for (ConstructData data : classData.getConstructData()) {
@@ -65,7 +65,7 @@ public class CoverageDataModel implements Serializable {
         }
       }
       catch (DailyProjectDataClientException e) {
-        session.setFeedback("Exception when getting coverage data for project " + project + ": " +
+        session.setFeedback("Exception when getting coverage DPD for project " + project + ": " +
             e.getMessage());
       }
     }

@@ -1,4 +1,4 @@
-package org.hackystat.projectbrowser.page.dailyprojectdata.build;
+package org.hackystat.projectbrowser.page.dailyprojectdata.devtime;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -9,8 +9,7 @@ import java.util.logging.Logger;
 
 import org.hackystat.dailyprojectdata.client.DailyProjectDataClient;
 import org.hackystat.dailyprojectdata.client.DailyProjectDataClientException;
-import org.hackystat.dailyprojectdata.resource.build.jaxb.MemberData;
-import org.hackystat.dailyprojectdata.resource.build.jaxb.BuildDailyProjectData;
+import org.hackystat.dailyprojectdata.resource.devtime.jaxb.DevTimeDailyProjectData;
 import org.hackystat.projectbrowser.ProjectBrowserApplication;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.page.dailyprojectdata.DailyProjectDataSession;
@@ -18,25 +17,24 @@ import org.hackystat.sensorbase.resource.projects.jaxb.Project;
 import org.hackystat.utilities.tstamp.Tstamp;
 
 /**
- * The data model for Build DPD display.  This data model accommodates multiple Projects.
- * For each project, the data model indicates the number of classes whose method-level percentage
- * falls into each of five buckets, from 0-20% to 80-100%.
+ * The data model for DevTime DPD display.  This data model accommodates multiple Projects.
+ * For each project, the data model indicates the members in the Project along with how
+ * much DevTime they worked on the associated project for the day.
  * @author Philip Johnson
- * @author Shaoxuan Zhang
  *
  */
-public class BuildDataModel implements Serializable {
+public class DevTimeDataModel implements Serializable {
 
   /** Support serialization. */
   private static final long serialVersionUID = 1L;
   
   /** Holds the build data, organized by Project.*/
-  private Map<Project, BuildData> buildDataMap = new HashMap<Project, BuildData>();
+  private Map<Project, DevTimeData> devTimeDataMap = new HashMap<Project, DevTimeData>();
   
   /**
-   * The default BuildDataModel, which contains no build information.
+   * The default DevTimeDataModel, which contains no build information.
    */
-  public BuildDataModel() {
+  public DevTimeDataModel() {
     // Do nothing
   }
   
@@ -52,19 +50,17 @@ public class BuildDataModel implements Serializable {
     
     for (Project project : projects) {
       Logger logger = ((ProjectBrowserApplication)ProjectBrowserApplication.get()).getLogger();
-      logger.fine("Getting Build DPD for project: " + project.getName());
+      logger.fine("Getting DevTime DPD for project: " + project.getName());
       try {
-        BuildDailyProjectData classData = dpdClient.getBuild(project.getOwner(),
+        DevTimeDailyProjectData devTimeDpd = dpdClient.getDevTime(project.getOwner(),
             project.getName(), Tstamp.makeTimestamp(session.getDate().getTime()));
-        logger.fine("Finished getting Build DPD for project: " + project.getName());
-        // Create a BuildData instance for this project.
-        BuildData buildData = this.getBuildData(project);
-        for (MemberData data : classData.getMemberData()) {
-          buildData.addEntry(data);
-        }
+        logger.fine("Finished getting DevTime DPD for project: " + project.getName());
+        DevTimeData data = new DevTimeData(project, devTimeDpd.getMemberData());
+        this.devTimeDataMap.put(project, data);
       }
+
       catch (DailyProjectDataClientException e) {
-        session.setFeedback("Exception when getting build DPD for project " + project + ": " +
+        session.setFeedback("Exception getting DevTime DPD for project " + project + ": " +
             e.getMessage());
       }
     }
@@ -75,7 +71,7 @@ public class BuildDataModel implements Serializable {
    * Sets this model to its empty state. 
    */
   public void clear() {
-    this.buildDataMap.clear();
+    this.devTimeDataMap.clear();
   }
   
 
@@ -85,28 +81,28 @@ public class BuildDataModel implements Serializable {
    * @return True if the data model is empty. 
    */
   public boolean isEmpty() {
-    return this.buildDataMap.isEmpty();
+    return this.devTimeDataMap.isEmpty();
   }
   
   /**
-   * Return the BuildData instance associated with the specified project.
-   * Creates and returns a new BuildData instance if one is not yet present.
+   * Return the DevTimeData instance associated with the specified project.
+   * Creates and returns a new DevTimeData instance if one is not yet present.
    * @param project The project. 
-   * @return The BuildData instance for this project.  
+   * @return The DevTimeData instance for this project.  
    */
-  public BuildData getBuildData(Project project) {
-    if (!buildDataMap.containsKey(project)) {
-      buildDataMap.put(project, new BuildData(project));
+  public DevTimeData getDevTimeData(Project project) {
+    if (!devTimeDataMap.containsKey(project)) {
+      devTimeDataMap.put(project, new DevTimeData(project));
     }
-    return buildDataMap.get(project);
+    return devTimeDataMap.get(project);
   }
   
   /**
-   * Returns the list of BuildData instances, needed for markup.
-   * @return The list of BuildData instances. 
+   * Returns the list of DevTimeData instances, needed for markup.
+   * @return The list of DevTimeData instances. 
    */
-  public List<BuildData> getBuildDataList() {
-    return new ArrayList<BuildData>(this.buildDataMap.values());
+  public List<DevTimeData> getDevTimeDataList() {
+    return new ArrayList<DevTimeData>(this.devTimeDataMap.values());
   }
   
 }

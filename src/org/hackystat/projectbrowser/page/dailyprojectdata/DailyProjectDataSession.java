@@ -17,6 +17,7 @@ import org.hackystat.projectbrowser.page.dailyprojectdata.build.BuildDataModel;
 import org.hackystat.projectbrowser.page.dailyprojectdata.complexity.ComplexityDataModel;
 import org.hackystat.projectbrowser.page.dailyprojectdata.coupling.CouplingDataModel;
 import org.hackystat.projectbrowser.page.dailyprojectdata.coverage.CoverageDataModel;
+import org.hackystat.projectbrowser.page.dailyprojectdata.devtime.DevTimeDataModel;
 import org.hackystat.projectbrowser.page.dailyprojectdata.unittest.UnitTestDataModel;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
 
@@ -41,7 +42,7 @@ public class DailyProjectDataSession implements Serializable {
   
   /** The list of analysis choices. */
   private List<String> analysisList = 
-    Arrays.asList("Build", "Coverage", "Coupling", "Complexity", "UnitTest");
+    Arrays.asList("Build", "Coverage", "Coupling", "Complexity", "DevTime", "UnitTest");
 
   /** the feedback string. */
   private String feedback = "";
@@ -64,8 +65,11 @@ public class DailyProjectDataSession implements Serializable {
   /** The complexity data model. */
   private ComplexityDataModel complexityDataModel = new ComplexityDataModel();
 
-  /** The complexity data model. */
+  /** The build data model. */
   private BuildDataModel buildDataModel = new BuildDataModel();
+
+  /** The DevTime data model. */
+  private DevTimeDataModel devTimeDataModel = new DevTimeDataModel();
 
   /**
    * Initialize this session, including the list of context-sensitive menus.
@@ -243,6 +247,14 @@ public class DailyProjectDataSession implements Serializable {
   }
   
   /**
+   * Gets the DevTime model associated with this session.
+   * @return The DevTime model. 
+   */
+  public DevTimeDataModel getDevTimeDataModel() {
+    return this.devTimeDataModel;
+  }
+  
+  /**
    * Sets all analysis data models to their empty state. 
    */
   public void clearDataModels() {
@@ -251,5 +263,6 @@ public class DailyProjectDataSession implements Serializable {
     this.couplingDataModel.clear();
     this.complexityDataModel.clear();
     this.buildDataModel.clear();
+    this.devTimeDataModel.clear();
   }
 }

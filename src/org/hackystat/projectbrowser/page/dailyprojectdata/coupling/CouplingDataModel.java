@@ -53,12 +53,12 @@ public class CouplingDataModel implements Serializable {
     
     for (Project project : projects) {
       Logger logger = ((ProjectBrowserApplication)ProjectBrowserApplication.get()).getLogger();
-      logger.info("Getting Coupling DPD for project: " + project.getName());
+      logger.fine("Getting Coupling DPD for project: " + project.getName());
       try {
         CouplingDailyProjectData classData = dpdClient.getCoupling(project.getOwner(),
             project.getName(), Tstamp.makeTimestamp(session.getDate().getTime()), "class",
             "DependencyFinder");
-        logger.info("Finished getting Coupling DPD for project: " + project.getName());
+        logger.fine("Finished getting Coupling DPD for project: " + project.getName());
         CouplingData couplingData = this.getCouplingData(project);
         for (org.hackystat.dailyprojectdata.resource.coupling.jaxb.CouplingData data : 
           classData.getCouplingData()) {
@@ -77,7 +77,7 @@ public class CouplingDataModel implements Serializable {
         }
       }
       catch (DailyProjectDataClientException e) {
-        session.setFeedback("Exception when getting coupling data for project " + project + ": " +
+        session.setFeedback("Exception when getting coupling DPD for project " + project + ": " +
             e.getMessage());
       }
     }

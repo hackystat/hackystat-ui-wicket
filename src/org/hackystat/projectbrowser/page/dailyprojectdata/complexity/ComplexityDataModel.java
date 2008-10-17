@@ -56,19 +56,19 @@ public class ComplexityDataModel implements Serializable {
     
     for (Project project : projects) {
       Logger logger = ((ProjectBrowserApplication)ProjectBrowserApplication.get()).getLogger();
-      logger.info("Getting Complexity DPD for project: " + project.getName());
+      logger.fine("Getting Complexity DPD for project: " + project.getName());
       try {
         ComplexityDailyProjectData classData = dpdClient.getComplexity(project.getOwner(),
             project.getName(), Tstamp.makeTimestamp(session.getDate().getTime()), complexityType,
         complexityTool);
-        logger.info("Finished getting Complexity DPD for project: " + project.getName());
+        logger.fine("Finished getting Complexity DPD for project: " + project.getName());
         ComplexityData complexityData = this.getComplexityData(project);
         for (FileData data : classData.getFileData()) {
           complexityData.addEntry(data);
         }
       }
       catch (Exception e) {
-        session.setFeedback("Exception when getting complexity data for project " + project + ": " +
+        session.setFeedback("Exception when getting complexity DPD for project " + project + ": " +
             StackTrace.toString(e));
       }
     }

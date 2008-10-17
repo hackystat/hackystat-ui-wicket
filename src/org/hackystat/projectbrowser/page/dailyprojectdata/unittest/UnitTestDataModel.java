@@ -51,11 +51,11 @@ public class UnitTestDataModel implements Serializable {
     
     for (Project project : projects) {
       Logger logger = ((ProjectBrowserApplication)ProjectBrowserApplication.get()).getLogger();
-      logger.info("Getting DPD for project: " + project.getName());
+      logger.fine("Getting UnitTest DPD for project: " + project.getName());
       try {
         UnitTestDailyProjectData classData = dpdClient.getUnitTest(project.getOwner(),
             project.getName(), Tstamp.makeTimestamp(session.getDate().getTime()));
-        logger.info("Finished getting DPD for project: " + project.getName());
+        logger.fine("Finished getting UnitTest DPD for project: " + project.getName());
         // Create a UnitTestData instance for this project.
         UnitTestData unittestData = this.getUnitTestData(project);
         for (MemberData data : classData.getMemberData()) {
@@ -63,7 +63,7 @@ public class UnitTestDataModel implements Serializable {
         }
       }
       catch (DailyProjectDataClientException e) {
-        session.setFeedback("Exception when getting unittest data for project " + project + ": " +
+        session.setFeedback("Exception when getting unittest DPD for project " + project + ": " +
             e.getMessage());
       }
     }

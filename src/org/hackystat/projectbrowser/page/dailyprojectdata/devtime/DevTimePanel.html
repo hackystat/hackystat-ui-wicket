@@ -1,0 +1,49 @@
+<html xmlns:wicket>
+  <wicket:panel>
+    <h3>DevTime in minutes for each project member </h3>
+    <table>
+      <tr>
+        <th>Project</th>
+        <th>DevTime(s)</th>
+        <th>Total</th>
+      </tr>
+      <tr wicket:id="devTimeDataList">
+        <td wicket:id="project"/>
+        <td>
+          <span wicket:id="devtimedata"/>
+        </td>
+        <td wicket:id="total" />
+      </tr>
+    </table>
+    <p>
+
+The goal of this analysis is to provide a perspective on the amount of developer "DevTime" 
+associated with one or more projects.  Each row shows, for a given project, the total 
+DevTime along with the breakdown of DevTime per developer for that day. 
+</p>
+
+<p>
+DevTime is an imperfect proxy for developer "effort".  It works in the following way. For 
+tools such as IDEs like Eclipse, developer activities within the tool generates "DevEvent" 
+instances, which basically indicate that at the given timestamp, the developer was interacting
+with the tool.  A tool such as Eclipse can generates dozens of DevEvent instances per hour
+under typical usage.      
+</p>
+
+<p>
+The DevTime metric is computed from the raw DevEvent sensor data in the following way.  Each day
+is divided into 288 five minute intervals (from 12:00 midnight to 12:04:59.999am, 
+12:05am to 12:09:59.999am, etc.)   If there is at least one DevEvent within a given five minute
+interval, then the developer gets DevTime for all five minutes within that interval.  Thus, 
+DevTime is always a multiple of 5.   
+</p>
+
+<p>
+DevTime is an imperfect measure of developer effort because it does not take into account 
+developer activities done away from instrumented tools.  For example, time in meetings, 
+time spent on the phone, or time thinking about the project in the shower does not count
+as DevTime.
+</p>  
+
+  </wicket:panel>
+</html>
