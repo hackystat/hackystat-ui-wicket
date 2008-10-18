@@ -29,20 +29,20 @@ public class DevTimePanel extends Panel {
     DailyProjectDataSession session = ProjectBrowserSession.get().getDailyProjectDataSession();
     // prepare the data model.
     DevTimeDataModel dataModel = session.getDevTimeDataModel();
-    ListView buildListView = new ListView("devTimeDataList", new PropertyModel(dataModel,
+    ListView listView = new ListView("devTimeDataList", new PropertyModel(dataModel,
         "devTimeDataList")) {
       /** Support serialization. */
       private static final long serialVersionUID = 1L;
 
       @Override
       protected void populateItem(ListItem item) {
-        DevTimeData buildData = (DevTimeData) item.getModelObject();
-        item.add(new Label("project", buildData.getProject().getName()));
-        item.add(new Label("devtimedata", buildData.getDevTimeData()));
-        item.add(new Label("total", String.valueOf(buildData.getTotalDevTime())));
+        DevTimeData data = (DevTimeData) item.getModelObject();
+        item.add(new Label("project", data.getProject().getName()));
+        item.add(new Label("devtimedata", data.getDevTimeData()));
+        item.add(new Label("total", String.valueOf(data.getTotalDevTime())));
       }
     };
-    add(buildListView);
+    add(listView);
   }
 
   /**

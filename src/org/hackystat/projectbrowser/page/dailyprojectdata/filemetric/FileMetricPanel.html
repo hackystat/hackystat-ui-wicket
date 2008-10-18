@@ -1,0 +1,25 @@
+<html xmlns:wicket>
+  <wicket:panel>
+    <h3>Total LOC for each project </h3>
+    <table>
+      <tr>
+        <th>Project</th>
+        <th>LOC by file type</th>
+        <th>Total</th>
+      </tr>
+      <tr wicket:id="fileMetricDataList">
+        <td wicket:id="project"/>
+        <td>
+          <span wicket:id="filemetricdata"/>
+        </td>
+        <td wicket:id="total" />
+      </tr>
+    </table>
+
+<p>
+The goal of this analysis is to provide a perspective on the size of the project in
+total LOC.  The analysis also provides a breakdown of the size by file type. 
+</p>  
+
+  </wicket:panel>
+</html>

@@ -18,6 +18,7 @@ import org.hackystat.projectbrowser.page.dailyprojectdata.complexity.ComplexityD
 import org.hackystat.projectbrowser.page.dailyprojectdata.coupling.CouplingDataModel;
 import org.hackystat.projectbrowser.page.dailyprojectdata.coverage.CoverageDataModel;
 import org.hackystat.projectbrowser.page.dailyprojectdata.devtime.DevTimeDataModel;
+import org.hackystat.projectbrowser.page.dailyprojectdata.filemetric.FileMetricDataModel;
 import org.hackystat.projectbrowser.page.dailyprojectdata.unittest.UnitTestDataModel;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
 
@@ -42,7 +43,8 @@ public class DailyProjectDataSession implements Serializable {
   
   /** The list of analysis choices. */
   private List<String> analysisList = 
-    Arrays.asList("Build", "Coverage", "Coupling", "Complexity", "DevTime", "UnitTest");
+    Arrays.asList("Build", "Coverage", "Coupling", "Complexity", "DevTime", "FileMetric", 
+        "UnitTest");
 
   /** the feedback string. */
   private String feedback = "";
@@ -70,6 +72,9 @@ public class DailyProjectDataSession implements Serializable {
 
   /** The DevTime data model. */
   private DevTimeDataModel devTimeDataModel = new DevTimeDataModel();
+
+  /** The FileMetric data model. */
+  private FileMetricDataModel fileMetricDataModel = new FileMetricDataModel();
 
   /**
    * Initialize this session, including the list of context-sensitive menus.
@@ -255,6 +260,14 @@ public class DailyProjectDataSession implements Serializable {
   }
   
   /**
+   * Gets the FileMetric model associated with this session.
+   * @return The FileMetric model. 
+   */
+  public FileMetricDataModel getFileMetricDataModel() {
+    return this.fileMetricDataModel;
+  }
+  
+  /**
    * Sets all analysis data models to their empty state. 
    */
   public void clearDataModels() {
@@ -264,5 +277,6 @@ public class DailyProjectDataSession implements Serializable {
     this.complexityDataModel.clear();
     this.buildDataModel.clear();
     this.devTimeDataModel.clear();
+    this.fileMetricDataModel.clear();
   }
 }

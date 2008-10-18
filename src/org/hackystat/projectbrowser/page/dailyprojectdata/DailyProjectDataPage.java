@@ -9,6 +9,7 @@ import org.hackystat.projectbrowser.page.dailyprojectdata.complexity.ComplexityP
 import org.hackystat.projectbrowser.page.dailyprojectdata.coupling.CouplingPanel;
 import org.hackystat.projectbrowser.page.dailyprojectdata.coverage.CoveragePanel;
 import org.hackystat.projectbrowser.page.dailyprojectdata.devtime.DevTimePanel;
+import org.hackystat.projectbrowser.page.dailyprojectdata.filemetric.FileMetricPanel;
 import org.hackystat.projectbrowser.page.dailyprojectdata.inputpanel.DpdInputPanel;
 import org.hackystat.projectbrowser.page.dailyprojectdata.unittest.UnitTestPanel;
 
@@ -55,6 +56,9 @@ public class DailyProjectDataPage extends ProjectBrowserBasePage {
     else if ("DevTime".equals(session.getAnalysis())) {
       add(new DevTimePanel(dpdDataPanelId));
     }
+    else if ("FileMetric".equals(session.getAnalysis())) {
+      add(new FileMetricPanel(dpdDataPanelId));
+    }
     this.get("FooterFeedback").setModel(new PropertyModel(session, "feedback"));
   }
 
@@ -91,6 +95,10 @@ public class DailyProjectDataPage extends ProjectBrowserBasePage {
     else if ("DevTime".equals(session.getAnalysis())) {
       session.getDevTimeDataModel().update(); 
       this.replace(new DevTimePanel(dpdDataPanelId));
+    }
+    else if ("FileMetric".equals(session.getAnalysis())) {
+      session.getFileMetricDataModel().update(); 
+      this.replace(new FileMetricPanel(dpdDataPanelId));
     }
   }
 }
