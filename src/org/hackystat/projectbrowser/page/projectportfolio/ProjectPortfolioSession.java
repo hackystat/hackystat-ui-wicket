@@ -39,7 +39,8 @@ public class ProjectPortfolioSession implements Serializable {
   private static final String LAST_REQUIRED_KEY = "3";
   /** The last parameter key. */
   public static final String PARAMETER_ORDER_MESSAGE = "Correct parameter order is : " + 
-                        "/startDate/endDate/granularity/projects";
+                        "/<startDate>/<endDate>/<granularity>/<projects> or " +
+                        "/last/<number>/<granularity>/<projects>/";
 
   /** The separator for parameter values. */
   public static final String PARAMETER_VALUE_SEPARATOR = ",";

@@ -60,23 +60,17 @@ public class EnhancedStreamTrendClassifier extends SimpleStreamTrendClassifier {
     double firstValue = stream.get(0);
     // the last valid value
     double lastValue = stream.get(size - 1);
-    // the step differential
-    double differential = (lastValue - firstValue) / (size - 1);
     // the acceptable error
     double error = (firstValue + lastValue) / 2 * e;
     if (error < MINI_ERROR) {
       error = MINI_ERROR;
     }
-    /*
-    System.out.println("FirstValue = " + firstValue + ", LastValue = " + lastValue +
-        ", diff = " + differential + ", error = " + error);
-        */
+
     //if it is stable trend with acceptable vibration, it will be stable.
     int increasePoint = 0;
     int decreasePoint = 0;
     for (int i = 1; i < size; ++i) {
       if (!isEqual(stream.get(i), stream.get(i - 1), error)) {
-        //System.out.println(linearValue + " & " + actualValue + " is not matched.");
         if (stream.get(i) < stream.get(i - 1)) {
           decreasePoint++;
         }

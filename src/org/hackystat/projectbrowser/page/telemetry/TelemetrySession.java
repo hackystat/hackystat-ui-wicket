@@ -53,7 +53,7 @@ public class TelemetrySession implements Serializable {
   private static final String LAST_REQUIRED_KEY = "4";
   /** The last parameter key. */
   public static final String PARAMETER_ORDER_MESSAGE = "Correct parameter order is : "
-      + "/telemetryName/granularity/startDate/endDate/projects/param";
+      + "/<telemetryName>/<granularity>/<startDate>/<endDate>/<projects>/<param>";
 
   /** The separator for parameter values. */
   public static final String PARAMETER_VALUE_SEPARATOR = ",";
