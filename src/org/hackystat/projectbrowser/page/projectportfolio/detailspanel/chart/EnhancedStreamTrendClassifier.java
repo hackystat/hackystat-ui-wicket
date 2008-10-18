@@ -67,8 +67,10 @@ public class EnhancedStreamTrendClassifier extends SimpleStreamTrendClassifier {
     if (error < MINI_ERROR) {
       error = MINI_ERROR;
     }
+    /*
     System.out.println("FirstValue = " + firstValue + ", LastValue = " + lastValue +
         ", diff = " + differential + ", error = " + error);
+        */
     //if it is stable trend with acceptable vibration, it will be stable.
     int increasePoint = 0;
     int decreasePoint = 0;

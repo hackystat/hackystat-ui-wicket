@@ -96,7 +96,7 @@ public class ProjectPortfolioDetailsPanel extends Panel {
                   public void onClick() {
 
                     ProjectBrowserSession.get().
-                      logUsage("click a chart on portfolio to invoke a telemtry analysis.");
+                      logUsage("PORTFOLIO {invoke telemtry}");
                     this.setResponsePage(TelemetryPage.class, chart.getTelemetryPageParameters());
                   }
               
