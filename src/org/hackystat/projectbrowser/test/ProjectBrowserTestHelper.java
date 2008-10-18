@@ -19,10 +19,8 @@ import org.hackystat.utilities.tstamp.Tstamp;
  */
 public class ProjectBrowserTestHelper {
   /** The Sensorbase server used in these tests. */
-  @SuppressWarnings("unused")
   private static org.hackystat.sensorbase.server.Server sensorbaseServer;
   /** The DailyProjectData server used in these tests. */
-  @SuppressWarnings("unused")
   private static org.hackystat.dailyprojectdata.server.Server dpdServer;  
   /** The Telemetry server used in these tests. */
   private static org.hackystat.telemetry.service.server.Server telemetryServer;  

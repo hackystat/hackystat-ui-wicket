@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Logger;
 import org.apache.wicket.model.IModel;
 import org.hackystat.projectbrowser.googlechart.ChartType;
@@ -193,6 +194,57 @@ public class TelemetryChartDataModel implements Serializable, Processable {
   }
 
   /**
+   * update the selectedChart.
+   * @return true if the chart is successfully updated.
+   */
+  public boolean updateSelectedChart() {
+    List<SelectableTelemetryStream> streams = new ArrayList<SelectableTelemetryStream>();
+    boolean dashed = false;
+    for (Project project : this.selectedProjects) {
+      //assign a same marker and line style to streams of the same project.
+      List<SelectableTelemetryStream> streamList = this.getTelemetryStream(project);
+      String projectMarker = null;
+      double thickness = 2;
+      double lineLength = 1;
+      double blankLength = 0;
+      boolean isLineStylePicked = false;
+      for (SelectableTelemetryStream stream : streamList) {
+        if (stream.isSelected() && !stream.isEmpty()) {
+          //marker.
+          if (projectMarker == null) {
+            projectMarker = GoogleChart.getNextMarker();
+          }
+          //line style, dash or solid
+          if (!isLineStylePicked) {
+            isLineStylePicked = true;
+            if (dashed) {
+              lineLength = 6;
+              blankLength = 3;
+            }
+            dashed = !dashed;
+          }
+          //add marker and line style to the stream.
+          stream.setMarker(projectMarker);
+          stream.setThickness(thickness);
+          stream.setLineLength(lineLength);
+          stream.setBlankLength(blankLength);
+          streams.add(stream);
+        }
+        else {
+          stream.setColor("");
+          stream.setMarker("");
+        }
+      }
+    }
+    if (streams.isEmpty()) {
+      selectedChart = "";
+      return false;
+    }
+    selectedChart = this.getChartUrl(streams);
+    return true;
+  }
+  
+  /**
    * Return the google chart url that present all streams within the given list.
    * 
    * @param streams the given stream list.
@@ -200,6 +252,7 @@ public class TelemetryChartDataModel implements Serializable, Processable {
    */
   public String getChartUrl(List<SelectableTelemetryStream> streams) {
     GoogleChart googleChart = new GoogleChart(ChartType.LINE, this.getWidth(), this.getHeight());
+    
     Map<String, TelemetryStreamYAxis> streamAxisMap = new HashMap<String, TelemetryStreamYAxis>();
     
     //combine streams Y axes.
@@ -222,7 +275,54 @@ public class TelemetryChartDataModel implements Serializable, Processable {
         axis.setMinimum((axisMin < streamMin) ? axisMin : streamMin);
       }
     }
-    //add the y axis and extend the range if it contains only one horizontal line.
+    
+    //Assign colors.
+    //IF there are more than 1 unit axis, streams will be colored according to the axes.
+    if (streamAxisMap.size() > 1 || streams.size() == 1) {
+      //generate enough random color.
+      List<String> colors = RandomColorGenerator.generateRandomColorInHex(streamAxisMap.size());
+      //color the axis.
+      int index = 0;
+      for (TelemetryStreamYAxis axis : streamAxisMap.values()) {
+        axis.setColor(colors.get(index++));
+      }
+      //color the streams.
+      for (SelectableTelemetryStream stream : streams) {
+        stream.setColor(streamAxisMap.get(stream.getUnitName()).getColor());
+      }
+    }
+    else {
+      //if there is only one axis, but have multiple stream names, streams will be colored
+      //according to the stream name.
+      for (TelemetryStreamYAxis axis : streamAxisMap.values()) {
+        axis.setColor("000000");
+      }
+      Map<String, String> streamColorMap = new HashMap<String, String>();
+      for (SelectableTelemetryStream stream : streams) {
+        streamColorMap.put(stream.getStreamName(), "");
+      }
+      if (streamColorMap.size() > 1) {
+        List<String> colors = RandomColorGenerator.generateRandomColorInHex(streamColorMap.size());
+        int index = 0;
+        for (Entry<String, String> streamName : streamColorMap.entrySet()) {
+          streamName.setValue(colors.get(index++));
+        }
+        for (SelectableTelemetryStream stream : streams) {
+          stream.setColor(streamColorMap.get(stream.getStreamName()));
+        }
+      }
+      else {
+        //if there is only one stream name as well. All stream will be colored separately.
+        List<String> colors = RandomColorGenerator.generateRandomColorInHex(streams.size());
+        int index = 0;
+        for (SelectableTelemetryStream stream : streams) {
+          stream.setColor(colors.get(index++));
+        }
+      }
+    }
+    
+    
+    //add the y axis.
     for (TelemetryStreamYAxis axis : streamAxisMap.values()) {
       String axisType = "r";
       if (googleChart.isYAxisEmpty()) {
@@ -239,15 +339,13 @@ public class TelemetryChartDataModel implements Serializable, Processable {
       //add the axis to the chart.
       googleChart.addAxisRange(axisType, rangeList, axis.getColor());
     }
-    //add streams to the chart.
-    for (int i = 0; i < streams.size(); ++i) {
-      SelectableTelemetryStream stream = streams.get(i);
-      if (!stream.isEmpty()) {
-        stream.setColor(streamAxisMap.get(stream.getUnitName()).getColor());
-        TelemetryStreamYAxis axis = streamAxisMap.get(stream.getUnitName());
-        this.addStreamToChart(stream, axis.getMinimum(), axis.getMaximum(), googleChart);
-      }
+
+    //add the streams to the chart.
+    for (SelectableTelemetryStream stream : streams) {
+      TelemetryStreamYAxis axis = streamAxisMap.get(stream.getUnitName());
+      this.addStreamToChart(stream, axis.getMinimum(), axis.getMaximum(), googleChart);
     }
+    
     //add the x axis.
     if (!streams.isEmpty()) {
       googleChart.addAxisLabel("x", 
@@ -276,7 +374,7 @@ public class TelemetryChartDataModel implements Serializable, Processable {
       //add range
       googleChart.getChartDataScale().add(range);
       //add stream color
-      googleChart.addColor(stream.getColor());
+      googleChart.addColor(stream.getStreamColor());
       //add line style;
       googleChart.addLineStyle(stream.getThickness(), 
           stream.getLineLength(), stream.getBlankLength());
@@ -284,7 +382,7 @@ public class TelemetryChartDataModel implements Serializable, Processable {
       //add markers
       /*stream.setMarker(GoogleChart.getRandomMarker());*/
       googleChart.getChartMarker().add(stream.getMarker());
-      googleChart.getMarkerColors().add(stream.getColor());
+      googleChart.getMarkerColors().add(stream.getMarkerColor());
     }
   }
 
@@ -410,53 +508,6 @@ public class TelemetryChartDataModel implements Serializable, Processable {
    */
   public boolean isChartEmpty() {
     return selectedChart == null || "".equals(selectedChart);
-  }
-
-  /**
-   * update the selectedChart.
-   * @return true if the chart is successfully updated.
-   */
-  public boolean updateSelectedChart() {
-    List<SelectableTelemetryStream> streams = new ArrayList<SelectableTelemetryStream>();
-    boolean dashed = false;
-    for (Project project : this.selectedProjects) {
-      List<SelectableTelemetryStream> streamList = this.getTelemetryStream(project);
-      String projectMarker = null;
-      double thickness = 2;
-      double lineLength = 1;
-      double blankLength = 0;
-      boolean isLineStylePicked = false;
-      for (SelectableTelemetryStream stream : streamList) {
-        if (stream.isSelected()) {
-          if (projectMarker == null) {
-            projectMarker = GoogleChart.getNextMarker();
-          }
-          if (!isLineStylePicked) {
-            isLineStylePicked = true;
-            if (dashed) {
-              lineLength = 6;
-              blankLength = 3;
-            }
-            dashed = !dashed;
-          }
-          stream.setMarker(projectMarker);
-          stream.setThickness(thickness);
-          stream.setLineLength(lineLength);
-          stream.setBlankLength(blankLength);
-          streams.add(stream);
-        }
-        else {
-          stream.setColor("");
-          stream.setMarker("");
-        }
-      }
-    }
-    if (streams.isEmpty()) {
-      selectedChart = "";
-      return false;
-    }
-    selectedChart = this.getChartUrl(streams);
-    return true;
   }
 
   /**

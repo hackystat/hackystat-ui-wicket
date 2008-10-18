@@ -20,8 +20,10 @@ public class SelectableTelemetryStream implements Serializable {
   private boolean selected = false;
   /** The TelemetryStream of this stream. */
   private final TelemetryStream telemetryStream;
-  /** The color associated with this stream. */
-  private String color = "";
+  /** The color of this stream. */
+  private String streamColor = "";
+  /** The color of the marker of this stream. */
+  private String markerColor = "";
   /** the marker of this stream. */
   private String marker = "";
   /** thickness of the line.*/
@@ -89,24 +91,43 @@ public class SelectableTelemetryStream implements Serializable {
     return telemetryStream;
   }
   /**
-   * @param color the color to set
+   * Set the color to both stream and marker color.
+   * @param color the color to set.
    */
   public void setColor(String color) {
-    this.color = color;
+    this.setStreamColor(color);
+    this.setMarkerColor(color);
   }
   /**
-   * @return the color
+   * @return color of stream.
    */
-  public String getColor() {
-    return color;
+  public String getStreamColor() {
+    return streamColor;
   }
-  
+  /**
+   * @param streamColor the stream color to set.
+   */
+  public void setStreamColor(String streamColor) {
+    this.streamColor = streamColor;
+  }
+  /**
+   * @return color of marker.
+   */
+  public String getMarkerColor() {
+    return markerColor;
+  }
+  /**
+   * @param markerColor the marker color to set.
+   */
+  public void setMarkerColor(String markerColor) {
+    this.markerColor = markerColor;
+  }
   /**
    * Returns a background-color attribute with the value of color.
    * @return The background-color key-value pair.
    */
   public String getBackgroundColorValue() {
-    return "background-color:#" + getColor();
+    return "background-color:#" + getStreamColor();
   }
   /**
    * @param marker the marker to set
@@ -194,6 +215,7 @@ public class SelectableTelemetryStream implements Serializable {
     }
     return streamData;
   }
+  
   /**
    * Return a image url that shows only one marker.
    * Using google chart to generate this image.
@@ -208,16 +230,24 @@ public class SelectableTelemetryStream implements Serializable {
     }
     String imageUrl = "http://chart.apis.google.com/chart?" +
             "chs=45x15&cht=ls&chd=t:1.0,1.0,1.0&chds=0.9,1.1&" +
-            "chm=" + marker + "," + color + ",0,1,10.0&" +
+            "chm=" + marker + "," + markerColor + ",0,1,10.0&" +
             "chls=" + thickness + "," + lineLength + "," + blankLength + "&" +
-            "chco=" + color;
+            "chco=" + streamColor;
     return imageUrl;
   }
+  
   /**
-   * Return the Units of this stream.
-   * @return String of the units.
+   * Return the Unit of this stream.
+   * @return String of the unit.
    */
   public String getUnitName() {
     return this.telemetryStream.getYAxis().getUnits();
+  }
+  /**
+   * Return the name of this stream.
+   * @return String of the name.
+   */
+  public String getStreamName() {
+    return this.telemetryStream.getName();
   }
 }
