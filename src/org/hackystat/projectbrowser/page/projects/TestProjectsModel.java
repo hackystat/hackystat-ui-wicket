@@ -191,4 +191,26 @@ public class TestProjectsModel extends ProjectBrowserTestHelper {
     Assert.assertEquals(two, result.get(1));
     Assert.assertEquals(three, result.get(2));
   }
+
+  /**
+   * Test semantic check of name.
+   */
+  @Test
+  public void testIsSemanticCheckOk() { // NOPMD Wicket has its own asserts
+    new WicketTester(new ProjectBrowserApplication(getTestProperties()));
+    String nameWithSpace = "test project";
+    String nameWithSlash = "test/project";
+    String nameGood = "test";
+    ProjectsModel model = new ProjectsModel();
+    model.createProject();
+    
+    model.setProjectName(nameWithSpace);
+    Assert.assertFalse(model.isSemanticCheckOk());
+
+    model.setProjectName(nameWithSlash);
+    Assert.assertFalse(model.isSemanticCheckOk());
+
+    model.setProjectName(nameGood);
+    Assert.assertTrue(model.isSemanticCheckOk());
+  }
 }

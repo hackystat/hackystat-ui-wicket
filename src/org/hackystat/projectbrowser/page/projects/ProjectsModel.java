@@ -922,7 +922,7 @@ public class ProjectsModel implements Serializable, IClusterable {
   /**
    * Semantic check of project.
    * 
-   * @return ture is semantic check passes.
+   * @return true is semantic check passes.
    */
   public boolean isSemanticCheckOk() {
     boolean ok = true;
@@ -930,7 +930,8 @@ public class ProjectsModel implements Serializable, IClusterable {
     Project project = getProject();
 
     // Check name for spaces
-    if ((project.getName() == null) || (project.getName().contains(" "))) {
+    if ((project.getName() == null) || (project.getName().contains(" ")) 
+        || (project.getName().contains("/"))) {
       this.feedback = "Invalid project name.";
       ok = false;
     }
