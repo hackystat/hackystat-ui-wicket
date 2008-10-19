@@ -5,6 +5,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
 import org.hackystat.projectbrowser.page.dailyprojectdata.build.BuildPanel;
+import org.hackystat.projectbrowser.page.dailyprojectdata.commit.CommitPanel;
 import org.hackystat.projectbrowser.page.dailyprojectdata.complexity.ComplexityPanel;
 import org.hackystat.projectbrowser.page.dailyprojectdata.coupling.CouplingPanel;
 import org.hackystat.projectbrowser.page.dailyprojectdata.coverage.CoveragePanel;
@@ -59,6 +60,9 @@ public class DailyProjectDataPage extends ProjectBrowserBasePage {
     else if ("FileMetric".equals(session.getAnalysis())) {
       add(new FileMetricPanel(dpdDataPanelId));
     }
+    else if ("Commit".equals(session.getAnalysis())) {
+      add(new CommitPanel(dpdDataPanelId));
+    }
     this.get("FooterFeedback").setModel(new PropertyModel(session, "feedback"));
   }
 
@@ -99,6 +103,10 @@ public class DailyProjectDataPage extends ProjectBrowserBasePage {
     else if ("FileMetric".equals(session.getAnalysis())) {
       session.getFileMetricDataModel().update(); 
       this.replace(new FileMetricPanel(dpdDataPanelId));
+    }
+    else if ("Commit".equals(session.getAnalysis())) {
+      session.getCommitDataModel().update(); 
+      this.replace(new CommitPanel(dpdDataPanelId));
     }
   }
 }

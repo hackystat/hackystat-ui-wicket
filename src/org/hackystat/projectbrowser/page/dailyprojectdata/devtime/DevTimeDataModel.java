@@ -28,11 +28,11 @@ public class DevTimeDataModel implements Serializable {
   /** Support serialization. */
   private static final long serialVersionUID = 1L;
   
-  /** Holds the build data, organized by Project.*/
+  /** Holds the DevTime data, organized by Project.*/
   private Map<Project, DevTimeData> devTimeDataMap = new HashMap<Project, DevTimeData>();
   
   /**
-   * The default DevTimeDataModel, which contains no build information.
+   * The default DevTimeDataModel, which contains no commit information.
    */
   public DevTimeDataModel() {
     // Do nothing

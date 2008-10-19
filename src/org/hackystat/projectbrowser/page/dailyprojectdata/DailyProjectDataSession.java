@@ -14,6 +14,7 @@ import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
 import org.hackystat.projectbrowser.page.contextsensitive.ContextSensitiveMenu;
 import org.hackystat.projectbrowser.page.contextsensitive.ContextSensitivePanel;
 import org.hackystat.projectbrowser.page.dailyprojectdata.build.BuildDataModel;
+import org.hackystat.projectbrowser.page.dailyprojectdata.commit.CommitDataModel;
 import org.hackystat.projectbrowser.page.dailyprojectdata.complexity.ComplexityDataModel;
 import org.hackystat.projectbrowser.page.dailyprojectdata.coupling.CouplingDataModel;
 import org.hackystat.projectbrowser.page.dailyprojectdata.coverage.CoverageDataModel;
@@ -38,12 +39,12 @@ public class DailyProjectDataSession implements Serializable {
   /** The projects this user has selected. */
   private List<Project> selectedProjects = new ArrayList<Project>();
   
-  /** The analysis this user has selected. Defaults to Coverage */
+  /** The analysis this user has selected. Defaults to Build. */
   private String analysis = "Coverage";
   
   /** The list of analysis choices. */
   private List<String> analysisList = 
-    Arrays.asList("Build", "Coverage", "Coupling", "Complexity", "DevTime", "FileMetric", 
+    Arrays.asList("Build", "Commit", "Coupling", "Coverage", "Complexity", "DevTime", "FileMetric", 
         "UnitTest");
 
   /** the feedback string. */
@@ -75,6 +76,10 @@ public class DailyProjectDataSession implements Serializable {
 
   /** The FileMetric data model. */
   private FileMetricDataModel fileMetricDataModel = new FileMetricDataModel();
+  
+  /** The Commit data model. */
+  private CommitDataModel commitDataModel = new CommitDataModel();
+
 
   /**
    * Initialize this session, including the list of context-sensitive menus.
@@ -268,6 +273,14 @@ public class DailyProjectDataSession implements Serializable {
   }
   
   /**
+   * Gets the Commit model associated with this session.
+   * @return The Commit model. 
+   */
+  public CommitDataModel getCommitDataModel() {
+    return this.commitDataModel;
+  }
+  
+  /**
    * Sets all analysis data models to their empty state. 
    */
   public void clearDataModels() {
@@ -278,5 +291,6 @@ public class DailyProjectDataSession implements Serializable {
     this.buildDataModel.clear();
     this.devTimeDataModel.clear();
     this.fileMetricDataModel.clear();
+    this.commitDataModel.clear();
   }
 }

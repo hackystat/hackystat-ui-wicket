@@ -1,0 +1,33 @@
+<html xmlns:wicket>
+  <wicket:panel>
+    <h3>Commit and Churn totals for each project member </h3>
+    <table>
+      <tr>
+        <th>Project</th>
+        <th>Commit/Churn</th>
+        <th>Total Commit/Churn</th>
+      </tr>
+      <tr wicket:id="commitDataList">
+        <td wicket:id="project"/>
+        <td>
+          <span wicket:id="commitdata"/>
+        </td>
+        <td wicket:id="total" />
+      </tr>
+    </table>
+
+<p>
+The goal of this analysis is to provide a perspective on the developer's impact on the 
+system under configuration management. Each row shows, for a given project, the total  
+number of commits made by the developer for the specified day, as well as the total churn
+(the number of lines added, lines deleted, and lines modified as a result of these
+commits). 
+</p>
+
+<p>
+In a healthy project, developers should have a relatively stable number of commits and 
+a relatively stable level of churn, although both upward and downward spikes in commits 
+and churn can be present in a healthy project.
+</p>
+  </wicket:panel>
+</html>
