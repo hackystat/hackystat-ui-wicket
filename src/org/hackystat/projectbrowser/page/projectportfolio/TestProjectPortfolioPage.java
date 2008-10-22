@@ -117,7 +117,7 @@ public class TestProjectPortfolioPage extends ProjectBrowserTestHelper {
 
     configurationForm = tester.newFormTester(configurationFormPath);
     ListView measureList = (ListView) configurationForm.getForm().get("measureList");
-    assertTrue("There should be 10 measures.", measureList.getList().size() > 2);
+    assertTrue("There should be at least 10 measures.", measureList.getList().size() >= 10);
     // set the first measure(Coverage)'s granularity parameter to line.
     assertEquals("Check measure name", "Coverage", tester.getComponentFromLastRenderedPage(
         "configurationPanel:configurationForm:measureList:0:measureNameLabel")
@@ -126,7 +126,7 @@ public class TestProjectPortfolioPage extends ProjectBrowserTestHelper {
     // set the second measure to be uncolorable.
     configurationForm.setValue("measureList:1:colorableCheckBox", FALSE);
     // set all others to be disable.
-    for (int i = 3; i < measureList.getList().size(); i++) {
+    for (int i = 4; i < measureList.getList().size(); i++) {
       configurationForm.setValue("measureList:" + i + ":enableCheckBox", FALSE);
     }
     configurationForm.submit("submit");
@@ -165,7 +165,7 @@ public class TestProjectPortfolioPage extends ProjectBrowserTestHelper {
 
     ListView measureheads = (ListView) tester
         .getComponentFromLastRenderedPage("detailPanel:measureHeads");
-    assertEquals("Should be only 2 measure heads.", 3, measureheads.size());
+    assertEquals("Should be only 4 measure heads.", 4, measureheads.size());
     assertEquals("Check the first measure's display name", "Coverage", tester
         .getComponentFromLastRenderedPage("detailPanel:measureHeads:0:measureName")
         .getModelObjectAsString());
@@ -178,7 +178,7 @@ public class TestProjectPortfolioPage extends ProjectBrowserTestHelper {
 
     ListView measures = (ListView) tester
         .getComponentFromLastRenderedPage("detailPanel:projectTable:0:measures");
-    assertEquals("Should be only 3 measures there.", 3, measures.size());
+    assertEquals("Should be only 4 measures there.", 4, measures.size());
     // check value
     assertEquals("Check Coverage value", "50.0", tester.getComponentFromLastRenderedPage(
         "detailPanel:projectTable:0:measures:0:value").getModelObjectAsString());

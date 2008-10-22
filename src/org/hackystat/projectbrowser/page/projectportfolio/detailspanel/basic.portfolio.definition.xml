@@ -1,13 +1,13 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <PortfolioDefinitions>
   <Measures>
-    <Measure name="Commit">
+    <Measure name="MemberCommit" alias="Commit" merge="sum">
       <DefaultValues colorable="false" higherBetter="true" defaultLowerThresold="0" defaultHigherThresold="1"/>
     </Measure>
-    <Measure name="Build">
+    <Measure name="MemberBuild" alias="Build" merge="sum">
       <DefaultValues colorable="false" higherBetter="true" defaultLowerThresold="0" defaultHigherThresold="1"/>
     </Measure>
-    <Measure name="UnitTest" alias="Test">
+    <Measure name="MemberUnitTest" alias="Test" merge="sum">
       <DefaultValues colorable="false" higherBetter="true" defaultLowerThresold="0" defaultHigherThresold="1"/>
     </Measure>
   </Measures>

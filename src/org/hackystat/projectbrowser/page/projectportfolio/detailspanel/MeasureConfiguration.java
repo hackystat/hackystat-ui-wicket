@@ -26,10 +26,14 @@ public class MeasureConfiguration implements Serializable {
 
   /** The name of the measure. */
   private String measureName;
+  /** The alias of this measure, which will be used as display name. */
+  private String alias;
   /** If this measure is colorable. */
   private boolean colorable;
   /** If this measure is enabled. */
   private boolean enabled = true;
+  /** The method to merge multiple streams. */
+  private String merge;
 
   /** If higher value means better. */
   private boolean higherBetter;
@@ -72,6 +76,42 @@ public class MeasureConfiguration implements Serializable {
     this.dataModel = dataModel;
   }
 
+  /**
+   * Create an instance with alias.
+   * 
+   * @param name The name of the measure.
+   * @param alias The alias of this measure, which will be used as display name.
+   * @param colorable If this measure is colorable.
+   * @param higherThreshold The threshold of high value.
+   * @param lowerThreshold The threshold of high value.
+   * @param higherBetter If higher value means better.
+   * @param dataModel The data model this measure belongs to.
+   */
+  public MeasureConfiguration(String name, String alias, boolean colorable, double lowerThreshold,
+      double higherThreshold, boolean higherBetter, ProjectPortfolioDataModel dataModel) {
+    this(name, colorable, lowerThreshold, higherThreshold, higherBetter, dataModel);
+    this.alias = alias;
+  }
+
+  /**
+   * Create an instance with alias and merge method.
+   * 
+   * @param name The name of the measure.
+   * @param alias The alias of this measure, which will be used as display name.
+   * @param colorable If this measure is colorable.
+   * @param higherThreshold The threshold of high value.
+   * @param lowerThreshold The threshold of high value.
+   * @param higherBetter If higher value means better.
+   * @param merge The method to merge multiple streams. Can be sum, avg, min or max.
+   * @param dataModel The data model this measure belongs to.
+   */
+  public MeasureConfiguration(String name, String alias, boolean colorable, double lowerThreshold,
+      double higherThreshold, boolean higherBetter, String merge, 
+      ProjectPortfolioDataModel dataModel) {
+    this(name, alias, colorable, lowerThreshold, higherThreshold, higherBetter, dataModel);
+    this.merge = merge;
+  }
+  
   /**
    * Load configuration from a PortfolioMeasure object.
    * @param measure the PortfolioMeasure object.
@@ -273,5 +313,45 @@ public class MeasureConfiguration implements Serializable {
    */
   public SimpleStreamTrendClassifier getStreamTrendClassifier() {
     return streamTrendClassifier;
+  }
+
+  /**
+   * @param alias the alias to set
+   */
+  public void setAlias(String alias) {
+    this.alias = alias;
+  }
+
+  /**
+   * @return the alias
+   */
+  public String getAlias() {
+    return alias;
+  }
+  
+  /**
+   * Return the display name of this measure.
+   * If alias is available, alias will be return. Otherwise, measure name will be return.
+   * @return the display name.
+   */
+  public String getDisplayName() {
+    if (this.alias != null && this.alias.length() > 0) {
+      return this.getAlias();
+    }
+    return this.getName();
+  }
+
+  /**
+   * @param merge the merge to set
+   */
+  public void setMerge(String merge) {
+    this.merge = merge;
+  }
+
+  /**
+   * @return the merge
+   */
+  public String getMerge() {
+    return merge;
   }
 }

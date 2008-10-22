@@ -27,14 +27,6 @@ public class PortfolioMeasure implements Serializable {
 
   /** The parameters for telemetry chart. */
   private String parameters;
-
-  /**
-   * Constructor.
-   * @param measureName the measure name to set.
-   */
-  public PortfolioMeasure(String measureName) {
-    this.measureName = measureName;
-  }
   
   /**
    * Construct this instance from a MeasureConfiguration object.

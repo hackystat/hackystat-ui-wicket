@@ -87,6 +87,9 @@ public class MiniBarChart implements Serializable {
     if (max < 0) {
       return "";
     }
+    if (max < 1) {
+      max = 1;
+    }
     GoogleChart googleChart;
     int chartSize = streamData.size();
     int width = chartSize * BAR_WIDTH;

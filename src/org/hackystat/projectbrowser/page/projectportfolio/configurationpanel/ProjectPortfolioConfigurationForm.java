@@ -133,11 +133,7 @@ public class ProjectPortfolioConfigurationForm extends StatelessForm {
       protected void populateItem(ListItem item) {
         final MeasureConfiguration measure = (MeasureConfiguration) item.getModelObject();
 
-        String measureName = measure.getName();
-        if (dataModel.getMeasureAlias().containsKey(measureName)) {
-          measureName = dataModel.getMeasureAlias().get(measureName);
-        }
-        item.add(new Label("measureNameLabel", measureName));
+        item.add(new Label("measureNameLabel", measure.getDisplayName()));
 
         item.add(new AjaxCheckBox("enableCheckBox", new PropertyModel(measure, "enabled")) {
           /** Support serialization. */

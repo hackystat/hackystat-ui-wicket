@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,9 @@ import org.hackystat.telemetry.service.client.TelemetryClient;
 import org.hackystat.telemetry.service.client.TelemetryClientException;
 import org.hackystat.telemetry.service.resource.chart.jaxb.ParameterDefinition;
 import org.hackystat.telemetry.service.resource.chart.jaxb.TelemetryChartData;
+import org.hackystat.telemetry.service.resource.chart.jaxb.TelemetryPoint;
+import org.hackystat.telemetry.service.resource.chart.jaxb.TelemetryStream;
+import org.hackystat.telemetry.service.resource.chart.jaxb.YAxis;
 import org.hackystat.utilities.logger.HackystatLogger;
 import org.hackystat.utilities.tstamp.Tstamp;
 import org.hackystat.utilities.uricache.UriCache;
@@ -88,7 +92,7 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
   /** The thresholds. */
   private final List<MeasureConfiguration> measures = new ArrayList<MeasureConfiguration>();
   /** Alias for measure. Maps names from definition to names for display. */
-  private final Map<String, String> measureAlias = new HashMap<String, String>();
+  //private final Map<String, String> measureAlias = new HashMap<String, String>();
   /** The portfolio measure configuration loaded from xml file. */
   // private final PortfolioDefinitions portfolioDefinitions = loadPortfolioDefinitions();
   /** The configuration saving capacity. */
@@ -153,30 +157,30 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
     // Load default measures
     measures.clear();
     measures.add(new MeasureConfiguration("Coverage", true, 40, 90, true, this));
-    measures.add(new MeasureConfiguration("CyclomaticComplexity", true, 10, 20, false, this));
+    measures.add(
+        new MeasureConfiguration("CyclomaticComplexity", "Complexity", true, 10, 20, false, this));
     measures.add(new MeasureConfiguration("Coupling", true, 10, 20, false, this));
-    measures.add(new MeasureConfiguration("Churn", true, 400, 900, false, this));
+    measures.add(
+        new MeasureConfiguration("MemberChurn", "Churn", true, 400, 900, false, "sum", this));
     measures.add(new MeasureConfiguration("CodeIssue", true, 10, 30, false, this));
+    // These measures are moved to basic.portfolio.definition.xml
     // measures.add(new MeasureConfiguration("Commit", false, 0, 0, true, this));
     // measures.add(new MeasureConfiguration("Build", false, 0, 0, true, this));
     // measures.add(new MeasureConfiguration("UnitTest", false, 0, 0, true, this));
-    measures.add(new MeasureConfiguration("FileMetric", false, 0, 0, true, this));
-    measures.add(new MeasureConfiguration("DevTime", false, 0, 0, true, this));
-
-    measureAlias.put("CyclomaticComplexity", "Complexity");
-    measureAlias.put("FileMetric", "Size(LOC)");
+    measures.add(
+        new MeasureConfiguration("FileMetric", "Size(LOC)", false, 0, 0, true, this));
+    measures.add(
+        new MeasureConfiguration("MemberDevTime", "DevTime", false, 0, 0, true, "sum", this));
 
     // Load additional user customized measures.
     PortfolioDefinitions portfolioDefinitions = getPortfolioDefinitions();
     if (portfolioDefinitions != null) {
       for (Measure measure : portfolioDefinitions.getMeasures().getMeasure()) {
         DefaultValues defaultValues = measure.getDefaultValues();
-        measures.add(new MeasureConfiguration(measure.getName(), defaultValues.isColorable(),
-            defaultValues.getDefaultLowerThresold(), defaultValues.getDefaultHigherThresold(),
-            defaultValues.isHigherBetter(), this));
-        if (measure.getAlias() != null && measure.getAlias().length() > 0) {
-          measureAlias.put(measure.getName(), measure.getAlias());
-        }
+        measures.add(new MeasureConfiguration(measure.getName(), measure.getAlias(), 
+            defaultValues.isColorable(), defaultValues.getDefaultLowerThresold(), 
+            defaultValues.getDefaultHigherThresold(), defaultValues.isHigherBetter(), 
+            measure.getMerge(), this));
       }
     }
 
@@ -373,13 +377,20 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
           TelemetryChartData chartData = telemetryClient.getChart(measure.getName(), owner,
               projectName, granularity, startTime, endTime, measure.getParamtersString());
           // Log warning when portfolio definition refers to multi-stream telemetry chart.
-          if (chartData.getTelemetryStream().size() > 1 && i == 0) {
-            Logger logger = getLogger();
-            logger.warning("Telemetry chart:" + measure.getName() + " has more than 1 stream. "
-                + "Should use chart than contain only one stream. "
-                + "Please check your portfolio and telemetry definitions");
+          TelemetryStream stream = chartData.getTelemetryStream().get(0);
+          if (chartData.getTelemetryStream().size() > 1) {
+            String merge = measure.getMerge();
+            if (merge != null && merge.length() > 0) {
+              stream = mergeStream(chartData.getTelemetryStream(), merge);
+            }
+            else if (i == 0) { //only log once.
+              Logger logger = getLogger();
+              logger.warning("Telemetry chart:" + measure.getName() + 
+                  " contains multiple streams, but there is no merge method found in portfolio " +
+                  "defintion. Please check your portfolio and telemetry definitions");
+            }
           }
-          MiniBarChart chart = new MiniBarChart(chartData.getTelemetryStream().get(0), measure);
+          MiniBarChart chart = new MiniBarChart(stream, measure);
           chart.setTelemetryPageParameters(getTelemetryPageParameters(measure, project));
           charts.add(chart);
         }
@@ -400,6 +411,102 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
       this.processingMessage += "All done.\n";
     }
     this.inProcess = false;
+  }
+
+  /**
+   * Merge the streams according to the merge parameter.
+   * @param telemetryStreams the input streams.
+   * @param merge the method to merge.
+   * @return a TelemetryStream.
+   */
+  private TelemetryStream mergeStream(List<TelemetryStream> telemetryStreams, String merge) {
+    //construct the target instance with the first stream.
+    TelemetryStream telemetryStream = new TelemetryStream();
+    telemetryStream.setYAxis(telemetryStreams.get(0).getYAxis());
+    telemetryStream.setName(telemetryStreams.get(0).getName());
+    //check y axis, has to be all the same. Otherwise will give out empty stream.
+    boolean allMatch = true;
+    for (TelemetryStream stream : telemetryStreams) {
+      if (!streamsEqual(stream.getYAxis(), telemetryStream.getYAxis())) {
+        allMatch = false;
+        Logger logger = getLogger();
+        logger.severe("YAxis: " + stream.getYAxis().getName() + " in stream: " + stream.getName()
+            + " is not match to YAxis: " + telemetryStream.getYAxis().getName() + " in stream :"
+            + telemetryStream.getName());
+      }
+    }
+    if (allMatch) {
+      //combine streams' data.
+      List<TelemetryPoint> points = new ArrayList<TelemetryPoint>();
+      points.addAll(telemetryStreams.get(0).getTelemetryPoint());
+      for (int i = 0; i < points.size(); i++) {
+        List<Double> doubleValues = new ArrayList<Double>();
+        //get all valid values in the same point.
+        for (int j = 0; j < telemetryStreams.size(); ++j) {
+          String stringValue = telemetryStreams.get(j).getTelemetryPoint().get(i).getValue();
+          if (stringValue != null) {
+            doubleValues.add(Double.valueOf(stringValue));
+          }
+        }
+        
+        points.get(i).setValue(null);
+        //if no valid data, the value of this point will be null
+        if (!doubleValues.isEmpty()) {
+          if ("sum".equals(merge)) {
+            Double value = 0.0;
+            for (Double v : doubleValues) {
+              value += v;
+            }
+            points.get(i).setValue(value.toString());
+          }
+          else if ("avg".equals(merge)) {
+            Double value = 0.0;
+            for (Double v : doubleValues) {
+              value += v;
+            }
+            value /= telemetryStreams.size();
+            points.get(i).setValue(value.toString());
+          } 
+          else if ("min".equals(merge)) {
+            points.get(i).setValue(Collections.min(doubleValues).toString());
+          } 
+          else if ("max".equals(merge)) {
+            points.get(i).setValue(Collections.max(doubleValues).toString());
+          }
+        }
+      }
+      telemetryStream.getTelemetryPoint().addAll(points);
+    }
+    return telemetryStream;
+  }
+
+  /**
+   * Compare the two given YAxis objects.
+   * @param axis1 the first YAxis.
+   * @param axis2 the second YAxis.
+   * @return true if they are equal.
+   */
+  private boolean streamsEqual(YAxis axis1, YAxis axis2) {
+    return eqauls(axis1.getName(), axis2.getName()) && eqauls(axis1.getUnits(), axis2.getUnits()) &&
+           eqauls(axis1.getNumberType(), axis2.getNumberType()) && 
+           eqauls(axis1.getLowerBound(), axis2.getLowerBound()) && 
+           eqauls(axis1.getUpperBound(), axis2.getUpperBound());
+  }
+
+  /**
+   * Compare the two given objects. If both objects are null, they are considered equal.
+   * @param o1 the first object
+   * @param o2 the second object
+   * @return true if the two objects are equal, otherwise false.
+   */
+  private boolean eqauls(Object o1, Object o2) {
+    if (o1 == null && o2 == null) {
+      return true;
+    }
+    if (o1 == null || o2 == null) {
+      return false;
+    }
+    return o1.equals(o2);
   }
 
   /**
@@ -568,13 +675,7 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
     List<String> names = new ArrayList<String>();
     for (MeasureConfiguration measure : measures) {
       if (measure.isEnabled()) {
-        // Convert to alias if available.
-        if (this.measureAlias.containsKey(measure.getName())) {
-          names.add(this.measureAlias.get(measure.getName()));
-        }
-        else {
-          names.add(measure.getName());
-        }
+        names.add(measure.getDisplayName());
       }
     }
     return names;
@@ -583,9 +684,11 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
   /**
    * @param backgroundColor the backgroundColor to set
    */
+  /*
   public void setBackgroundColor(String backgroundColor) {
     this.backgroundColor = backgroundColor;
   }
+  */
 
   /**
    * @return the backgroundColor
@@ -597,9 +700,11 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
   /**
    * @param goodColor the goodColor to set
    */
+  /*
   public void setGoodColor(String goodColor) {
     this.goodColor = goodColor;
   }
+  */
 
   /**
    * @return the goodColor
@@ -611,9 +716,11 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
   /**
    * @param sosoColor the sosoColor to set
    */
+  /*
   public void setSosoColor(String sosoColor) {
     this.sosoColor = sosoColor;
   }
+  */
 
   /**
    * @return the sosoColor
@@ -625,9 +732,11 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
   /**
    * @param badColor the badColor to set
    */
+  /*
   public void setBadColor(String badColor) {
     this.badColor = badColor;
   }
+  */
 
   /**
    * @return the badColor
@@ -639,9 +748,11 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
   /**
    * @param fontColor the fontColor to set
    */
+  /*
   public void setFontColor(String fontColor) {
     this.fontColor = fontColor;
   }
+  */
 
   /**
    * @return the fontColor
@@ -655,13 +766,6 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
    */
   public String getNAColor() {
     return naColor;
-  }
-
-  /**
-   * @return the measureAlias
-   */
-  public Map<String, String> getMeasureAlias() {
-    return measureAlias;
   }
 
   /**

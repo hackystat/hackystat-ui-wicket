@@ -63,7 +63,7 @@ public class LoadingProcessPanel extends Panel {
    * start panel self update.
    */
   public final void start() {
-    AjaxSelfUpdatingTimerBehavior selfUpdateBehavior = 
+    final AjaxSelfUpdatingTimerBehavior selfUpdate = 
       new AjaxSelfUpdatingTimerBehavior(Duration.milliseconds(500)) {
       /** Support serialization. */
       private static final long serialVersionUID = 1L;
@@ -77,7 +77,7 @@ public class LoadingProcessPanel extends Panel {
         }
       }
     };
-    add(selfUpdateBehavior);
+    add(selfUpdate);
   }
   /**
    * visible when data loading is in process or data loading end with error.
