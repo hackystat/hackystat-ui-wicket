@@ -6,6 +6,7 @@ import org.hackystat.projectbrowser.ProjectBrowserProperties;
 import org.junit.BeforeClass;
 import org.hackystat.sensorbase.client.SensorBaseClient;
 import org.hackystat.sensorbase.client.SensorBaseClientException;
+import org.hackystat.sensorbase.client.SensorBaseClient.InvitationReply;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
 import org.hackystat.sensorbase.resource.projects.jaxb.ProjectRef;
 import org.hackystat.simdata.SimData;
@@ -24,6 +25,9 @@ public class ProjectBrowserTestHelper {
   private static org.hackystat.dailyprojectdata.server.Server dpdServer;  
   /** The Telemetry server used in these tests. */
   private static org.hackystat.telemetry.service.server.Server telemetryServer;  
+
+  /** The test domain for all users in this simulation. */
+  private static final String testdomain = "@hackystat.org";
 
   /**
    * Constructor.
@@ -102,8 +106,8 @@ public class ProjectBrowserTestHelper {
    * @param endTime end time of the test data.
    * @param days number of days before endTime that this data will cover.
    */
-  protected void generateSimData(String user, String projectName, XMLGregorianCalendar endTime, 
-                                  int days) {
+  protected void generateSimData(String user, String projectName, 
+                                 XMLGregorianCalendar endTime, int days) {
     try {
       
       SimData simData = new SimData(getSensorBaseHostName());
@@ -158,10 +162,36 @@ public class ProjectBrowserTestHelper {
         // Code issues decrease by 2 per day, end with 0.
         simData.addCodeIssues(user, day, userFile, i * 2);
         
-        simData.quitShells();
       }
+      simData.quitShells();
     }
     catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Adds newMember to projectName owned by owner. 
+   * The newMember is invited by the owner, and then newMember accepts. 
+   * @param projectName The name of the project.
+   * @param owner The owner of the project (without domain name).
+   * @param newMember The member to be added (without domain name). 
+   */
+
+  public void addMember(String projectName, String owner, String newMember) {
+    String ownerEmail = owner + testdomain;
+    String newMemberEmail = newMember + testdomain;
+    SensorBaseClient ownerClient = 
+      new SensorBaseClient(getSensorBaseHostName(), ownerEmail, ownerEmail);
+    SensorBaseClient newMemberClient = 
+      new SensorBaseClient(getSensorBaseHostName(), newMemberEmail, newMemberEmail);
+    try {
+      Project project = ownerClient.getProject(ownerEmail, projectName);
+      project.getInvitations().getInvitation().add(newMemberEmail);
+      ownerClient.putProject(project);
+      newMemberClient.reply(ownerEmail, projectName, InvitationReply.ACCEPT);
+    }
+    catch (SensorBaseClientException e) {
       e.printStackTrace();
     }
   }

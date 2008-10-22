@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.ListMultipleChoice;
@@ -36,6 +38,8 @@ public class TestProjectPortfolioPage extends ProjectBrowserTestHelper {
   private String testUser = "TestProjectPortfolioUser";
   /** email of the test user. */
   private String testUserEmail = testUser + "@hackystat.org";
+  /** the test user. */
+  private String testUser2 = "TestProjectPortfolioUser2";
   /** the test project. */
   private String testProject = "TestProjectPortfolioProject";
 
@@ -104,8 +108,10 @@ public class TestProjectPortfolioPage extends ProjectBrowserTestHelper {
    */
   @Test
   public void testProjectPortfolioPage() throws Exception {
-    // NOPMD WicketTester has its own assert classes.
+    
     this.generateSimData(testUser, testProject, Tstamp.makeTimestamp(testEndDate), 3);
+    this.generateSimData(testUser2, testProject, Tstamp.makeTimestamp(testEndDate), 2);
+    this.addMember(testProject, testUser, testUser2);
 
     tester.assertInvisible(configurationPanelPath);
     tester.clickLink(configurationLink);
@@ -143,13 +149,13 @@ public class TestProjectPortfolioPage extends ProjectBrowserTestHelper {
     int index = 0;
     for (int i = 0; i < projectChoice.getChoices().size(); i++) {
       Project project = (Project) projectChoice.getChoices().get(i);
-      if ("Default".equals(project.getName())) {
+      if (this.testProject.equals(project.getName())) {
         index = i;
         pass = true;
       }
     }
     if (!pass) {
-      fail("Default project not found in project list.");
+      fail(testProject + " not found in project list.");
     }
     // select the default project.
     inputForm.select("projectMenu", index);
@@ -175,17 +181,37 @@ public class TestProjectPortfolioPage extends ProjectBrowserTestHelper {
     assertEquals("Check the third measure's display name", "Coupling", tester
         .getComponentFromLastRenderedPage("detailPanel:measureHeads:2:measureName")
         .getModelObjectAsString());
+    assertEquals("Check the fourth measure's display name", "Churn", tester
+        .getComponentFromLastRenderedPage("detailPanel:measureHeads:3:measureName")
+        .getModelObjectAsString());
 
     ListView measures = (ListView) tester
         .getComponentFromLastRenderedPage("detailPanel:projectTable:0:measures");
     assertEquals("Should be only 4 measures there.", 4, measures.size());
+    List<String> projectNames = new ArrayList<String>();
+    projectNames.add(tester.getComponentFromLastRenderedPage(
+        "detailPanel:projectTable:0:projectName").getModelObjectAsString());
+    projectNames.add(tester.getComponentFromLastRenderedPage(
+        "detailPanel:projectTable:1:projectName").getModelObjectAsString());
+    assertTrue("Default should in the detail table", projectNames.contains("Default"));
+    assertTrue(testProject + " should in the detail table", projectNames.contains(testProject));
+    String testProjectPath = "";
+    if (testProject.equals(projectNames.get(0))) {
+      testProjectPath = "detailPanel:projectTable:0:";
+    }
+    else {
+      testProjectPath = "detailPanel:projectTable:1:";
+    }
     // check value
     assertEquals("Check Coverage value", "50.0", tester.getComponentFromLastRenderedPage(
-        "detailPanel:projectTable:0:measures:0:value").getModelObjectAsString());
+        testProjectPath + "measures:0:value").getModelObjectAsString());
     assertEquals("Check Complexity value", "3.0", tester.getComponentFromLastRenderedPage(
-        "detailPanel:projectTable:0:measures:1:value").getModelObjectAsString());
+        testProjectPath + "measures:1:value").getModelObjectAsString());
     assertEquals("Check Coupling value", "N/A", tester.getComponentFromLastRenderedPage(
-        "detailPanel:projectTable:0:measures:2:value").getModelObjectAsString());
+        testProjectPath + "measures:2:value").getModelObjectAsString());
+    assertEquals("Check Churn value", "80.0", tester.getComponentFromLastRenderedPage(
+        testProjectPath + "measures:3:value").getModelObjectAsString());
+    
     // check inner data.
     MiniBarChart coverage = (MiniBarChart) measures.getList().get(0);
     assertEquals("Check measure name.", "Coverage", coverage.getConfiguration().getName());
@@ -197,6 +223,7 @@ public class TestProjectPortfolioPage extends ProjectBrowserTestHelper {
     assertFalse("Complexity should be uncolorable", complexity.getConfiguration().isColorable());
 
   }
+
 
   /**
    * Test the configuration panel.
