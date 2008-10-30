@@ -50,7 +50,7 @@
   <fail message="This package requires ${env.JETTY_HOME}/lib/jetty-${jetty.version}.jar to be installed and JETTY_HOME defined" unless="jetty.available" />
 
   <!-- Make sure that Wicket is available . -->
-  <property name="wicket.version" value="1.3.5" />
+  <property name="wicket.version" value="1.3.4" />
   <available file="${env.WICKET_HOME}/lib/wicket-${wicket.version}.jar" type="file" property="wicket.available" />
   <fail message="This package requires ${env.WICKET_HOME}/wicket-${wicket.version}.jar to be installed and WICKET_HOME defined" unless="wicket.available" />
     

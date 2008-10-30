@@ -186,6 +186,7 @@ public class ProjEditPanel extends Panel {
       private static final long serialVersionUID = 1L;
 
       /** Cancel. */
+      @Override
       public void onSubmit() {
         session.getProjEditPanel().setVisible(false);
         session.getProjListPanel().setVisible(true);

@@ -22,5 +22,5 @@ public class ProjectsPage extends ProjectBrowserBasePage {
     add(form);
     ProjectsSession session = ProjectBrowserSession.get().getProjectsSession();
     session.setProjPage(this);
-  };
+  }
 }

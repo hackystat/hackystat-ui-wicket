@@ -97,7 +97,6 @@ public class ProjListPanel extends Panel {
         return model.isEditable();
       }
     }
-    ;
 
     /**
      * Action button attached to the project in the current row in list.
@@ -139,7 +138,6 @@ public class ProjListPanel extends Panel {
         return model.isRenameable();
       }
     }
-    ;
 
     /**
      * Action button attached to the project in the current row in list.
@@ -181,7 +179,6 @@ public class ProjListPanel extends Panel {
         return model.isDeletable();
       }
     }
-    ;
 
     /**
      * Action button attached to the project in the current row in list.
@@ -223,7 +220,6 @@ public class ProjListPanel extends Panel {
         return model.isLeavable();
       }
     }
-    ;
 
     /**
      * Action button attached to the project in the current row in list.
@@ -265,7 +261,6 @@ public class ProjListPanel extends Panel {
         return model.isRepliable();
       }
     }
-    ;
 
     ListView projectTable = new ListView("projectTable", new PropertyModel(model, "projects")) {
       /** For serialization. */
@@ -333,4 +328,4 @@ public class ProjListPanel extends Panel {
     projectForm.add(projectTable);
     add(projectForm);
   }
-};
+}

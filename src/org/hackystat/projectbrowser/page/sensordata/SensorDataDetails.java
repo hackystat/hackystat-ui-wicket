@@ -25,7 +25,7 @@ public class SensorDataDetails implements Serializable {
   private long runtime = 0;
   private String sdtName = null;
   private String resource = null;
-  private String owner = null;;
+  private String owner = null;
   private String tool = null;
   private String properties = null;
   private SensorDataRef ref = null;

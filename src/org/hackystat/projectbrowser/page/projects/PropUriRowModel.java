@@ -129,4 +129,4 @@ public class PropUriRowModel implements Serializable, IClusterable {
     result.append(this.getUriPattern3());
     return result.toString();
   }
-};
+}
