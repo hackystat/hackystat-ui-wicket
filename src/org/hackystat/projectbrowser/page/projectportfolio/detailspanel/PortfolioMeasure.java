@@ -32,7 +32,7 @@ public class PortfolioMeasure implements Serializable {
    * Construct this instance from a MeasureConfiguration object.
    * @param measure the MeasureConfiguration object
    */
-  public PortfolioMeasure(MeasureConfiguration measure) {
+  public PortfolioMeasure(PortfolioMeasureConfiguration measure) {
     this.measureName = measure.getName();
     this.setColorable(measure.isColorable());
     this.setEnabled(measure.isEnabled());

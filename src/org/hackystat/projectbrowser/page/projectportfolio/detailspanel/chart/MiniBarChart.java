@@ -8,7 +8,8 @@ import java.util.List;
 import org.apache.wicket.PageParameters;
 import org.hackystat.projectbrowser.googlechart.ChartType;
 import org.hackystat.projectbrowser.googlechart.GoogleChart;
-import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.MeasureConfiguration;
+import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.
+        PortfolioMeasureConfiguration;
 import org.hackystat.telemetry.service.resource.chart.jaxb.TelemetryPoint;
 import org.hackystat.telemetry.service.resource.chart.jaxb.TelemetryStream;
 
@@ -38,14 +39,14 @@ public class MiniBarChart implements Serializable {
   private PageParameters telemetryPageParameters;
 
   /** The configuration of this chart. */
-  private final MeasureConfiguration configuration;
+  private final PortfolioMeasureConfiguration configuration;
   
   
   /**
    * @param stream The stream of this chart.
    * @param configuration The configuration of this chart.
    */
-  public MiniBarChart(TelemetryStream stream, MeasureConfiguration configuration) {
+  public MiniBarChart(TelemetryStream stream, PortfolioMeasureConfiguration configuration) {
     this.streamData = getStreamData(stream);
     for (int i = streamData.size() - 1; i >= 0; --i) {
       this.latestValue = streamData.get(i);
@@ -168,7 +169,7 @@ public class MiniBarChart implements Serializable {
   /**
    * @return the configuration
    */
-  public MeasureConfiguration getConfiguration() {
+  public PortfolioMeasureConfiguration getConfiguration() {
     return configuration;
   }
 

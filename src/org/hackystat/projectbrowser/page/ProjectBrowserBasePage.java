@@ -19,6 +19,7 @@ import org.hackystat.projectbrowser.page.projectportfolio.ProjectPortfolioPage;
 import org.hackystat.projectbrowser.page.projects.ProjectsPage;
 import org.hackystat.projectbrowser.page.sensordata.SensorDataPage;
 import org.hackystat.projectbrowser.page.telemetry.TelemetryPage;
+import org.hackystat.projectbrowser.page.todate.ToDatePage;
 import org.hackystat.utilities.tstamp.Tstamp;
 
 /**
@@ -89,6 +90,13 @@ public class ProjectBrowserBasePage extends WebPage {
       @Override
       public boolean isVisible() {
         return ((ProjectBrowserApplication)getApplication()).isPageAvailable("projectportfolio");
+      }
+    });
+    add(new BookmarkablePageLink("ToDatePageLink", ToDatePage.class) {
+      private static final long serialVersionUID = 1L;
+      @Override
+      public boolean isVisible() {
+        return ((ProjectBrowserApplication)getApplication()).isPageAvailable("todate");
       }
     });
     add(new BookmarkablePageLink("CrapPageLink", CrapPage.class) {

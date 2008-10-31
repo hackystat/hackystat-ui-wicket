@@ -17,6 +17,7 @@ import org.hackystat.projectbrowser.page.projectportfolio.ProjectPortfolioPage;
 import org.hackystat.projectbrowser.page.projects.ProjectsPage;
 import org.hackystat.projectbrowser.page.sensordata.SensorDataPage;
 import org.hackystat.projectbrowser.page.telemetry.TelemetryPage;
+import org.hackystat.projectbrowser.page.todate.ToDatePage;
 import org.hackystat.utilities.logger.HackystatLogger;
 
 /**
@@ -96,6 +97,9 @@ public class ProjectBrowserApplication extends WebApplication {
     }
     if (isPageAvailable("projectportfolio")) {
       mount(new IndexedParamUrlCodingStrategy("projectportfolio", ProjectPortfolioPage.class));
+    }
+    if (isPageAvailable("todate")) {
+      mount(new IndexedParamUrlCodingStrategy("todate", ToDatePage.class));
     }
     if (isPageAvailable("crap")) {
       mountBookmarkablePage("crap", CrapPage.class);

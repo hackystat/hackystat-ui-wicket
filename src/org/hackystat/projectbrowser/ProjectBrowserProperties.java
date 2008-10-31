@@ -123,6 +123,7 @@ public class ProjectBrowserProperties {
     properties.setProperty(AVAILABLEPAGE_KEY + ".projectportfolio", TRUE);
     properties.setProperty(BACKGROUND_PROCESS_KEY + ".telemetry", TRUE);
     properties.setProperty(BACKGROUND_PROCESS_KEY + ".projectportfolio", TRUE);
+    properties.setProperty(BACKGROUND_PROCESS_KEY + ".todate", TRUE);
     properties.setProperty(LOG_USAGE_KEY, "false");
 
     // Now read in the properties file, and override the defaults if supplied. 

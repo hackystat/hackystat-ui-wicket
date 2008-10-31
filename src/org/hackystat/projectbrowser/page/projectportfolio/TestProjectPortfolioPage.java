@@ -120,7 +120,7 @@ public class TestProjectPortfolioPage extends ProjectBrowserTestHelper {
     FormTester configurationForm = tester.newFormTester(configurationFormPath);
     configurationForm.submit("reset");
     // tester.clickLink(configurationLink);
-
+    
     configurationForm = tester.newFormTester(configurationFormPath);
     ListView measureList = (ListView) configurationForm.getForm().get("measureList");
     assertTrue("There should be at least 10 measures.", measureList.getList().size() >= 10);

@@ -12,7 +12,6 @@ import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.StatelessForm;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -21,7 +20,8 @@ import org.apache.wicket.model.PropertyModel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.page.popupwindow.PopupWindowPanel;
 import org.hackystat.projectbrowser.page.projectportfolio.ProjectPortfolioPage;
-import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.MeasureConfiguration;
+import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.
+        PortfolioMeasureConfiguration;
 import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.ProjectPortfolioDataModel;
 import org.hackystat.projectbrowser.page.telemetry.TelemetrySession;
 import org.hackystat.telemetry.service.resource.chart.jaxb.ParameterDefinition;
@@ -33,7 +33,7 @@ import org.hackystat.telemetry.service.resource.chart.jaxb.Type;
  * @author Shaoxuan Zhang
  * 
  */
-public class ProjectPortfolioConfigurationForm extends StatelessForm {
+public class ProjectPortfolioConfigurationForm extends Form {
   /** Support serialization. */
   private static final long serialVersionUID = 447730202032199770L;
   
@@ -57,11 +57,7 @@ public class ProjectPortfolioConfigurationForm extends StatelessForm {
   */
   /** The introductions. */
   private static final String introductions = 
-    "Time phase: the time phase to analyse."
-    + "Good color: the color for good values and trends."
-    + "Soso color: the color for middle values and unstable trends."
-    + "Bad color: the color for bad values and trends."
-    + "Enabled : Only enabled measure will be shown in detail panel\n\n"
+    "Enabled : Only enabled measure will be shown in detail panel\n\n"
     + "Colorable : Colorable measure's chart and value will be colored according to the following"
     + " setting. Noncolorable measure's chart and value will be black.\n\n"
     + "Is Higher Better: If higher value means better."
@@ -131,7 +127,8 @@ public class ProjectPortfolioConfigurationForm extends StatelessForm {
 
       @Override
       protected void populateItem(ListItem item) {
-        final MeasureConfiguration measure = (MeasureConfiguration) item.getModelObject();
+        final PortfolioMeasureConfiguration measure = 
+          (PortfolioMeasureConfiguration) item.getModelObject();
 
         item.add(new Label("measureNameLabel", measure.getDisplayName()));
 

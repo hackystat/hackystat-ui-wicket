@@ -64,7 +64,7 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
   /** host of the telemetry host. */
   private String telemetryHost;
   /** email of the user. */
-  private String email;
+  private String userEmail;
   /** password of the user. */
   private String password;
   /** The telemetry session. */
@@ -90,7 +90,8 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
   private Map<Project, List<MiniBarChart>> measuresCharts = 
     new HashMap<Project, List<MiniBarChart>>();
   /** The thresholds. */
-  private final List<MeasureConfiguration> measures = new ArrayList<MeasureConfiguration>();
+  private final List<PortfolioMeasureConfiguration> measures = 
+    new ArrayList<PortfolioMeasureConfiguration>();
   /** Alias for measure. Maps names from definition to names for display. */
   //private final Map<String, String> measureAlias = new HashMap<String, String>();
   /** The portfolio measure configuration loaded from xml file. */
@@ -99,8 +100,6 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
   private static Long capacity = 1000L;
   /** The max life of the saved configuration. */
   private static Double maxLife = 300.0;
-  /** The user's email. */
-  private String userEmail = ProjectBrowserSession.get().getEmail();
 
   /** The background color for table cells. */
   private String backgroundColor = "000000";
@@ -119,13 +118,13 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
    * Constructor that initialize the measures.
    * 
    * @param telemetryHost the telemetry host
-   * @param email the user's email
+   * @param userEmail the user's email
    * @param password the user's passowrd
    */
-  public ProjectPortfolioDataModel(String telemetryHost, String email, String password) {
+  public ProjectPortfolioDataModel(String telemetryHost, String userEmail, String password) {
     telemetrySession = ProjectBrowserSession.get().getTelemetrySession();
     this.telemetryHost = telemetryHost;
-    this.email = email;
+    this.userEmail = userEmail;
     this.password = password;
     this.initializeMeasures();
     this.loadUserConfiguration();
@@ -145,9 +144,10 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
     this.endDate = endDate;
     this.granularity = granularity;
     this.selectedProjects = selectedProjects;
-    for (MeasureConfiguration measure : getEnabledMeasures()) {
+    for (PortfolioMeasureConfiguration measure : getEnabledMeasures()) {
       checkMeasureParameters(measure);
     }
+    measuresCharts.clear();
   }
 
   /**
@@ -156,35 +156,35 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
   private void initializeMeasures() {
     // Load default measures
     measures.clear();
-    measures.add(new MeasureConfiguration("Coverage", true, 40, 90, true, this));
-    measures.add(
-        new MeasureConfiguration("CyclomaticComplexity", "Complexity", true, 10, 20, false, this));
-    measures.add(new MeasureConfiguration("Coupling", true, 10, 20, false, this));
-    measures.add(
-        new MeasureConfiguration("MemberChurn", "Churn", true, 400, 900, false, "sum", this));
-    measures.add(new MeasureConfiguration("CodeIssue", true, 10, 30, false, this));
+    measures.add(new PortfolioMeasureConfiguration("Coverage", true, 40, 90, true, this));
+    measures.add(new PortfolioMeasureConfiguration("CyclomaticComplexity", "Complexity", true, 
+                                                    10, 20, false, this));
+    measures.add(new PortfolioMeasureConfiguration("Coupling", true, 10, 20, false, this));
+    measures.add(new PortfolioMeasureConfiguration("MemberChurn", "Churn", true, 400, 900, false,
+                                                    "sum", this));
+    measures.add(new PortfolioMeasureConfiguration("CodeIssue", true, 10, 30, false, this));
     // These measures are moved to basic.portfolio.definition.xml
     // measures.add(new MeasureConfiguration("Commit", false, 0, 0, true, this));
     // measures.add(new MeasureConfiguration("Build", false, 0, 0, true, this));
     // measures.add(new MeasureConfiguration("UnitTest", false, 0, 0, true, this));
-    measures.add(
-        new MeasureConfiguration("FileMetric", "Size(LOC)", false, 0, 0, true, this));
-    measures.add(
-        new MeasureConfiguration("MemberDevTime", "DevTime", false, 0, 0, true, "sum", this));
+    measures.add(new PortfolioMeasureConfiguration("FileMetric", "Size(LOC)", false, 0, 0, true, 
+                                                    this));
+    measures.add(new PortfolioMeasureConfiguration("MemberDevTime", "DevTime", false, 0, 0, true, 
+                                                    "sum", this));
 
     // Load additional user customized measures.
     PortfolioDefinitions portfolioDefinitions = getPortfolioDefinitions();
     if (portfolioDefinitions != null) {
       for (Measure measure : portfolioDefinitions.getMeasures().getMeasure()) {
         DefaultValues defaultValues = measure.getDefaultValues();
-        measures.add(new MeasureConfiguration(measure.getName(), measure.getAlias(), 
+        measures.add(new PortfolioMeasureConfiguration(measure.getName(), measure.getAlias(), 
             defaultValues.isColorable(), defaultValues.getDefaultLowerThresold(), 
             defaultValues.getDefaultHigherThresold(), defaultValues.isHigherBetter(), 
             measure.getMerge(), this));
       }
     }
 
-    for (MeasureConfiguration measure : getEnabledMeasures()) {
+    for (PortfolioMeasureConfiguration measure : getEnabledMeasures()) {
       checkMeasureParameters(measure);
     }
   }
@@ -210,8 +210,8 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
   public String saveUserConfiguration() {
     StringBuffer log = new StringBuffer();
     UriCache userCache = this.getUserConfiguartionCache();
-    for (MeasureConfiguration measure : this.measures) {
-      String uri = userEmail + "/" + measure.getName();
+    for (PortfolioMeasureConfiguration measure : this.measures) {
+      String uri = userEmail + "/portfolio/" + measure.getName();
       PortfolioMeasure oldMeasure = (PortfolioMeasure) userCache.get(uri);
       PortfolioMeasure newMeasure = new PortfolioMeasure(measure);
       if (oldMeasure == null || !oldMeasure.equals(newMeasure)) {
@@ -231,8 +231,8 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
    */
   private void loadUserConfiguration() {
     UriCache userCache = this.getUserConfiguartionCache();
-    for (MeasureConfiguration measure : this.measures) {
-      String uri = userEmail + "/" + measure.getName();
+    for (PortfolioMeasureConfiguration measure : this.measures) {
+      String uri = userEmail + "/portfolio/" + measure.getName();
       PortfolioMeasure saved = (PortfolioMeasure) userCache.get(uri);
       if (saved != null) {
         measure.loadFrom(saved);
@@ -341,8 +341,7 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
     this.complete = false;
     this.processingMessage = "Retrieving data from Hackystat Telemetry service.\n";
     try {
-      measuresCharts.clear();
-      TelemetryClient telemetryClient = new TelemetryClient(telemetryHost, email, password);
+      TelemetryClient telemetryClient = new TelemetryClient(telemetryHost, userEmail, password);
       // prepare start and end time.
       XMLGregorianCalendar startTime = getStartTimestamp();
       XMLGregorianCalendar endTime = getEndTimestamp();
@@ -358,10 +357,10 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
         // get charts of this project
         List<MiniBarChart> charts = new ArrayList<MiniBarChart>();
 
-        List<MeasureConfiguration> enableMeasures = getEnabledMeasures();
+        List<PortfolioMeasureConfiguration> enableMeasures = getEnabledMeasures();
 
         for (int j = 0; j < enableMeasures.size(); ++j) {
-          MeasureConfiguration measure = enableMeasures.get(j);
+          PortfolioMeasureConfiguration measure = enableMeasures.get(j);
 
           this.processingMessage += "---> Retrieve " + measure.getName() + "<"
               + measure.getParamtersString() + ">" + " (" + (i + 1) + " .. " + (j + 1) + " of "
@@ -515,7 +514,7 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
    * 
    * @param measure the given MeasureConfiguration.
    */
-  private void checkMeasureParameters(MeasureConfiguration measure) {
+  private void checkMeasureParameters(PortfolioMeasureConfiguration measure) {
     List<ParameterDefinition> paramDefList = telemetrySession.getParameterList(measure.getName());
     if (measure.getParameters().size() != paramDefList.size()) {
       measure.getParameters().clear();
@@ -540,7 +539,8 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
    * @param project the project
    * @return the PagaParameters object
    */
-  private PageParameters getTelemetryPageParameters(MeasureConfiguration measure, Project project) {
+  private PageParameters getTelemetryPageParameters(PortfolioMeasureConfiguration measure, 
+      Project project) {
     PageParameters parameters = new PageParameters();
 
     parameters.put(TelemetrySession.TELEMETRY_KEY, measure.getName());
@@ -648,16 +648,17 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
   /**
    * @return the measures
    */
-  public List<MeasureConfiguration> getMeasures() {
+  public List<PortfolioMeasureConfiguration> getMeasures() {
     return measures;
   }
 
   /**
    * @return the enabled measures
    */
-  public final List<MeasureConfiguration> getEnabledMeasures() {
-    List<MeasureConfiguration> enableMeasures = new ArrayList<MeasureConfiguration>();
-    for (MeasureConfiguration measure : measures) {
+  public final List<PortfolioMeasureConfiguration> getEnabledMeasures() {
+    List<PortfolioMeasureConfiguration> enableMeasures = 
+      new ArrayList<PortfolioMeasureConfiguration>();
+    for (PortfolioMeasureConfiguration measure : measures) {
       if (measure.isEnabled()) {
         enableMeasures.add(measure);
       }
@@ -673,7 +674,7 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
    */
   public List<String> getEnabledMeasuresName() {
     List<String> names = new ArrayList<String>();
-    for (MeasureConfiguration measure : measures) {
+    for (PortfolioMeasureConfiguration measure : measures) {
       if (measure.isEnabled()) {
         names.add(measure.getDisplayName());
       }
