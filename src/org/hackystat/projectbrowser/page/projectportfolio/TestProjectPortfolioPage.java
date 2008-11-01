@@ -155,7 +155,7 @@ public class TestProjectPortfolioPage extends ProjectBrowserTestHelper {
       }
     }
     if (!pass) {
-      fail(testProject + " not found in project list.");
+      fail(testProject + " not found in projects list.");
     }
     // select the default project.
     inputForm.select("projectMenu", index);
