@@ -54,13 +54,13 @@ public class ProjectPortfolioSession implements Serializable {
   private ProjectPortfolioDataModel dataModel;
   
   /** The start date this user has selected. */
-  private long startDate = ProjectBrowserBasePage.getDateBefore(28).getTime();
+  private long startDate = ProjectBrowserBasePage.getDateBefore(5).getTime();
   /** The end date this user has selected. */
   private long endDate = ProjectBrowserBasePage.getDateBefore(1).getTime();
   /** The projects this user has selected. */
   private List<Project> selectedProjects = new ArrayList<Project>();
   /** the granularity this data model focus. */
-  private String granularity = "Week";
+  private String granularity = "Day";
   /** The available granularities. */
   private final String[] granularities = {"Day", "Week", "Month"};
   
