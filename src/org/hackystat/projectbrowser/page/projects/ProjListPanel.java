@@ -262,6 +262,47 @@ public class ProjListPanel extends Panel {
       }
     }
 
+   /**
+    * Action button attached to the project in the current row in list.
+    * @author Randy Cox
+    */
+  final class ClearCacheButton extends Button {
+     /** For serialization. */
+     private static final long serialVersionUID = 1L;
+     /** Project to clear cache for. */
+     private Project project;
+
+     /**
+      * Constructor.
+      * 
+      * @param id wicket id
+      * @param project to clear cache for.
+      */
+     public ClearCacheButton(String id, Project project) {
+       super(id);
+       this.project = project;
+     }
+
+     /** Bring up clear cache panel to confirm action. */
+     @Override
+     public void onSubmit() {
+       model.setProject(this.project);
+       model.setFeedback("");
+       session.getProjListPanel().setVisible(false);
+       session.getProjClearCachePanel().setVisible(true);
+     }
+
+     /** 
+      * Turn on only when project has allows the action of this button.
+      * @return true if button is turned on. 
+      * */
+     @Override
+     public boolean isVisible() {
+       ProjectsModel model = new ProjectsModel(this.project);
+       return model.isClearCacheable();
+     }
+   }
+
     ListView projectTable = new ListView("projectTable", new PropertyModel(model, "projects")) {
       /** For serialization. */
       private static final long serialVersionUID = 1L;
@@ -275,6 +316,7 @@ public class ProjListPanel extends Panel {
         item.add(new DeleteButton("deleteButton", model.getProject()));
         item.add(new LeaveButton("leaveButton", model.getProject()));
         item.add(new ReplyButton("replyButton", model.getProject()));
+        item.add(new ClearCacheButton("clearCacheButton", model.getProject()));
         item.add(new Label("projectName", new PropertyModel(model, "projectName")));
 
         Label projectOwner = new Label("projectOwner", new PropertyModel(model, 

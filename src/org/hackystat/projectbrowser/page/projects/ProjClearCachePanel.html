@@ -1,0 +1,12 @@
+<html xmlns:wicket>
+  <wicket:panel>
+    <form wicket:id="projClearCacheForm" class="hform">
+      <table>
+        <tr><td><label>Are you sure you wish to clear the cache for the following project? </label></td><td><input wicket:id="projectName" type="text" /></td></tr>
+      </table>
+      <input style="width: 6em" wicket:id="clearCacheButton" type="submit" value="clear cache"/>
+      <input style="width: 6em" wicket:id="cancelButton" type="submit" value="cancel"/>
+      <div id="feedback"><span wicket:id="clearCacheFeedback">[Clear Cache Feedback]</span></div>
+    </form>
+  </wicket:panel>
+</html>

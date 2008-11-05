@@ -759,6 +759,32 @@ public class ProjectsModel implements Serializable, IClusterable {
   }
 
   /**
+   * True if project's cache can be cleared.
+   * 
+   * @return True if project's cache can be cleared.
+   */
+  public boolean isClearCacheable() {
+    if (this.isEmpty()) {
+      return false;
+    }
+    Boolean clearable = false;
+    String owner = this.project.getOwner();
+    String user = ProjectBrowserSession.get().getUserEmail();
+    if (owner.compareToIgnoreCase(user) == 0) {
+      clearable = true;
+    }
+    List<String> members = this.project.getMembers().getMember();
+    if (members.contains(user)) {
+      clearable = true;
+    }
+    List<String> spectators = this.project.getSpectators().getSpectator();
+    if (spectators.contains(user)) {
+      clearable = true;
+    }
+    return clearable;
+  }
+
+  /**
    * Gets current feedback string.
    * 
    * @return the feedback

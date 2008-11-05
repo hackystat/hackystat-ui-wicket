@@ -41,6 +41,9 @@ public class ProjectsSession implements Serializable {
   /** Holds reply panel. */
   private Panel projReplyPanel;
 
+  /** Holds clear cache panel. */
+  private Panel projClearCachePanel;
+
   /** The feedback string. */
   private Label feedbackLabel;
 
@@ -117,6 +120,24 @@ public class ProjectsSession implements Serializable {
    */
   public void setProjEditPanel(Panel projEditPanel) {
     this.projEditPanel = projEditPanel;
+  }
+
+  /**
+   * Set clear cache panel.
+   * 
+   * @return the projClearCachePanel
+   */
+  public Panel getProjClearCachePanel() {
+    return projClearCachePanel;
+  }
+
+  /**
+   * Get clear cache panel.
+   * 
+   * @param projClearCachePanel the projClearCachePanel to set
+   */
+  public void setProjClearCachePanel(Panel projClearCachePanel) {
+    this.projClearCachePanel = projClearCachePanel;
   }
 
   /**

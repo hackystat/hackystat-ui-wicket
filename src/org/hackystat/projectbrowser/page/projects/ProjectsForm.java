@@ -59,5 +59,10 @@ public class ProjectsForm extends Form {
     replyPanel.setVisible(false);
     add(replyPanel);
     session.setProjReplyPanel(replyPanel);
+
+    final ProjClearCachePanel clearCachePanel = new ProjClearCachePanel("projClearCachePanel");
+    clearCachePanel.setVisible(false);
+    add(clearCachePanel);
+    session.setProjClearCachePanel(clearCachePanel);
   }
 }

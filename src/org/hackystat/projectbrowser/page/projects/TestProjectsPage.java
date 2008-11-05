@@ -67,12 +67,14 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
   private String DELETE_PANEL = "projectsForm:projDeletePanel";
   private String LEAVE_PANEL = "projectsForm:projLeavePanel";
   private String REPLY_PANEL = "projectsForm:projReplyPanel";
+  private String CLEARCACHE_PANEL = "projectsForm:projClearCachePanel";
   private String PROJECT_TABLE = "projectsForm:projListPanel:projListForm:projectTable";
   private String EDIT_BUTTON = ":editButton";
   private String RENAME_BUTTON = ":renameButton";
   private String DELETE_BUTTON = ":deleteButton";
   private String LEAVE_BUTTON = ":leaveButton";
   private String REPLY_BUTTON = ":replyButton";
+  private String CLEARCACHE_BUTTON = ":clearCacheButton";
 
   private String USER = "user";
   private String PASSWORD = "password";
@@ -121,6 +123,7 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
     tester.assertInvisible(LEAVE_PANEL);
     tester.assertInvisible(DELETE_PANEL);
     tester.assertInvisible(REPLY_PANEL);
+    tester.assertInvisible(CLEARCACHE_PANEL);
   }
 
   /**
@@ -238,6 +241,7 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
         tester.assertInvisible(PREFIX_LIST + index.toString() + RENAME_BUTTON);
         tester.assertInvisible(PREFIX_LIST + index.toString() + LEAVE_BUTTON);
         tester.assertInvisible(PREFIX_LIST + index.toString() + REPLY_BUTTON);
+        tester.assertVisible(PREFIX_LIST + index.toString() + CLEARCACHE_BUTTON);
       }
       else {
         index++;
@@ -276,6 +280,7 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
     tester.assertInvisible(LEAVE_PANEL);
     tester.assertInvisible(DELETE_PANEL);
     tester.assertInvisible(REPLY_PANEL);
+    tester.assertInvisible(CLEARCACHE_PANEL);
 
     // Enter test data into edit form
     FormTester editForm = tester.newFormTester("projectsForm:projEditPanel:projEditForm");
@@ -300,6 +305,7 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
     tester.assertInvisible(LEAVE_PANEL);
     tester.assertInvisible(DELETE_PANEL);
     tester.assertInvisible(REPLY_PANEL);
+    tester.assertInvisible(CLEARCACHE_PANEL);
 
     // Check project count, should be one more
     ListView listViewAfter = (ListView) tester
@@ -407,6 +413,7 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
     tester.assertInvisible(LEAVE_PANEL);
     tester.assertInvisible(DELETE_PANEL);
     tester.assertInvisible(REPLY_PANEL);
+    tester.assertInvisible(CLEARCACHE_PANEL);
 
     // Enter test data into edit form
     FormTester form = tester.newFormTester("projectsForm:projEditPanel:projEditForm");
@@ -502,6 +509,7 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
     tester.assertInvisible(LEAVE_PANEL);
     tester.assertInvisible(DELETE_PANEL);
     tester.assertInvisible(REPLY_PANEL);
+    tester.assertInvisible(CLEARCACHE_PANEL);
 
     // Enter test data into edit form
     FormTester renameForm = tester.newFormTester("projectsForm:projRenamePanel:projRenameForm");
@@ -591,6 +599,7 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
     tester.assertInvisible(LEAVE_PANEL);
     tester.assertVisible(DELETE_PANEL);
     tester.assertInvisible(REPLY_PANEL);
+    tester.assertInvisible(CLEARCACHE_PANEL);
 
     // Push cancel button
     Button cancelDeleteButton = (Button) tester.getComponentFromLastRenderedPage(
@@ -606,6 +615,7 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
     tester.assertInvisible(LEAVE_PANEL);
     tester.assertInvisible(DELETE_PANEL);
     tester.assertInvisible(REPLY_PANEL);
+    tester.assertInvisible(CLEARCACHE_PANEL);
 
     // Push the delete button again
     index = findProjectIndexInList(tester, TEST_NEW_NAME);
@@ -674,6 +684,7 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
     tester.assertInvisible(LEAVE_PANEL);
     tester.assertInvisible(DELETE_PANEL);
     tester.assertInvisible(REPLY_PANEL);
+    tester.assertInvisible(CLEARCACHE_PANEL);
 
     // Store project count for later compare
     ListView listView = (ListView) tester
@@ -702,6 +713,7 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
     tester.assertInvisible(LEAVE_PANEL);
     tester.assertInvisible(DELETE_PANEL);
     tester.assertVisible(REPLY_PANEL);
+    tester.assertInvisible(CLEARCACHE_PANEL);
 
     // Push cancel button
     Button cancelReplyButton = (Button) tester
@@ -717,6 +729,7 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
     tester.assertInvisible(LEAVE_PANEL);
     tester.assertInvisible(DELETE_PANEL);
     tester.assertInvisible(REPLY_PANEL);
+    tester.assertInvisible(CLEARCACHE_PANEL);
 
     // Push the delete button again
     index = findProjectIndexInList(tester, TEST_NEW_NAME);
@@ -802,6 +815,7 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
     tester.assertInvisible(LEAVE_PANEL);
     tester.assertInvisible(DELETE_PANEL);
     tester.assertInvisible(REPLY_PANEL);
+    tester.assertInvisible(CLEARCACHE_PANEL);
 
     // Store project count for later compare
     ListView listView = (ListView) tester
@@ -830,6 +844,7 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
     tester.assertInvisible(LEAVE_PANEL);
     tester.assertInvisible(DELETE_PANEL);
     tester.assertVisible(REPLY_PANEL);
+    tester.assertInvisible(CLEARCACHE_PANEL);
 
     // Push save button
     Button declineButton = (Button) tester.getComponentFromLastRenderedPage(
@@ -902,6 +917,7 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
     tester.assertInvisible(LEAVE_PANEL);
     tester.assertInvisible(DELETE_PANEL);
     tester.assertInvisible(REPLY_PANEL);
+    tester.assertInvisible(CLEARCACHE_PANEL);
 
     // Store project count for later compare
     ListView listView = (ListView) tester
@@ -930,6 +946,7 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
     tester.assertInvisible(LEAVE_PANEL);
     tester.assertInvisible(DELETE_PANEL);
     tester.assertVisible(REPLY_PANEL);
+    tester.assertInvisible(CLEARCACHE_PANEL);
 
     // Push save button
     Button acceptButton = (Button) tester
@@ -969,6 +986,7 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
     tester.assertVisible(LEAVE_PANEL);
     tester.assertInvisible(DELETE_PANEL);
     tester.assertInvisible(REPLY_PANEL);
+    tester.assertInvisible(CLEARCACHE_PANEL);
 
     // Push cancel button
     Button cancelLeaveButton = (Button) tester
@@ -997,6 +1015,7 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
     tester.assertInvisible(LEAVE_PANEL);
     tester.assertInvisible(DELETE_PANEL);
     tester.assertInvisible(REPLY_PANEL);
+    tester.assertInvisible(CLEARCACHE_PANEL);
 
     // Check to see if project is gone.
     project = findProjectInList(tester, TEST_NEW_NAME);
@@ -1017,5 +1036,82 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
         .size());
     Assert.assertEquals("Invitee should not be an invitee.", 0, project.getInvitations()
         .getInvitation().size());
+  }
+  
+  /**
+   * Test project clear cache.
+   * 
+   * @throws Exception when communication error occurs.
+   */
+  @Test
+  public void testProjectsClearCachePage() throws Exception { // NOPMD WicketTester has its own 
+                                                              // assert classes.
+
+    Properties testProperties = getTestProperties();
+    testProperties.put(ProjectBrowserProperties.AVAILABLEPAGE_KEY + PROJECTS, TRUE);
+    WicketTester tester = new WicketTester(new ProjectBrowserApplication(testProperties));
+
+    login(tester);
+    createNewProject(tester);
+
+    // Push the button
+    Integer index = findProjectIndexInList(tester, TEST_NEW_NAME);
+    Button clearCacheButton = (Button) tester
+        .getComponentFromLastRenderedPage(PREFIX_LIST
+            + index.toString() + CLEARCACHE_BUTTON);
+    clearCacheButton.onSubmit();
+
+    // Assert correct panels are visible
+    tester.assertComponent(CLEARCACHE_PANEL, ProjClearCachePanel.class);
+    tester.assertInvisible(EDIT_PANEL);
+    tester.assertInvisible(LIST_PANEL);
+    tester.assertInvisible(RENAME_PANEL);
+    tester.assertInvisible(LEAVE_PANEL);
+    tester.assertInvisible(DELETE_PANEL);
+    tester.assertInvisible(REPLY_PANEL);
+    tester.assertVisible(CLEARCACHE_PANEL);
+
+    // Push save button
+    Button button = (Button) tester.getComponentFromLastRenderedPage(
+      "projectsForm:projClearCachePanel:projClearCacheForm:clearCacheButton");
+    button.onSubmit();
+    
+    tester.assertRenderedPage(ProjectsPage.class);
+    tester.assertComponent(PROJECTS_FORM, ProjectsForm.class);
+    tester.assertVisible(LIST_PANEL);
+    tester.assertInvisible(EDIT_PANEL);
+    tester.assertInvisible(RENAME_PANEL);
+    tester.assertInvisible(LEAVE_PANEL);
+    tester.assertInvisible(DELETE_PANEL);
+    tester.assertInvisible(REPLY_PANEL);
+    tester.assertInvisible(CLEARCACHE_PANEL);
+
+    // Push the button
+    clearCacheButton.onSubmit();
+
+    // Assert correct panels are visible
+    tester.assertComponent(CLEARCACHE_PANEL, ProjClearCachePanel.class);
+    tester.assertInvisible(EDIT_PANEL);
+    tester.assertInvisible(LIST_PANEL);
+    tester.assertInvisible(RENAME_PANEL);
+    tester.assertInvisible(LEAVE_PANEL);
+    tester.assertInvisible(DELETE_PANEL);
+    tester.assertInvisible(REPLY_PANEL);
+    tester.assertVisible(CLEARCACHE_PANEL);
+
+    // Push save button
+    Button cancelButton = (Button) tester.getComponentFromLastRenderedPage(
+      "projectsForm:projClearCachePanel:projClearCacheForm:cancelButton");
+    cancelButton.onSubmit();
+    
+    tester.assertRenderedPage(ProjectsPage.class);
+    tester.assertComponent(PROJECTS_FORM, ProjectsForm.class);
+    tester.assertVisible(LIST_PANEL);
+    tester.assertInvisible(EDIT_PANEL);
+    tester.assertInvisible(RENAME_PANEL);
+    tester.assertInvisible(LEAVE_PANEL);
+    tester.assertInvisible(DELETE_PANEL);
+    tester.assertInvisible(REPLY_PANEL);
+    tester.assertInvisible(CLEARCACHE_PANEL);
   }
 }
