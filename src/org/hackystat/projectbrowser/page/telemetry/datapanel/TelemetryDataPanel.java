@@ -6,6 +6,7 @@ import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -13,6 +14,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.hackystat.projectbrowser.googlechart.GoogleChart;
 import org.hackystat.projectbrowser.imageurl.ImageUrl;
 import org.hackystat.projectbrowser.page.popupwindow.PopupWindowPanel;
 import org.hackystat.projectbrowser.page.telemetry.TelemetryPage;
@@ -53,9 +55,15 @@ public class TelemetryDataPanel extends Panel {
 
       @Override
       public void onSubmit() {
-        if (!session.getDataModel().updateSelectedChart()) {
-          session.setFeedback("Failed to get a chart image. "
-              + " Please check to make sure you've selected at least one stream!");
+        if (session.getDataModel().isSizeWithinRange()) {
+          if (!session.getDataModel().updateSelectedChart()) {
+            session.setFeedback("Failed to get a chart image. "
+                + " Please check to make sure you've selected at least one stream!");
+          }
+        }
+        else {
+          session.setFeedback(
+              "The size of the chart cannot be greater than " + GoogleChart.MAX_SIZE);
         }
       }
     };
@@ -128,11 +136,6 @@ public class TelemetryDataPanel extends Panel {
 
             item.add(new ImageUrl("streamMarker", stream.getMarkerImageUrl()));
 
-            WebComponent colorCell = new WebComponent("colorCell");
-            colorCell.add(new AttributeModifier("style", true, new PropertyModel(stream,
-                "backgroundColorValue")));
-            item.add(colorCell);
-
             ListView streamData = new ListView("streamData", stream.getTelemetryStream()
                 .getTelemetryPoint()) {
               /** Support serialization. */
@@ -162,6 +165,9 @@ public class TelemetryDataPanel extends Panel {
     };
     streamForm.add(projectTable);
 
+    streamForm.add(new TextField("width", new PropertyModel(dataModel, "width")));
+    streamForm.add(new TextField("height", new PropertyModel(dataModel, "height")));
+    
     // add the selected chart.
     WebComponent selectedchartUrl = new WebComponent("selectedChart") {
       public static final long serialVersionUID = 1L;

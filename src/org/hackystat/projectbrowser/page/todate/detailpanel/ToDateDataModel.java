@@ -163,7 +163,7 @@ public class ToDateDataModel implements Serializable, Processable {
     }
 
     if (log.length() > 0) {
-      ProjectBrowserSession.get().logUsage("CONFIGURATION: {changed} " + log.toString());
+      ProjectBrowserSession.get().logUsage("TODATE CONFIGURATION: {changed} " + log.toString());
     }
     return log.toString();
   }
@@ -245,9 +245,11 @@ public class ToDateDataModel implements Serializable, Processable {
             startTime = project.getStartTime();
           }
           String s = "/";
+          /*
           System.out.println(
               "retriving telemetry: " + measure.getName() + s + owner + s + projectName + s
                   + granularity + s + startTime + s + endTime + s + measure.getParamtersString());
+          */
           getLogger().fine(
               "retriving telemetry: " + measure.getName() + s + owner + s + projectName + s
                   + granularity + s + startTime + s + endTime + s + measure.getParamtersString());

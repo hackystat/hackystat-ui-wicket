@@ -18,7 +18,6 @@
           <td rowspan="1" wicket:id="projectName">project name</td>
           <tr wicket:id="projectStream">
             <td><input type="checkbox" wicket:id="streamCheckBox" /></td>
-            <td width="20" wicket:id="colorCell"/>
             <td wicket:id="streamName">stream name</td>
             <td wicket:id="streamUnit">stream unit</td>
             <td><img wicket:id="streamMarker"/></td>
@@ -28,7 +27,7 @@
           </tr>
         </tr>
       </table>
-      <input type="submit" value="Get Chart"/>
+      <input type="submit" value="Get Chart"/> Chart Size = <input style="width: 4em" wicket:id="width" type="text" /> x <input style="width: 4em" wicket:id="height" type="text" /> pixels (no greater than 300000)
     </form>
     <br/>
     <img wicket:id="selectedChart"></img>

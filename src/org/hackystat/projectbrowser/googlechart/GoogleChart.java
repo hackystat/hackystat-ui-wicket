@@ -22,6 +22,8 @@ public class GoogleChart implements Serializable {
   public static final String DATASET_SEPARATOR = "|";
   /** character that separate data items in a data set. */
   public static final String DATAITEM_SEPARATOR = ",";
+  /** The maximum size of a google chart. */
+  public static final int MAX_SIZE = 300000;
   /** chart type of this chart. */
   private ChartType chartType;
   /** width in pixel. */

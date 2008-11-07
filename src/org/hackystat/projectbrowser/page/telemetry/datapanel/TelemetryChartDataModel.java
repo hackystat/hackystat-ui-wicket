@@ -31,9 +31,9 @@ public class TelemetryChartDataModel implements Serializable, Processable {
   /** Support serialization. */
   private static final long serialVersionUID = 1L;
   /** the width of this chart. */
-  private static final int WIDTH = 1000;
+  private int width = 850;
   /** the height of this chart. */
-  private static final int HEIGHT = 300;
+  private int height = 350;
   
   /** The start date this user has selected. */
   private long startDate = 0;
@@ -486,14 +486,22 @@ public class TelemetryChartDataModel implements Serializable, Processable {
    * @return the width
    */
   public int getWidth() {
-    return WIDTH;
+    return width;
   }
 
   /**
    * @return the height
    */
   public int getHeight() {
-    return HEIGHT;
+    return height;
+  }
+  
+  /**
+   * Check if the size of the chart is within range.
+   * @return true if multiple of width and height is not bigger than MAX_SIZE.
+   */
+  public boolean isSizeWithinRange() {
+    return this.width <= GoogleChart.MAX_SIZE / this.height;
   }
 
   /**
@@ -542,5 +550,19 @@ public class TelemetryChartDataModel implements Serializable, Processable {
    */
   public String getProcessingMessage() {
     return processingMessage;
+  }
+
+  /**
+   * @param width the width to set
+   */
+  public void setWidth(int width) {
+    this.width = width;
+  }
+
+  /**
+   * @param height the height to set
+   */
+  public void setHeight(int height) {
+    this.height = height;
   }
 }

@@ -221,7 +221,7 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
     }
 
     if (log.length() > 0) {
-      ProjectBrowserSession.get().logUsage("CONFIGURATION: {changed} " + log.toString());
+      ProjectBrowserSession.get().logUsage("PORTFOLIO CONFIGURATION: {changed} " + log.toString());
     }
     return log.toString();
   }
