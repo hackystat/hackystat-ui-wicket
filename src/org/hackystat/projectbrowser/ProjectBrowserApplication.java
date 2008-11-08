@@ -18,6 +18,8 @@ import org.hackystat.projectbrowser.page.projects.ProjectsPage;
 import org.hackystat.projectbrowser.page.sensordata.SensorDataPage;
 import org.hackystat.projectbrowser.page.telemetry.TelemetryPage;
 import org.hackystat.projectbrowser.page.todate.ToDatePage;
+import org.hackystat.projectbrowser.page.trajectory.TrajectoryPage;
+import org.hackystat.projectbrowser.page.trajectory.dtwpanel.TrajectoryDTWPage;
 import org.hackystat.utilities.logger.HackystatLogger;
 
 /**
@@ -94,6 +96,10 @@ public class ProjectBrowserApplication extends WebApplication {
     }
     if (isPageAvailable("telemetry")) {
       mount(new IndexedParamUrlCodingStrategy("telemetry", TelemetryPage.class));
+    }
+    if (isPageAvailable("trajectory")) {
+      mountBookmarkablePage("trajectory", TrajectoryPage.class);
+      mountBookmarkablePage("dtw", TrajectoryDTWPage.class);
     }
     if (isPageAvailable("projectportfolio")) {
       mount(new IndexedParamUrlCodingStrategy("projectportfolio", ProjectPortfolioPage.class));

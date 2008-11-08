@@ -62,6 +62,13 @@ public class GoogleChart implements Serializable {
   private static final List<String> markers = Arrays.asList(new String[]{"o", "d", "c", "x", "s"});
   /** index of the current available marker. */
   private static int markersIndex = 0;
+  
+  private static final List<String> jetColors = Arrays.asList(new String[] { "00007F", "0000DC",
+      "0039FF", "0096FF", "00F3FF", "50FFAD", "ADFF50", "FFF300", "FF9600", "FF3900", "DC0000",
+      "7F0000" });
+  private static short currentJetColor = 0;
+
+  
   /**
    * initialize the chart with indispensable parameter.
    * @param chartType type of this chart.
@@ -499,4 +506,21 @@ public class GoogleChart implements Serializable {
   public String getBackgroundColor() {
     return backgroundColor;
   }
+
+  /**
+   * @return a random color in format of RRGGBB.
+   */
+  public static String getNextJetColor() {
+    if ((jetColors.size() % 2) > 0) {
+      currentJetColor += 2;
+    }
+    else {
+      currentJetColor += 3;
+    }
+    if (currentJetColor >= jetColors.size()) {
+      currentJetColor = 0;
+    }
+    return jetColors.get(currentJetColor);
+  }
+  
 }

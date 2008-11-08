@@ -17,6 +17,7 @@ import org.hackystat.projectbrowser.page.projects.ProjectsSession;
 import org.hackystat.projectbrowser.page.sensordata.SensorDataSession;
 import org.hackystat.projectbrowser.page.telemetry.TelemetrySession;
 import org.hackystat.projectbrowser.page.todate.ToDateSession;
+import org.hackystat.projectbrowser.page.trajectory.TrajectorySession;
 import org.hackystat.sensorbase.client.SensorBaseClient;
 import org.hackystat.sensorbase.client.SensorBaseClientException;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
@@ -67,6 +68,7 @@ public class ProjectBrowserSession extends WebSession {
   /** ProjectBrowserSession that holds the page state for the Project page. */
   private ProjectsSession projectsSession = new ProjectsSession();
 
+  private TrajectorySession trajectorySession = new TrajectorySession();
 
   
   /**
@@ -419,4 +421,12 @@ public class ProjectBrowserSession extends WebSession {
   public Logger getLogger() {
     return ((ProjectBrowserApplication)ProjectBrowserApplication.get()).getLogger();
   }
-}
+
+  /**
+   * Returns the TrajectorySession instance. 
+   * @return The session state for the trajectory page. 
+   */
+  public TrajectorySession getTrajectorySession() {
+    return this.trajectorySession;
+  }
+  }

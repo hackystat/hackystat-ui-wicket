@@ -41,7 +41,7 @@ public class ProjectBrowserProperties {
   public static final String LOG_USAGE_KEY = "projectbrowser.usagelogging";
   /** Available pages. */
   public static final String[] PAGE_NAMES = {"projects", "dailyprojectdata", 
-                                                 "telemetry", "projectportfolio", "crap"};
+                                             "telemetry", "trajectory", "projectportfolio", "crap"};
   /** The default number of items per page. */
   private int defaultItemsPerPage = 50;
   /** The default port as an int. */
