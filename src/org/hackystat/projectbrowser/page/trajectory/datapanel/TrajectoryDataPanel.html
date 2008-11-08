@@ -1,0 +1,52 @@
+<html xmlns:wicket>
+  <wicket:panel>
+    <h3>Telemetry Chart: <span wicket:id="telemetryName" />
+    </h3>
+    <h5><a wicket:id="restLink">The RESTful Link<!--span wicket:id="restLinkLabel"/--></a></h5>
+    <form wicket:id="streamForm">
+      <table width="100%">
+        <th>Project</th>
+        <th><input type="checkbox" wicket:id="selectAll" /></th>
+        <th/>
+        <th>Stream</th>
+        <th>Unit</th>
+        <th>Marker</th>
+        <span wicket:id="markersList">
+          <th wicket:id="marker">
+          </th>
+        </span>
+        <tr wicket:id="projectTable">
+        <td wicket:id="projectName">project name</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>        
+		<span wicket:id="datesList">
+          <th wicket:id="date">
+          </th>
+        </span>
+          <tr wicket:id="projectStream">
+            <td></td>
+            <td><input type="checkbox" wicket:id="streamCheckBox" /></td>
+            <td width="20" wicket:id="colorCell"/>
+            <td wicket:id="streamName">stream name</td>
+            <td wicket:id="streamUnit">stream unit</td>
+            <td><img wicket:id="streamMarker"/></td>
+            <span wicket:id="streamData">
+              <td wicket:id="data">data</td>
+            </span>
+          </tr>
+        </tr>
+      </table>
+      <input type="submit" value="Get Chart"/>
+      <input type="submit" value="Do DTW analysis" wicket:id="dtw"/>
+    </form>
+    <br/>
+    <img wicket:id="selectedChart" />
+    <br />
+    <span wicket:id="selectedChartUrlWindow" />
+    <br />
+    <br />
+  </wicket:panel>
+</html>

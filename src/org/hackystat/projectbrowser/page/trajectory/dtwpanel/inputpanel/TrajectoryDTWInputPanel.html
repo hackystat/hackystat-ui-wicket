@@ -1,0 +1,65 @@
+<html xmlns:wicket>
+<wicket:panel>
+  <div id="dtw-page">
+  <!-- <span wicket:id="feedback">Feedback</span> -->
+  
+  <table width="200" border="1">
+  
+    <tr>
+      <td height="31"> <strong>Stream1 statistics:</strong> </td>
+    </tr>
+    <tr>
+      <td class="statistics" width="165"><span wicket:id="stream1Statistics"></span> </td>
+    </tr>
+    
+    <tr>
+      <td> <strong>Stream2 statistics:</strong> </td>
+    </tr>
+    <tr>
+      <td class="statistics" width="165"><span wicket:id="stream2Statistics"></span> </td>
+    </tr>
+
+    <tr>
+      <td> <strong>DTW Options:</strong> </td>
+    </tr>
+    <tr>
+     <td>
+     <form wicket:id="dtwOptions">
+      <table>
+        <tr>
+          <td class="dtwoptions">DTW step </td>
+          <td class="dtwoptions"><select name="Step" style="width: 8em" wicket:id="dtwStep">
+          <option value="Default">Default</option></select></td>
+        </tr>
+        <tr>  
+          <td class="dtwoptions">Window type </td>
+          <td class="dtwoptions"><select name="Windowing" style="width: 8em" wicket:id="windowType">
+          <option value="Default">Default</option></select></td>
+        </tr>
+        <tr>
+          <td class="dtwoptions">Window size:</td>
+          <td class="dtwoptions"><input style="width: 6em" wicket:id="windowSizeTextField" type="text" /></td>
+        </tr>  
+        <tr>  
+          <td class="dtwoptions">Open End </td>
+          <td class="dtwoptions"><select name="OpenEnd" style="width: 8em" wicket:id="openEndType">
+          <option value="Default">Default</option></select></td>
+        </tr>  
+      </table>
+      <input type="submit" value="Realign!" wicket:id="doDtw"/>
+      </form>
+      
+     </td>
+    </tr>
+    
+    <tr>
+      <td> <strong>DTW statistics:</strong> </td>
+    </tr>
+    <tr>
+      <td><span wicket:id="dtwStatistics"></span> </td>
+    </tr>
+    
+  </table>
+ </div> 
+</wicket:panel>
+</html>
