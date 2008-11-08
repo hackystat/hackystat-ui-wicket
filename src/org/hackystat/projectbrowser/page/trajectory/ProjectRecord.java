@@ -109,7 +109,7 @@ public class ProjectRecord implements Serializable {
 
 
   /**
-   * Set the indent
+   * Set the indent.
    *
    * @param indent The indent to set.
    */

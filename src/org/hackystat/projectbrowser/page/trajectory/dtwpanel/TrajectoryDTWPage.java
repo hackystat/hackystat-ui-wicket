@@ -29,9 +29,9 @@ public class TrajectoryDTWPage extends ProjectBrowserBasePage {
   /** Trajectory session to hold up the state. */
   private TrajectorySession session = ProjectBrowserSession.get().getTrajectorySession();
   /** the TelemetryInputPanel in this page. */
-  private TrajectoryDTWInputPanel inputPanel;
+  // private TrajectoryDTWInputPanel inputPanel;
   /** the TelemetryDataPanel in this page. */
-  private TrajectoryDTWDataPanel dataPanel;
+  // private TrajectoryDTWDataPanel dataPanel;
   /** the LoadingProcessPanel in this page. */
   private LoadingProcessPanel loadingProcessPanel;
 
@@ -45,11 +45,11 @@ public class TrajectoryDTWPage extends ProjectBrowserBasePage {
   public TrajectoryDTWPage() {
     getLogger().info(MARK + "Trajectory page constructor invoked, hash: " + this.hashCode());
 
-    inputPanel = new TrajectoryDTWInputPanel("inputPanel", this);
+    TrajectoryDTWInputPanel inputPanel = new TrajectoryDTWInputPanel("inputPanel", this);
     inputPanel.setOutputMarkupId(true);
     add(inputPanel);
 
-    dataPanel = new TrajectoryDTWDataPanel("dataPanel", this);
+    TrajectoryDTWDataPanel dataPanel = new TrajectoryDTWDataPanel("dataPanel", this);
     dataPanel.setOutputMarkupId(true);
     add(dataPanel);
 

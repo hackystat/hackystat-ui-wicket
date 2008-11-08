@@ -38,7 +38,6 @@ public class TestDTWUtilFactory {
       0.430978196, 0.365619143, 0.272249068, 0.388961662, 0.267207084, 0.145825986, 0.024818368,
       0.038823880, 0.020149865, 0.038823880, -0.003192654, -0.141691599, -0.280190544, 
       -0.418689489 };
-  private double[][] s1, s2;
 
   /**
    * Set up the test environment.
@@ -51,8 +50,8 @@ public class TestDTWUtilFactory {
       xAxis[i] = ((Integer) i).doubleValue();
     }
     try {
-      s1 = DTWUtilFactory.rBind(xAxis, series1);
-      s2 = DTWUtilFactory.rBind(xAxis, series2);
+      double[][] s1 = DTWUtilFactory.rBind(xAxis, series1);
+      double[][] s2 = DTWUtilFactory.rBind(xAxis, series2);
       assertEquals("Testing rbind", s2[2][0], xAxis[2], 0.000001D);
       assertEquals("Testing rbind", s1[3][0], xAxis[3], 0.000001D);
     }

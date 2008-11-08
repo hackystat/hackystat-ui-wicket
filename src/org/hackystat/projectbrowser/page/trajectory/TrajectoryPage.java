@@ -37,9 +37,6 @@ public class TrajectoryPage extends ProjectBrowserBasePage {
   /** the LoadingProcessPanel in this page. */
   private LoadingProcessPanel loadingProcessPanel;
 
-  TrajectoryDTWInputPanel dtwInputPanel;
-  private TrajectoryDTWDataPanel dtwDataPanel;
-
   // Some string constants used while logging
   //
   private static final String MARK = "[DEBUG] ";
@@ -116,10 +113,10 @@ public class TrajectoryPage extends ProjectBrowserBasePage {
    * Starts the DTW dialog.
    */
   public void goDTW() {
-    dtwInputPanel = new TrajectoryDTWInputPanel("inputPanel", this);
+    TrajectoryDTWInputPanel dtwInputPanel = new TrajectoryDTWInputPanel("inputPanel", this);
     dtwInputPanel.setOutputMarkupId(true);
 
-    dtwDataPanel = new TrajectoryDTWDataPanel("dataPanel", this);
+    TrajectoryDTWDataPanel dtwDataPanel = new TrajectoryDTWDataPanel("dataPanel", this);
     dtwDataPanel.setOutputMarkupId(true);
 
     remove(inputPanel);

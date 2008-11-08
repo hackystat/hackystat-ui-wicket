@@ -27,7 +27,7 @@ public class SymmetricStepFunction extends AbstractStepFunction {
   public static final String STEP_PATTERN_P2 = "P2";
 
   /**
-   * Constructor
+   * Constructor.
    * 
    * @param stepPattern specifies the step pattern.
    */

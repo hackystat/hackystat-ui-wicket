@@ -940,7 +940,8 @@ public class TrajectoryChartDataModel implements Serializable, Processable {
       NumberFormat decFormatter = new DecimalFormat("####0.00");
       for (List<Double> l : res) {
         for (Double d : l) {
-          sb.append(decFormatter.format(d) + ", ");
+          sb.append(decFormatter.format(d));
+          sb.append(", ");
         }
         sb.append('|');
       }
@@ -1149,7 +1150,7 @@ public class TrajectoryChartDataModel implements Serializable, Processable {
    */
 
   /**
-   * Return the comma-separated list of parameters in String
+   * Return the comma-separated list of parameters in String.
    * 
    * @return the parameters as String
    */

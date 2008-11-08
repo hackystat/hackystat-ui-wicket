@@ -22,7 +22,7 @@ public class SelectableTrajectoryStream implements Serializable {
   private boolean selected = false;
   /** The TelemetryStream of this stream. */
   private TelemetryStream telemetryStream;
-  /** The color associated with this stream */
+  /** The color associated with this stream. */
   private String color = "";
   /** the marker of this stream. */
   private String marker = "";

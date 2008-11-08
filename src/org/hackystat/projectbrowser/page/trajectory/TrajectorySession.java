@@ -90,7 +90,7 @@ public class TrajectorySession implements Serializable {
   private String feedback = "";
   /** The parameters for telemetry chart. */
   private List<IModel> parameters = new ArrayList<IModel>();
-  /** The data model to hold state for data panel */
+  /** The data model to hold state for data panel. */
   private TrajectoryChartDataModel dataModel = new TrajectoryChartDataModel();
   /** Error message when parsing page paramters. */
   private String paramErrorMessage = "";

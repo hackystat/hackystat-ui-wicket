@@ -24,7 +24,7 @@ public class DTWInputForm extends Form {
   /** Support serialization. */
   public static final long serialVersionUID = 1L;
   /** The page containing this form. */
-  private TrajectoryDTWInputPanel page = null;
+  // private TrajectoryDTWInputPanel page = null;
   /** TelemetrySession that holds page state for telemetry. */
   private TrajectorySession session = ProjectBrowserSession.get().getTrajectorySession();
 
@@ -37,7 +37,7 @@ public class DTWInputForm extends Form {
   public DTWInputForm(String id, TrajectoryDTWInputPanel pane) {
 
     super(id);
-    this.page = pane;
+    // this.page = pane;
 
     // Create the drop-down menu for step patterns.
     DropDownChoice stepMenu = new DropDownChoice("dtwStep", new PropertyModel(session, "DTWStep"),
