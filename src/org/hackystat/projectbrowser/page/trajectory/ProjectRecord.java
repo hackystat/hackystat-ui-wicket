@@ -90,7 +90,7 @@ public class ProjectRecord implements Serializable {
    *
    * @return The debug message.
    */
-  public synchronized String toLabelMessage() {
+  public String toLabelMessage() {
     StringBuffer sb = new StringBuffer(1024);
     sb.append("project: " + this.project.getName() + CR);
     sb.append("owner " + this.project.getOwner() + CR);
