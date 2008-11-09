@@ -11,9 +11,9 @@ import org.hackystat.utilities.tstamp.Tstamp;
 
 /**
  * The container for the project and some auxiliary information.
- *
+ * 
  * @author Pavel Senin.
- *
+ * 
  */
 public class ProjectRecord implements Serializable {
 
@@ -33,19 +33,17 @@ public class ProjectRecord implements Serializable {
   private Integer indent = 0;
 
   private static final String CR = "\n";
-  private static final SimpleDateFormat labelDateFormat = 
-                                                        new SimpleDateFormat("MM/dd/yy", Locale.US);
 
   /**
    * Constructor.
-   *
+   * 
    * @param project The project.
    * @param selectedStartDate The start date for the interval.
    * @param selectedEndDate The end date for the interval.
    * @param indent The shift.
    */
-  public ProjectRecord(Project project, Date selectedStartDate, Date selectedEndDate,
-      Integer indent) {
+  public ProjectRecord(Project project, Date selectedStartDate, Date selectedEndDate, 
+                                                                                 Integer indent) {
     this.project = project;
     this.startDate = new Date(selectedStartDate.getTime());
     this.endDate = new Date(selectedStartDate.getTime());
@@ -54,7 +52,7 @@ public class ProjectRecord implements Serializable {
 
   /**
    * Constructor.
-   *
+   * 
    * @param project The project.
    * @param indent The shift in days.
    */
@@ -78,7 +76,7 @@ public class ProjectRecord implements Serializable {
 
   /**
    * Returns the project.
-   *
+   * 
    * @return The project.
    */
   public Project getProject() {
@@ -87,13 +85,14 @@ public class ProjectRecord implements Serializable {
 
   /**
    * Prints the debug log message.
-   *
+   * 
    * @return The debug message.
    */
   public String toLabelMessage() {
     StringBuffer sb = new StringBuffer(1024);
     sb.append("project: " + this.project.getName() + CR);
     sb.append("owner " + this.project.getOwner() + CR);
+    SimpleDateFormat labelDateFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
     sb.append("life:"
         + labelDateFormat.format(new Date(Tstamp.makeTimestamp(this.project.getStartTime())
             .getTime()))
@@ -106,11 +105,9 @@ public class ProjectRecord implements Serializable {
     return sb.toString();
   }
 
-
-
   /**
    * Set the indent.
-   *
+   * 
    * @param indent The indent to set.
    */
   public void setIndent(Integer indent) {
@@ -119,7 +116,7 @@ public class ProjectRecord implements Serializable {
 
   /**
    * Get the indent.
-   *
+   * 
    * @return The indent for the project interval.
    */
   public Integer getIndent() {
@@ -128,7 +125,7 @@ public class ProjectRecord implements Serializable {
 
   /**
    * Set the start date for this record.
-   *
+   * 
    * @param timeInMillis The time to set.
    */
   public void setStartDate(long timeInMillis) {
@@ -137,7 +134,7 @@ public class ProjectRecord implements Serializable {
 
   /**
    * Get the start date for this record.
-   *
+   * 
    * @return The start date for this project.
    */
   public Date getStartDate() {
@@ -147,17 +144,16 @@ public class ProjectRecord implements Serializable {
 
   /**
    * Set the end date for this record.
-   *
+   * 
    * @param timeInMillis The time to set.
    */
   public void setEndDate(long timeInMillis) {
     this.endDate = new Date(timeInMillis);
   }
 
-
   /**
    * Get the end date for this record.
-   *
+   * 
    * @return The end date for this project.
    */
   public Date getEndDate() {
@@ -167,7 +163,7 @@ public class ProjectRecord implements Serializable {
 
   /**
    * Set the project.
-   *
+   * 
    * @param project The project to set.
    */
   public void setProject(Project project) {
