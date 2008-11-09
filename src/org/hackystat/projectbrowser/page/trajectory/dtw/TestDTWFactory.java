@@ -51,7 +51,8 @@ public class TestDTWFactory {
   public void testBasicDTW() throws DTWException {
     DTWAlignment r = DTWFactory.doDTW(query, template, SymmetricStepFunction.STEP_PATTERN_P0);
     assertNotNull("Testing DTW", r);
-    System.out.println(r);
+    // 
+    // System.out.println(r);
   }
 
 }
