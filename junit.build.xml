@@ -13,7 +13,7 @@
   <target name="junit.tool" depends="compile" description="Run JUnit tests.">
     <mkdir dir="${junit.dir}" />
     <!-- Run the tests, which are all classes whose name starts with 'Test'. -->
-    <junit printsummary="withOutAndErr" haltonfailure="${junit.haltonfailure}" fork="yes" failureproperty="junit.failed">
+    <junit maxmemory="512M" printsummary="withOutAndErr" haltonfailure="${junit.haltonfailure}" fork="yes" failureproperty="junit.failed">
       <jvmarg value="-Dsensorbaseclient.timeout=1000000"/>
       <jvmarg value="-Xmx512m"/>
       <classpath>
