@@ -119,9 +119,11 @@ public class ProjectBrowserProperties {
     properties.setProperty(AVAILABLEPAGE_KEY + ".sensordata", TRUE);
     properties.setProperty(AVAILABLEPAGE_KEY + ".dailyprojectdata", TRUE);
     properties.setProperty(AVAILABLEPAGE_KEY + ".telemetry", TRUE);
+    properties.setProperty(AVAILABLEPAGE_KEY + ".trajectory", TRUE);
     properties.setProperty(AVAILABLEPAGE_KEY + ".projects", TRUE);
     properties.setProperty(AVAILABLEPAGE_KEY + ".projectportfolio", TRUE);
     properties.setProperty(BACKGROUND_PROCESS_KEY + ".telemetry", TRUE);
+    properties.setProperty(BACKGROUND_PROCESS_KEY + ".trajectory", TRUE);
     properties.setProperty(BACKGROUND_PROCESS_KEY + ".projectportfolio", TRUE);
     properties.setProperty(BACKGROUND_PROCESS_KEY + ".todate", TRUE);
     properties.setProperty(LOG_USAGE_KEY, "false");

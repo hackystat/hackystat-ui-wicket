@@ -67,7 +67,7 @@ public class ProjectBrowserSession extends WebSession {
   private ToDateSession toDateSession = new ToDateSession();
   /** ProjectBrowserSession that holds the page state for the Project page. */
   private ProjectsSession projectsSession = new ProjectsSession();
-
+  /** Trajectory session - holds the page state for the Trajectory page. */
   private TrajectorySession trajectorySession = new TrajectorySession();
 
   
