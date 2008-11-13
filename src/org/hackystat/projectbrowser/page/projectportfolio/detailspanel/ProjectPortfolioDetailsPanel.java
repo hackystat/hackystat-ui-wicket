@@ -80,6 +80,7 @@ public class ProjectPortfolioDetailsPanel extends Panel {
             else {
               value = "N/A";
             }
+            
             Label valueLabel = new Label("value", value);
             String colorString = "color:#" + chart.getValueColor();
             valueLabel.add(new AttributeModifier("style", true, new Model(colorString)));

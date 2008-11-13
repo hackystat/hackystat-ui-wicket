@@ -26,6 +26,8 @@ public class MiniBarChart implements Serializable {
   
   /** The stream of this chart. */
   protected List<Double> streamData;
+  /** The index of the last valid value. */
+  private int lastValidIndex = -1;
   /** The latest value of the stream. */
   private double latestValue;
   /** The width of a bar. */
@@ -35,8 +37,10 @@ public class MiniBarChart implements Serializable {
   /** The height of the chart. */
   public static final int CHART_HEIGHT = 15;
   
-  /** The PageParameters to construct the link. */
+  /** The PageParameters to construct the chart link to telemetry page. */
   private PageParameters telemetryPageParameters;
+  /** The PageParameters to construct the value link to dpd page. */
+  //private PageParameters dpdPageParameters;
 
   /** The configuration of this chart. */
   private final PortfolioMeasureConfiguration configuration;
@@ -51,6 +55,7 @@ public class MiniBarChart implements Serializable {
     for (int i = streamData.size() - 1; i >= 0; --i) {
       this.latestValue = streamData.get(i);
       if (latestValue >= 0) {
+        this.lastValidIndex = i;
         break;
       }
     }
@@ -171,6 +176,13 @@ public class MiniBarChart implements Serializable {
    */
   public PortfolioMeasureConfiguration getConfiguration() {
     return configuration;
+  }
+
+  /**
+   * @return the lastValidIndex
+   */
+  public int getLastValidIndex() {
+    return lastValidIndex;
   }
 
 }

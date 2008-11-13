@@ -9,7 +9,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.logging.Logger;
 
+import org.apache.wicket.PageParameters;
+import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
 import org.hackystat.projectbrowser.page.contextsensitive.ContextSensitiveMenu;
 import org.hackystat.projectbrowser.page.contextsensitive.ContextSensitivePanel;
@@ -22,6 +25,7 @@ import org.hackystat.projectbrowser.page.dailyprojectdata.devtime.DevTimeDataMod
 import org.hackystat.projectbrowser.page.dailyprojectdata.filemetric.FileMetricDataModel;
 import org.hackystat.projectbrowser.page.dailyprojectdata.unittest.UnitTestDataModel;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
+import org.hackystat.utilities.tstamp.Tstamp;
 
 /**
  * Session instance for the daily project data page to hold its state.
@@ -33,6 +37,24 @@ public class DailyProjectDataSession implements Serializable {
   /** Support serialization. */
   private static final long serialVersionUID = 1L;
 
+  /** The parameter key of dpd analysis. */
+  public static final String ANALYSIS_KEY = "0";
+  /** The parameter key of date. */
+  public static final String DATE_KEY = "1";
+  /** The parameter key of selectedProjects. */
+  public static final String SELECTED_PROJECTS_KEY = "2";
+  /**
+   * The last parameter key that is required. 
+   */
+  private static final String LAST_REQUIRED_KEY = "2";
+
+  /** The parameter instruction message. */
+  public static final String PARAMETER_ORDER_MESSAGE = "Correct parameter order is : "
+      + "/<analysis>/<date>/<projects>";
+
+  /** Error message when parsing page paramters. */
+  private String paramErrorMessage = "";
+  
   /** The date this user has selected in the ProjectDate form. */
   private long date = ProjectBrowserBasePage.getDateYesterday().getTime();
 
@@ -43,7 +65,7 @@ public class DailyProjectDataSession implements Serializable {
   private String analysis = "Coverage";
   
   /** The list of analysis choices. */
-  private List<String> analysisList = 
+  private static final List<String> analysisList = 
     Arrays.asList("Build", "Commit", "Coupling", "Coverage", "Complexity", "DevTime", "FileMetric", 
         "UnitTest");
 
@@ -97,6 +119,141 @@ public class DailyProjectDataSession implements Serializable {
         false));
   }
 
+  /**
+   * Return the associated DPD analysis with the given telemetry.
+   * @param telemetryName the name of the given telemetry
+   * @return the associated DPD, null if not found a match one.
+   */
+  public static String getAssociatedDpdAnalysis(final String telemetryName) {
+    if (telemetryName == null || telemetryName.length() <= 0) {
+      return null;
+    }
+    for (String analysis : analysisList) {
+      if (telemetryName.contains(analysis)) {
+        return analysis;
+      }
+    }
+    return null;
+  }
+  /**
+   * Returns a PageParameters instance that represents the content of the input form.
+   * 
+   * @return a PageParameters instance.
+   */
+  public PageParameters getPageParameters() {
+    PageParameters parameters = new PageParameters();
+
+    parameters.put(ANALYSIS_KEY, this.getAnalysis());
+    parameters.put(DATE_KEY, ProjectBrowserSession.getFormattedDateString(this.date));
+    parameters.put(SELECTED_PROJECTS_KEY, 
+        ProjectBrowserSession.convertProjectListToString(this.getSelectedProjects()));
+
+    return parameters;
+  }
+  
+  /**
+   * Load data from URL parameters into this session.
+   * @param parameters the URL parameters
+   * @return true if all parameters are loaded correctly
+   */
+  public boolean loadPageParameters(PageParameters parameters) {
+    boolean isLoadSucceed = true;
+    //boolean isDpdLoaded = false;
+    Logger logger = ProjectBrowserSession.get().getLogger();
+    if (!parameters.containsKey(LAST_REQUIRED_KEY)) {
+      isLoadSucceed = false;
+      String error = "Some parameters are missing, should be " + LAST_REQUIRED_KEY + "\n" +
+          PARAMETER_ORDER_MESSAGE;
+      logger.warning(error);
+      this.paramErrorMessage = error + "\n";
+      return false;
+    }
+    StringBuffer errorMessage = new StringBuffer(1000);
+
+    // load dpd analysis name
+    if (parameters.containsKey(ANALYSIS_KEY)) {
+      String analysisString = parameters.getString(ANALYSIS_KEY);
+      if (this.getAnalysisList().contains(analysisString)) {
+        this.setAnalysis(analysisString);
+        //isDpdLoaded = true;
+      }
+      else {
+        isLoadSucceed = false;
+        String error = "Analysis from URL parameter is unknown: " + analysisString;
+        logger.warning(error);
+        errorMessage.append(error);
+        errorMessage.append('\n');
+      }
+    }
+    else {
+      isLoadSucceed = false;
+      errorMessage.append("Analysis key is missing in URL parameters.\n");
+    }
+    
+    //load dates
+    if (parameters.containsKey(DATE_KEY)) {
+      String startDateString = parameters.getString(DATE_KEY);
+      try {
+        this.date = Tstamp.makeTimestamp(startDateString).toGregorianCalendar()
+            .getTimeInMillis();
+      }
+      catch (Exception e) {
+        isLoadSucceed = false;
+        String error = "Errors when parsing date from URL parameter: " + startDateString;
+        logger.warning(error + " > " + e.getMessage());
+        errorMessage.append(error);
+        errorMessage.append('\n');
+      }
+    }
+    else {
+      isLoadSucceed = false;
+      errorMessage.append("date key is missing in URL parameters.\n");
+    }
+    
+    //load seletecd project
+    if (parameters.containsKey(SELECTED_PROJECTS_KEY)) {
+      String[] projectsStringArray = 
+        parameters.getString(SELECTED_PROJECTS_KEY).split(
+            ProjectBrowserSession.PARAMETER_VALUE_SEPARATOR);
+      List<Project> projectsList = new ArrayList<Project>();
+      for (String projectString : projectsStringArray) {
+        int index = projectString.lastIndexOf(ProjectBrowserSession.PROJECT_NAME_OWNER_SEPARATR);
+        String projectName = projectString;
+        String projectOwner = null;
+        if (index > 0 && index < projectString.length()) {
+          projectName = projectString.substring(0, index);
+          projectOwner = projectString.substring(
+              index + ProjectBrowserSession.PROJECT_NAME_OWNER_SEPARATR.length());
+        }
+        Project project = ProjectBrowserSession.get().getProject(projectName, projectOwner);
+        if (project == null) {
+          isLoadSucceed = false;
+          String error = "Error URL parameter: project: " + projectString +
+              " >> matching project not found under user: " + 
+              ProjectBrowserSession.get().getEmail();
+          logger.warning(error);
+          errorMessage.append(error);
+          errorMessage.append('\n');
+        }
+        else {
+          projectsList.add(project);
+        }
+      }
+      if (!projectsList.isEmpty()) {
+        this.setSelectedProjects(projectsList);
+      }
+    }
+    else {
+      isLoadSucceed = false;
+      errorMessage.append("projects is missing in URL parameters.\n");
+    }
+    
+    if (errorMessage.length() > 0) {
+      this.paramErrorMessage = errorMessage.append(PARAMETER_ORDER_MESSAGE).toString();
+    }
+    return isLoadSucceed;
+  }
+  
   /**
    * Gets the date associated with this page. 
    * @return The date for this page. 
@@ -278,6 +435,22 @@ public class DailyProjectDataSession implements Serializable {
    */
   public CommitDataModel getCommitDataModel() {
     return this.commitDataModel;
+  }
+
+  /**
+   * @return the paramErrorMessage
+   */
+  public String getParamErrorMessage() {
+    String temp = this.paramErrorMessage;
+    this.clearParamErrorMessage();
+    return temp;
+  }
+
+  /**
+   * Clears the paramErrorMessage.
+   */
+  public void clearParamErrorMessage() {
+    this.paramErrorMessage = "";
   }
   
   /**

@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -390,7 +391,9 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
             }
           }
           MiniBarChart chart = new MiniBarChart(stream, measure);
-          chart.setTelemetryPageParameters(getTelemetryPageParameters(measure, project));
+          chart.setTelemetryPageParameters(this.getTelemetryPageParameters(measure, project));
+          //chart.setDpdPageParameters(this.getDpdPageParameters(
+          //measure, project, chart.getLastValidIndex()));
           charts.add(chart);
         }
         this.measuresCharts.put(project, charts);
@@ -546,14 +549,41 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
     parameters.put(TelemetrySession.TELEMETRY_KEY, measure.getName());
     parameters.put(TelemetrySession.START_DATE_KEY, getStartTimestamp().toString());
     parameters.put(TelemetrySession.END_DATE_KEY, getEndTimestamp().toString());
-    parameters.put(TelemetrySession.SELECTED_PROJECTS_KEY, project.getName()
-        + TelemetrySession.PROJECT_NAME_OWNER_SEPARATR + project.getOwner());
+    parameters.put(TelemetrySession.SELECTED_PROJECTS_KEY, 
+        ProjectBrowserSession.convertProjectListToString(Arrays.asList(new Project[]{project})));
     parameters.put(TelemetrySession.GRANULARITY_KEY, this.granularity);
     parameters.put(TelemetrySession.TELEMETRY_PARAMERTERS_KEY, measure.getParamtersString());
 
     return parameters;
   }
 
+  /**
+   * Return a PageParameters instance that include necessary information for telemetry.
+   * 
+   * @param measure the telemetry analysis
+   * @param project the project
+   * @param indexOfLastValue the index of last valid value.
+   * @return the PagaParameters object, null if indexOfLastValue is negative, 
+   * which means last value is not available.
+   */
+  /*
+  private PageParameters getDpdPageParameters(PortfolioMeasureConfiguration measure, 
+      Project project, int indexOfLastValue) {
+    if (indexOfLastValue < 0) {
+      return null;
+    }
+    PageParameters parameters = new PageParameters();
+    
+
+    parameters.put(DailyProjectDataSession.ANALYSIS_KEY, measure.getName());
+    parameters.put(DailyProjectDataSession.DATE_KEY, );
+    parameters.put(DailyProjectDataSession.SELECTED_PROJECTS_KEY, 
+        ProjectBrowserSession.convertProjectListToString(Arrays.asList(new Project[]{project})));
+
+    return parameters;
+  }
+  */
+  
   /**
    * Return the end time stamp for analysis. If includeCurrentWeek, it will return the time stamp of
    * yesterday. If !includeCurrentWeek, it will return the time stamp of last Saturday.

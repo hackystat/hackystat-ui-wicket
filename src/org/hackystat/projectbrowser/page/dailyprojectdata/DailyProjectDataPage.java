@@ -1,6 +1,9 @@
 package org.hackystat.projectbrowser.page.dailyprojectdata;
 
+import org.apache.wicket.PageParameters;
 import org.apache.wicket.behavior.HeaderContributor;
+import org.apache.wicket.markup.html.basic.MultiLineLabel;
+import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.model.PropertyModel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.page.ProjectBrowserBasePage;
@@ -35,6 +38,7 @@ public class DailyProjectDataPage extends ProjectBrowserBasePage {
    * Creates the DPD page. 
    */
   public DailyProjectDataPage() {
+    
     add(HeaderContributor.forCss(
         org.hackystat.projectbrowser.page.dailyprojectdata.DailyProjectDataPage.class, 
         "dailyprojectdata.css"));
@@ -63,16 +67,36 @@ public class DailyProjectDataPage extends ProjectBrowserBasePage {
     else if ("Commit".equals(session.getAnalysis())) {
       add(new CommitPanel(dpdDataPanelId));
     }
+    
+    BookmarkablePageLink restLink = new BookmarkablePageLink("restLink", DailyProjectDataPage.class,
+        session.getPageParameters());
+    restLink.setVisible(false);
+    //add(restLink);
+    
+    add(new MultiLineLabel("paramErrorMessage", new PropertyModel(session, "paramErrorMessage")));
+    
     this.get("FooterFeedback").setModel(new PropertyModel(session, "feedback"));
   }
 
   /**
-   * The action to be performed when the user has set the Project and Date fields. 
+   * Constructs the telemetry page. 
+   * @param parameters the parameters from URL request.
+   */
+  public DailyProjectDataPage(PageParameters parameters) {
+    this();
+    boolean isLoadSucceed = session.loadPageParameters(parameters);
+
+    if (isLoadSucceed) {
+      updateDataPanel();
+    }
+  }
+
+  /**
+   * Update the data panel.
    * We will (1) clear all of our data models; (2) update the appropriate data model based upon
    * the user's settings; and (3) set the data panel.
    */
-  @Override
-  public void onProjectDateSubmit() {
+  private void updateDataPanel() {
     // Get rid of all prior state.
     session.clearDataModels();
     // Update a single model depending upon the user's settings. 
@@ -108,5 +132,17 @@ public class DailyProjectDataPage extends ProjectBrowserBasePage {
       session.getCommitDataModel().update(); 
       this.replace(new CommitPanel(dpdDataPanelId));
     }
+    /*
+    this.replace(new BookmarkablePageLink("restLink", DailyProjectDataPage.class,
+        session.getPageParameters()));
+    */
+  }
+  
+  /**
+   * The action to be performed when the user has set the Project and Date fields. 
+   */
+  @Override
+  public void onProjectDateSubmit() {
+    this.updateDataPanel();
   }
 }

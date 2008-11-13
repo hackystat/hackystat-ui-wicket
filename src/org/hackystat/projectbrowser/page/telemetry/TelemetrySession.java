@@ -51,14 +51,9 @@ public class TelemetrySession implements Serializable {
    * all telemetries have parameter.
    */
   private static final String LAST_REQUIRED_KEY = "4";
-  /** The last parameter key. */
+  /** The parameter instruction message. */
   public static final String PARAMETER_ORDER_MESSAGE = "Correct parameter order is : "
       + "/<telemetryName>/<granularity>/<startDate>/<endDate>/<projects>/<param>";
-
-  /** The separator for parameter values. */
-  public static final String PARAMETER_VALUE_SEPARATOR = ",";
-  /** The separator between project name and its onwer. */
-  public static final String PROJECT_NAME_OWNER_SEPARATR = "::";
 
   /** The analysis this user has selected. */
   private String telemetryName = null;
@@ -112,11 +107,11 @@ public class TelemetrySession implements Serializable {
     for (IModel model : this.parameters) {
       if (model != null) {
         stringBuffer.append(model.getObject());
-        stringBuffer.append(PARAMETER_VALUE_SEPARATOR);
+        stringBuffer.append(ProjectBrowserSession.PARAMETER_VALUE_SEPARATOR);
       }
     }
     String param = stringBuffer.toString();
-    if (param.endsWith(PARAMETER_VALUE_SEPARATOR)) {
+    if (param.endsWith(ProjectBrowserSession.PARAMETER_VALUE_SEPARATOR)) {
       param = param.substring(0, param.length() - 1);
     }
     return param;
@@ -259,28 +254,6 @@ public class TelemetrySession implements Serializable {
   }
 
   /**
-   * Returns the string that represents startDate in standard formatted. e.g.
-   * 2008-08-08T08:08:08+08:00, the +08:00 in the end means the time zone of this time stamp is
-   * +08:00
-   * 
-   * @return a String
-   */
-  public String getFormattedStartDateString() {
-    return Tstamp.makeTimestamp(this.startDate).toString();
-  }
-
-  /**
-   * Returns the string that represents endDate in standard formatted. e.g.
-   * 2008-08-08T08:08:08+08:00, the +08:00 in the end means the time zone of this time stamp is
-   * +08:00
-   * 
-   * @return a String
-   */
-  public String getFormattedEndDateString() {
-    return Tstamp.makeTimestamp(this.endDate).toString();
-  }
-
-  /**
    * Returns the start date in yyyy-MM-dd format.
    * 
    * @return The date as a simple string.
@@ -383,28 +356,6 @@ public class TelemetrySession implements Serializable {
   }
 
   /**
-   * Returns the list of the selected projects in a single String, separated by comma.
-   * 
-   * @return a String.
-   */
-  public String getSelectedProjectsAsString() {
-    StringBuffer projectList = new StringBuffer();
-    for (int i = 0; i < this.getSelectedProjects().size(); ++i) {
-      Project project = this.getSelectedProjects().get(i);
-      if (project == null) {
-        continue;
-      }
-      projectList.append(project.getName());
-      projectList.append(PROJECT_NAME_OWNER_SEPARATR);
-      projectList.append(project.getOwner());
-      if (i < this.getSelectedProjects().size() - 1) {
-        projectList.append(PARAMETER_VALUE_SEPARATOR);
-      }
-    }
-    return projectList.toString();
-  }
-
-  /**
    * @return the telemetrys
    */
   public Map<String, TelemetryChartDefinition> getTelemetryDefs() {
@@ -422,28 +373,6 @@ public class TelemetrySession implements Serializable {
     return chartDef;
   }
 
-  /**
-   * Returns a Project instance that available to current user and is matched to the given project
-   * name and project owner.
-   * 
-   * @param projectName the given project name.
-   * @param projectOwner the given project owner.
-   * @return the Project instance. null if no matching project is found, which may means either the
-   *         project name or project owner is null or there is no Project for this user with the
-   *         same project name and owner as the given ones.
-   */
-  public Project getProject(String projectName, String projectOwner) {
-    if (projectName == null) {
-      return null;
-    }
-    for (Project project : ProjectBrowserSession.get().getProjectList()) {
-      if (projectName.equals(project.getName())
-          && (projectOwner == null || projectOwner.equals(project.getOwner()))) {
-        return project;
-      }
-    }
-    return null;
-  }
 
   /**
    * Load data from URL parameters into this session.
@@ -541,15 +470,16 @@ public class TelemetrySession implements Serializable {
     // load seletecd project
     if (parameters.containsKey(SELECTED_PROJECTS_KEY)) {
       String[] projectsStringArray = parameters.getString(SELECTED_PROJECTS_KEY).split(
-          PARAMETER_VALUE_SEPARATOR);
+          ProjectBrowserSession.PARAMETER_VALUE_SEPARATOR);
       List<Project> projectsList = new ArrayList<Project>();
       for (String projectString : projectsStringArray) {
-        int index = projectString.lastIndexOf(PROJECT_NAME_OWNER_SEPARATR);
+        int index = projectString.lastIndexOf(ProjectBrowserSession.PROJECT_NAME_OWNER_SEPARATR);
         String projectName = projectString;
         String projectOwner = null;
         if (index > 0 && index < projectString.length()) {
           projectName = projectString.substring(0, index);
-          projectOwner = projectString.substring(index + PROJECT_NAME_OWNER_SEPARATR.length());
+          projectOwner = projectString.substring(
+              index + ProjectBrowserSession.PROJECT_NAME_OWNER_SEPARATR.length());
           /*
            * isLoadSucceed = false; 
            * String error = "Error URL parameter: project: " + projectString + " >>
@@ -557,7 +487,7 @@ public class TelemetrySession implements Serializable {
            * errorMessage.append(error); errorMessage.append('\n'); continue;
            */
         }
-        Project project = this.getProject(projectName, projectOwner);
+        Project project = ProjectBrowserSession.get().getProject(projectName, projectOwner);
         if (project == null) {
           isLoadSucceed = false;
           String error = "Error URL parameter: project: " + projectString
@@ -582,7 +512,8 @@ public class TelemetrySession implements Serializable {
     // load telemetry parameters
     if (parameters.containsKey(TELEMETRY_PARAMERTERS_KEY)) {
       String paramString = parameters.getString(TELEMETRY_PARAMERTERS_KEY);
-      String[] paramStringArray = paramString.split(PARAMETER_VALUE_SEPARATOR);
+      String[] paramStringArray = paramString.split(
+          ProjectBrowserSession.PARAMETER_VALUE_SEPARATOR);
       this.parameters.clear();
       if (isTelemetryLoaded) {
         List<ParameterDefinition> paramDefList = this.getTelemetryDefs().get(this.telemetryName)
@@ -659,9 +590,10 @@ public class TelemetrySession implements Serializable {
 
     parameters.put(TELEMETRY_KEY, this.getTelemetryName());
     parameters.put(GRANULARITY_KEY, this.getGranularity());
-    parameters.put(START_DATE_KEY, this.getFormattedStartDateString());
-    parameters.put(END_DATE_KEY, this.getFormattedEndDateString());
-    parameters.put(SELECTED_PROJECTS_KEY, this.getSelectedProjectsAsString());
+    parameters.put(START_DATE_KEY, ProjectBrowserSession.getFormattedDateString(this.startDate));
+    parameters.put(END_DATE_KEY, ProjectBrowserSession.getFormattedDateString(this.endDate));
+    parameters.put(SELECTED_PROJECTS_KEY, 
+        ProjectBrowserSession.convertProjectListToString(this.getSelectedProjects()));
     parameters.put(TELEMETRY_PARAMERTERS_KEY, this.getParametersAsString());
 
     return parameters;

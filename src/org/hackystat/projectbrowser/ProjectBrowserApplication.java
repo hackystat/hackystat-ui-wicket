@@ -92,7 +92,7 @@ public class ProjectBrowserApplication extends WebApplication {
       mountBookmarkablePage("projects", ProjectsPage.class);
     }
     if (isPageAvailable("dailyprojectdata")) {
-      mountBookmarkablePage("dailyprojectdata", DailyProjectDataPage.class);
+      mount(new IndexedParamUrlCodingStrategy("dailyprojectdata", DailyProjectDataPage.class));
     }
     if (isPageAvailable("telemetry")) {
       mount(new IndexedParamUrlCodingStrategy("telemetry", TelemetryPage.class));

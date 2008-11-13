@@ -25,6 +25,7 @@ import org.hackystat.sensorbase.resource.projects.jaxb.ProjectIndex;
 import org.hackystat.sensorbase.resource.projects.jaxb.ProjectRef;
 import org.hackystat.telemetry.service.client.TelemetryClient;
 import org.hackystat.utilities.logger.HackystatLogger;
+import org.hackystat.utilities.tstamp.Tstamp;
 
 /**
  * Provides a session instance that holds authentication credentials.
@@ -54,6 +55,11 @@ public class ProjectBrowserSession extends WebSession {
   private List<Project> projectList = null;
   /** The analysis list. */
   public List<String> analysisList = new ArrayList<String>();
+
+  /** The separator for parameter values. */
+  public static final String PARAMETER_VALUE_SEPARATOR = ",";
+  /** The separator between project name and its onwer. */
+  public static final String PROJECT_NAME_OWNER_SEPARATR = "::";
   
   /** The SensorDataSession that holds page state for SensorData page. */
   private SensorDataSession sensorDataSession = new SensorDataSession();
@@ -252,6 +258,62 @@ public class ProjectBrowserSession extends WebSession {
     return this.projectMap;
   }
   */
+
+  /**
+   * Returns a Project instance that available to current user and 
+   * is matched to the given project name and project owner.
+   * @param projectName the given project name.
+   * @param projectOwner the given project owner.
+   * @return the Project instance. null if no matching project is found,
+   * which may means either the project name or project owner is null or there is no Project for
+   * this user with the same project name and owner as the given ones.
+   */
+  public Project getProject(String projectName, String projectOwner) {
+    if (projectName == null) {
+      return null;
+    }
+    for (Project project : getProjectList()) {
+      if (projectName.equals(project.getName()) && 
+          (projectOwner == null || projectOwner.equals(project.getOwner()))) {
+          return project;
+      }
+    }
+    return null;
+  }
+  
+
+  /**
+   * Returns a single String represents a list of the projects, separated by comma.
+   * @param projects a list of selected projects.
+   * @return a String.
+   */
+  public static String convertProjectListToString(List<Project> projects) {
+    StringBuffer projectList = new StringBuffer();
+    for (int i = 0; i < projects.size(); ++i) {
+      Project project = projects.get(i);
+      if (project == null) {
+        continue;
+      }
+      projectList.append(project.getName());
+      projectList.append(PROJECT_NAME_OWNER_SEPARATR);
+      projectList.append(project.getOwner());
+      if (i < projects.size() - 1) {
+        projectList.append(PARAMETER_VALUE_SEPARATOR);
+      }
+    }
+    return projectList.toString();
+  }
+
+  /**
+   * Returns the string that represents the given date in standard formatted.
+   * e.g. 2008-08-08T08:08:08+08:00, 
+   * the +08:00 in the end means the time zone of this time stamp is +08:00
+   * @param date the given date
+   * @return a String
+   */
+  public static String getFormattedDateString(long date) {
+    return Tstamp.makeTimestamp(date).toString();
+  }
   
   /**
    * Return the project associated with the given id.
