@@ -73,8 +73,8 @@ public class TrajectoryChartDataModel implements Serializable, Processable {
   /** The parameters for this telemetry chart. */
   private List<String> parameters = new ArrayList<String>();
   /** Store the data retrieved from telemetry service. */
-  private Map<Project, List<SelectableTrajectoryStream>> projectStreamData 
-                                        = new HashMap<Project, List<SelectableTrajectoryStream>>();
+  private Map<Project, List<SelectableTrajectoryStream>> projectStreamData = 
+    new HashMap<Project, List<SelectableTrajectoryStream>>();
   /** Chart with selected project streams. */
   private String selectedChart = null;
   /** the width of this chart. */
@@ -107,6 +107,7 @@ public class TrajectoryChartDataModel implements Serializable, Processable {
   private static final String MARK = "[DEBUG] ";
 
   private String dtwStatistics = "dtw Placeholder";
+  private String paramErrorMessage = " TEST ";
 
   /**
    * Set all the parameters for the current chart.
@@ -420,7 +421,7 @@ public class TrajectoryChartDataModel implements Serializable, Processable {
           .log(Level.FINER, MARK + "TelemetryChart: processing project " + project.getName());
       List<SelectableTrajectoryStream> streamList = this.getTrajectoryStream(project);
       getLogger().log(Level.FINER,
-          MARK + "TelemetryChart: found " + streamList.size() + " stream(s)."); //NOPMD
+          MARK + "TelemetryChart: found " + streamList.size() + " stream(s)."); // NOPMD
       String projectMarker = null;
       double thickness = 2;
       double lineLength = 1;
@@ -761,6 +762,7 @@ public class TrajectoryChartDataModel implements Serializable, Processable {
 
   /**
    * Calculates the Euclidean distance.
+   * 
    * @param s1 time series 1.
    * @param s2 time series 2.
    * @return the Euclidean distance.
@@ -810,7 +812,7 @@ public class TrajectoryChartDataModel implements Serializable, Processable {
         }
       }
     }
-    
+
     getLogger().log(Level.FINER,
         MARK + "Normalized TS: min: " + streamMin + ", maximum: " + streamMax);
 
@@ -1000,7 +1002,7 @@ public class TrajectoryChartDataModel implements Serializable, Processable {
     if (!stream.isEmpty()) {
       // add stream data
       ArrayList<Double> res = stream.getNormalizedStreamData();
-      getLogger().log(Level.FINER,"TrajectoryChart: adding series: " + res);
+      getLogger().log(Level.FINER, "TrajectoryChart: adding series: " + res);
       googleChart.getChartData().add(res);
       // prepare the range data.
       List<Double> range = getRangeList(minimum, maximum);
@@ -1063,7 +1065,7 @@ public class TrajectoryChartDataModel implements Serializable, Processable {
    * @return the new object
    */
   private TrajectoryStreamYAxis newYAxis(String streamUnitName, double streamMax, 
-                                                                      double streamMin) {
+      double streamMin) {
     TrajectoryStreamYAxis axis = new TrajectoryStreamYAxis(streamUnitName);
     axis.setMaximum(streamMax);
     axis.setMinimum(streamMin);
@@ -1083,13 +1085,13 @@ public class TrajectoryChartDataModel implements Serializable, Processable {
     double minimum = min;
     double maximum = max;
     List<Double> rangeList = new ArrayList<Double>();
-//    if (minimum == maximum) {
-//      minimum -= 0.5;
-//      minimum = (minimum < 0) ? 0 : minimum;
-//      maximum += 0.5;
-//    }
-//    minimum = Math.floor(minimum);
-//    maximum = Math.ceil(maximum);
+    // if (minimum == maximum) {
+    // minimum -= 0.5;
+    // minimum = (minimum < 0) ? 0 : minimum;
+    // maximum += 0.5;
+    // }
+    // minimum = Math.floor(minimum);
+    // maximum = Math.ceil(maximum);
     rangeList.add(minimum);
     rangeList.add(maximum);
     return rangeList;
@@ -1278,5 +1280,23 @@ public class TrajectoryChartDataModel implements Serializable, Processable {
     }
     return sb.toString();
   }
+  
+  /**
+   * Set the paramErrorMessage.
+   * 
+   * @param message the message.
+   */
+  public void setWarningMessage(String message) {
+    this.paramErrorMessage = message;
+  }
+  
+  /**
+   * @return the paramErrorMessage
+   */
+  public String getWarningMessage() {
+    String temp = this.paramErrorMessage;
+    return temp;
+  }
 
+  
 }

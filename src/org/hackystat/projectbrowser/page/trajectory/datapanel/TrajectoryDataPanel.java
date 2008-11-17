@@ -70,9 +70,9 @@ public class TrajectoryDataPanel extends Panel {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
-
+    
     IModel dataModel = new PropertyModel(session, "dataModel");
-
+    
     BookmarkablePageLink restLink = new BookmarkablePageLink("restLink", TrajectoryPage.class,
         session.getPageParameters());
 
@@ -225,6 +225,8 @@ public class TrajectoryDataPanel extends Panel {
       }
     };
     streamForm.add(projectTable);
+    
+    add(new Label("streamWarningMessage", new PropertyModel(dataModel, "warningMessage")));
 
     // add the selected chart.
     WebComponent selectedchartUrl = new WebComponent("selectedChart") {

@@ -24,6 +24,7 @@ import org.hackystat.telemetry.service.resource.chart.jaxb.ParameterDefinition;
 import org.hackystat.telemetry.service.resource.chart.jaxb.TelemetryChartDefinition;
 import org.hackystat.telemetry.service.resource.chart.jaxb.TelemetryChartRef;
 import org.hackystat.telemetry.service.resource.chart.jaxb.Type;
+import org.hackystat.utilities.logger.HackystatLogger;
 import org.hackystat.utilities.tstamp.Tstamp;
 
 /**
@@ -128,6 +129,10 @@ public class TrajectorySession implements Serializable {
    * Constructor - create the session instance.
    */
   public TrajectorySession() {
+    // elevate the logging level here
+    Logger logger = HackystatLogger.getLogger("org.hackystat.projectbrowser", "projectbrowser");
+    HackystatLogger.setLoggingLevel(logger, "FINER");
+    
     granularityList.add("Day");
     granularityList.add("Week");
     granularityList.add("Month");
