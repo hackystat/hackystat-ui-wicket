@@ -77,6 +77,7 @@ hr { color : #3366CC; background-color : #3366CC; height : 2px; }
 
 #div-left     { float: left; width: 200px}
 #div-right    { padding-left: 210px}
+#div-right-trajectory    { padding-left: 260px}
 #loadingpanelmessage { height: 300px; overflow: auto;}
 
 

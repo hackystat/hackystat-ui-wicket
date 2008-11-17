@@ -68,7 +68,7 @@ public class TrajectoryDTWPage extends ProjectBrowserBasePage {
     this.get("FooterFeedback").setModel(new PropertyModel(session, "feedback"));
     this.get("FooterFeedback").setOutputMarkupId(true);
 
-    add(new MultiLineLabel("paramErrorMessage", new PropertyModel(session, "paramErrorMessage")));
+    add(new MultiLineLabel("feedback", new PropertyModel(session, "feedback")));
   }
 
   /**
