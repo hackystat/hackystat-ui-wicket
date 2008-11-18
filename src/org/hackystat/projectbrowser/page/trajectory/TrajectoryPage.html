@@ -18,7 +18,13 @@
 	<b>About this page:</b> 
     This page provides a way to visualize telemetry trends for different projects and different date 
     ranges for each project. By selecting two projects, a chart and date ranges for each project, 
-    you will generate two telemetry time series which can be viewed simultaneously.
+    you will generate two telemetry time series which can be viewed simultaneously. In addition to 
+    that, Trajectory provides an implementation of Dynamic Time Warping algorithm which finds the 
+    optimal mapping between two time series. Our DTW implementation normalizes time series before 
+    analysis and allows customization through local and global constraints, distance definitions and
+    open-end alignment. 
+    
+ 
    </div>
    </wicket:extend>
   </body>
