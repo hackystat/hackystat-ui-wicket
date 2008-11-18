@@ -2,6 +2,8 @@ package org.hackystat.projectbrowser.googlechart;
 
 import java.awt.Color;
 import java.io.Serializable;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -261,18 +263,20 @@ public class GoogleChart implements Serializable {
   }
   
   /**
-   * Trim the double number. 
-   * Keep only one number after decimal point.
+   * Trim the double number. Keep only one number after decimal point.
+   * 
    * @param dataItem the Double number.
    * @return a string of result.
    */
   private String trimDouble(Double dataItem) {
-    String number = dataItem.toString();
-    int index = number.indexOf('.');
-    if (index > 0 && index + 2 < number.length()) {
-      number = number.substring(0, index + 2);
-    }
-    return number;
+    NumberFormat format = new DecimalFormat("0.##");
+    return format.format(dataItem);
+    // String number = dataItem.toString();
+    // int index = number.indexOf('.');
+    // if (index > 0 && index + 4 < number.length()) {
+    // number = number.substring(0, index + 4);
+    // }
+    // return number;
   }
 
   /**
@@ -460,6 +464,7 @@ public class GoogleChart implements Serializable {
     randomColor = randomColor.substring(randomColor.length() - 6);
     return randomColor;
   }
+  
   /**
    * @return a random marker.
    */

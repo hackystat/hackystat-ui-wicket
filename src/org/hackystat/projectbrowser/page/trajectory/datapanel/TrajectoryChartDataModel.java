@@ -107,7 +107,7 @@ public class TrajectoryChartDataModel implements Serializable, Processable {
   private static final String MARK = "[DEBUG] ";
 
   private String dtwStatistics = "dtw Placeholder";
-  private String paramErrorMessage = " TEST ";
+  private String trajectoryDataWarningMessage = "";
 
   /**
    * Set all the parameters for the current chart.
@@ -209,6 +209,7 @@ public class TrajectoryChartDataModel implements Serializable, Processable {
       }
       else {
         selectedProject1StreamLength = streams.get(0).getTelemetryPoint().size();
+        selectedProject1.setStreamColor(GoogleChart.getNextJetColor());
       }
       logger.log(Level.FINER, MARK + "Finished retrieving chart <" + getTelemetryName()
           + "> for project: " + project.getName() + " streams retrieved: " + streams.size()
@@ -242,6 +243,7 @@ public class TrajectoryChartDataModel implements Serializable, Processable {
       }
       else {
         selectedProject2StreamLength = streams.get(0).getTelemetryPoint().size();
+        selectedProject2.setStreamColor(GoogleChart.getNextJetColor());
       }
       logger.log(Level.FINER, MARK + "Finished retrieving chart <" + getTelemetryName()
           + "> for project: " + project.getName() + " streams retrieved: " + streams.size()
@@ -252,6 +254,11 @@ public class TrajectoryChartDataModel implements Serializable, Processable {
       maxStreamLength = Math.max(selectedProject1StreamLength + this.selectedProject1.getIndent(),
           selectedProject2StreamLength + this.selectedProject2.getIndent());
       logger.log(Level.FINER, MARK + "the longest stream is " + maxStreamLength + " points.");
+      
+      if (selectedProject1StreamLength != selectedProject2StreamLength) {
+        this.trajectoryDataWarningMessage = "You've selected streams of different length, "
+            + "the open-endede DTW is not implemented yet.";
+      }
 
     }
     catch (TelemetryClientException e) {
@@ -451,6 +458,7 @@ public class TrajectoryChartDataModel implements Serializable, Processable {
           stream.setBlankLength(blankLength);
           stream.setIndent(projectRec.getIndent());
           streams.add(stream);
+          stream.setColor(projectRec.getStreamColor());
         }
         else {
           stream.setColor("");
@@ -649,7 +657,7 @@ public class TrajectoryChartDataModel implements Serializable, Processable {
         streamAxis.setMaximum((axisMax > streamMax) ? axisMax : streamMax);
         streamAxis.setMinimum((axisMin < streamMin) ? axisMin : streamMin);
       }
-      stream.setColor(GoogleChart.getNextJetColor());
+      // stream.setColor(GoogleChart.getNextJetColor());
     }
     // add the y axis and extend the range if it contains only one horizontal line.
     String axisType = "r";
@@ -718,7 +726,7 @@ public class TrajectoryChartDataModel implements Serializable, Processable {
       if (!stream.isEmpty()) {
         String streamUnitName = stream.getUnitName();
         streamAxis = newYAxis(streamUnitName, streamMax, streamMin);
-        stream.setColor(GoogleChart.getNextJetColor());
+        //stream.setColor(GoogleChart.getNextJetColor());
       }
     }
 
@@ -827,7 +835,7 @@ public class TrajectoryChartDataModel implements Serializable, Processable {
               + ", length " + stream.getTelemetryStream().getTelemetryPoint().size());
       String streamUnitName = stream.getUnitName();
       streamAxis = newYAxis(streamUnitName, streamMax, streamMin);
-      stream.setColor(GoogleChart.getNextJetColor());
+      //stream.setColor(GoogleChart.getNextJetColor());
     }
 
     // add the y axis and extend the range if it contains only one horizontal line.
@@ -903,7 +911,6 @@ public class TrajectoryChartDataModel implements Serializable, Processable {
     try {
       DTWAlignment r = DTWFactory.doDTW(queryD, templateD, SymmetricStepFunction.STEP_PATTERN_P0);
       // getLogger().log(Level.FINER, MARK + "DTW Record: " + CR + r.toString());
-      res.add(template);
 
       double[] rawWarpingQuery = r.getWarpingQuery();
       List<Double> warpingQuery = new ArrayList<Double>();
@@ -912,6 +919,7 @@ public class TrajectoryChartDataModel implements Serializable, Processable {
       }
 
       res.add(warpingQuery);
+      res.add(template);
       return res;
     }
     catch (DTWException e) {
@@ -1287,14 +1295,15 @@ public class TrajectoryChartDataModel implements Serializable, Processable {
    * @param message the message.
    */
   public void setWarningMessage(String message) {
-    this.paramErrorMessage = message;
+    this.trajectoryDataWarningMessage = message;
   }
   
   /**
    * @return the paramErrorMessage
    */
   public String getWarningMessage() {
-    String temp = this.paramErrorMessage;
+    String temp = this.trajectoryDataWarningMessage;
+    this.trajectoryDataWarningMessage = "";
     return temp;
   }
 

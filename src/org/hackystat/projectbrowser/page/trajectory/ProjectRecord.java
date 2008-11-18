@@ -32,6 +32,8 @@ public class ProjectRecord implements Serializable {
   // the shift for the data displayed
   private Integer indent = 0;
 
+  private String color;
+
   private static final String CR = "\n";
 
   /**
@@ -170,4 +172,21 @@ public class ProjectRecord implements Serializable {
     this.project = project;
   }
 
+  /**
+   * Set the color used for the telemetry trajectory rendering.
+   * 
+   * @param color the color to use.
+   */
+  public void setStreamColor(String color) {
+    this.color = color;
+  }
+
+  /**
+   * Get the stream color to use.
+   * 
+   * @return the stream color.
+   */
+  public String getStreamColor() {
+    return this.color;
+  }
 }
