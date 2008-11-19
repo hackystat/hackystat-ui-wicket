@@ -1,6 +1,5 @@
 package org.hackystat.projectbrowser.page.projectportfolio.detailspanel.chart;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,7 +13,7 @@ import java.util.List;
  * @author Shaoxuan Zhang
  *
  */
-public class EnhancedStreamTrendClassifier extends SimpleStreamTrendClassifier {
+public class EnhancedStreamTrendClassifier extends SimpleStreamClassifier {
 
   /** Support serialization. */
   private static final long serialVersionUID = 5078158281421083678L;
@@ -38,14 +37,13 @@ public class EnhancedStreamTrendClassifier extends SimpleStreamTrendClassifier {
   }
   
   /**
-   * Parse the list of data and produce a StreamTrend result.
-   * @param data the input list of data
-   * @return StreamTrend enumeration. 
+   * Parse the given MiniBarChart and produce a StreamCategory result.
+   * @param chart the input chart
+   * @return StreamCategory enumeration. 
    */
   @Override
-  public StreamTrend getStreamTrend(List<Double> data) {
-    List<Double> stream = new ArrayList<Double>();
-    stream.addAll(data);
+  public StreamCategory getStreamCategory(MiniBarChart chart) {
+    List<Double> stream = chart.streamData;
     for (int i = 0; i < stream.size(); i++) {
       if (stream.get(i).isNaN() || stream.get(i) < 0) {
         stream.remove(i);
@@ -54,7 +52,7 @@ public class EnhancedStreamTrendClassifier extends SimpleStreamTrendClassifier {
     }
     int size = stream.size();
     if (size == 1) {
-      return StreamTrend.STABLE;
+      return StreamCategory.STABLE;
     }
     // the first valid value
     double firstValue = stream.get(0);
@@ -80,15 +78,15 @@ public class EnhancedStreamTrendClassifier extends SimpleStreamTrendClassifier {
       }
     }
     if (isEqual(lastValue, firstValue, error) && decreasePoint == 0 && increasePoint == 0) {
-      return StreamTrend.STABLE;
+      return StreamCategory.STABLE;
     }
     if (lastValue > firstValue && decreasePoint == 0) {
-      return StreamTrend.INCREASING;
+      return StreamCategory.INCREASING;
     }
     if (lastValue < firstValue && increasePoint == 0) {
-      return StreamTrend.DECREASING;
+      return StreamCategory.DECREASING;
     }
-    return StreamTrend.OTHER;
+    return StreamCategory.OTHER;
   }
   
   /**

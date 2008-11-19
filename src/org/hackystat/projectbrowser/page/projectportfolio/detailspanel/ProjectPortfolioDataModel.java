@@ -107,9 +107,9 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
   /** The color for good state. */
   private String goodColor = "00ff00";
   /** The color for soso state. */
-  private String sosoColor = "ffff00";
+  private String averageColor = "ffff00";
   /** The color for bad state. */
-  private String badColor = "ff0000";
+  private String poorColor = "ff0000";
 
   /**
    * Constructor that initialize the measures.
@@ -630,16 +630,7 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
   public String getBackgroundColor() {
     return backgroundColor;
   }
-
-  /**
-   * @param goodColor the goodColor to set
-   */
-  /*
-  public void setGoodColor(String goodColor) {
-    this.goodColor = goodColor;
-  }
-  */
-
+  
   /**
    * @return the goodColor
    */
@@ -648,45 +639,18 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
   }
 
   /**
-   * @param sosoColor the sosoColor to set
-   */
-  /*
-  public void setSosoColor(String sosoColor) {
-    this.sosoColor = sosoColor;
-  }
-  */
-
-  /**
    * @return the sosoColor
    */
-  public String getSosoColor() {
-    return sosoColor;
+  public String getAverageColor() {
+    return averageColor;
   }
-
-  /**
-   * @param badColor the badColor to set
-   */
-  /*
-  public void setBadColor(String badColor) {
-    this.badColor = badColor;
-  }
-  */
 
   /**
    * @return the badColor
    */
-  public String getBadColor() {
-    return badColor;
+  public String getPoorColor() {
+    return poorColor;
   }
-
-  /**
-   * @param fontColor the fontColor to set
-   */
-  /*
-  public void setFontColor(String fontColor) {
-    this.fontColor = fontColor;
-  }
-  */
 
   /**
    * @return the fontColor

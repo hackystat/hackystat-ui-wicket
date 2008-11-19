@@ -7,9 +7,10 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.chart.
          EnhancedStreamTrendClassifier;
+import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.chart.MiniBarChart;
 import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.chart.
-         SimpleStreamTrendClassifier;
-import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.chart.StreamTrend;
+         SimpleStreamClassifier;
+import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.chart.StreamCategory;
 
 /**
  * Configuration for project portfolio measures.
@@ -52,7 +53,7 @@ public class PortfolioMeasureConfiguration implements Serializable {
   private final List<IModel> parameters = new ArrayList<IModel>();
   
   /** The simple stream trend classifier.*/
-  private SimpleStreamTrendClassifier streamTrendClassifier = new EnhancedStreamTrendClassifier();
+  private SimpleStreamClassifier streamClassifier = new EnhancedStreamTrendClassifier();
 
   /**
    * Create an instance.
@@ -97,12 +98,12 @@ public class PortfolioMeasureConfiguration implements Serializable {
   }
 
   /**
-   * Parse the list of data and produce a StreamTrend result.
-   * @param stream the input list of data
-   * @return StreamTrend enumeration. 
+   * Parse the given MiniBarChart and produce a StreamCategory result.
+   * @param chart the input chart
+   * @return StreamCategory enumeration. 
    */
-  public StreamTrend getStreamTrend(List<Double> stream) {
-    return this.streamTrendClassifier.getStreamTrend(stream);
+  public StreamCategory getStreamCategory(MiniBarChart chart) {
+    return this.streamClassifier.getStreamCategory(chart);
   }
   
   /**
@@ -169,6 +170,49 @@ public class PortfolioMeasureConfiguration implements Serializable {
   }
 
   /**
+   * Return the color of the given MiniBarChart.
+   * @param chart the MiniBarChart
+   * @return the color in String
+   */
+  public String getChartColor(MiniBarChart chart) {
+    if (isColorable()) {
+      switch (getStreamCategory(chart)) {
+      case STABLE: return getStableColor();
+      case INCREASING: return getHigherColor();
+      case DECREASING: return getLowerColor();
+      default: return getUnclassifiedTrendColor();
+      }
+    }
+    else {
+      return getDataModel().getFontColor();
+    }
+  }
+
+  /**
+   * Return the color according to the value.
+   * The color method is defined in this measure configuration.
+   * @param value the value.
+   * @return the color in String
+   */
+  public String getValueColor(double value) {
+    if (value < 0) {
+      return getDataModel().getNAColor();
+    }
+    if (isColorable()) {
+      if (value >= this.getHigherThreshold()) {
+        return getHigherColor();
+      }
+      if (value < this.getLowerThreshold()) {
+        return getLowerColor();
+      }
+      return getAverageColor();
+    }
+    else {
+      return getDataModel().getFontColor();
+    }
+  }
+  
+  /**
    * Return the color for higher value or increasing trend.
    * @return the color
    */
@@ -177,16 +221,16 @@ public class PortfolioMeasureConfiguration implements Serializable {
       return dataModel.getGoodColor();
     }
     else {
-      return dataModel.getBadColor();
+      return dataModel.getPoorColor();
     }
   }
   
   /**
-   * Return the color for middle value or unstable trend.
+   * Return the color for average value or unstable trend.
    * @return the color
    */
-  public String getMiddleColor() {
-    return dataModel.getSosoColor();
+  public String getAverageColor() {
+    return dataModel.getAverageColor();
   }
 
   /**
@@ -195,7 +239,7 @@ public class PortfolioMeasureConfiguration implements Serializable {
    */
   public String getLowerColor() {
     if (this.isHigherBetter()) {
-      return dataModel.getBadColor();
+      return dataModel.getPoorColor();
     }
     else {
       return dataModel.getGoodColor();
@@ -215,7 +259,7 @@ public class PortfolioMeasureConfiguration implements Serializable {
    * @return the color
    */
   public String getUnclassifiedTrendColor() {
-    return dataModel.getSosoColor();
+    return dataModel.getAverageColor();
   }
 
   /**
@@ -269,17 +313,17 @@ public class PortfolioMeasureConfiguration implements Serializable {
   }
 
   /**
-   * @param streamTrendClassifier the streamTrendClassifier to set
+   * @param streamClassifier the streamTrendClassifier to set
    */
-  public void setStreamTrendClassifier(SimpleStreamTrendClassifier streamTrendClassifier) {
-    this.streamTrendClassifier = streamTrendClassifier;
+  public void setStreamClassifier(SimpleStreamClassifier streamClassifier) {
+    this.streamClassifier = streamClassifier;
   }
 
   /**
    * @return the streamTrendClassifier
    */
-  public SimpleStreamTrendClassifier getStreamTrendClassifier() {
-    return streamTrendClassifier;
+  public SimpleStreamClassifier getStreamClassifier() {
+    return streamClassifier;
   }
 
   /**

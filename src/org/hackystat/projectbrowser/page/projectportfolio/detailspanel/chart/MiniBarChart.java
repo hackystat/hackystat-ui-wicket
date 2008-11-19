@@ -29,6 +29,8 @@ public class MiniBarChart implements Serializable {
   
   /** The stream of this chart. */
   protected List<Double> streamData;
+  /** The list of original streams. */
+  protected List<TelemetryStream> streams;
   /** The index of the last valid value. */
   private int lastValidIndex = -1;
   /** The latest value of the stream. */
@@ -54,17 +56,20 @@ public class MiniBarChart implements Serializable {
    * @param configuration The configuration of this chart.
    */
   public MiniBarChart(List<TelemetryStream> streams, PortfolioMeasureConfiguration configuration) {
-    if (streams.size() > 1) {
-      this.streamData = getStreamData(mergeStream(streams, configuration.getMerge()));
-    }
-    else {
-      this.streamData = getStreamData(streams.get(0));
-    }
-    for (int i = streamData.size() - 1; i >= 0; --i) {
-      this.latestValue = streamData.get(i);
-      if (latestValue >= 0) {
-        this.lastValidIndex = i;
-        break;
+    this.streams = streams;
+    if (this.streams != null) {
+      if (this.streams.size() > 1) {
+        this.streamData = getStreamData(mergeStream(this.streams, configuration.getMerge()));
+      }
+      else {
+        this.streamData = getStreamData(streams.get(0));
+      }
+      for (int i = streamData.size() - 1; i >= 0; --i) {
+        this.latestValue = streamData.get(i);
+        if (latestValue >= 0) {
+          this.lastValidIndex = i;
+          break;
+        }
       }
     }
     this.configuration = configuration;
@@ -219,17 +224,7 @@ public class MiniBarChart implements Serializable {
    * @return the color
    */
   public String getChartColor() {
-    if (configuration.isColorable()) {
-      switch (configuration.getStreamTrend(this.streamData)) {
-      case STABLE: return configuration.getStableColor();
-      case INCREASING: return configuration.getHigherColor();
-      case DECREASING: return configuration.getLowerColor();
-      default: return configuration.getUnclassifiedTrendColor();
-      }
-    }
-    else {
-      return configuration.getDataModel().getFontColor();
-    }
+    return configuration.getChartColor(this);
   }
 
   
@@ -241,24 +236,11 @@ public class MiniBarChart implements Serializable {
   }
 
   /**
-   * @return the valueColor
+   * Return the color for the latest value.
+   * @return the color
    */
   public String getValueColor() {
-    if (this.getLatestValue() < 0) {
-      return configuration.getDataModel().getNAColor();
-    }
-    if (configuration.isColorable()) {
-      if (this.getLatestValue() >= this.configuration.getHigherThreshold()) {
-        return configuration.getHigherColor();
-      }
-      if (this.getLatestValue() < this.configuration.getLowerThreshold()) {
-        return configuration.getLowerColor();
-      }
-      return configuration.getMiddleColor();
-    }
-    else {
-      return configuration.getDataModel().getFontColor();
-    }
+    return configuration.getValueColor(this.getLatestValue());
   }
 
   /**

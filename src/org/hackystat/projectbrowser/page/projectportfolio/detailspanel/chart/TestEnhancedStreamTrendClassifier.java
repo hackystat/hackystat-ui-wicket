@@ -23,7 +23,9 @@ public class TestEnhancedStreamTrendClassifier {
   @Test
   public void testIncreaseTrend() {
     List<Double> trend = Arrays.asList(new Double[]{55.0, 67.0, 66.5, 78.8, 76.0, 89.0});
-    assertEquals("", StreamTrend.INCREASING, streamTrendClassifier.getStreamTrend(trend));
+    MiniBarChart chart = new MiniBarChart(null, null);
+    chart.streamData = trend;
+    assertEquals("", StreamCategory.INCREASING, streamTrendClassifier.getStreamCategory(chart));
   }
 
   /**
@@ -35,7 +37,9 @@ public class TestEnhancedStreamTrendClassifier {
   @Test
   public void testDecreaseTrend() {
     List<Double> trend = Arrays.asList(new Double[]{89.0, 76.0, 78.8, 66.5, 67.0, 55.0});
-    assertEquals("", StreamTrend.DECREASING, streamTrendClassifier.getStreamTrend(trend));
+    MiniBarChart chart = new MiniBarChart(null, null);
+    chart.streamData = trend;
+    assertEquals("", StreamCategory.DECREASING, streamTrendClassifier.getStreamCategory(chart));
   }
 
   /**
@@ -47,7 +51,9 @@ public class TestEnhancedStreamTrendClassifier {
   @Test
   public void testStableTrend() {
     List<Double> trend = Arrays.asList(new Double[]{65.0, 67.0, 66.5, 68.8, 66.0, 69.0});
-    assertEquals("", StreamTrend.STABLE, streamTrendClassifier.getStreamTrend(trend));
+    MiniBarChart chart = new MiniBarChart(null, null);
+    chart.streamData = trend;
+    assertEquals("", StreamCategory.STABLE, streamTrendClassifier.getStreamCategory(chart));
   }
 
   /**
@@ -59,6 +65,8 @@ public class TestEnhancedStreamTrendClassifier {
   @Test
   public void testUnstableTrend() {
     List<Double> trend = Arrays.asList(new Double[]{67.0, 55.0, 66.5, 89.0, 76.0, 78.8});
-    assertEquals("", StreamTrend.OTHER, streamTrendClassifier.getStreamTrend(trend));
+    MiniBarChart chart = new MiniBarChart(null, null);
+    chart.streamData = trend;
+    assertEquals("", StreamCategory.OTHER, streamTrendClassifier.getStreamCategory(chart));
   }
 }
