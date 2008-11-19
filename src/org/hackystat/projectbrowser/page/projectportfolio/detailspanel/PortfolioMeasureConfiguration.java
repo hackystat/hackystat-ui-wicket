@@ -55,47 +55,7 @@ public class PortfolioMeasureConfiguration implements Serializable {
   private SimpleStreamTrendClassifier streamTrendClassifier = new EnhancedStreamTrendClassifier();
 
   /**
-   * Create an instance with default colors green yellow red. higher color will be green if
-   * isHigherTheBetter is true, otherwise will be red. lower color will be red if isHigherTheBetter
-   * is true, otherwise will be green.
-   * 
-   * @param name The name of the measure.
-   * @param colorable If this measure is colorable.
-   * @param higherThreshold The threshold of high value.
-   * @param lowerThreshold The threshold of high value.
-   * @param higherBetter If higher value means better.
-   * @param dataModel The data model this measure belongs to.
-   */
-  public PortfolioMeasureConfiguration(String name, boolean colorable, double lowerThreshold,
-      double higherThreshold, boolean higherBetter, ProjectPortfolioDataModel dataModel) {
-    this.measureName = name;
-    this.colorable = colorable;
-    this.lowerThreshold = lowerThreshold;
-    this.higherThreshold = higherThreshold;
-    this.higherBetter = higherBetter;
-    this.dataModel = dataModel;
-  }
-
-  /**
-   * Create an instance with alias.
-   * 
-   * @param name The name of the measure.
-   * @param alias The alias of this measure, which will be used as display name.
-   * @param colorable If this measure is colorable.
-   * @param higherThreshold The threshold of high value.
-   * @param lowerThreshold The threshold of high value.
-   * @param higherBetter If higher value means better.
-   * @param dataModel The data model this measure belongs to.
-   */
-  public PortfolioMeasureConfiguration(String name, String alias, boolean colorable, 
-      double lowerThreshold, double higherThreshold, boolean higherBetter, 
-      ProjectPortfolioDataModel dataModel) {
-    this(name, colorable, lowerThreshold, higherThreshold, higherBetter, dataModel);
-    this.alias = alias;
-  }
-
-  /**
-   * Create an instance with alias and merge method.
+   * Create an instance.
    * 
    * @param name The name of the measure.
    * @param alias The alias of this measure, which will be used as display name.
@@ -109,8 +69,14 @@ public class PortfolioMeasureConfiguration implements Serializable {
   public PortfolioMeasureConfiguration(String name, String alias, boolean colorable, 
       double lowerThreshold, double higherThreshold, boolean higherBetter, String merge, 
       ProjectPortfolioDataModel dataModel) {
-    this(name, alias, colorable, lowerThreshold, higherThreshold, higherBetter, dataModel);
+    this.measureName = name;
+    this.colorable = colorable;
+    this.lowerThreshold = lowerThreshold;
+    this.higherThreshold = higherThreshold;
+    this.higherBetter = higherBetter;
+    this.alias = alias;
     this.merge = merge;
+    this.dataModel = dataModel;
   }
   
   /**

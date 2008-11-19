@@ -5,13 +5,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
 import org.apache.wicket.PageParameters;
 import org.hackystat.projectbrowser.googlechart.ChartType;
 import org.hackystat.projectbrowser.googlechart.GoogleChart;
 import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.
         PortfolioMeasureConfiguration;
+import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.ProjectPortfolioDataModel;
 import org.hackystat.telemetry.service.resource.chart.jaxb.TelemetryPoint;
 import org.hackystat.telemetry.service.resource.chart.jaxb.TelemetryStream;
+import org.hackystat.telemetry.service.resource.chart.jaxb.YAxis;
 
 /**
  * A mini bar chart.
@@ -47,11 +50,16 @@ public class MiniBarChart implements Serializable {
   
   
   /**
-   * @param stream The stream of this chart.
+   * @param streams The stream of this chart.
    * @param configuration The configuration of this chart.
    */
-  public MiniBarChart(TelemetryStream stream, PortfolioMeasureConfiguration configuration) {
-    this.streamData = getStreamData(stream);
+  public MiniBarChart(List<TelemetryStream> streams, PortfolioMeasureConfiguration configuration) {
+    if (streams.size() > 1) {
+      this.streamData = getStreamData(mergeStream(streams, configuration.getMerge()));
+    }
+    else {
+      this.streamData = getStreamData(streams.get(0));
+    }
     for (int i = streamData.size() - 1; i >= 0; --i) {
       this.latestValue = streamData.get(i);
       if (latestValue >= 0) {
@@ -62,6 +70,102 @@ public class MiniBarChart implements Serializable {
     this.configuration = configuration;
   }
 
+  /**
+   * Merge the streams according to the merge parameter.
+   * @param telemetryStreams the input streams.
+   * @param merge the method to merge.
+   * @return a TelemetryStream.
+   */
+  private TelemetryStream mergeStream(List<TelemetryStream> telemetryStreams, String merge) {
+    //construct the target instance with the first stream.
+    TelemetryStream telemetryStream = new TelemetryStream();
+    telemetryStream.setYAxis(telemetryStreams.get(0).getYAxis());
+    telemetryStream.setName(telemetryStreams.get(0).getName());
+    //check y axis, has to be all the same. Otherwise will give out empty stream.
+    boolean allMatch = true;
+    for (TelemetryStream stream : telemetryStreams) {
+      if (!streamsEqual(stream.getYAxis(), telemetryStream.getYAxis())) {
+        allMatch = false;
+        Logger logger = ProjectPortfolioDataModel.getLogger();
+        logger.severe("YAxis: " + stream.getYAxis().getName() + " in stream: " + stream.getName()
+            + " is not match to YAxis: " + telemetryStream.getYAxis().getName() + " in stream :"
+            + telemetryStream.getName());
+      }
+    }
+    if (allMatch) {
+      //combine streams' data.
+      List<TelemetryPoint> points = new ArrayList<TelemetryPoint>();
+      points.addAll(telemetryStreams.get(0).getTelemetryPoint());
+      for (int i = 0; i < points.size(); i++) {
+        List<Double> doubleValues = new ArrayList<Double>();
+        //get all valid values in the same point.
+        for (int j = 0; j < telemetryStreams.size(); ++j) {
+          String stringValue = telemetryStreams.get(j).getTelemetryPoint().get(i).getValue();
+          if (stringValue != null) {
+            doubleValues.add(Double.valueOf(stringValue));
+          }
+        }
+        
+        points.get(i).setValue(null);
+        //if no valid data, the value of this point will be null
+        if (!doubleValues.isEmpty()) {
+          if ("sum".equals(merge)) {
+            Double value = 0.0;
+            for (Double v : doubleValues) {
+              value += v;
+            }
+            points.get(i).setValue(value.toString());
+          }
+          else if ("avg".equals(merge)) {
+            Double value = 0.0;
+            for (Double v : doubleValues) {
+              value += v;
+            }
+            value /= telemetryStreams.size();
+            points.get(i).setValue(value.toString());
+          } 
+          else if ("min".equals(merge)) {
+            points.get(i).setValue(Collections.min(doubleValues).toString());
+          } 
+          else if ("max".equals(merge)) {
+            points.get(i).setValue(Collections.max(doubleValues).toString());
+          }
+        }
+      }
+      telemetryStream.getTelemetryPoint().addAll(points);
+    }
+    return telemetryStream;
+  }
+
+  /**
+   * Compare the two given YAxis objects.
+   * @param axis1 the first YAxis.
+   * @param axis2 the second YAxis.
+   * @return true if they are equal.
+   */
+  private boolean streamsEqual(YAxis axis1, YAxis axis2) {
+    return eqauls(axis1.getName(), axis2.getName()) && eqauls(axis1.getUnits(), axis2.getUnits()) &&
+           eqauls(axis1.getNumberType(), axis2.getNumberType()) && 
+           eqauls(axis1.getLowerBound(), axis2.getLowerBound()) && 
+           eqauls(axis1.getUpperBound(), axis2.getUpperBound());
+  }
+
+  /**
+   * Compare the two given objects. If both objects are null, they are considered equal.
+   * @param o1 the first object
+   * @param o2 the second object
+   * @return true if the two objects are equal, otherwise false.
+   */
+  private boolean eqauls(Object o1, Object o2) {
+    if (o1 == null && o2 == null) {
+      return true;
+    }
+    if (o1 == null || o2 == null) {
+      return false;
+    }
+    return o1.equals(o2);
+  }
+  
   /**
    * Return a List of Double from the given telemetry stream.
    * @param stream a TelemetryStream

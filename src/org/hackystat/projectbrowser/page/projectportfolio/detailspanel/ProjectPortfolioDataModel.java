@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,9 +37,6 @@ import org.hackystat.telemetry.service.client.TelemetryClient;
 import org.hackystat.telemetry.service.client.TelemetryClientException;
 import org.hackystat.telemetry.service.resource.chart.jaxb.ParameterDefinition;
 import org.hackystat.telemetry.service.resource.chart.jaxb.TelemetryChartData;
-import org.hackystat.telemetry.service.resource.chart.jaxb.TelemetryPoint;
-import org.hackystat.telemetry.service.resource.chart.jaxb.TelemetryStream;
-import org.hackystat.telemetry.service.resource.chart.jaxb.YAxis;
 import org.hackystat.utilities.logger.HackystatLogger;
 import org.hackystat.utilities.tstamp.Tstamp;
 import org.hackystat.utilities.uricache.UriCache;
@@ -157,21 +153,28 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
   private void initializeMeasures() {
     // Load default measures
     measures.clear();
-    measures.add(new PortfolioMeasureConfiguration("Coverage", true, 40, 90, true, this));
-    measures.add(new PortfolioMeasureConfiguration("CyclomaticComplexity", "Complexity", true, 
-                                                    10, 20, false, this));
-    measures.add(new PortfolioMeasureConfiguration("Coupling", true, 10, 20, false, this));
-    measures.add(new PortfolioMeasureConfiguration("MemberChurn", "Churn", true, 400, 900, false,
-                                                    "sum", this));
-    measures.add(new PortfolioMeasureConfiguration("CodeIssue", true, 10, 30, false, this));
+    measures.add(
+        new PortfolioMeasureConfiguration("Coverage", null, true, 40, 90, true, null, this));
+    measures.add(
+        new PortfolioMeasureConfiguration("CyclomaticComplexity", "Complexity", true, 10, 20,
+                                            false, null, this));
+    measures.add(
+        new PortfolioMeasureConfiguration("Coupling", null, true, 10, 20, false, null, this));
+    measures.add(
+        new PortfolioMeasureConfiguration("MemberChurn", "Churn", true, 400, 900, false, "sum", 
+                                            this));
+    measures.add(
+        new PortfolioMeasureConfiguration("CodeIssue", null, true, 10, 30, false, null, this));
+    measures.add(
+        new PortfolioMeasureConfiguration("FileMetric", "Size(LOC)", false, 0, 0, true, null, 
+                                            this));
+    measures.add(
+        new PortfolioMeasureConfiguration("MemberDevTime", "DevTime", false, 0, 0, true, "sum", 
+                                            this));
     // These measures are moved to basic.portfolio.definition.xml
     // measures.add(new MeasureConfiguration("Commit", false, 0, 0, true, this));
     // measures.add(new MeasureConfiguration("Build", false, 0, 0, true, this));
     // measures.add(new MeasureConfiguration("UnitTest", false, 0, 0, true, this));
-    measures.add(new PortfolioMeasureConfiguration("FileMetric", "Size(LOC)", false, 0, 0, true, 
-                                                    this));
-    measures.add(new PortfolioMeasureConfiguration("MemberDevTime", "DevTime", false, 0, 0, true, 
-                                                    "sum", this));
 
     // Load additional user customized measures.
     PortfolioDefinitions portfolioDefinitions = getPortfolioDefinitions();
@@ -377,20 +380,16 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
           TelemetryChartData chartData = telemetryClient.getChart(measure.getName(), owner,
               projectName, granularity, startTime, endTime, measure.getParamtersString());
           // Log warning when portfolio definition refers to multi-stream telemetry chart.
-          TelemetryStream stream = chartData.getTelemetryStream().get(0);
           if (chartData.getTelemetryStream().size() > 1) {
             String merge = measure.getMerge();
-            if (merge != null && merge.length() > 0) {
-              stream = mergeStream(chartData.getTelemetryStream(), merge);
-            }
-            else if (i == 0) { //only log once.
+            if ((merge == null || merge.length() <= 0) && i == 0) {
               Logger logger = getLogger();
               logger.warning("Telemetry chart:" + measure.getName() + 
                   " contains multiple streams, but there is no merge method found in portfolio " +
                   "defintion. Please check your portfolio and telemetry definitions");
             }
           }
-          MiniBarChart chart = new MiniBarChart(stream, measure);
+          MiniBarChart chart = new MiniBarChart(chartData.getTelemetryStream(), measure);
           chart.setTelemetryPageParameters(this.getTelemetryPageParameters(measure, project));
           //chart.setDpdPageParameters(this.getDpdPageParameters(
           //measure, project, chart.getLastValidIndex()));
@@ -413,102 +412,6 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
       this.processingMessage += "All done.\n";
     }
     this.inProcess = false;
-  }
-
-  /**
-   * Merge the streams according to the merge parameter.
-   * @param telemetryStreams the input streams.
-   * @param merge the method to merge.
-   * @return a TelemetryStream.
-   */
-  private TelemetryStream mergeStream(List<TelemetryStream> telemetryStreams, String merge) {
-    //construct the target instance with the first stream.
-    TelemetryStream telemetryStream = new TelemetryStream();
-    telemetryStream.setYAxis(telemetryStreams.get(0).getYAxis());
-    telemetryStream.setName(telemetryStreams.get(0).getName());
-    //check y axis, has to be all the same. Otherwise will give out empty stream.
-    boolean allMatch = true;
-    for (TelemetryStream stream : telemetryStreams) {
-      if (!streamsEqual(stream.getYAxis(), telemetryStream.getYAxis())) {
-        allMatch = false;
-        Logger logger = getLogger();
-        logger.severe("YAxis: " + stream.getYAxis().getName() + " in stream: " + stream.getName()
-            + " is not match to YAxis: " + telemetryStream.getYAxis().getName() + " in stream :"
-            + telemetryStream.getName());
-      }
-    }
-    if (allMatch) {
-      //combine streams' data.
-      List<TelemetryPoint> points = new ArrayList<TelemetryPoint>();
-      points.addAll(telemetryStreams.get(0).getTelemetryPoint());
-      for (int i = 0; i < points.size(); i++) {
-        List<Double> doubleValues = new ArrayList<Double>();
-        //get all valid values in the same point.
-        for (int j = 0; j < telemetryStreams.size(); ++j) {
-          String stringValue = telemetryStreams.get(j).getTelemetryPoint().get(i).getValue();
-          if (stringValue != null) {
-            doubleValues.add(Double.valueOf(stringValue));
-          }
-        }
-        
-        points.get(i).setValue(null);
-        //if no valid data, the value of this point will be null
-        if (!doubleValues.isEmpty()) {
-          if ("sum".equals(merge)) {
-            Double value = 0.0;
-            for (Double v : doubleValues) {
-              value += v;
-            }
-            points.get(i).setValue(value.toString());
-          }
-          else if ("avg".equals(merge)) {
-            Double value = 0.0;
-            for (Double v : doubleValues) {
-              value += v;
-            }
-            value /= telemetryStreams.size();
-            points.get(i).setValue(value.toString());
-          } 
-          else if ("min".equals(merge)) {
-            points.get(i).setValue(Collections.min(doubleValues).toString());
-          } 
-          else if ("max".equals(merge)) {
-            points.get(i).setValue(Collections.max(doubleValues).toString());
-          }
-        }
-      }
-      telemetryStream.getTelemetryPoint().addAll(points);
-    }
-    return telemetryStream;
-  }
-
-  /**
-   * Compare the two given YAxis objects.
-   * @param axis1 the first YAxis.
-   * @param axis2 the second YAxis.
-   * @return true if they are equal.
-   */
-  private boolean streamsEqual(YAxis axis1, YAxis axis2) {
-    return eqauls(axis1.getName(), axis2.getName()) && eqauls(axis1.getUnits(), axis2.getUnits()) &&
-           eqauls(axis1.getNumberType(), axis2.getNumberType()) && 
-           eqauls(axis1.getLowerBound(), axis2.getLowerBound()) && 
-           eqauls(axis1.getUpperBound(), axis2.getUpperBound());
-  }
-
-  /**
-   * Compare the two given objects. If both objects are null, they are considered equal.
-   * @param o1 the first object
-   * @param o2 the second object
-   * @return true if the two objects are equal, otherwise false.
-   */
-  private boolean eqauls(Object o1, Object o2) {
-    if (o1 == null && o2 == null) {
-      return true;
-    }
-    if (o1 == null || o2 == null) {
-      return false;
-    }
-    return o1.equals(o2);
   }
 
   /**
@@ -809,7 +712,7 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
   /**
    * @return the logger that associated to this web application.
    */
-  private static Logger getLogger() {
+  public static Logger getLogger() {
     return HackystatLogger.getLogger("org.hackystat.projectbrowser", "projectbrowser");
   }
 }

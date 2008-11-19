@@ -3,6 +3,7 @@ package org.hackystat.projectbrowser.page.telemetry.datapanel;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Color generator to generate colors with maximum distinguish.
@@ -18,11 +19,12 @@ public class RandomColorGenerator {
    */
   public static List<Color> generateRandomColor(int n) {
     float diff = (float)1 / n;
-    float h = (float)Math.random();
+    Random rand = new Random();
+    float h = (float)rand.nextDouble();
     List<Color> colors = new ArrayList<Color>();
     for (int i = 0; i < n; ++i) {
-      colors.add(Color.
-          getHSBColor(h, (float)(Math.random() / 2 + 0.5), (float)(Math.random() / 2 + 0.5)));
+      colors.add(Color.getHSBColor(
+          h, (float)(rand.nextDouble() / 2 + 0.5), (float)(rand.nextDouble() / 2 + 0.5)));
       h += diff;
     }
     return colors;
