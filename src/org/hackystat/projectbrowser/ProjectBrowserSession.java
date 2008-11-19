@@ -16,7 +16,6 @@ import org.hackystat.projectbrowser.page.projectportfolio.ProjectPortfolioSessio
 import org.hackystat.projectbrowser.page.projects.ProjectsSession;
 import org.hackystat.projectbrowser.page.sensordata.SensorDataSession;
 import org.hackystat.projectbrowser.page.telemetry.TelemetrySession;
-import org.hackystat.projectbrowser.page.todate.ToDateSession;
 import org.hackystat.projectbrowser.page.trajectory.TrajectorySession;
 import org.hackystat.sensorbase.client.SensorBaseClient;
 import org.hackystat.sensorbase.client.SensorBaseClientException;
@@ -69,8 +68,6 @@ public class ProjectBrowserSession extends WebSession {
   private TelemetrySession telemetrySession = new TelemetrySession();
   /** ProjectPortfolioSession that holds page state for Project Portfolio page. */
   private ProjectPortfolioSession projectPortfolioSession = new ProjectPortfolioSession();
-  /** The TelemetrySession that holds page state for Telemetry page. */
-  private ToDateSession toDateSession = new ToDateSession();
   /** ProjectBrowserSession that holds the page state for the Project page. */
   private ProjectsSession projectsSession = new ProjectsSession();
   /** Trajectory session - holds the page state for the Trajectory page. */
@@ -403,14 +400,6 @@ public class ProjectBrowserSession extends WebSession {
    */
   public TelemetrySession getTelemetrySession() {
     return this.telemetrySession;
-  }
-
-  /**
-   * Returns the ToDateSession instance. 
-   * @return The session state for the ToDate page. 
-   */
-  public ToDateSession getToDateSession() {
-    return this.toDateSession;
   }
   
   /**
