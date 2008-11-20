@@ -10,7 +10,7 @@ import org.hackystat.projectbrowser.page.trajectory.dtw.constraint.AbstractConst
  * @author Pavel Senin.
  * 
  */
-public class SymmetricStepFunction extends AbstractStepFunction {
+public class AsymmetricStepFunction extends AbstractStepFunction {
 
   private String stepPattern;
 
@@ -31,7 +31,7 @@ public class SymmetricStepFunction extends AbstractStepFunction {
    * 
    * @param stepPattern specifies the step pattern.
    */
-  public SymmetricStepFunction(String stepPattern) {
+  public AsymmetricStepFunction(String stepPattern) {
     this.stepPattern = stepPattern;
   }
 
@@ -97,11 +97,11 @@ public class SymmetricStepFunction extends AbstractStepFunction {
       for (int i = 1; i < columns; i++) {
         double[] options = { Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE };
         if ((i - 1) > 0 && (j - 2) > 0) {
-          options[0] = costMatrix[i - 2][j - 3] + 2 * costMatrix[i - 1][j - 2] + 2
-              * costMatrix[i][j - 1] + costMatrix[i][j];
+          options[0] = costMatrix[i - 2][j - 3] + 2
+              * (costMatrix[i - 1][j - 2] + 2 * costMatrix[i][j - 1] + costMatrix[i][j]) / 3;
         }
         if ((i - 1) > 0 && (j - 2) > 0) {
-          options[1] = costMatrix[i - 3][j - 2] + 2 * costMatrix[i - 2][j - 1] + 2
+          options[1] = costMatrix[i - 3][j - 2] + costMatrix[i - 2][j - 1] + 2
               * costMatrix[i - 1][j] + costMatrix[i][j];
         }
         options[2] = costMatrix[i - 1][j - 1] + 2 * costMatrix[i][j];
@@ -124,12 +124,12 @@ public class SymmetricStepFunction extends AbstractStepFunction {
       for (int i = 1; i < columns; i++) {
         double[] options = { Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE };
         if ((j - 1) > 0) {
-          options[0] = costMatrix[i - 1][j - 2] + 2 * costMatrix[i][j - 1] + costMatrix[i][j];
+          options[0] = costMatrix[i - 1][j - 2] + (costMatrix[i][j - 1] + costMatrix[i][j]) / 2;
         }
         if ((i - 1) > 0) {
-          options[1] = costMatrix[i - 2][j - 1] + 2 * costMatrix[i - 1][j] + costMatrix[i][j];
+          options[1] = costMatrix[i - 2][j - 1] + costMatrix[i - 1][j] + costMatrix[i][j];
         }
-        options[2] = costMatrix[i - 1][j - 1] + 2 * costMatrix[i][j];
+        options[2] = costMatrix[i - 1][j - 1] + costMatrix[i][j];
         double minDistance = Math.min(options[0], Math.min(options[1], options[2]));
         costMatrix[i][j] = distanceMatrix[i][j] + minDistance;
       }
@@ -150,20 +150,20 @@ public class SymmetricStepFunction extends AbstractStepFunction {
         double[] options = { Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE,
             Double.MAX_VALUE, Double.MAX_VALUE };
         if ((j - 2) > 0) {
-          options[0] = costMatrix[i - 1][j - 3] + 2 * costMatrix[i][j - 2] + costMatrix[i][j - 1]
-              + costMatrix[i][j];
+          options[0] = costMatrix[i - 1][j - 3]
+              + (costMatrix[i][j - 2] + costMatrix[i][j - 1] + costMatrix[i][j]) / 3;
         }
         if ((j - 1) > 0) {
-          options[1] = costMatrix[i - 1][j - 2] + 2 * costMatrix[i][j - 1] + costMatrix[i][j];
+          options[1] = costMatrix[i - 1][j - 2] + (costMatrix[i][j - 1] + costMatrix[i][j]) / 2;
         }
         if ((i - 2) > 0) {
-          options[2] = costMatrix[i - 3][j - 1] + 2 * costMatrix[i - 2][j - 1]
-              + costMatrix[i - 1][j] + costMatrix[i][j];
+          options[2] = costMatrix[i - 3][j - 1] + costMatrix[i - 2][j - 1] + costMatrix[i - 1][j]
+              + costMatrix[i][j];
         }
         if ((i - 1) > 0) {
-          options[3] = costMatrix[i - 2][j - 1] + 2 * costMatrix[i - 1][j] + costMatrix[i][j];
+          options[3] = costMatrix[i - 2][j - 1] + costMatrix[i - 1][j] + costMatrix[i][j];
         }
-        options[4] = costMatrix[i - 1][j - 1] + 2 * costMatrix[i][j];
+        options[4] = costMatrix[i - 1][j - 1] + costMatrix[i][j];
         double minDistance = Math.min(options[0], Math.min(Math.min(options[1], options[2]), Math
             .min(options[3], options[4])));
         costMatrix[i][j] = distanceMatrix[i][j] + minDistance;
@@ -182,8 +182,8 @@ public class SymmetricStepFunction extends AbstractStepFunction {
     int columns = distanceMatrix[0].length;
     for (int j = 1; j < rows; j++) {
       for (int i = 1; i < columns; i++) {
-        double[] options = { costMatrix[i - 1][j - 1] + 2 * costMatrix[i][j],
-            costMatrix[i][j - 1] + costMatrix[i][j], costMatrix[i - 1][j] + costMatrix[i][j] };
+        double[] options = { costMatrix[i][j - 1], costMatrix[i - 1][j - 1] + 2 * costMatrix[i][j],
+            costMatrix[i - 1][j] + costMatrix[i][j] };
         double minDistance = Math.min(options[0], Math.min(options[1], options[2]));
         costMatrix[i][j] = distanceMatrix[i][j] + minDistance;
       }
