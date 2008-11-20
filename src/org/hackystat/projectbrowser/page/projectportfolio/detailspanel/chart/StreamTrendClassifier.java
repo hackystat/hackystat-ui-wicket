@@ -1,9 +1,9 @@
 package org.hackystat.projectbrowser.page.projectportfolio.detailspanel.chart;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
- * A simple stream trend classifier.
  * Classify stream trend into 4 classes: increasing, decreasing, stable and unstable(other).
  * Monotonous increase line will be considered as increasing.
  * Monotonous decrease line will be considered as decreasing.
@@ -13,7 +13,7 @@ import java.util.List;
  * @author Shaoxuan Zhang
  *
  */
-public class EnhancedStreamTrendClassifier extends SimpleStreamClassifier {
+public class StreamTrendClassifier implements Serializable, StreamClassifier {
 
   /** Support serialization. */
   private static final long serialVersionUID = 5078158281421083678L;
@@ -25,14 +25,14 @@ public class EnhancedStreamTrendClassifier extends SimpleStreamClassifier {
   /** 
    * Default constructor using e = 10%.
    */
-  public EnhancedStreamTrendClassifier() {
+  public StreamTrendClassifier() {
     this(0.1);
   }
   
   /**
    * @param e Acceptable error in percentage.
    */
-  public EnhancedStreamTrendClassifier(double e) {
+  public StreamTrendClassifier(double e) {
     this.e = e;
   }
   
@@ -41,7 +41,6 @@ public class EnhancedStreamTrendClassifier extends SimpleStreamClassifier {
    * @param chart the input chart
    * @return StreamCategory enumeration. 
    */
-  @Override
   public StreamCategory getStreamCategory(MiniBarChart chart) {
     List<Double> stream = chart.streamData;
     for (int i = 0; i < stream.size(); i++) {

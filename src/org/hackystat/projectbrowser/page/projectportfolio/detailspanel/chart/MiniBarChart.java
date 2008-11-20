@@ -30,7 +30,7 @@ public class MiniBarChart implements Serializable {
   /** The stream of this chart. */
   protected List<Double> streamData;
   /** The list of original streams. */
-  protected List<TelemetryStream> streams;
+  protected List<List<Double>> streams = new ArrayList<List<Double>>();
   /** The index of the last valid value. */
   private int lastValidIndex = -1;
   /** The latest value of the stream. */
@@ -56,10 +56,12 @@ public class MiniBarChart implements Serializable {
    * @param configuration The configuration of this chart.
    */
   public MiniBarChart(List<TelemetryStream> streams, PortfolioMeasureConfiguration configuration) {
-    this.streams = streams;
-    if (this.streams != null) {
-      if (this.streams.size() > 1) {
-        this.streamData = getStreamData(mergeStream(this.streams, configuration.getMerge()));
+    if (streams != null) {
+      for (TelemetryStream stream : streams) {
+        this.streams.add(getStreamData(stream));
+      }
+      if (streams.size() > 1) {
+        this.streamData = getStreamData(mergeStream(streams, configuration.getMerge()));
       }
       else {
         this.streamData = getStreamData(streams.get(0));
@@ -176,7 +178,7 @@ public class MiniBarChart implements Serializable {
    * @param stream a TelemetryStream
    * @return the list of data of this stream
    */
-  protected final List<Double> getStreamData(TelemetryStream stream) {
+  public static final List<Double> getStreamData(TelemetryStream stream) {
     List<Double> streamData = new ArrayList<Double>();
     for (TelemetryPoint point : stream.getTelemetryPoint()) {
       if (point.getValue() == null) {

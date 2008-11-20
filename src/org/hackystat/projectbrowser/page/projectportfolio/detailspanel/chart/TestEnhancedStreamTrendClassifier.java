@@ -12,7 +12,7 @@ import org.junit.Test;
  */
 public class TestEnhancedStreamTrendClassifier {
   /** the EnhancedStreamTrendClassifier. */
-  private EnhancedStreamTrendClassifier streamTrendClassifier = new EnhancedStreamTrendClassifier();
+  private StreamTrendClassifier streamTrendClassifier = new StreamTrendClassifier();
   
   /**
    * Test with a increasing stream with acceptable decreasing point.<p>

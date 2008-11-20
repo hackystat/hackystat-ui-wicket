@@ -25,6 +25,8 @@ import org.hackystat.projectbrowser.ProjectBrowserProperties;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.page.loadingprocesspanel.Processable;
 import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.chart.MiniBarChart;
+import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.chart.
+        StreamParticipationClassifier;
 import org.hackystat.projectbrowser.page.projectportfolio.jaxb.Measures.Measure;
 import org.hackystat.projectbrowser.page.projectportfolio.jaxb.Measures;
 import org.hackystat.projectbrowser.page.projectportfolio.jaxb.PortfolioDefinitions;
@@ -151,31 +153,39 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
    * Initialize the measure configurations.
    */
   private void initializeMeasures() {
+    String sum = "sum";
     // Load default measures
     measures.clear();
-    measures.add(
-        new PortfolioMeasureConfiguration("Coverage", null, true, 40, 90, true, null, this));
-    measures.add(
-        new PortfolioMeasureConfiguration("CyclomaticComplexity", "Complexity", true, 10, 20,
-                                            false, null, this));
-    measures.add(
-        new PortfolioMeasureConfiguration("Coupling", null, true, 10, 20, false, null, this));
-    measures.add(
-        new PortfolioMeasureConfiguration("MemberChurn", "Churn", true, 400, 900, false, "sum", 
-                                            this));
+    measures.add(new PortfolioMeasureConfiguration("Coverage", null, true, 40, 90, true, null,
+                                                    this));
+    measures.add(new PortfolioMeasureConfiguration("CyclomaticComplexity", "Complexity", true,
+                                                    10, 20, false, null, this));
+    measures.add(new PortfolioMeasureConfiguration("Coupling", null, true, 10, 20, false, null,
+                                                    this));
+    measures.add(new PortfolioMeasureConfiguration("MemberChurn", "Churn", true, 400, 900, false,
+                                                    sum, this));
+    measures.add(new PortfolioMeasureConfiguration("FileMetric", "Size(LOC)", false, 0, 0, true, 
+                                                    null, this));
+    PortfolioMeasureConfiguration devTime = 
+      new PortfolioMeasureConfiguration("MemberDevTime", "DevTime", false, 0, 0, true, sum, this);
+    measures.add(devTime);
+    devTime.setStreamClassifier(new StreamParticipationClassifier(50, 0.5, 50));
+    // These measures are moved to basic.portfolio.definition.xml
+    PortfolioMeasureConfiguration commit = 
+      new PortfolioMeasureConfiguration("MemberCommit", "Commit", false, 0, 0, true, sum, this);
+    measures.add(commit);
+    commit.setStreamClassifier(new StreamParticipationClassifier(50, 1, 50));
+    PortfolioMeasureConfiguration build = 
+      new PortfolioMeasureConfiguration("MemberBuild", "Build", false, 0, 0, true, sum, this);
+    measures.add(build);
+    build.setStreamClassifier(new StreamParticipationClassifier(50, 3, 50));
+    PortfolioMeasureConfiguration test = 
+      new PortfolioMeasureConfiguration("MemberUnitTest", "Test", false, 0, 0, true, sum, this);
+    measures.add(test);
+    test.setStreamClassifier(new StreamParticipationClassifier(50, 10, 50));
     measures.add(
         new PortfolioMeasureConfiguration("CodeIssue", null, true, 10, 30, false, null, this));
-    measures.add(
-        new PortfolioMeasureConfiguration("FileMetric", "Size(LOC)", false, 0, 0, true, null, 
-                                            this));
-    measures.add(
-        new PortfolioMeasureConfiguration("MemberDevTime", "DevTime", false, 0, 0, true, "sum", 
-                                            this));
-    // These measures are moved to basic.portfolio.definition.xml
-    // measures.add(new MeasureConfiguration("Commit", false, 0, 0, true, this));
-    // measures.add(new MeasureConfiguration("Build", false, 0, 0, true, this));
-    // measures.add(new MeasureConfiguration("UnitTest", false, 0, 0, true, this));
-
+    
     // Load additional user customized measures.
     PortfolioDefinitions portfolioDefinitions = getPortfolioDefinitions();
     if (portfolioDefinitions != null) {
@@ -266,11 +276,13 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
     PortfolioDefinitions portfolioDefinitions = new PortfolioDefinitions();
     portfolioDefinitions.setMeasures(new Measures());
     // load the basic default definitions.
+    /*
     getLogger().info("Reading basic portfolio definitions from: basic.portfolio.definition.xml");
     InputStream defStream = ProjectPortfolioDataModel.class
         .getResourceAsStream("basic.portfolio.definition.xml");
     portfolioDefinitions.getMeasures().getMeasure().addAll(
         getDefinitions(defStream).getMeasures().getMeasure());
+        */
 
     // load user defined definitions.
     String defDirString = ((ProjectBrowserApplication) ProjectBrowserApplication.get())
