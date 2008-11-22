@@ -2,12 +2,10 @@ package org.hackystat.projectbrowser.page.projectportfolio.inputpanel;
 
 import org.apache.wicket.extensions.markup.html.form.DateTextField;
 import org.apache.wicket.extensions.yui.calendar.DatePicker;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.CheckBoxMultipleChoice;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.PropertyModel;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.ProjectChoiceRenderer;
@@ -102,11 +100,12 @@ public class ProjectPortfolioInputForm extends Form {
       }
     });
     
-    Link configurationLink = new Link("configuration") {
+    Button configurationButton = 
+      new Button("configuration", new PropertyModel(this, "labelMessage")) {
       /** Support serialization. */
       private static final long serialVersionUID = 0L;
       @Override
-      public void onClick() {
+      public void onSubmit() {
         page.setConfigurationPanelVisible(!page.isConfigurationPanelVisible());
       }
       @Override
@@ -114,8 +113,8 @@ public class ProjectPortfolioInputForm extends Form {
         return getIsEnable();
       }
     };
-    configurationLink.add(new Label("label", new PropertyModel(this, "labelMessage")));
-    add(configurationLink);
+    //configurationButton.add(new Label("label", new PropertyModel(this, "labelMessage")));
+    add(configurationButton);
 
     Button submitButton = new Button("submit") {
       /** Support serialization. */

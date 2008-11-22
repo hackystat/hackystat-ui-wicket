@@ -45,40 +45,34 @@
           </td>
         </tr>
       </table-->
-      <table>
-        <tr>
-          <th style="text-align:center">Enabled</th>
-          <th style="text-align:center">Name</th>
-          <th style="text-align:center">Colorable</th>
-          <th style="text-align:center">Is Higher Better</th>
-          <th style="text-align:center">Higher Threshold</th>
-          <th style="text-align:center">Lower Threshold</th>
-          <th colspan="5">Telemetry Parameters</th>
+      <table id="configuration_table">
+        <tr style="border-bottom: 2px solid #ddd">
+          <th style="text-align:center; border-right:  0px solid #ddd;">Measure Name</th>
+          <th style="text-align:center">Color Method</th>
+          <th style="text-align:center">Telemetry Parameters</th>
         </tr>
-        <tr wicket:id="measureList">
-          <td style="vertical-align:middle; text-align:center"><input type="checkbox" wicket:id="enableCheckBox"/></td>
-          <td style="vertical-align:middle" wicket:id="measureNameLabel"/>
-          <td style="vertical-align:middle; text-align:center"><input type="checkbox" wicket:id="colorableCheckBox"/></td>
-          <td style="vertical-align:middle; text-align:center"><input type="checkbox" wicket:id="isHigherBetterCheckBox"/></td>
-          <td style="vertical-align:middle; text-align:center"><input type="text" style="width: 3em" wicket:id="higherThreshold"/></td>
-          <td style="vertical-align:middle; text-align:center"><input type="text" style="width: 3em" wicket:id="lowerThreshold"/></td>
-          <div wicket:id="parameterList">
-            <td style="vertical-align:middle; text-align:right; white-space:nowrap">
-              <div>
-              <b wicket:id="name" />:<span style="width: 8em" wicket:id="field"/>
-              </div>
-            </td>
-          </div>
+        <tr wicket:id="measureList" style="border-top: 1px solid #ddd">
+          <td style="border-right:  0px solid #ddd;">
+            <input type="checkbox" wicket:id="enableCheckBox"/>
+            <label wicket:id="measureNameLabel">measure name</label>
+          </td>
+			          <td style="text-align: center; border-right: 0px solid #ddd"">
+			            <select wicket:id="colorMethod"/>
+		              <div wicket:id="measurePanel">measure panel</div>
+		            </td>
+		            <td>
+		              <div wicket:id="telemetryParameters">telemetry parameters panel</div>
+		            </td>
         </tr>
-        <tr>
+        <tr style="border-top: 1px solid #ddd">
           <td style="text-align:center">
             <input type="submit" value="OK" wicket:id="submit"/>
           </td>
-          <td colspan="3">
-            <span wicket:id="instructionPopup"/>
-          </td>
-          <td>
+          <td style="text-align: center">
             <input type="submit" value="Reset to Default" wicket:id="reset"/>
+          </td>
+          <td style="text-align: center">
+            <span wicket:id="instructionPopup"/>
           </td>
         </tr>
       </table>

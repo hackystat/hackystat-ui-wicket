@@ -1,14 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PortfolioDefinitions>
   <Measures>
-    <Measure name="MemberCommit" alias="Commit" merge="sum">
-      <DefaultValues colorable="false" higherBetter="true" defaultLowerThresold="0" defaultHigherThresold="1"/>
+    <Measure name="Coverage" classifierMethod="StreamTrend" enabled="true">
+      <StreamTrendParameters higherBetter="true" lowerThresold="40" higherThresold="90"/>
     </Measure>
-    <Measure name="MemberBuild" alias="Build" merge="sum">
-      <DefaultValues colorable="false" higherBetter="true" defaultLowerThresold="0" defaultHigherThresold="1"/>
+    <Measure name="CyclomaticComplexity" alias="Complexity" classifierMethod="StreamTrend" enabled="true">
+      <StreamTrendParameters higherBetter="false" lowerThresold="10" higherThresold="20"/>
     </Measure>
-    <Measure name="MemberUnitTest" alias="Test" merge="sum">
-      <DefaultValues colorable="false" higherBetter="true" defaultLowerThresold="0" defaultHigherThresold="1"/>
+    <Measure name="Coupling" classifierMethod="StreamTrend" enabled="true">
+      <StreamTrendParameters higherBetter="false" lowerThresold="10" higherThresold="20"/>
+    </Measure>
+    <Measure name="MemberChurn" alias="Churn" merge="sum" classifierMethod="StreamTrend" enabled="true">
+      <StreamTrendParameters higherBetter="false" lowerThresold="400" higherThresold="900"/>
+    </Measure>
+    <Measure name="FileMetric" alias="Size(LOC)" enabled="true">
+    </Measure>
+    <Measure name="MemberDevTime" alias="DevTime" merge="sum" classifierMethod="Participation" enabled="true">
+      <ParticipationParameters memberPercentage="50" thresoldValue="0.5" frequencyPercentage="50"/>
+    </Measure>
+    <Measure name="MemberCommit" alias="Commit" merge="sum" classifierMethod="Participation" enabled="true">
+      <ParticipationParameters memberPercentage="50" thresoldValue="1" frequencyPercentage="50"/>
+    </Measure>
+    <Measure name="MemberBuild" alias="Build" merge="sum" classifierMethod="Participation" enabled="true">
+      <ParticipationParameters memberPercentage="50" thresoldValue="3" frequencyPercentage="50"/>
+    </Measure>
+    <Measure name="MemberUnitTest" alias="Test" merge="sum" classifierMethod="Participation" enabled="true">
+      <ParticipationParameters memberPercentage="50" thresoldValue="10" frequencyPercentage="50"/>
+    </Measure>
+    <Measure name="CodeIssue" classifierMethod="StreamTrend" enabled="false">
+      <StreamTrendParameters higherBetter="false" lowerThresold="5" higherThresold="20"/>
     </Measure>
   </Measures>
 </PortfolioDefinitions>

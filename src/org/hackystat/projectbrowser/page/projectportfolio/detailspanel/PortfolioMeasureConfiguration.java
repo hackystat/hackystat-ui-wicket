@@ -3,14 +3,13 @@ package org.hackystat.projectbrowser.page.projectportfolio.detailspanel;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.chart.
-        StreamParticipationClassifier;
-import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.chart.StreamTrendClassifier;
 import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.chart.MiniBarChart;
 import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.chart.StreamClassifier;
-import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.chart.StreamCategory;
+import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.chart.PortfolioCategory;
+import org.hackystat.projectbrowser.page.projectportfolio.jaxb.Measures.Measure;
 
 /**
  * Configuration for project portfolio measures.
@@ -29,109 +28,58 @@ public class PortfolioMeasureConfiguration implements Serializable {
   private String measureName;
   /** The alias of this measure, which will be used as display name. */
   private String alias;
-  /** If this measure is colorable. */
-  private boolean colorable;
   /** If this measure is enabled. */
   private boolean enabled = true;
   /** The method to merge multiple streams. */
   private String merge;
-
-  /** If higher value means better. */
-  private boolean higherBetter;
-  
-  /** The threshold of high value. */
-  private double higherThreshold;
-  /** The threshold of low value. */
-  private double lowerThreshold;
 
   /** The data model this measure belongs to. */
   private final ProjectPortfolioDataModel dataModel;
 
   /** This meausre's parameter list. */
   //private List<String> parameters = new ArrayList<String>();
-  /** The parameters for telemetry chart. */
+  /** The parameters for telemetry analysis. */
   private final List<IModel> parameters = new ArrayList<IModel>();
   
-  /** The simple stream trend classifier.*/
-  private StreamClassifier streamClassifier = new StreamTrendClassifier();
+  /** The stream classifier.*/
+  private StreamClassifier streamClassifier;
 
   /**
    * Create an instance.
    * 
    * @param name The name of the measure.
    * @param alias The alias of this measure, which will be used as display name.
-   * @param colorable If this measure is colorable.
-   * @param higherThreshold The threshold of high value.
-   * @param lowerThreshold The threshold of high value.
-   * @param higherBetter If higher value means better.
    * @param merge The method to merge multiple streams. Can be sum, avg, min or max.
+   * @param enabled If this measure is enabled.
+   * @param streamClassifier the {@link StreamClassifier} to use, null means no coloring.
    * @param dataModel The data model this measure belongs to.
    */
-  public PortfolioMeasureConfiguration(String name, String alias, boolean colorable, 
-      double lowerThreshold, double higherThreshold, boolean higherBetter, String merge, 
-      ProjectPortfolioDataModel dataModel) {
+  public PortfolioMeasureConfiguration(String name, String alias, String merge, boolean enabled,
+      StreamClassifier streamClassifier, ProjectPortfolioDataModel dataModel) {
     this.measureName = name;
-    this.colorable = colorable;
-    this.lowerThreshold = lowerThreshold;
-    this.higherThreshold = higherThreshold;
-    this.higherBetter = higherBetter;
     this.alias = alias;
     this.merge = merge;
+    this.enabled = enabled;
+    this.streamClassifier = streamClassifier;
     this.dataModel = dataModel;
   }
   
   /**
    * Load configuration from a PortfolioMeasure object.
-   * @param measure the PortfolioMeasure object.
+   * @param enabled If this measure is enabled.
+   * @param streamClassifier The stream classifier.
+   * @param telemetryParameters The parameters for telemetry analysis.
    */
-  public void loadFrom(PortfolioMeasure measure) {
-    this.setColorable(measure.isColorable());
-    this.setEnabled(measure.isEnabled());
-    this.setHigherBetter(measure.isHigherBetter());
-    this.setHigherThreshold(measure.getHigherThreshold());
-    this.setLowerThreshold(measure.getLowerThreshold());
-    String parametersString = measure.getParameters();
+  public void setMeasureConfiguration(boolean enabled, StreamClassifier streamClassifier,
+      String telemetryParameters) {
+    this.setEnabled(enabled);
+    this.streamClassifier = streamClassifier;
     this.parameters.clear();
-    for (String parameter : parametersString.split(PARAMETER_SEPARATOR)) {
-      this.parameters.add(new Model(parameter));
+    if (telemetryParameters != null) {
+      for (String parameter : telemetryParameters.split(PARAMETER_SEPARATOR)) {
+        this.parameters.add(new Model(parameter));
+      }
     }
-  }
-
-  /**
-   * Parse the given MiniBarChart and produce a StreamCategory result.
-   * @param chart the input chart
-   * @return StreamCategory enumeration. 
-   */
-  public StreamCategory getStreamCategory(MiniBarChart chart) {
-    return this.streamClassifier.getStreamCategory(chart);
-  }
-  
-  /**
-   * @param higherThreshold the higherThreshold to set
-   */
-  public void setHigherThreshold(double higherThreshold) {
-    this.higherThreshold = higherThreshold;
-  }
-
-  /**
-   * @return the higherThreshold
-   */
-  public double getHigherThreshold() {
-    return higherThreshold;
-  }
-
-  /**
-   * @param lowerThreshold the lowerThreshold to set
-   */
-  public void setLowerThreshold(double lowerThreshold) {
-    this.lowerThreshold = lowerThreshold;
-  }
-
-  /**
-   * @return the lowerThreshold
-   */
-  public double getLowerThreshold() {
-    return lowerThreshold;
   }
 
   /**
@@ -139,20 +87,6 @@ public class PortfolioMeasureConfiguration implements Serializable {
    */
   public String getName() {
     return measureName;
-  }
-
-  /**
-   * @param colorable the colorable to set
-   */
-  public void setColorable(boolean colorable) {
-    this.colorable = colorable;
-  }
-
-  /**
-   * @return the colorable
-   */
-  public boolean isColorable() {
-    return colorable;
   }
 
   /**
@@ -170,45 +104,28 @@ public class PortfolioMeasureConfiguration implements Serializable {
   }
 
   /**
+   * Return the color associated with the given category.
+   * @param category the {@link PortfolioCategory}.
+   * @return Color in String.
+   */
+  public String getColor(PortfolioCategory category) {
+    switch (category) {
+      case GOOD: return getDataModel().getGoodColor();
+      case AVERAGE: return getDataModel().getAverageColor();
+      case POOR: return getDataModel().getPoorColor();
+      case NA: return getDataModel().getNAColor();
+      default: return getDataModel().getFontColor();
+    }
+  }
+  
+  /**
    * Return the color of the given MiniBarChart.
    * @param chart the MiniBarChart
    * @return the color in String
    */
   public String getChartColor(MiniBarChart chart) {
-    if (isColorable() || this.streamClassifier instanceof StreamParticipationClassifier) {
-      switch (getStreamCategory(chart)) {
-      case STABLE: return getStableColor();
-      case INCREASING: return getHigherColor();
-      case DECREASING: return getLowerColor();
-      case GOOD: return getDataModel().getGoodColor();
-      case AVERAGE: return getDataModel().getAverageColor();
-      case POOR: return getDataModel().getPoorColor();
-      default: return getDataModel().getAverageColor();
-      }
-    }
-    else {
-      return getDataModel().getFontColor();
-    }
-  }
-
-  /**
-   * Return the color according to the value.
-   * The color method is defined in this measure configuration.
-   * @param value the value.
-   * @return the color in String
-   */
-  public String getValueColor(double value) {
-    if (value < 0) {
-      return getDataModel().getNAColor();
-    }
-    if (isColorable()) {
-      if (value >= this.getHigherThreshold()) {
-        return getHigherColor();
-      }
-      if (value < this.getLowerThreshold()) {
-        return getLowerColor();
-      }
-      return getAverageColor();
+    if (hasClassifier()) {
+      return getColor(this.streamClassifier.getStreamCategory(chart));
     }
     else {
       return getDataModel().getFontColor();
@@ -216,15 +133,17 @@ public class PortfolioMeasureConfiguration implements Serializable {
   }
   
   /**
-   * Return the color for higher value or increasing trend.
-   * @return the color
+   * Return the color according to the value.
+   * The color method is defined in this measure configuration.
+   * @param value the value.
+   * @return the color in String
    */
-  public String getHigherColor() {
-    if (this.isHigherBetter()) {
-      return dataModel.getGoodColor();
+  public String getValueColor(double value) {
+    if (hasClassifier()) {
+      return getColor(this.streamClassifier.getValueCategory(value));
     }
     else {
-      return dataModel.getPoorColor();
+      return getDataModel().getFontColor();
     }
   }
   
@@ -234,27 +153,6 @@ public class PortfolioMeasureConfiguration implements Serializable {
    */
   public String getAverageColor() {
     return dataModel.getAverageColor();
-  }
-
-  /**
-   * Return the color for lower value or decreasing trend.
-   * @return the color
-   */
-  public String getLowerColor() {
-    if (this.isHigherBetter()) {
-      return dataModel.getPoorColor();
-    }
-    else {
-      return dataModel.getGoodColor();
-    }
-  }
-
-  /**
-   * Return the color for stable trend.
-   * @return the color
-   */
-  public String getStableColor() {
-    return dataModel.getGoodColor();
   }
 
   /**
@@ -287,26 +185,29 @@ public class PortfolioMeasureConfiguration implements Serializable {
   }
 
   /**
-   * @param higherBetter the higherBetter to set
-   */
-  public void setHigherBetter(boolean higherBetter) {
-    this.higherBetter = higherBetter;
-  }
-
-  /**
-   * @return the higherBetter
-   */
-  public boolean isHigherBetter() {
-    return higherBetter;
-  }
-
-  /**
    * @return the dataModel
    */
   public ProjectPortfolioDataModel getDataModel() {
     return dataModel;
   }
 
+  /**
+   * Set the stream classifier according to the given classifier name.
+   * If the colorMethod is null or is equals to the name of {@link streamClassifier}, 
+   * nothing will happen.
+   * Otherwise, it will create a new stream classifier with information saved in UriCache.
+   * @param classifierName the String represents the classifier.
+   */
+  public void setStreamClassifier(String classifierName) {
+    if (classifierName == null || (this.hasClassifier() && 
+        classifierName.equalsIgnoreCase(this.streamClassifier.getName()))) {
+      return;
+    }
+    Measure measure = dataModel.getSavedMeasure(this);
+    measure.setClassifierMethod(classifierName);
+    this.setStreamClassifier(ProjectPortfolioDataModel.getClassifier(measure));
+  }
+  
   /**
    * @param streamClassifier the streamTrendClassifier to set
    */
@@ -334,6 +235,14 @@ public class PortfolioMeasureConfiguration implements Serializable {
   public String getAlias() {
     return alias;
   }
+
+  /**
+   * Check if the {@link alias} field is available.
+   * @return true if {@link alias} field is available.
+   */
+  public boolean hasAlias() {
+    return alias != null && alias.length() > 0;
+  }
   
   /**
    * Return the display name of this measure.
@@ -360,4 +269,55 @@ public class PortfolioMeasureConfiguration implements Serializable {
   public String getMerge() {
     return merge;
   }
+  
+  /**
+   * Check if the {@link merge} field is available.
+   * @return true if {@link merge} field is available.
+   */
+  public boolean hasMerge() {
+    return merge != null && merge.length() > 0;
+  }
+
+  /**
+   * Return the configuration panel of the stream classifer.
+   * @param id the wicket id.
+   * @return the panel.
+   */
+  public Panel getConfigurationPanel(String id) {
+    if (hasClassifier()) {
+      return this.streamClassifier.getConfigurationPanel(id);
+    }
+    Panel panel = new Panel(id);
+    panel.setVisible(false);
+    return panel;
+  }
+
+  /**
+   * @return the name of the {@link streamClassifier}.
+   */
+  public String getClassiferName() {
+    if (!hasClassifier()) {
+      return "None";
+    }
+    return this.streamClassifier.getName();
+  }
+
+  /**
+   * Save classifier's setting into the given {@link Measure} instance.
+   * @param measure the given {@link Measure} instance
+   */
+  public void saveClassifierSetting(Measure measure) {
+    if (hasClassifier()) {
+      this.streamClassifier.saveSetting(measure);
+    }
+  }
+
+  /**
+   * Check if this instance has the stream classifier.
+   * @return true if it has.
+   */
+  public boolean hasClassifier() {
+    return this.streamClassifier != null;
+  }
+
 }

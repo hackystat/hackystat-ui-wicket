@@ -2,6 +2,10 @@ package org.hackystat.projectbrowser.page.projectportfolio.detailspanel.chart;
 
 import java.io.Serializable;
 import java.util.List;
+import org.apache.wicket.markup.html.panel.Panel;
+import org.hackystat.projectbrowser.page.projectportfolio.jaxb.Measures.Measure;
+import org.hackystat.projectbrowser.page.projectportfolio.jaxb.Measures.Measure.
+        ParticipationParameters;
 
 /**
  * Classify stream into 3 categories: GOOD, AVERAGE and POOR, 
@@ -14,6 +18,8 @@ public class StreamParticipationClassifier implements Serializable, StreamClassi
 
   /** Support serialization. */
   private static final long serialVersionUID = 8335959874933854182L;
+  /** Name of this classifier. */
+  public static final String name = "Participation";
   /** The expected percentage of members that participated. */
   private double memberPercentage;
   /** The lowest value with which a member is consider as participating. */
@@ -46,7 +52,7 @@ public class StreamParticipationClassifier implements Serializable, StreamClassi
    * @param chart the input chart
    * @return StreamCategory enumeration. 
    */
-  public StreamCategory getStreamCategory(MiniBarChart chart) {
+  public PortfolioCategory getStreamCategory(MiniBarChart chart) {
     int activeMember = 0;
     for (List<Double> stream : chart.streams) {
       if (isTheStreamGood(stream)) {
@@ -54,12 +60,12 @@ public class StreamParticipationClassifier implements Serializable, StreamClassi
       }
     }
     if (activeMember > this.memberPercentage * chart.streams.size() / 100) {
-      return StreamCategory.GOOD;
+      return PortfolioCategory.GOOD;
     }
     if (isTheStreamGood(chart.streamData)) {
-      return StreamCategory.AVERAGE;
+      return PortfolioCategory.AVERAGE;
     }
-    return StreamCategory.POOR;
+    return PortfolioCategory.POOR;
   }
 
   /**
@@ -123,4 +129,42 @@ public class StreamParticipationClassifier implements Serializable, StreamClassi
     return frequencyPercentage;
   }
 
+  /**
+   * Return the panel for users to configure this stream trend classifer.
+   * User can customize higher, lower thresholds and if higher is better.
+   * @param id The Wicket component id.
+   * @return a Panel
+   */
+  public Panel getConfigurationPanel(String id) {
+    return new StreamParticipationClassifierConfigurationPanel(id, this);
+  }
+
+  /**
+   * Return the category of the given value.
+   * Always return OTHER.
+   * @param value the given value.
+   * @return a {@link PortfolioCategory} result
+   */
+  public PortfolioCategory getValueCategory(double value) {
+    return PortfolioCategory.OTHER;
+  }
+
+  /**
+   * @return the name of this classifier.
+   */
+  public String getName() {
+    return name;
+  }
+
+  /**
+   * Save classifier's setting into the given {@link Measure} instance.
+   * @param measure the given {@link Measure} instance
+   */
+  public void saveSetting(Measure measure) {
+    ParticipationParameters param = new ParticipationParameters();
+    param.setFrequencyPercentage(frequencyPercentage);
+    param.setMemberPercentage(memberPercentage);
+    param.setThresoldValue(thresholdValue);
+    measure.setParticipationParameters(param);
+  }
 }

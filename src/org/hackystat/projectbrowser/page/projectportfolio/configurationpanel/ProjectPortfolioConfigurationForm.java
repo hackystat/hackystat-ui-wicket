@@ -1,31 +1,24 @@
 package org.hackystat.projectbrowser.page.projectportfolio.configurationpanel;
 
-import java.util.HashMap;
-import java.util.Map;
-import org.apache.wicket.Component;
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
-import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.apache.wicket.markup.html.form.Button;
-import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
-import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.page.popupwindow.PopupWindowPanel;
 import org.hackystat.projectbrowser.page.projectportfolio.ProjectPortfolioPage;
 import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.
         PortfolioMeasureConfiguration;
 import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.ProjectPortfolioDataModel;
-import org.hackystat.projectbrowser.page.telemetry.TelemetrySession;
-import org.hackystat.telemetry.service.resource.chart.jaxb.ParameterDefinition;
-import org.hackystat.telemetry.service.resource.chart.jaxb.Type;
 
 /**
  * Form in Project Portfolio configuration panel to input data.
@@ -67,9 +60,6 @@ public class ProjectPortfolioConfigurationForm extends Form {
   //private static final String STYLE_KEY = "style";
   /** THe preceding of HTTP background color style setting. */
   //private static final String BACKGROUND_COLOR_PRECEDING = "background-color:#";
-  /** The validators for measures' higher and lower thresholds. */
-  private Map<String, ConfigurationValueValidator> validators = 
-    new HashMap<String, ConfigurationValueValidator>();
   
   /**
    * @param id the wicket component id.
@@ -119,116 +109,71 @@ public class ProjectPortfolioConfigurationForm extends Form {
     */
     
     //measure specified settings.
-    final Form form = this;
     
-    ListView measureList = new ListView("measureList", dataModel.getMeasures()) {
+    final ListView measureList = new ListView("measureList", dataModel.getMeasures()) {
       /** Support serialization. */
       public static final long serialVersionUID = 1L;
 
       @Override
-      protected void populateItem(ListItem item) {
+      protected void populateItem(final ListItem item) {
+        item.setOutputMarkupId(true);
         final PortfolioMeasureConfiguration measure = 
           (PortfolioMeasureConfiguration) item.getModelObject();
+        
+        String cellClass;
+        if (item.getIndex() % 2 == 0) {
+          cellClass = "even";
+        }
+        else {
+          cellClass = "odd";
+        }
+        item.add(new AttributeModifier("class", true, new Model(cellClass)));
 
         item.add(new Label("measureNameLabel", measure.getDisplayName()));
 
+        // Add measure's configuration panel
+        final Panel measurePanel = measure.getConfigurationPanel("measurePanel");
+        measurePanel.setVisible(measure.hasClassifier() && measure.isEnabled());
+        measurePanel.setOutputMarkupId(true);
+        item.add(measurePanel);
+        
         item.add(new AjaxCheckBox("enableCheckBox", new PropertyModel(measure, "enabled")) {
           /** Support serialization. */
           public static final long serialVersionUID = 1L;
 
           @Override
-          protected void onUpdate(AjaxRequestTarget arg0) {
-            arg0.addComponent(this.getForm());
+          protected void onUpdate(AjaxRequestTarget target) {
+            //measurePanel.setVisible(measure.isEnabled());
+            target.addComponent(getForm());
           }
         });
-
-        item.add(new AjaxCheckBox("colorableCheckBox", new PropertyModel(measure, "colorable")) {
+        final DropDownChoice colorMethodMenu = new DropDownChoice("colorMethod", 
+            new Model(measure.getClassiferName()),
+            ProjectPortfolioDataModel.availableClassifiers) {
           /** Support serialization. */
-          public static final long serialVersionUID = 1L;
-
-          @Override
-          protected void onUpdate(AjaxRequestTarget arg0) {
-            arg0.addComponent(this.getForm());
-          }
-
-          @Override
-          public boolean isEnabled() {
-            return measure.isEnabled();
-          }
-        });
-
-        item.add(new CheckBox("isHigherBetterCheckBox", 
-            new PropertyModel(measure, "higherBetter")) {
-          /** Support serialization. */
-          public static final long serialVersionUID = 1L;
-
-          @Override
-          public boolean isEnabled() {
-            return measure.isEnabled() && measure.isColorable();
-          }
-        });
-        
-        final TextField higherThresholdTextField = 
-          new TextField("higherThreshold", new PropertyModel(measure, "higherThreshold")) {
-          /** Support serialization. */
-          private static final long serialVersionUID = -7434510173892738329L;
-
-          @Override
-          public boolean isEnabled() {
-            return measure.isEnabled() && measure.isColorable();
-          }
-        };
-        item.add(higherThresholdTextField);
-        
-        final TextField lowerThresholdTextField = 
-          new TextField("lowerThreshold", new PropertyModel(measure, "lowerThreshold")) {
-          /** Support serialization. */
-          private static final long serialVersionUID = -1675316116473661403L;
-
-          @Override
-          public boolean isEnabled() {
-            return measure.isEnabled() && measure.isColorable();
-          }
-        };
-        item.add(lowerThresholdTextField);
-        
-        if (measure.isEnabled() && measure.isColorable()) {
-          ConfigurationValueValidator validator = new ConfigurationValueValidator(measure.getName(),
-              higherThresholdTextField, lowerThresholdTextField);
-          form.add(validator);
-          //add the validator to the validators map and remove the old existed one from the form.
-          ConfigurationValueValidator oldValidator = validators.put(measure.getName(), validator);
-          if (oldValidator != null) {
-            form.remove(oldValidator);
-          }
-        }
-        
-     // Add parameter List
-        TelemetrySession telemetrySession = ProjectBrowserSession.get().getTelemetrySession();
-        ListView parameterList = 
-          new ListView("parameterList", telemetrySession.getParameterList(measure.getName())) {
-          /** Support serialization. */
-          public static final long serialVersionUID = 1L;
-          @Override
-          protected void populateItem(ListItem item) {
-            ParameterDefinition paramDef = (ParameterDefinition)item.getModelObject();
-            item.add(new Label("name", paramDef.getName()));
-            Component component = getComponent("field", paramDef.getType());
-            if (item.getIndex() >= measure.getParameters().size() && component.getModel() != null) {
-              measure.getParameters().add(component.getModel());
-            }
-            else {
-              component.setModel(measure.getParameters().get(item.getIndex()));
-            }
-            item.add(component);
-          }
-          
+          private static final long serialVersionUID = 5465487314644465276L;
           @Override
           public boolean isVisible() {
             return measure.isEnabled();
           }
         };
-        item.add(parameterList);
+        colorMethodMenu.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+          /** Support serialization. */
+          private static final long serialVersionUID = -6447496738809283902L;
+
+          @Override
+          protected void onUpdate(AjaxRequestTarget target) {
+            String colorMethod = colorMethodMenu.getModelObjectAsString();
+            measure.setStreamClassifier(colorMethod);
+            target.addComponent(getFormComponent().getForm());
+          }
+          
+        });
+        item.add(colorMethodMenu);
+        
+        // Add parameter List
+
+        item.add(new TelemetryParameterPanel("telemetryParameters", measure));
       }
     };
     add(measureList);
@@ -322,69 +267,4 @@ public class ProjectPortfolioConfigurationForm extends Form {
   }
   */
 
-  /**
-   * Return a FormComponent according to the parameter type.
-   * DropDownChoice for Enumerated.
-   * CheckBox for Boolean.
-   * TextField for Text and Integer.
-   * @param id the wicket component id.
-   * @param type the parameter type.
-   * @return a FormComponent.
-   */
-  public Component getComponent(String id, Type type) {
-    Component component;
-    if ("Enumerated".equals(type.getName())) {
-      DropDownChoice choice = 
-        new DropDownChoice(id, new Model(type.getDefault()), type.getValue()) {           
-        /** Support serialization. */
-        public static final long serialVersionUID = 1L; 
-        /**
-         * Called any time a component that has this behavior registered is rendering the 
-         * component tag.
-         * @param tag the tag that is rendered
-         */
-        @Override 
-        protected void onComponentTag(ComponentTag tag) { 
-          tag.setName("select");
-          super.onComponentTag(tag);
-        } 
-      };
-      //choice.setPersistent(true);
-      component = choice;
-    }
-    else if ("Boolean".equals(type.getName())) {
-      CheckBox checkBox = new CheckBox(id, new Model(type.getDefault())) {           
-        /** Support serialization. */
-        public static final long serialVersionUID = 1L; 
-        @Override 
-        protected void onComponentTag(ComponentTag tag) { 
-          tag.setName("input");
-          tag.put("type", "checkbox");
-          tag.remove("style"); //need for firefox on mac.
-          super.onComponentTag(tag);
-        } 
-      };
-      //checkBox.setPersistent(true);
-      component = checkBox;
-    }
-    else if ("Text".equals(type.getName()) || "Integer".equals(type.getName())) {
-      TextField textField = new TextField(id, new Model(type.getDefault())) {           
-        /** Support serialization. */
-        public static final long serialVersionUID = 1L; 
-        @Override 
-        protected void onComponentTag(ComponentTag tag) { 
-          tag.setName("input");
-          tag.put("type", "text");
-          super.onComponentTag(tag);
-        } 
-      };
-      //textField.setPersistent(true);
-      component = textField;
-    }
-    else {
-      component = new Label(id, new Model("Parameter Type " + type.getName() + " not recognized."));
-    }
-    return component;
-  }
-  
 }

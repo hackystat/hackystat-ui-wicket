@@ -25,12 +25,13 @@ import org.hackystat.projectbrowser.ProjectBrowserProperties;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.page.loadingprocesspanel.Processable;
 import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.chart.MiniBarChart;
+import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.chart.StreamClassifier;
 import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.chart.
         StreamParticipationClassifier;
-import org.hackystat.projectbrowser.page.projectportfolio.jaxb.Measures.Measure;
+import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.chart.StreamTrendClassifier;
 import org.hackystat.projectbrowser.page.projectportfolio.jaxb.Measures;
 import org.hackystat.projectbrowser.page.projectportfolio.jaxb.PortfolioDefinitions;
-import org.hackystat.projectbrowser.page.projectportfolio.jaxb.Measures.Measure.DefaultValues;
+import org.hackystat.projectbrowser.page.projectportfolio.jaxb.Measures.Measure;
 import org.hackystat.projectbrowser.page.telemetry.TelemetrySession;
 import org.hackystat.sensorbase.resource.projects.ProjectUtils;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
@@ -77,6 +78,12 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
   private long startDate = 0;
   /** The end date this user has selected. */
   private long endDate = 0;
+  /** List of available stream classifiers. */
+  public static final List<String> availableClassifiers = Arrays.asList(new String[]{
+                                                  "None",
+                                                  StreamTrendClassifier.name,
+                                                  StreamParticipationClassifier.name
+                                              });
 
   /**
    * the time phrase this data model focus. In scale of telemetryGranularity, from current to the
@@ -88,13 +95,13 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
   /** The charts in this model. */
   private Map<Project, List<MiniBarChart>> measuresCharts = 
     new HashMap<Project, List<MiniBarChart>>();
-  /** The thresholds. */
+  /** The List of PortfolioMeasureConfiguration. */
   private final List<PortfolioMeasureConfiguration> measures = 
     new ArrayList<PortfolioMeasureConfiguration>();
   /** Alias for measure. Maps names from definition to names for display. */
   //private final Map<String, String> measureAlias = new HashMap<String, String>();
   /** The portfolio measure configuration loaded from xml file. */
-  // private final PortfolioDefinitions portfolioDefinitions = loadPortfolioDefinitions();
+  //private PortfolioDefinitions portfolioDefinitions = getPortfolioDefinitions();
   /** The configuration saving capacity. */
   private static Long capacity = 1000L;
   /** The max life of the saved configuration. */
@@ -153,67 +160,93 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
    * Initialize the measure configurations.
    */
   private void initializeMeasures() {
-    String sum = "sum";
     // Load default measures
     measures.clear();
-    measures.add(new PortfolioMeasureConfiguration("Coverage", null, true, 40, 90, true, null,
-                                                    this));
-    measures.add(new PortfolioMeasureConfiguration("CyclomaticComplexity", "Complexity", true,
-                                                    10, 20, false, null, this));
-    measures.add(new PortfolioMeasureConfiguration("Coupling", null, true, 10, 20, false, null,
-                                                    this));
-    measures.add(new PortfolioMeasureConfiguration("MemberChurn", "Churn", true, 400, 900, false,
-                                                    sum, this));
-    measures.add(new PortfolioMeasureConfiguration("FileMetric", "Size(LOC)", false, 0, 0, true, 
-                                                    null, this));
-    PortfolioMeasureConfiguration devTime = 
-      new PortfolioMeasureConfiguration("MemberDevTime", "DevTime", false, 0, 0, true, sum, this);
-    measures.add(devTime);
-    devTime.setStreamClassifier(new StreamParticipationClassifier(50, 0.5, 50));
-    // These measures are moved to basic.portfolio.definition.xml
-    PortfolioMeasureConfiguration commit = 
-      new PortfolioMeasureConfiguration("MemberCommit", "Commit", false, 0, 0, true, sum, this);
-    measures.add(commit);
-    commit.setStreamClassifier(new StreamParticipationClassifier(50, 1, 50));
-    PortfolioMeasureConfiguration build = 
-      new PortfolioMeasureConfiguration("MemberBuild", "Build", false, 0, 0, true, sum, this);
-    measures.add(build);
-    build.setStreamClassifier(new StreamParticipationClassifier(50, 3, 50));
-    PortfolioMeasureConfiguration test = 
-      new PortfolioMeasureConfiguration("MemberUnitTest", "Test", false, 0, 0, true, sum, this);
-    measures.add(test);
-    test.setStreamClassifier(new StreamParticipationClassifier(50, 10, 50));
-    measures.add(
-        new PortfolioMeasureConfiguration("CodeIssue", null, true, 10, 30, false, null, this));
     
     // Load additional user customized measures.
     PortfolioDefinitions portfolioDefinitions = getPortfolioDefinitions();
     if (portfolioDefinitions != null) {
       for (Measure measure : portfolioDefinitions.getMeasures().getMeasure()) {
-        DefaultValues defaultValues = measure.getDefaultValues();
         measures.add(new PortfolioMeasureConfiguration(measure.getName(), measure.getAlias(), 
-            defaultValues.isColorable(), defaultValues.getDefaultLowerThresold(), 
-            defaultValues.getDefaultHigherThresold(), defaultValues.isHigherBetter(), 
-            measure.getMerge(), this));
+            measure.getMerge(), measure.isEnabled(), getClassifier(measure), this));
       }
     }
-
     for (PortfolioMeasureConfiguration measure : getEnabledMeasures()) {
       checkMeasureParameters(measure);
     }
   }
 
   /**
-   * Print the portfolio measure for logging purpose.
+   * Get a {@link StreamClassifier} according to the given Measure.
+   * @param measure a given {@link Measure} object.
+   * @return a {@link StreamClassifier} instance, 
+   * null if no supported classifier defined in the Measure object.
+   */
+  protected static StreamClassifier getClassifier(Measure measure) {
+    String classifierMethod = measure.getClassifierMethod();
+    if ("StreamTrend".equalsIgnoreCase(classifierMethod)) {
+      if (measure.getStreamTrendParameters() == null) {
+        return new StreamTrendClassifier(0, 0, true);
+      }
+      Double lowerThreshold = measure.getStreamTrendParameters().getLowerThresold();
+      if (lowerThreshold == null) {
+        lowerThreshold = 0.0;
+      }
+      Double higherThreshold = measure.getStreamTrendParameters().getHigherThresold();
+      if (higherThreshold == null) {
+        higherThreshold = 0.0;
+      }
+      Boolean higherBetter = measure.getStreamTrendParameters().isHigherBetter();
+      if (higherBetter) {
+        higherBetter = true;
+      }
+      return new StreamTrendClassifier(lowerThreshold, higherThreshold, higherBetter);
+    }
+    else if ("Participation".equalsIgnoreCase(classifierMethod)) {
+      if (measure.getParticipationParameters() == null) {
+        return new StreamParticipationClassifier(50, 0, 50);
+      }
+      Double memberPercentage = measure.getParticipationParameters().getMemberPercentage();
+      if (memberPercentage == null) {
+        memberPercentage = 50.0;
+      }
+      Double valueThreshold = measure.getParticipationParameters().getThresoldValue();
+      if (valueThreshold == null) {
+        valueThreshold = 0.0;
+      }
+      Double frequencyPercentage = 
+        measure.getParticipationParameters().getFrequencyPercentage();
+      if (frequencyPercentage == null) {
+        frequencyPercentage = 50.0;
+      }
+      return new StreamParticipationClassifier(
+          memberPercentage, valueThreshold, frequencyPercentage);
+    }
+    return null;
+  }
+  
+  /**
+   * Print the {@link Measure} for logging purpose.
    * 
-   * @param measure the PortfolioMeasure to log.
+   * @param measure the {@link Measure} to log.
    * @return the string
    */
-  private String printPortfolioMeasure(PortfolioMeasure measure) {
+  private String printPortfolioMeasure(Measure measure) {
     String s = "/";
-    return "<" + measure.getMeasureName() + ": " + s + measure.isEnabled() + s
-        + measure.isColorable() + s + measure.isHigherBetter() + s + measure.getLowerThreshold()
-        + s + measure.getHigherThreshold() + s + measure.getParameters() + "> ";
+    String classifierParameters = "";
+    if (measure.getStreamTrendParameters() != null) {
+      classifierParameters = measure.getStreamTrendParameters().getLowerThresold() + s +
+                             measure.getStreamTrendParameters().getHigherThresold() + s + 
+                             measure.getStreamTrendParameters().isHigherBetter();
+    }
+    if (measure.getParticipationParameters() != null) {
+      classifierParameters = measure.getParticipationParameters().getMemberPercentage() + s +
+                             measure.getParticipationParameters().getThresoldValue() + s +
+                             measure.getParticipationParameters().getFrequencyPercentage();
+    }
+    return "<" + measure.getName() + ": " + s + measure.isEnabled() + s
+        + measure.getClassifierMethod() + s + classifierParameters + s + 
+        measure.getTelemetryParameters() + "> ";
   }
 
   /**
@@ -226,9 +259,16 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
     UriCache userCache = this.getUserConfiguartionCache();
     for (PortfolioMeasureConfiguration measure : this.measures) {
       String uri = userEmail + "/portfolio/" + measure.getName();
-      PortfolioMeasure oldMeasure = (PortfolioMeasure) userCache.get(uri);
-      PortfolioMeasure newMeasure = new PortfolioMeasure(measure);
+      Measure oldMeasure = null;
+      if (userCache.get(uri) instanceof Measure) {
+        oldMeasure = (Measure) userCache.get(uri);
+      }
+      else {
+        userCache.remove(uri);
+      }
+      Measure newMeasure = this.getMeasure(measure);
       if (oldMeasure == null || !oldMeasure.equals(newMeasure)) {
+        mergeMeasures(newMeasure, oldMeasure);
         userCache.put(uri, newMeasure);
         log.append(printPortfolioMeasure(newMeasure));
       }
@@ -241,19 +281,70 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
   }
 
   /**
+   * Merge the old measure into the new one.
+   * @param newMeasure The new Measure.
+   * @param oldMeasure The old Measure.
+   */
+  private void mergeMeasures(Measure newMeasure, Measure oldMeasure) {
+    if (oldMeasure == null) {
+      return;
+    }
+    if (newMeasure.getStreamTrendParameters() == null) {
+      newMeasure.setStreamTrendParameters(oldMeasure.getStreamTrendParameters());
+    }
+    if (newMeasure.getParticipationParameters() == null) {
+      newMeasure.setParticipationParameters(oldMeasure.getParticipationParameters());
+    }
+  }
+
+  /**
+   * Return a {@link Measure} represents the given PortfolioMeasureConfiguration.
+   * @param measureConfiguration a {@link PortfolioMeasureConfiguration}.
+   * @return a {@link Measure}.
+   */
+  private Measure getMeasure(PortfolioMeasureConfiguration measureConfiguration) {
+    Measure measure = new Measure();
+    measure.setName(measureConfiguration.getName());
+    measure.setEnabled(measureConfiguration.isEnabled());
+    measure.setTelemetryParameters(measureConfiguration.getParamtersString());
+    measure.setClassifierMethod(measureConfiguration.getClassiferName());
+    measureConfiguration.saveClassifierSetting(measure);
+    
+    return measure;
+  }
+  
+  /**
    * Load user's configuration from system's cache.
    */
   private void loadUserConfiguration() {
-    UriCache userCache = this.getUserConfiguartionCache();
     for (PortfolioMeasureConfiguration measure : this.measures) {
-      String uri = userEmail + "/portfolio/" + measure.getName();
-      PortfolioMeasure saved = (PortfolioMeasure) userCache.get(uri);
-      if (saved != null) {
-        measure.loadFrom(saved);
+      Measure savedMeausre = getSavedMeasure(measure);
+      if (savedMeausre != null) {
+        measure.setMeasureConfiguration(savedMeausre.isEnabled(), getClassifier(savedMeausre), 
+                                        savedMeausre.getTelemetryParameters());
       }
     }
   }
 
+  /**
+   * Get the {@link Measure} instance associated with the given 
+   * {@link PortfolioMeasureConfiguration} from UriCache.
+   * @param measure the given {@link PortfolioMeasureConfiguration}
+   * @return the {@link Measure} instance, null if not matched found in cache.
+   */
+  protected final Measure getSavedMeasure(PortfolioMeasureConfiguration measure) {
+    UriCache userCache = this.getUserConfiguartionCache();
+    String uri = userEmail + "/portfolio/" + measure.getName();
+    Measure savedMeausre = null;
+    if (userCache.get(uri) instanceof Measure) {
+      savedMeausre = (Measure) userCache.get(uri);
+    }
+    else {
+      userCache.remove(uri);
+    }
+    return savedMeausre;
+  }
+  
   /**
    * Reset user's configuration cache.
    */
@@ -276,13 +367,15 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
     PortfolioDefinitions portfolioDefinitions = new PortfolioDefinitions();
     portfolioDefinitions.setMeasures(new Measures());
     // load the basic default definitions.
-    /*
+    
     getLogger().info("Reading basic portfolio definitions from: basic.portfolio.definition.xml");
     InputStream defStream = ProjectPortfolioDataModel.class
         .getResourceAsStream("basic.portfolio.definition.xml");
-    portfolioDefinitions.getMeasures().getMeasure().addAll(
-        getDefinitions(defStream).getMeasures().getMeasure());
-        */
+    PortfolioDefinitions definition = getDefinitions(defStream);
+    if (definition != null) {
+      portfolioDefinitions.getMeasures().getMeasure().addAll(definition.getMeasures().getMeasure());
+    }
+        
 
     // load user defined definitions.
     String defDirString = ((ProjectBrowserApplication) ProjectBrowserApplication.get())
@@ -299,8 +392,10 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
       for (File xmlFile : xmlFiles) {
         try {
           getLogger().info("Reading portfolio definitions from: " + xmlFile);
-          portfolioDefinitions.getMeasures().getMeasure().addAll(
-              getDefinitions(new FileInputStream(xmlFile)).getMeasures().getMeasure());
+          PortfolioDefinitions def = getDefinitions(new FileInputStream(xmlFile));
+          if (def != null) {
+            portfolioDefinitions.getMeasures().getMeasure().addAll(def.getMeasures().getMeasure());
+          }
         }
         catch (FileNotFoundException e) {
           getLogger().info("Error reading definitions from: " + xmlFile + " " + e);
@@ -338,7 +433,8 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
     catch (JAXBException e1) {
       Logger logger = getLogger();
       logger.severe("Error occurs when parsing portfolio definition xml file with jaxb > "
-          + e1.getMessage());
+          + e1.getErrorCode() + ":" + e1.getMessage());
+      e1.printStackTrace();
     }
     catch (SAXException e) {
       Logger logger = getLogger();

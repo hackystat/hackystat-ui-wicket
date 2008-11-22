@@ -1,5 +1,18 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+           xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+           jaxb:extensionBindingPrefixes="xjc"
+           jaxb:version="2.0">
+         
+    <xs:annotation>
+       <xs:appinfo>
+          <jaxb:globalBindings generateIsSetMethod="true">
+              <xjc:serializable uid="6799287509742157998"/>
+          </jaxb:globalBindings>
+       </xs:appinfo>
+    </xs:annotation>
+    
     <xs:element name="PortfolioDefinitions">
         <xs:complexType>
             <xs:sequence>
@@ -13,22 +26,27 @@
           <xs:element name="Measure" maxOccurs="unbounded">
               <xs:complexType>
               	<xs:sequence>
-              		<xs:element name="DefaultValues">
+              		<xs:element name="StreamTrendParameters" minOccurs="0">
               			<xs:complexType>
-              				<xs:attribute name="colorable"
-              					type="xs:boolean" />
-              				<xs:attribute name="higherBetter"
-              					type="xs:boolean" />
-              				<xs:attribute name="defaultLowerThresold"
-              					type="xs:double" />
-              				<xs:attribute name="defaultHigherThresold"
-              					type="xs:double" />
+              				<xs:attribute name="higherBetter" type="xs:boolean" />
+              				<xs:attribute name="lowerThresold" type="xs:double" />
+              				<xs:attribute name="higherThresold" type="xs:double" />
               			</xs:complexType>
               		</xs:element>
+                  <xs:element name="ParticipationParameters" minOccurs="0">
+                    <xs:complexType>
+                      <xs:attribute name="memberPercentage" type="xs:double" />
+                      <xs:attribute name="thresoldValue" type="xs:double" />
+                      <xs:attribute name="frequencyPercentage" type="xs:double" />
+                    </xs:complexType>
+                  </xs:element>
               	</xs:sequence>
-                        <xs:attribute name="name" use="required" type="xs:string"/>
-                        <xs:attribute name="alias" use="optional" type="xs:string"/>
-              	<xs:attribute name="merge" type="xs:string" use="optional"></xs:attribute>
+                <xs:attribute name="name" type="xs:string" use="required"/>
+                <xs:attribute name="alias" type="xs:string" use="optional"/>
+                <xs:attribute name="classifierMethod" type="xs:string" use="optional"/>
+                <xs:attribute name="enabled" type="xs:boolean" default="true"/>
+              	<xs:attribute name="merge" type="xs:string" use="optional"/>
+                <xs:attribute name="telemetryParameters" type="xs:string" use="optional"/>
               </xs:complexType>
           </xs:element>
         </xs:sequence>

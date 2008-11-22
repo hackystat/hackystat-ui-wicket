@@ -220,7 +220,7 @@ public class TelemetryInputForm extends Form {
    * @param type the parameter type.
    * @return a FormComponent.
    */
-  public Component getComponent(String id, Type type) {
+  public static final Component getComponent(String id, Type type) {
     Component component;
     if ("Enumerated".equals(type.getName())) {
       DropDownChoice choice = 
