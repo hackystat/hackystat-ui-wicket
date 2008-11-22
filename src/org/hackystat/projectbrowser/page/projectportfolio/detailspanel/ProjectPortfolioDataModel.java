@@ -183,6 +183,9 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
    * null if no supported classifier defined in the Measure object.
    */
   protected static StreamClassifier getClassifier(Measure measure) {
+    if (measure == null) {
+      return null;
+    }
     String classifierMethod = measure.getClassifierMethod();
     if ("StreamTrend".equalsIgnoreCase(classifierMethod)) {
       if (measure.getStreamTrendParameters() == null) {

@@ -204,6 +204,9 @@ public class PortfolioMeasureConfiguration implements Serializable {
       return;
     }
     Measure measure = dataModel.getSavedMeasure(this);
+    if (measure == null) {
+      measure = new Measure();
+    }
     measure.setClassifierMethod(classifierName);
     this.setStreamClassifier(ProjectPortfolioDataModel.getClassifier(measure));
   }
