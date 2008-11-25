@@ -3,49 +3,67 @@
   <table>
     <form wicket:id="inputForm">
       <tr>
-        <th rowspan="3" scope="row">Project #1
+        <th rowspan="3" scope="row">
+        <label>Project #1:</label><br/>
           <select name="select" style="width: 10em" wicket:id="project1List">
             <option value="Default">Default</option>
           </select>
         </th>
         <td>&nbsp;</td>
-        <td> start date:
+        <td> <label>
+			   <span>start date:</span>
+			 </label><br/>
           <input style="width: 6em" wicket:id="project1StartDate" type="text" />
         </td>
       </tr>
       <tr>
         <td>&nbsp;</td>
-        <td> end date:
+        <td> <label>
+			   <span>end date:</span>
+			 </label><br/>
           <input style="width: 6em" wicket:id="project1EndDate" type="text" />
         </td>
       </tr>
       <tr>
         <td>&nbsp;</td>
-        <td>indent: <input style="width: 2em" wicket:id="project1Indent" type="text" /></td>
+        <td> <label>
+			   <span>indent:</span>
+			 </label><br/>
+        <input style="width: 2em" wicket:id="project1Indent" type="text" /></td>
       </tr>
       <tr>
-        <th rowspan="3" scope="row"> Project: #2
+        <th rowspan="3" scope="row">
+        <label>Project #2:</label><br/>
           <select name="select" style="width: 10em" wicket:id="project2List">
             <option value="Default">Default</option>
           </select>
         </th>
         <td>&nbsp;</td>
-        <td> start date:
+        <td> <label>
+			   <span>start date:</span>
+			 </label><br/>
           <input style="width: 6em" wicket:id="project2StartDate" type="text" />
         </td>
       </tr>
       <tr>
         <td>&nbsp;</td>
-        <td> end date:
+        <td> <label>
+			   <span>end date:</span>
+			 </label><br/>
           <input style="width: 6em" wicket:id="project2EndDate" type="text" />
         </td>
-      </tr>     
-      <tr>         
-        <td>&nbsp;</td>
-        <td>indent: <input style="width: 2em" wicket:id="project2Indent" type="text" /></td>
       </tr>
       <tr>
-        <td>Chart:
+        <td>&nbsp;</td>
+        <td> <label>
+			   <span>indent:</span>
+			 </label><br/>
+        <input style="width: 2em" wicket:id="project2Indent" type="text" /></td>
+      </tr>
+      <tr>
+        <td> <label>
+			   <span>Chart:</span>
+			 </label><br/>
           <select name="select2" style="width: 10em" wicket:id="telemetryMenu">
             <option value="Default">Default</option>
           </select></td>
@@ -53,7 +71,9 @@
         <td>&nbsp;</td>
       </tr>
       <tr>
-        <td> Granularity:
+        <td> <label>
+			   <span>Granularity:</span>
+			 </label><br/>
           <select style="width: 10em" wicket:id="granularity">
             <option value="Day">Day</option>
             <option value="Week">Week</option>
@@ -64,15 +84,16 @@
         <td>&nbsp;</td>
       </tr>
       <tr wicket:id="parameterList">
-        <td><span wicket:id="name" />: <span style="width: 10em" wicket:id="field"/> </td>
-        <td wicket:id="parameterPopup"/>
-        <td>&nbsp;</td>
-      </tr>
+          <td>
+            <label><span wicket:id="name">parameter</span>:</label> <br/>
+            <span style="width: 8em" wicket:id="field"></span>
+          </td>
+          <td wicket:id="parameterPopup">Popup</td>
+        </tr>
       <tr>
-        <td style="text-align:center"><input type="submit" value="Display Telemetry" wicket:id="submit"/>
+        <td colspan="2" style="text-align:center">
+          <input type="submit" value="Display Telemetry" wicket:id="submit"/>
         </td>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
       </tr>
     </form>
     <form wicket:id="cancelForm">
