@@ -48,7 +48,7 @@
       <table id="configuration_table">
         <tr style="border-bottom: 2px solid #ddd">
           <th style="text-align:center; border-right:  0px solid #ddd;">Measure Name</th>
-          <th style="text-align:center">Color Method</th>
+          <th colspan="2" style="text-align:center">Color Method</th>
           <th style="text-align:center">Telemetry Parameters</th>
         </tr>
         <tr wicket:id="measureList" style="border-top: 1px solid #ddd">
@@ -56,8 +56,10 @@
             <input type="checkbox" wicket:id="enableCheckBox"/>
             <label wicket:id="measureNameLabel">measure name</label>
           </td>
-			          <td style="text-align: center; border-right: 0px solid #ddd"">
-			            <select wicket:id="colorMethod"/>
+			          <td style="text-align: center; border-right: 0px solid #ddd">
+			            <select wicket:id="colorMethod"></select>
+                </td>
+                <td style="text-align: center;">
 		              <div wicket:id="measurePanel">measure panel</div>
 		            </td>
 		            <td>
