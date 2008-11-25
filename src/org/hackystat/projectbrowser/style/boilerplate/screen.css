@@ -66,7 +66,23 @@ hr { color : #3366CC; background-color : #3366CC; height : 2px; }
 #portfolio_detail_table {
   background: black;
 }
-#portfolio_detail_table th, #portfolio_detail_table td {
+#portfolio_detail_table a {
+  color:#0099FF; 
+}
+#portfolio_detail_table th {
+  color:#0099FF; 
+  padding-left: 5px; 
+  white-space: nowrap
+}
+#portfolio_detail_table th.projectName {
+  text-align:left;
+}
+#portfolio_detail_table th.measureHead {
+	min-width: 5em; 
+	border-left: 1px solid #ddd; 
+	text-align:center
+}
+#portfolio_detail_table td {
   white-space:nowrap;
 }
 

@@ -7,6 +7,8 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +21,7 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import org.apache.wicket.PageParameters;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hackystat.projectbrowser.ProjectBrowserApplication;
 import org.hackystat.projectbrowser.ProjectBrowserProperties;
@@ -533,10 +536,25 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
    */
   private void checkMeasureParameters(PortfolioMeasureConfiguration measure) {
     List<ParameterDefinition> paramDefList = telemetrySession.getParameterList(measure.getName());
-    if (measure.getParameters().size() != paramDefList.size()) {
-      measure.getParameters().clear();
+    List<IModel> parameters = measure.getParameters();
+    //[1] check the size of parameters.
+    if (parameters.size() == paramDefList.size()) {
+      //[2] check data type compatible of each parameter.
+      for (int i = 0; i < parameters.size(); ++i) {
+        if (!TelemetrySession.isValueMatchType(
+            String.valueOf(measure.getParameters().get(i).getObject()), 
+            paramDefList.get(i).getType())) {
+          parameters.remove(i);
+          parameters.add(i, new Model(paramDefList.get(i).getType().getDefault()));
+          
+        }
+      }
+    }
+    //[1.5] rebuild the parameter if size is not match.
+    else {
+      parameters.clear();
       for (ParameterDefinition paramDef : paramDefList) {
-        measure.getParameters().add(new Model(paramDef.getType().getDefault()));
+        parameters.add(new Model(paramDef.getType().getDefault()));
       }
     }
   }
@@ -790,4 +808,32 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
   public static Logger getLogger() {
     return HackystatLogger.getLogger("org.hackystat.projectbrowser", "projectbrowser");
   }
+
+  /**
+   * Sort the table according to the given measure index.
+   * @param i the index of the measure in enabled measures.
+   */
+  public void sortTable(final int i) {
+    Collections.sort(this.selectedProjects, new Comparator<Project>() {
+      public int compare(Project o1, Project o2) {
+        int result = (int) (measuresCharts.get(o2).get(i).getLatestValue() * 10 -
+                     measuresCharts.get(o1).get(i).getLatestValue() * 10);
+        return result;
+      }
+      
+    });
+  }
+
+  /**
+   * Sort the table by the project's name.
+   */
+  public void sortProjectNames() {
+    Collections.sort(this.selectedProjects, new Comparator<Project>() {
+      public int compare(Project o1, Project o2) {
+        return o1.getName().compareTo(o2.getName());
+      }
+      
+    });
+  }
+  
 }

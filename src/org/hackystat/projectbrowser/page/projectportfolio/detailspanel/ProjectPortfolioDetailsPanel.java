@@ -37,23 +37,44 @@ public class ProjectPortfolioDetailsPanel extends Panel {
    */
   public ProjectPortfolioDetailsPanel(String id) {
     super(id);
-
+    
     BookmarkablePageLink permalink = new BookmarkablePageLink("permalink", 
         ProjectPortfolioPage.class, session.getPageParameters());
     add(permalink);
+
+    Link sortProjectLink = new Link("sortProjectName") {
+      /** Support serialization. */
+      private static final long serialVersionUID = -5801192573412127312L;
+      @Override
+      public void onClick() {
+        dataModel.sortProjectNames();
+      }
+      
+    };
+    add(sortProjectLink);
     
     ListView measureHeads = new ListView("measureHeads", dataModel.getEnabledMeasuresName()) {
       /** Support serialization. */
       private static final long serialVersionUID = -6222175445067187421L;
 
       @Override
-      protected void populateItem(ListItem item) {
-        item.add(new Label("measureName", item.getModelObjectAsString()));
+      protected void populateItem(final ListItem item) {
+        final String measureName = item.getModelObjectAsString();
+        Link sortLink = new Link("sortLink") {
+          /** Support serialization. */
+          private static final long serialVersionUID = 1217586293098377714L;
+          @Override
+          public void onClick() {
+            dataModel.sortTable(item.getIndex());
+          }
+        };
+        sortLink.add(new Label("measureName", measureName));
+        item.add(sortLink);
       }
     };
     add(measureHeads);
     
-    ListView dateList = new ListView("projectTable", dataModel.getSelectedProjects()) {
+    ListView dateTable = new ListView("projectTable", dataModel.getSelectedProjects()) {
       /** Support serialization. */
       public static final long serialVersionUID = 1L;
       @Override
@@ -109,7 +130,7 @@ public class ProjectPortfolioDetailsPanel extends Panel {
         item.add(dateList);
       }
     };
-    add(dateList);
+    add(dateTable);
     
     
   }

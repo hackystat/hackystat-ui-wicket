@@ -559,6 +559,9 @@ public class TelemetrySession implements Serializable {
    * @return true if the value and type are matched.
    */
   public static boolean isValueMatchType(String value, Type type) {
+    if (value == null) {
+      return false;
+    }
     if ("Enumerated".equals(type.getName())) {
       return type.getValue().contains(value);
     }

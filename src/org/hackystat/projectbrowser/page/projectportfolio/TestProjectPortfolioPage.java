@@ -172,16 +172,16 @@ public class TestProjectPortfolioPage extends ProjectBrowserTestHelper {
         .getComponentFromLastRenderedPage("detailPanel:measureHeads");
     assertEquals("Should be only 4 measure heads.", 4, measureheads.size());
     assertEquals("Check the first measure's display name", "Coverage", tester
-        .getComponentFromLastRenderedPage("detailPanel:measureHeads:0:measureName")
+        .getComponentFromLastRenderedPage("detailPanel:measureHeads:0:sortLink:measureName")
         .getModelObjectAsString());
     assertEquals("Check the second measure's display name", "Complexity", tester
-        .getComponentFromLastRenderedPage("detailPanel:measureHeads:1:measureName")
+        .getComponentFromLastRenderedPage("detailPanel:measureHeads:1:sortLink:measureName")
         .getModelObjectAsString());
     assertEquals("Check the third measure's display name", "Coupling", tester
-        .getComponentFromLastRenderedPage("detailPanel:measureHeads:2:measureName")
+        .getComponentFromLastRenderedPage("detailPanel:measureHeads:2:sortLink:measureName")
         .getModelObjectAsString());
     assertEquals("Check the fourth measure's display name", "Churn", tester
-        .getComponentFromLastRenderedPage("detailPanel:measureHeads:3:measureName")
+        .getComponentFromLastRenderedPage("detailPanel:measureHeads:3:sortLink:measureName")
         .getModelObjectAsString());
 
     ListView measures = (ListView) tester
