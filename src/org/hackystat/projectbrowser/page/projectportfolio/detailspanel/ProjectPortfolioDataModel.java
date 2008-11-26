@@ -104,7 +104,7 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
   /** Alias for measure. Maps names from definition to names for display. */
   //private final Map<String, String> measureAlias = new HashMap<String, String>();
   /** The portfolio measure configuration loaded from xml file. */
-  //private PortfolioDefinitions portfolioDefinitions = getPortfolioDefinitions();
+  private PortfolioDefinitions portfolioDefinitions = getPortfolioDefinitions();
   /** The configuration saving capacity. */
   private static Long capacity = 1000L;
   /** The max life of the saved configuration. */
@@ -167,7 +167,7 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
     measures.clear();
     
     // Load additional user customized measures.
-    PortfolioDefinitions portfolioDefinitions = getPortfolioDefinitions();
+    //PortfolioDefinitions portfolioDefinitions = getPortfolioDefinitions();
     if (portfolioDefinitions != null) {
       for (Measure measure : portfolioDefinitions.getMeasures().getMeasure()) {
         measures.add(new PortfolioMeasureConfiguration(measure.getName(), measure.getAlias(), 
