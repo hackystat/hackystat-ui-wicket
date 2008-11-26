@@ -106,6 +106,7 @@ public class ProjectPortfolioInputForm extends Form {
       private static final long serialVersionUID = 0L;
       @Override
       public void onSubmit() {
+        session.getDataModel().saveUserConfiguration();
         page.setConfigurationPanelVisible(!page.isConfigurationPanelVisible());
       }
       @Override

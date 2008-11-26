@@ -240,18 +240,25 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
   private String printPortfolioMeasure(Measure measure) {
     String s = "/";
     String classifierParameters = "";
-    if (measure.getStreamTrendParameters() != null) {
+    String classifier = measure.getClassifierMethod();
+    if (StreamTrendClassifier.name.equalsIgnoreCase(classifier) && 
+        measure.getStreamTrendParameters() != null) {
       classifierParameters = measure.getStreamTrendParameters().getLowerThresold() + s +
                              measure.getStreamTrendParameters().getHigherThresold() + s + 
                              measure.getStreamTrendParameters().isHigherBetter();
     }
-    if (measure.getParticipationParameters() != null) {
+    else if (StreamParticipationClassifier.name.equals(classifier) && 
+        measure.getParticipationParameters() != null) {
       classifierParameters = measure.getParticipationParameters().getMemberPercentage() + s +
                              measure.getParticipationParameters().getThresoldValue() + s +
                              measure.getParticipationParameters().getFrequencyPercentage();
     }
-    return "<" + measure.getName() + ": " + s + measure.isEnabled() + s
-        + measure.getClassifierMethod() + s + classifierParameters + s + 
+    String enabled = "disabled";
+    if (measure.isEnabled()) {
+      enabled = "enabled";
+    }
+    return "<" + measure.getName() + ": " + s + enabled + s
+        + classifier + s + classifierParameters + s + 
         measure.getTelemetryParameters() + "> ";
   }
 
@@ -273,10 +280,14 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
         userCache.remove(uri);
       }
       Measure newMeasure = this.getMeasure(measure);
-      if (oldMeasure == null || !oldMeasure.equals(newMeasure)) {
-        mergeMeasures(newMeasure, oldMeasure);
-        userCache.put(uri, newMeasure);
-        log.append(printPortfolioMeasure(newMeasure));
+      if (oldMeasure != null) {
+        String oldMeasureString = printPortfolioMeasure(oldMeasure);
+        String newMeasureString = printPortfolioMeasure(newMeasure);
+        if (!newMeasureString.equals(oldMeasureString)) {
+          mergeMeasures(newMeasure, oldMeasure);
+          userCache.put(uri, newMeasure);
+          log.append(newMeasureString);
+        }
       }
     }
 
