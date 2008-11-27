@@ -12,6 +12,8 @@ import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.ProjectPo
 public class ProjectPortfolioConfigurationPanel extends Panel {
   /** Support serialization. */
   private static final long serialVersionUID = 7222939734399409429L;
+  /** The configuration form to use. */
+  private ProjectPortfolioConfigurationForm configForm;
 
   /**
    * @param id the wicket component id.
@@ -20,11 +22,16 @@ public class ProjectPortfolioConfigurationPanel extends Panel {
   public ProjectPortfolioConfigurationPanel(String id, ProjectPortfolioDataModel dataModel) {
     super(id);
     
-    ProjectPortfolioConfigurationForm configForm = 
+    configForm = 
       new ProjectPortfolioConfigurationForm("configurationForm", dataModel);
     configForm.setOutputMarkupId(true);
     add(configForm);
-    
   }
 
+  /**
+   * @return the configuration form.
+   */
+  public ProjectPortfolioConfigurationForm getForm() {
+    return this.configForm;
+  }
 }

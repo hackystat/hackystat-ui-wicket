@@ -106,12 +106,11 @@ public class ProjectPortfolioInputForm extends Form {
       private static final long serialVersionUID = 0L;
       @Override
       public void onSubmit() {
-        session.getDataModel().saveUserConfiguration();
         page.setConfigurationPanelVisible(!page.isConfigurationPanelVisible());
       }
       @Override
       public boolean isEnabled() {
-        return getIsEnable();
+        return getIsEnable() && !page.isConfigurationPanelVisible();
       }
     };
     //configurationButton.add(new Label("label", new PropertyModel(this, "labelMessage")));
@@ -122,13 +121,15 @@ public class ProjectPortfolioInputForm extends Form {
       public static final long serialVersionUID = 1L;
       @Override
       public void onSubmit() {
-        session.getDataModel().saveUserConfiguration();
+        if (page.isConfigurationPanelVisible()) {
+          page.setConfigurationPanelVisible(false);
+        }
         session.updateDataModel();
         page.onProjectDateSubmit();
       }
       @Override
       public boolean isEnabled() {
-        return getIsEnable();
+        return getIsEnable() && !page.isConfigurationPanelVisible();
       }
     };
     add(submitButton);
@@ -138,6 +139,7 @@ public class ProjectPortfolioInputForm extends Form {
    * @return the configuration label message
    */
   public String getLabelMessage() {
+    /*
     String labelMessage;
     if (page.isConfigurationPanelVisible()) {
       labelMessage = "Hide Configuration";
@@ -146,6 +148,8 @@ public class ProjectPortfolioInputForm extends Form {
       labelMessage = "Show Configuration";
     }
     return labelMessage;
+    */
+    return "Show Configuration";
   }
   
   /**

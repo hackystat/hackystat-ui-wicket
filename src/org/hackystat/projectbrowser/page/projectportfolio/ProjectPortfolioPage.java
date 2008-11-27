@@ -2,6 +2,7 @@ package org.hackystat.projectbrowser.page.projectportfolio;
 
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.behavior.HeaderContributor;
 import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.PropertyModel;
@@ -34,6 +35,9 @@ public class ProjectPortfolioPage extends ProjectBrowserBasePage {
    */
   public ProjectPortfolioPage () {
     super();
+    //[0] add portfolio specified css.
+    add(HeaderContributor.forCss(ProjectPortfolioPage.class, "portfolio.css"));
+    
     add(new FeedbackPanel("feedback"));
     
     session.initializeDataModel();

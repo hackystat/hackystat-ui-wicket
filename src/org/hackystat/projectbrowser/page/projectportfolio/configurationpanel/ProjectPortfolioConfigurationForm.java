@@ -178,7 +178,7 @@ public class ProjectPortfolioConfigurationForm extends Form {
     };
     add(measureList);
     PopupWindowPanel parameterPopup = new PopupWindowPanel("instructionPopup",
-        "Configuration instruction", "Configuration instruction");
+        "Configuration instruction", "Configuration Instructions");
     parameterPopup.getModalWindow().setContent(
         new MultiLineLabel(parameterPopup.getModalWindow().getContentId(), introductions));
     add(parameterPopup);
@@ -193,6 +193,7 @@ public class ProjectPortfolioConfigurationForm extends Form {
       }
     };
     add(okButton);
+    this.setDefaultButton(okButton);
     
     Button resetButton = new Button("reset") {
       /** Support serialization. */
@@ -211,8 +212,8 @@ public class ProjectPortfolioConfigurationForm extends Form {
   /*
   @Override
   public void onSubmit() {
-    this.dataModel.saveUserConfiguration();
-    this.getParent().setVisible(false);
+    dataModel.saveUserConfiguration();
+    ((ProjectPortfolioPage)this.getPage()).setConfigurationPanelVisible(false);
   }
   */
 
