@@ -141,11 +141,14 @@ public class StreamParticipationClassifier implements Serializable, StreamClassi
 
   /**
    * Return the category of the given value.
-   * Always return OTHER.
+   * If the value < 0, NA will be return. Otherwise, always return OTHER.
    * @param value the given value.
    * @return a {@link PortfolioCategory} result
    */
   public PortfolioCategory getValueCategory(double value) {
+    if (value < 0) {
+      return PortfolioCategory.NA;
+    }
     return PortfolioCategory.OTHER;
   }
 

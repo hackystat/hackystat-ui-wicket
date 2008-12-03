@@ -143,7 +143,10 @@ public class PortfolioMeasureConfiguration implements Serializable {
       return getColor(this.streamClassifier.getValueCategory(value));
     }
     else {
-      return getDataModel().getFontColor();
+      if (value < 0) {
+        return getColor(PortfolioCategory.NA);
+      }
+      return getColor(PortfolioCategory.OTHER);
     }
   }
   
