@@ -8,6 +8,7 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
+import org.hackystat.projectbrowser.ProjectBrowserApplication;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.imageurl.ImageUrl;
 import org.hackystat.projectbrowser.page.projectportfolio.ProjectPortfolioPage;
@@ -107,22 +108,25 @@ public class ProjectPortfolioDetailsPanel extends Panel {
             valueLabel.add(new AttributeModifier("style", true, new Model(colorString)));
             item.add(valueLabel);
 
-            /*
-            Link chartLink = new BookmarkablePageLink("chartLink", 
-                TelemetryPage.class, chart.getTelemetryPageParameters()) ;
-                */
-            Link chartLink = new Link("chartLink") {
-                  /** Support serialization. */
-                  private static final long serialVersionUID = 32587804920775165L;
-                  @Override
-                  public void onClick() {
-
-                    ProjectBrowserSession.get().
-                      logUsage("PORTFOLIO {invoke telemtry}");
-                    this.setResponsePage(TelemetryPage.class, chart.getTelemetryPageParameters());
-                  }
-              
-            };
+            Link chartLink;
+            if (((ProjectBrowserApplication)getApplication()).isLoggingUserUsage()) {
+              //Need to use Link to log because BookmarkablePageLink does not allow to override the
+              //onClick method.
+              chartLink = new Link("chartLink") {
+                /** Support serialization. */
+                private static final long serialVersionUID = 32587804920775165L;
+                @Override
+                public void onClick() {
+                  ProjectBrowserSession.get().
+                    logUsage("PORTFOLIO {invoke telemtry}");
+                  this.setResponsePage(TelemetryPage.class, chart.getTelemetryPageParameters());
+                }
+              };
+            }
+            else {
+              chartLink = new BookmarkablePageLink("chartLink", 
+                  TelemetryPage.class, chart.getTelemetryPageParameters()) ;
+            }
             chartLink.add(new ImageUrl("chart", chart.getImageUrl()));
             item.add(chartLink);
           }
