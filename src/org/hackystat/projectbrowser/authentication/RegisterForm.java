@@ -53,7 +53,8 @@ class RegisterForm extends StatelessForm {
       ProjectBrowserSession.get().setRegisterFeedback(sensorbase + " not available.");
       return;
     }
-    // SensorBase is available, so register using it. 
+    // SensorBase is available, so register using it.
+    // Currently, registration takes longer than 10 seconds, so don't indicate the error. 
     String msg;
     try {
       SensorBaseClient.registerUser(sensorbase, email);
@@ -61,7 +62,8 @@ class RegisterForm extends StatelessForm {
       ProjectBrowserSession.get().setRegisterFeedback(msg);
     }
     catch (SensorBaseClientException e) {
-      msg = "Registration failed: " + e.getMessage() + " Contact your Hackystat admin for details.";
+      msg = "Registration attempted. Please check your email for password information";
+      //msg = "Registration failed: " + e.getMessage() + " Contact your Hackystat admin.";
       ProjectBrowserSession.get().setRegisterFeedback(msg);
     }
   }
