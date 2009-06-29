@@ -59,6 +59,9 @@
   <ivy:retrieve organisation="org.hackystat" module="hackystat-analysis-telemetry" revision="latest.integration" pattern="${lib.dir}/hackystat-analysis-telemetry/[artifact].[ext]" sync="true" inline="true" conf="default" log="download-only" transitive="false" type="jar" />
   <path id="hackystat-analysis-telemetry.path" location="${lib.dir}/hackystat-analysis-telemetry/telemetry.jar" />
 
+  <ivy:retrieve organisation="org.hackystat" module="hackystat-sensorbase-simdata" revision="latest.integration" pattern="${lib.dir}/hackystat-sensorbase-simdata/[artifact].[ext]" sync="true" inline="true" conf="default" log="download-only" transitive="false" type="jar" />
+  <path id="hackystat-sensorbase-simdata.path" location="${lib.dir}/hackystat-sensorbase-simdata/simdata.jar" />
+
   <ivy:retrieve organisation="org.apache.wicket" module="wicket" revision="${wicket.version}" pattern="${lib.dir}/wicket/[artifact].[ext]" sync="true" inline="true" conf="default, datetime" log="download-only" transitive="false" type="jar" />
   <path id="wicket.path">
     <fileset dir="${lib.dir}/wicket">
@@ -79,14 +82,6 @@
       <include name="*.jar" />
     </fileset>
   </path>
-
-  <!-- Make sure that JavaMail is accessible. -->
-  <available classname="javax.mail.Message" property="javamail.available" />
-  <fail message="This package requires JavaMail. See http://code.google.com/p/hackystat/wiki/InstallingJavaMail." unless="javamail.available" />
-
-  <!-- Make sure that the JAXB library is available (by default in Java 6, through manual installation in Java 5. -->
-  <available classname="javax.xml.bind.JAXBContext" property="jaxb.available" />
-  <fail message="This package requires JAXB.  See http://code.google.com/p/hackystat/wiki/InstallingJAXBinJava5." unless="jaxb.available" />
 
   <!-- Basic properties for this system. -->
   <property name="system.name" value="hackystat-ui-wicket" />
@@ -110,12 +105,10 @@
 
   <!-- The compile classpath is useful to many tools. -->
   <path id="compile.classpath">
-    <fileset dir="${lib.dir}">
-      <include name="simdata.jar" />
-    </fileset>
     <path refid="hackystat-sensorbase-uh.path" />
     <path refid="hackystat-analysis-dailyprojectdata.path" />
     <path refid="hackystat-analysis-telemetry.path" />
+    <path refid="hackystat-sensorbase-simdata.path" />
     <path refid="junit.path" />
     <path refid="wicket.path" />
     <path refid="jetty.path" />
