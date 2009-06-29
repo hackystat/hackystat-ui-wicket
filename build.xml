@@ -1,10 +1,17 @@
-<project name="build" default="compile">
+<project name="build" default="compile" xmlns:ivy="antlib:org.apache.ivy.ant">
   <description>
   The basic build file for this system.
   </description>
 
   <!-- Always make environment variables available with the "env." prefix. -->
   <property environment="env" />
+
+  <!-- Basic directory structure. -->
+  <property name="src.dir" location="${basedir}/src" />
+  <property name="lib.dir" location="${basedir}/lib" />
+  <property name="webapp.dir" location="${basedir}/webapp" />
+  <property name="build.dir" location="${basedir}/build" />
+  <property name="build.classes.dir" location="${basedir}/build/classes" />
 
   <!-- Make sure we're running a Java 5 or better. -->
   <condition property="java.5.available">
@@ -21,43 +28,65 @@
   </condition>
   <fail message="This package requires Ant 1.7." unless="ant.1.7.available" />
 
-  <!-- Make sure that a compatible version of JUnit is installed. -->
-  <!-- You can override the version. For example: 'ant -Djunit.version=4.1 -f junit.build.xml' -->
-  <property name="junit.version" value="4.5" />
-  <property name="junit.jar" location="${env.JUNIT_HOME}/junit-${junit.version}.jar" />
-  <available file="${junit.jar}" type="file" property="junit.available" />
-  <fail message="This package requires JUNIT_HOME to be defined and ${junit.jar} available" unless="junit.available" />
+  <!-- Make sure Ivy is installed. -->
+  <import file="ivy.build.xml" />
+  <available file="${ivy.jar.path}/ivy.jar" type="file" property="ivy.available" />
+  <fail message="This package requires Ivy.  To install, invoke 'ant -f ivy.build.xml'." unless="ivy.available" />
+  <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpath="${ivy.jar.path}/ivy.jar" />
+
+  <!-- Make sure library.versions.properties is installed, which provides all library version numbers. -->
+  <property name="library.versions.path" location="${user.home}/.hackystat/library.versions.properties" />
+  <available file="${library.versions.path}" type="file" property="library.versions.available" />
+  <fail message="This package requires ~/.hackystat/library.versions.properties.  To install, invoke 'ant -f ivy.build.xml'." unless="library.versions.available" />
+  <!-- Now load all library version numbers. -->
+  <property file="${library.versions.path}" />
+
+  <!-- Where to look for configuration files (Checkstyle, PMD, FindBugs, etc.) -->
+  <property name="configfiles.url" value="http://hackystat.googlecode.com/svn/trunk/configfiles/" />
+  <property name="configfiles.dir" location="${lib.dir}/configfiles" />
+  <mkdir dir="${configfiles.dir}" />
+
+  <!-- Install libraries required for compilation. -->
+  <ivy:retrieve organisation="org.junit" module="junit" revision="${junit.version}" pattern="${lib.dir}/junit/[artifact].[ext]" sync="true" inline="true" conf="default" log="download-only" transitive="false" type="jar" />
+  <path id="junit.path" location="${lib.dir}/junit/junit.jar" />
+
+  <ivy:retrieve organisation="org.hackystat" module="hackystat-sensorbase-uh" revision="latest.integration" pattern="${lib.dir}/hackystat-sensorbase-uh/[artifact].[ext]" sync="true" inline="true" conf="default" log="download-only" transitive="false" type="jar" />
+  <path id="hackystat-sensorbase-uh.path" location="${lib.dir}/hackystat-sensorbase-uh/sensorbase.jar" />
+
+  <ivy:retrieve organisation="org.hackystat" module="hackystat-analysis-dailyprojectdata" revision="latest.integration" pattern="${lib.dir}/hackystat-analysis-dailyprojectdata/[artifact].[ext]" sync="true" inline="true" conf="default" log="download-only" transitive="false" type="jar" />
+  <path id="hackystat-analysis-dailyprojectdata.path" location="${lib.dir}/hackystat-analysis-dailyprojectdata/dailyprojectdata.jar" />
+
+  <ivy:retrieve organisation="org.hackystat" module="hackystat-analysis-telemetry" revision="latest.integration" pattern="${lib.dir}/hackystat-analysis-telemetry/[artifact].[ext]" sync="true" inline="true" conf="default" log="download-only" transitive="false" type="jar" />
+  <path id="hackystat-analysis-telemetry.path" location="${lib.dir}/hackystat-analysis-telemetry/telemetry.jar" />
+
+  <ivy:retrieve organisation="org.apache.wicket" module="wicket" revision="${wicket.version}" pattern="${lib.dir}/wicket/[artifact].[ext]" sync="true" inline="true" conf="default, datetime" log="download-only" transitive="false" type="jar" />
+  <path id="wicket.path">
+    <fileset dir="${lib.dir}/wicket">
+      <include name="*.jar" />
+    </fileset>
+  </path>
+
+  <ivy:retrieve organisation="org.mortbay" module="jetty" revision="${jetty.version}" pattern="${lib.dir}/jetty/[artifact].[ext]" sync="true" inline="true" conf="default" log="download-only" transitive="false" type="jar" />
+  <path id="jetty.path">
+    <fileset dir="${lib.dir}/jetty">
+      <include name="*.jar" />
+    </fileset>
+  </path>
+
+  <ivy:retrieve organisation="org.slf4j" module="slf4j" revision="${slf4j.version}" pattern="${lib.dir}/slf4j/[artifact].[ext]" sync="true" inline="true" conf="core,simple" log="download-only" transitive="false" type="jar" />
+  <path id="slf4j.path">
+    <fileset dir="${lib.dir}/slf4j">
+      <include name="*.jar" />
+    </fileset>
+  </path>
+
+  <!-- Make sure that JavaMail is accessible. -->
+  <available classname="javax.mail.Message" property="javamail.available" />
+  <fail message="This package requires JavaMail. See http://code.google.com/p/hackystat/wiki/InstallingJavaMail." unless="javamail.available" />
 
   <!-- Make sure that the JAXB library is available (by default in Java 6, through manual installation in Java 5. -->
   <available classname="javax.xml.bind.JAXBContext" property="jaxb.available" />
-  <fail message="This package requires JAXB to be installed" unless="jaxb.available" />
-
-  <!-- Make sure that Hackystat SensorBase library is available . -->
-  <available file="${env.HACKYSTAT_SENSORBASE_HOME}/sensorbase.jar" type="file" property="hackystat.sensorbase.available" />
-  <fail message="${env.HACKYSTAT_SENSORBASE_HOME}/sensorbase.jar. This package requires the Hackystat SensorBase to be installed and HACKYSTAT_SENSORBASE_HOME defined" unless="hackystat.sensorbase.available" />
-
-  <!-- Make sure that Hackystat DPD library is available . -->
-  <available file="${env.HACKYSTAT_DAILYPROJECTDATA_HOME}/dailyprojectdata.jar" type="file" property="hackystat.dailyprojectdata.available" />
-  <fail message="${env.HACKYSTAT_DAILYPROJECTDATA_HOME}/dailyprojectdata.jar. This package requires the Hackystat DPD to be installed and HACKYSTAT_DAILYPROJECTDATA_HOME defined" unless="hackystat.dailyprojectdata.available" />
-
-  <!-- Make sure that Hackystat Telemetry library is available . -->
-  <available file="${env.HACKYSTAT_TELEMETRY_HOME}/telemetry.jar" type="file" property="hackystat.telemetry.available" />
-  <fail message="${env.HACKYSTAT_TELEMETRY_HOME}/telemetry.jar. This package requires the Hackystat Telemetry to be installed and HACKYSTAT_TELEMETRY_HOME defined" unless="hackystat.telemetry.available" />
-
-  <!-- Make sure that Jetty is available . -->
-  <property name="jetty.version" value="6.1.9" />
-  <available file="${env.JETTY_HOME}/lib/jetty-${jetty.version}.jar" type="file" property="jetty.available" />
-  <fail message="This package requires ${env.JETTY_HOME}/lib/jetty-${jetty.version}.jar to be installed and JETTY_HOME defined" unless="jetty.available" />
-
-  <!-- Make sure that Wicket is available . -->
-  <property name="wicket.version" value="1.3.5" />
-  <available file="${env.WICKET_HOME}/lib/wicket-${wicket.version}.jar" type="file" property="wicket.available" />
-  <fail message="This package requires ${env.WICKET_HOME}/wicket-${wicket.version}.jar to be installed and WICKET_HOME defined" unless="wicket.available" />
-    
-  <!-- Make sure that SLF4J is available . -->
-  <property name="slf4j.version" value="1.5.0" />
-  <available file="${env.SLF4J_HOME}/slf4j-api-${slf4j.version}.jar" type="file" property="slf4j.available" />
-  <fail message="This package requires ${env.SLF4J_HOME}/slf4j-api-${slf4j.version}.jar to be installed and SLF4J_HOME defined" unless="slf4j.available" />
+  <fail message="This package requires JAXB.  See http://code.google.com/p/hackystat/wiki/InstallingJAXBinJava5." unless="jaxb.available" />
 
   <!-- Basic properties for this system. -->
   <property name="system.name" value="hackystat-ui-wicket" />
@@ -78,45 +107,26 @@
     <istrue value="${hackystat.enable}" />
   </condition>
 
-  <!-- Basic directory structure. -->
-  <property name="src.dir" location="${basedir}/src" />
-  <property name="lib.dir" location="${basedir}/lib" />
-  <property name="webapp.dir" location="${basedir}/webapp" />
-  <property name="build.dir" location="${basedir}/build" />
-  <property name="build.classes.dir" location="${basedir}/build/classes" />
 
   <!-- The compile classpath is useful to many tools. -->
   <path id="compile.classpath">
-    <!-- Get Utilities, Restlet, Derby, etc. by including full sensorbase.jar. -->
-    <fileset file="${env.HACKYSTAT_SENSORBASE_HOME}/sensorbase.jar" />
-    <fileset file="${env.HACKYSTAT_DAILYPROJECTDATA_HOME}/dailyprojectdata.lib.jar" />
-    <fileset file="${env.HACKYSTAT_TELEMETRY_HOME}/telemetry.jar" />
-    <fileset file="${env.JUNIT_HOME}/junit-${junit.version}.jar" />
-    <fileset file="${env.FINDBUGS_HOME}/lib/annotations.jar" />
-    <fileset dir="${env.WICKET_HOME}/lib">
-      <include name="wicket-${wicket.version}.jar" />
-      <include name="wicket-datetime-${wicket.version}.jar" />
-      <include name="wicket-extensions-${wicket.version}.jar" />
-    </fileset>
-    <fileset dir="${env.JETTY_HOME}/lib">
-      <include name="jetty-${jetty.version}.jar" />
-      <include name="jetty-util-${jetty.version}.jar" />
-      <include name="servlet-api-2.5-${jetty.version}.jar" />
-    </fileset>
-    <fileset dir="${env.SLF4J_HOME}">
-      <include name="slf4j-api-${slf4j.version}.jar" />
-      <include name="slf4j-simple-${slf4j.version}.jar" />
-    </fileset>
     <fileset dir="${lib.dir}">
       <include name="simdata.jar" />
     </fileset>
+    <path refid="hackystat-sensorbase-uh.path" />
+    <path refid="hackystat-analysis-dailyprojectdata.path" />
+    <path refid="hackystat-analysis-telemetry.path" />
+    <path refid="junit.path" />
+    <path refid="wicket.path" />
+    <path refid="jetty.path" />
+    <path refid="slf4j.path" />
   </path>
-  
+
   <path id="run.classpath">
-    <path refid="compile.classpath"/>
+    <path refid="compile.classpath" />
     <pathelement path="${build.classes.dir}" />
   </path>
-    
+
 
   <target name="compile" description="Compiles the code and copies resource files to build.classes.dir">
     <!-- Now compile the code into build/classes -->
@@ -127,8 +137,8 @@
       <compilerarg value="-Werror" />
     </javac>
     <!-- Copy html markup and static files from webapp directory to build.classes.dir -->
-    <filter token="version" value="${version}"/>
-    <filter token="tstamp" value="${TSTAMP}"/>
+    <filter token="version" value="${version}" />
+    <filter token="tstamp" value="${TSTAMP}" />
     <copy todir="${build.classes.dir}" filtering="true" overwrite="true">
       <fileset dir="${src.dir}">
         <include name="**/*.*" />
@@ -146,34 +156,11 @@
 
   <target name="convertLineEndings" description="Makes line endings compatible with host platform.">
     <fixcrlf srcdir="${basedir}" includes="*.build.xml" />
-  </target> 
+  </target>
 
-  <target name="war" depends="compile">
-     <war destfile="${build.dir}/${final.name}.war" webxml="${src.webapp.dir}/WEB-INF/web.xml">
-       <lib dir="${env.JETTY_HOME}/lib">
-         <include name="jetty-${jetty.version}.jar" />
-         <include name="jetty-util-${jetty.version}.jar" />
-         <include name="servlet-api-2.5-${jetty.version}.jar" />
-       </lib>
-       <lib file="${env.WICKET_HOME}/lib">
-         <include name="wicket-${wicket.version}.jar" />
-
-         <include name="wicket-datetime-${wicket.version}.jar" />
-
-         <include name="wicket-extensions-${wicket.version}.jar" />
-       </lib>
-       <lib dir="${env.SLF4J_HOME}">
-         <include name="slf4j-api-${slf4j.version}.jar" />
-         <include name="slf4j-simple-${slf4j.version}.jar" />
-       </lib>
-       <classes dir="${build.main.classes}" />
-       <fileset dir="${src.webapp.dir}" excludes="**/web.xml" />
-     </war>
-   </target>
-
-   <target name="run" depends="compile">
-     <java classpathref="run.classpath" classname="org.hackystat.projectbrowser.Start" fork="true" />
-   </target>
+  <target name="run" depends="compile">
+    <java classpathref="run.classpath" classname="org.hackystat.projectbrowser.Start" fork="true" />
+  </target>
 
 </project>
 
