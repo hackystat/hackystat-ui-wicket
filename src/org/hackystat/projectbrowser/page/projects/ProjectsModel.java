@@ -187,11 +187,10 @@ public class ProjectsModel implements Serializable, IClusterable {
    * @return String with all user email sub-string in bold.
    */
   private String convertUserEmailToBold(String string) {
-    String line = string.toLowerCase();
+    String line = string.toLowerCase(Locale.ENGLISH);
     String user = ProjectBrowserSession.get().getUserEmail().toLowerCase();
     String boldUser = "<b>" + user + "</b>";
-    String result = line.replaceAll(user, boldUser);
-    return result;
+    return line.replaceAll(user, boldUser);
   }
 
   /**
@@ -201,10 +200,9 @@ public class ProjectsModel implements Serializable, IClusterable {
    * @return String with all user email sub-string in bold.
    */
   public String removeBold(String string) {
-    String result = string.toLowerCase();
+    String result = string.toLowerCase(Locale.ENGLISH);
     result = result.replaceAll("<b>", "");
-    result = result.replaceAll("</b>", "");
-    return result;
+    return result.replaceAll("</b>", "");
   }
 
   /**
@@ -213,8 +211,7 @@ public class ProjectsModel implements Serializable, IClusterable {
    * @return project owner.
    */
   public String getProjectOwner() {
-    String result = getProject().getOwner();
-    return result;
+    return getProject().getOwner();
   }
 
   /**
@@ -790,8 +787,7 @@ public class ProjectsModel implements Serializable, IClusterable {
    * @return the feedback
    */
   public String getFeedback() {
-    String feedback = this.feedback;
-    return feedback;
+    return this.feedback;
   }
 
   /**

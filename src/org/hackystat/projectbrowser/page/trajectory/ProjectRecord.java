@@ -140,8 +140,7 @@ public class ProjectRecord implements Serializable {
    * @return The start date for this project.
    */
   public Date getStartDate() {
-    Date d = new Date(this.startDate.getTime());
-    return d;
+    return new Date(this.startDate.getTime());
   }
 
   /**
@@ -159,8 +158,7 @@ public class ProjectRecord implements Serializable {
    * @return The end date for this project.
    */
   public Date getEndDate() {
-    Date d = new Date(this.endDate.getTime());
-    return d;
+    return new Date(this.endDate.getTime());
   }
 
   /**

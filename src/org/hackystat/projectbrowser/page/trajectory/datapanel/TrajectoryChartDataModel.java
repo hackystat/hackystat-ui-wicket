@@ -719,7 +719,7 @@ public class TrajectoryChartDataModel implements Serializable, Processable {
     getLogger().log(Level.FINER,
         MARK + "Normalized TS: min: " + streamMin + ", maximum: " + streamMax);
 
-    List<ArrayList<Double>> normalizedStreams = new ArrayList<ArrayList<Double>>();
+    List<List<Double>> normalizedStreams = new ArrayList<List<Double>>();
 
     // make up the Y axis for all streams
     for (SelectableTrajectoryStream stream : streams) {
@@ -747,7 +747,7 @@ public class TrajectoryChartDataModel implements Serializable, Processable {
     for (int i = 0; i < streams.size(); ++i) {
       SelectableTrajectoryStream stream = streams.get(i);
       if (!stream.isEmpty()) {
-        ArrayList<Double> s = this.addStreamToNormalizedChart(stream, streamAxis.getMinimum(),
+        List<Double> s = this.addStreamToNormalizedChart(stream, streamAxis.getMinimum(),
             streamAxis.getMaximum(), maxStreamLength, googleChart);
         normalizedStreams.add(s);
       }
@@ -1004,12 +1004,12 @@ public class TrajectoryChartDataModel implements Serializable, Processable {
    * 
    * @return normalized data extracted from the stream.
    */
-  public ArrayList<Double> addStreamToNormalizedChart(SelectableTrajectoryStream stream,
+  public List<Double> addStreamToNormalizedChart(SelectableTrajectoryStream stream,
       double minimum, double maximum, Integer maxStreamLength, GoogleChart googleChart) {
     // add the chart only if the stream is not empty.
     if (!stream.isEmpty()) {
       // add stream data
-      ArrayList<Double> res = stream.getNormalizedStreamData();
+      List<Double> res = stream.getNormalizedStreamData();
       getLogger().log(Level.FINER, "TrajectoryChart: adding series: " + res);
       googleChart.getChartData().add(res);
       // prepare the range data.

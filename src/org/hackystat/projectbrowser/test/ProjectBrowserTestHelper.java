@@ -28,6 +28,12 @@ public class ProjectBrowserTestHelper {
 
   /** The test domain for all users in this simulation. */
   private static final String testdomain = "@hackystat.org";
+  
+  protected static final String TEST_USER = "TestUser@hackystat.org";
+  protected static final String TEST_INVITEE = "TestInvitee@hackystat.org";
+  protected static final String TEST_NEW_INVITEE = TEST_INVITEE;
+  protected static final String TEST_NEW_SPECTATOR = "TestSpectator@hackystat.org";
+  protected static final String TEST_EDIT_SPECTATOR = "TestSpectator@hackystat.org";
 
   /**
    * Constructor.
@@ -49,6 +55,11 @@ public class ProjectBrowserTestHelper {
       org.hackystat.dailyprojectdata.server.Server.newTestInstance(); 
     ProjectBrowserTestHelper.telemetryServer = 
       org.hackystat.telemetry.service.server.Server.newTestInstance();
+    
+    SensorBaseClient.registerUser(sensorbaseServer.getHostName(), TEST_INVITEE);
+    SensorBaseClient.registerUser(sensorbaseServer.getHostName(), TEST_USER);
+    SensorBaseClient.registerUser(sensorbaseServer.getHostName(), TEST_NEW_SPECTATOR);
+
   }
 
   /**

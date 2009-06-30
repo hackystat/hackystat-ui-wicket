@@ -1,7 +1,6 @@
-<project name="hudson.sensorbase" default="hudson.basic">
+<project name="sensorbase.hudson" default="hudson.basic">
   <description>
-    Runs junit, pmd, checkstyle, findbugs, and javadoc, failing the build if problems found.
-    Invocation: ant -f verify.build.xml
+    Tasks for use by Hudson continuous integration system.
   </description>
 
   <!-- First, override the default settings of these properties. -->
@@ -11,8 +10,12 @@
   <property name="checkstyle.failOnViolation" value="true"/> 
   <property name="junit.haltonfailure" value="true"/>
 
+  <!-- Ensure that Ivy and library.versions.properties are installed. -->
+  <ant antfile="ivy.build.xml"/>
+
   <!-- Now import the target definitions. -->
-  <import file="javadoc.build.xml"/>
+  <import file="javadoc.build.xml"/>  
+  <import file="javancss.build.xml"/>  
   <import file="pmd.build.xml"/>
   <import file="findbugs.build.xml"/>
   <import file="checkstyle.build.xml"/>
@@ -21,30 +24,27 @@
   <import file="sclc.build.xml"/>
   <import file="dist.build.xml"/>
   <import file="jar.build.xml"/>
-  <import file="javancss.build.xml"/>
   
       
   <target name="hudson.basic" 
-    depends="clean, compile, checkstyle.tool,  junit.tool, findbugs.tool, pmd.tool, jar, dist" 
+    depends="clean, compile, checkstyle.tool,  junit.tool, findbugs.tool, pmd.tool, publish" 
     description="Fast build for production purposes. No sensors.">
-      <fail message="FindBugs reported warnings." if="findbugs.warningsfound"/>
+    <fail message="FindBugs reported warnings." if="findbugs.warningsfound"/>
   </target>
   
   <target name="hudson.daily.build" 
-     depends="clean, compile, checkstyle.tool, findbugs.tool, pmd.tool, jar" 
-     description="Builds and runs all QA stuff in preparation for sending sensor data.
-    Note that the JUnit task is missing, since we get a DiskPageStore exception.  See Aug 29,2008
-    builds for examples. This error does not occur when building the project directly, only as
-    part of the hudson 'integrated' builds.">
+     depends="clean, compile, checkstyle.tool, junit.tool, findbugs.tool, pmd.tool, publish" 
+     description="Builds and runs all QA stuff in preparation for sending sensor data.">
+    <fail message="FindBugs reported warnings." if="findbugs.warningsfound"/>
   </target>
 
   <target name="hudson.daily.junit"  
-      description="JUnit plus sensor. [Does nothing since we can't call this as an Ant subproject. without getting a DiskPageStore error."/>
+    depends="junit.tool, junit.sensor"  description="JUnit plus sensor."/>
   
   <target name="hudson.daily.javancss"  
     depends="javancss.tool, javancss.sensor"  description="JavaNCSS plus sensor."/>
   
   <target name="hudson.daily.emma"  
-     description="Emma plus sensor. [Does nothing since we can't call this as an Ant subproject. without getting a DiskPageStore error."/>
+     depends="emma.tool, emma.sensor"  description="Emma plus sensor."/>
   
 </project>

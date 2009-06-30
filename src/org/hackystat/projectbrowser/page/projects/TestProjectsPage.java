@@ -33,22 +33,21 @@ import org.junit.Assert;
  */
 public class TestProjectsPage extends ProjectBrowserTestHelper {  
 
-  private static String TEST_USER = "TestUser@hackystat.org";
-  private static String TEST_INVITEE = "TestInvitee@hackystat.org";
+ 
   private static String DEFAULT_NAME = "Default";
 
   private static String TEST_NEW_NAME = "TestProjectName";
   private static String TEST_NEW_STARTDATE = "2008-01-01";
   private static String TEST_NEW_ENDDATE = "2008-12-31";
   private static String TEST_NEW_DESC = "Test description.";
-  private static String TEST_NEW_INVITEE = TEST_INVITEE;
-  private static String TEST_NEW_SPECTATOR = "TestSpectator@hackystat.org";
+ 
+ 
 
   private static String TEST_EDIT_STARTDATE = "2008-01-01";
   private static String TEST_EDIT_ENDDATE = "2008-12-31";
   private static String TEST_EDIT_DESC = "Test description.";
   private static String TEST_EDIT_INVITEE = TEST_INVITEE;
-  private static String TEST_EDIT_SPECTATOR = "TestSpectator@hackystat.org";
+ 
 
   private static String TEST_RENAME_NAME = "TestRenameProject";
 
@@ -259,9 +258,6 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
    */
   private void createNewProject(WicketTester tester) throws Exception  {
 
-    SensorBaseClient.registerUser(getSensorBaseHostName(), TEST_NEW_INVITEE);
-    SensorBaseClient.registerUser(getSensorBaseHostName(), TEST_NEW_SPECTATOR);
-
     // Store project count for later testing
     ListView listView = (ListView) tester
         .getComponentFromLastRenderedPage(PROJECT_TABLE);
@@ -361,25 +357,6 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
   }
 
   /**
-   * Test creating a new project.
-   * 
-   * @throws Exception when communication error occurs.
-   */
-  @Test
-  public void testProjectsNewPage() throws Exception { // NOPMD WicketTester has its own assert
-                                                        // classes.
-    Properties testProperties = getTestProperties();
-    testProperties.put(ProjectBrowserProperties.AVAILABLEPAGE_KEY + PROJECTS, TRUE);
-    WicketTester tester = new WicketTester(new ProjectBrowserApplication(testProperties));
-
-    // Login
-    login(tester);
-
-    // Create new project and test it
-    createNewProject(tester);
-  }
-
-  /**
    * Test edit of existing project.
    * 
    * @throws Exception when communication error occurs.
@@ -473,6 +450,26 @@ public class TestProjectsPage extends ProjectBrowserTestHelper {
     }
     Assert.assertTrue(TEST_NEW_NAME + NOT_FOUND, found);
   }
+
+  /**
+   * Test creating a new project.
+   * 
+   * @throws Exception when communication error occurs.
+   */
+  @Test
+  public void testProjectsNewPage() throws Exception { // NOPMD WicketTester has its own assert
+                                                        // classes.
+    Properties testProperties = getTestProperties();
+    testProperties.put(ProjectBrowserProperties.AVAILABLEPAGE_KEY + PROJECTS, TRUE);
+    WicketTester tester = new WicketTester(new ProjectBrowserApplication(testProperties));
+
+    // Login
+    login(tester);
+
+    // Create new project and test it
+    createNewProject(tester);
+  }
+
 
   /**
    * Test renaming of project.

@@ -246,7 +246,7 @@ public class SelectableTrajectoryStream implements Serializable {
    * 
    * @return the list of data of this stream
    */
-  public final ArrayList<Double> getNormalizedStreamData() {
+  public final List<Double> getNormalizedStreamData() {
     double[] streamData = new double[this.indent
         + this.getTelemetryStream().getTelemetryPoint().size()];
     for (int i = 0; i < this.indent; i++) {

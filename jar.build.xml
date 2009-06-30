@@ -1,4 +1,4 @@
-<project name="jar" default="jar">
+<project name="jar" default="publish" xmlns:ivy="antlib:org.apache.ivy.ant">
   <description>
   Provides the target for building a jar file of the ProjectBrowser.
   </description>
@@ -6,12 +6,14 @@
   <import file="build.xml"/>
   <property name="tmp.dir" location="${basedir}/tmp" />
   <property name="tmp.lib.dir" location="${basedir}/tmp-lib" />
+  <property name="build.jar.dir" location="${build.dir}/jar" />  
  
   <target name="jar" depends="compile" 
     description="Create projectbrowser.jar">
     <!-- Define the directories and distribution name -->
     <delete dir="${tmp.dir}" quiet="yes"/>
     <mkdir dir="${tmp.dir}" />
+    <mkdir dir="${build.jar.dir}" />
     
     <!-- Copy the projectbrowser files over. -->
     <copy todir="${tmp.dir}">
@@ -20,26 +22,26 @@
     
     <!-- Copy over all of the required libraries. --> 
     <unjar dest="${tmp.dir}">
-      <fileset file="${env.HACKYSTAT_SENSORBASE_HOME}/sensorbaseclient.jar" />
-      <fileset file="${env.HACKYSTAT_DAILYPROJECTDATA_HOME}/dailyprojectdata.lib.jar" />
-      <fileset file="${env.HACKYSTAT_TELEMETRY_HOME}/telemetry.jar" />
-      <fileset dir="${env.WICKET_HOME}/lib">
-        <include name="wicket-${wicket.version}.jar" />
-        <include name="wicket-datetime-${wicket.version}.jar" />
-        <include name="wicket-extensions-${wicket.version}.jar" />
+      <fileset file="${lib.dir}/hackystat-sensorbase-uh/sensorbaseclient.jar" />
+      <fileset file="${lib.dir}/hackystat-analysis-dailyprojectdata/dailyprojectdata.lib.jar" />
+      <fileset file="${lib.dir}/hackystat-analysis-telemetry/telemetry.lib.jar" />
+      <fileset dir="${lib.dir}/wicket">
+        <include name="wicket.jar" />
+        <include name="wicket-datetime.jar" />
+        <include name="wicket-extensions.jar" />
       </fileset>
-      <fileset dir="${env.JETTY_HOME}/lib">
-         <include name="jetty-${jetty.version}.jar" />
-         <include name="jetty-util-${jetty.version}.jar" />
-         <include name="servlet-api-2.5-${jetty.version}.jar" />
+      <fileset dir="${lib.dir}/jetty">
+         <include name="jetty.jar" />
+         <include name="jetty-util.jar" />
+         <include name="servlet-api-2.5.jar" />
        </fileset>
-       <fileset dir="${env.SLF4J_HOME}">
-         <include name="slf4j-api-${slf4j.version}.jar" />
-         <include name="slf4j-simple-${slf4j.version}.jar" />
+       <fileset dir="${lib.dir}/slf4j">
+         <include name="slf4j-api.jar" />
+         <include name="slf4j-simple.jar" />
        </fileset>
     </unjar>
 
-    <jar destfile="${basedir}/projectbrowser.jar" basedir="${tmp.dir}">
+    <jar destfile="${build.jar.dir}/projectbrowser.jar" basedir="${tmp.dir}">
        <manifest>
          <attribute name="Main-Class" value="org.hackystat.projectbrowser.Start"/>
          <attribute name="Implementation-Title" value="Hackystat ProjectBrowser"/>
@@ -48,6 +50,20 @@
        </manifest>
      </jar>
       <delete dir="${tmp.dir}" />
-  </target>     
-</project>
+  </target> 
+  
+  <target name="publish" depends="jar" description="Publish this project in the local ivy repository">
+     <ivy:resolve />
+     <tstamp>
+       <format property="publication-revision" pattern="yyyy.MM.dd.HH.mm.ss" />
+     </tstamp>
+     <ivy:publish artifactspattern="${build.jar.dir}/[artifact].[ext]" resolver="local-repository" pubrevision="${publication-revision}" update="true" />
+   </target>
+
+   <target name="publish-all" description="Publish all dependent projects, then this one.">
+    <ant antfile="../hackystat-sensorbase-simdata/jar.build.xml" target="publish-all" inheritAll="false" />
+    <antcall target="publish" />
+   </target>    
+
+  </project>
 

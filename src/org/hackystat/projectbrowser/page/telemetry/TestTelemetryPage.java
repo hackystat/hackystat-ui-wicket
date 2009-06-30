@@ -23,6 +23,7 @@ import org.hackystat.projectbrowser.page.telemetry.datapanel.TelemetryDataPanel;
 import org.hackystat.projectbrowser.page.telemetry.inputpanel.TelemetryDescriptionPanel;
 import org.hackystat.projectbrowser.page.telemetry.inputpanel.TelemetryInputPanel;
 import org.hackystat.projectbrowser.test.ProjectBrowserTestHelper;
+import org.hackystat.sensorbase.client.SensorBaseClient;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
 import org.hackystat.telemetry.service.resource.chart.jaxb.TelemetryChartDefinition;
 import org.hackystat.utilities.tstamp.Tstamp;
@@ -57,9 +58,11 @@ public class TestTelemetryPage extends ProjectBrowserTestHelper {
   private String signinButtonKey = "Signin";
   /**
    * Initialize data for testing.
+   * @throws Exception if problems occur. 
    */
   @Before
-  public void setUp() {
+  public void setUp() throws Exception {
+    SensorBaseClient.registerUser(super.getSensorBaseHostName(), testUserEmail);
     this.generateSimData(testUser, testProject, Tstamp.makeTimestamp(), 0);
   }
   

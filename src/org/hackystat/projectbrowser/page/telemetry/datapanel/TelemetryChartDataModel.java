@@ -453,8 +453,7 @@ public class TelemetryChartDataModel implements Serializable, Processable {
     if (streamList.isEmpty()) {
       return new ArrayList<String>();
     }
-    List<String> dateList = getDateList(streamList.get(0).getTelemetryStream().getTelemetryPoint());
-    return dateList;
+    return getDateList(streamList.get(0).getTelemetryStream().getTelemetryPoint());
   }
 
   /**
