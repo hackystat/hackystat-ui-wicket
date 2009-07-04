@@ -44,42 +44,43 @@
   <property name="configfiles.dir" location="${lib.dir}/configfiles" />
   <mkdir dir="${configfiles.dir}" />
 
-  <!-- Install libraries required for compilation. -->
-  <ivy:retrieve organisation="org.junit" module="junit" revision="${junit.version}" pattern="${lib.dir}/junit/[artifact].[ext]" sync="true" inline="true" conf="default" log="download-only" transitive="false" type="jar" />
-  <path id="junit.path" location="${lib.dir}/junit/junit.jar" />
+  <target name="install-libraries" description="Install libraries needed for compilation">
+    <ivy:retrieve organisation="org.junit" module="junit" revision="${junit.version}" pattern="${lib.dir}/junit/[artifact].[ext]" sync="true" inline="true" conf="default" log="download-only" transitive="false" type="jar" />
+    <path id="junit.path" location="${lib.dir}/junit/junit.jar" />
 
-  <ivy:retrieve organisation="org.hackystat" module="hackystat-sensorbase-uh" revision="latest.integration" pattern="${lib.dir}/hackystat-sensorbase-uh/[artifact].[ext]" sync="true" inline="true" conf="default" log="download-only" transitive="false" type="jar" />
-  <path id="hackystat-sensorbase-uh.path" location="${lib.dir}/hackystat-sensorbase-uh/sensorbase.jar" />
+    <ivy:retrieve organisation="org.hackystat" module="hackystat-sensorbase-uh" revision="latest.integration" pattern="${lib.dir}/hackystat-sensorbase-uh/[artifact].[ext]" sync="true" inline="true" conf="default" log="download-only" transitive="false" type="jar" />
+    <path id="hackystat-sensorbase-uh.path" location="${lib.dir}/hackystat-sensorbase-uh/sensorbase.jar" />
 
-  <ivy:retrieve organisation="org.hackystat" module="hackystat-analysis-dailyprojectdata" revision="latest.integration" pattern="${lib.dir}/hackystat-analysis-dailyprojectdata/[artifact].[ext]" sync="true" inline="true" conf="default" log="download-only" transitive="false" type="jar" />
-  <path id="hackystat-analysis-dailyprojectdata.path" location="${lib.dir}/hackystat-analysis-dailyprojectdata/dailyprojectdata.lib.jar" />
+    <ivy:retrieve organisation="org.hackystat" module="hackystat-analysis-dailyprojectdata" revision="latest.integration" pattern="${lib.dir}/hackystat-analysis-dailyprojectdata/[artifact].[ext]" sync="true" inline="true" conf="default" log="download-only" transitive="false" type="jar" />
+    <path id="hackystat-analysis-dailyprojectdata.path" location="${lib.dir}/hackystat-analysis-dailyprojectdata/dailyprojectdata.lib.jar" />
 
-  <ivy:retrieve organisation="org.hackystat" module="hackystat-analysis-telemetry" revision="latest.integration" pattern="${lib.dir}/hackystat-analysis-telemetry/[artifact].[ext]" sync="true" inline="true" conf="default" log="download-only" transitive="false" type="jar" />
-  <path id="hackystat-analysis-telemetry.path" location="${lib.dir}/hackystat-analysis-telemetry/telemetry.lib.jar" />
+    <ivy:retrieve organisation="org.hackystat" module="hackystat-analysis-telemetry" revision="latest.integration" pattern="${lib.dir}/hackystat-analysis-telemetry/[artifact].[ext]" sync="true" inline="true" conf="default" log="download-only" transitive="false" type="jar" />
+    <path id="hackystat-analysis-telemetry.path" location="${lib.dir}/hackystat-analysis-telemetry/telemetry.lib.jar" />
 
-  <ivy:retrieve organisation="org.hackystat" module="hackystat-sensorbase-simdata" revision="latest.integration" pattern="${lib.dir}/hackystat-sensorbase-simdata/[artifact].[ext]" sync="true" inline="true" conf="default" log="download-only" transitive="false" type="jar" />
-  <path id="hackystat-sensorbase-simdata.path" location="${lib.dir}/hackystat-sensorbase-simdata/simdata.jar" />
+    <ivy:retrieve organisation="org.hackystat" module="hackystat-sensorbase-simdata" revision="latest.integration" pattern="${lib.dir}/hackystat-sensorbase-simdata/[artifact].[ext]" sync="true" inline="true" conf="default" log="download-only" transitive="false" type="jar" />
+    <path id="hackystat-sensorbase-simdata.path" location="${lib.dir}/hackystat-sensorbase-simdata/simdata.jar" />
 
-  <ivy:retrieve organisation="org.apache.wicket" module="wicket" revision="${wicket.version}" pattern="${lib.dir}/wicket/[artifact].[ext]" sync="true" inline="true" conf="default, datetime" log="download-only" transitive="false" type="jar" />
-  <path id="wicket.path">
-    <fileset dir="${lib.dir}/wicket">
-      <include name="*.jar" />
-    </fileset>
-  </path>
+    <ivy:retrieve organisation="org.apache.wicket" module="wicket" revision="${wicket.version}" pattern="${lib.dir}/wicket/[artifact].[ext]" sync="true" inline="true" conf="default, datetime" log="download-only" transitive="false" type="jar" />
+    <path id="wicket.path">
+      <fileset dir="${lib.dir}/wicket">
+        <include name="*.jar" />
+      </fileset>
+    </path>
 
-  <ivy:retrieve organisation="org.mortbay" module="jetty" revision="${jetty.version}" pattern="${lib.dir}/jetty/[artifact].[ext]" sync="true" inline="true" conf="default" log="download-only" transitive="false" type="jar" />
-  <path id="jetty.path">
-    <fileset dir="${lib.dir}/jetty">
-      <include name="*.jar" />
-    </fileset>
-  </path>
+    <ivy:retrieve organisation="org.mortbay" module="jetty" revision="${jetty.version}" pattern="${lib.dir}/jetty/[artifact].[ext]" sync="true" inline="true" conf="default" log="download-only" transitive="false" type="jar" />
+    <path id="jetty.path">
+      <fileset dir="${lib.dir}/jetty">
+        <include name="*.jar" />
+      </fileset>
+    </path>
 
-  <ivy:retrieve organisation="org.slf4j" module="slf4j" revision="${slf4j.version}" pattern="${lib.dir}/slf4j/[artifact].[ext]" sync="true" inline="true" conf="core,simple" log="download-only" transitive="false" type="jar" />
-  <path id="slf4j.path">
-    <fileset dir="${lib.dir}/slf4j">
-      <include name="*.jar" />
-    </fileset>
-  </path>
+    <ivy:retrieve organisation="org.slf4j" module="slf4j" revision="${slf4j.version}" pattern="${lib.dir}/slf4j/[artifact].[ext]" sync="true" inline="true" conf="core,simple" log="download-only" transitive="false" type="jar" />
+    <path id="slf4j.path">
+      <fileset dir="${lib.dir}/slf4j">
+        <include name="*.jar" />
+      </fileset>
+    </path>
+  </target>
 
   <!-- Basic properties for this system. -->
   <property name="system.name" value="hackystat-ui-wicket" />
@@ -119,7 +120,7 @@
   </path>
 
 
-  <target name="compile" description="Compiles the code and copies resource files to build.classes.dir">
+  <target name="compile" depends="install-libraries" description="Compiles the code and copies resource files to build.classes.dir">
     <!-- Now compile the code into build/classes -->
     <mkdir dir="${build.classes.dir}" />
     <javac srcdir="${src.dir}" destdir="${build.classes.dir}" source="1.5" target="1.5" debug="on" includeAntRuntime="no">
@@ -138,7 +139,7 @@
     </copy>
   </target>
 
-  <target name="clean" description="Delete build/ directory and top-level sensorbase jar files.">
+  <target name="clean" depends="install-libraries" description="Delete build/ directory and top-level sensorbase jar files.">
     <delete>
       <fileset dir="${basedir}" includes="sensorbase*.jar" />
     </delete>
