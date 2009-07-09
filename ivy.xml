@@ -2,6 +2,8 @@
   <info organisation="org.hackystat" module="hackystat-ui-wicket"/>
   <publications>
     <artifact name="projectbrowser" />
+    <artifact name="hackystat-ui-wicket-javadoc" type="javadoc" ext="zip"/>
+    <artifact name="hackystat-ui-wicket-source" type="source" ext="zip"/>
   </publications>
   <dependencies>
     <dependency org="org.junit" name="junit" rev="${junit.version}" />

@@ -5,7 +5,7 @@ import java.util.List;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.hackystat.projectbrowser.page.projectportfolio.jaxb.Measures.Measure;
 import org.hackystat.projectbrowser.page.projectportfolio.jaxb.Measures.Measure.
-        StreamTrendParameters;;
+        StreamTrendParameters;
 /**
  * Classify stream trend into 4 classes: increasing, decreasing, stable and unstable(other).
  * Monotonous increase line will be considered as increasing.
