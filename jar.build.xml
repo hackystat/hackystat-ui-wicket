@@ -30,6 +30,7 @@
         <include name="wicket.jar" />
         <include name="wicket-datetime.jar" />
         <include name="wicket-extensions.jar" />
+        <include name="joda-time.jar" />
       </fileset>
       <fileset dir="${lib.dir}/jetty">
          <include name="jetty.jar" />
