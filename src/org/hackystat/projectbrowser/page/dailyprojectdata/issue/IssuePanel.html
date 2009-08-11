@@ -1,0 +1,40 @@
+<html xmlns:wicket>
+  <wicket:panel>
+    <h3>Issue summary for each project. </h3>
+    <table>
+      <tr>
+        <th>Project</th>
+        <th wicket:id="issueOpenStatusHeads">
+          <span wicket:id="issueStatusName"/>
+        </th>
+        <th>Total Open Issues</th>
+        <th wicket:id="issueClosedStatusHeads">
+          <span wicket:id="issueStatusName"/>
+        </th>
+        <th>Total Closed Issues</th>
+      </tr>
+      <tr wicket:id="issueDataList">
+        <td wicket:id="project"/>
+        <td wicket:id="openIssueDataList">
+          <span align="right" wicket:id="data"></span>
+        </td>
+        <td align="right" wicket:id="totalOpen"/>
+        <td wicket:id="closedIssueDataList">
+          <span align="right" wicket:id="data"></span>
+        </td>
+        <td align="right" wicket:id="totalClosed"/>
+      </tr>
+    </table>
+
+<p>
+The goal of this analysis is to provide a perspective on the developer's impact on the 
+system under issue tracking system. Each row shows, for a given project, the  
+number of different status of issues, as well as the total count of open and closed issues.
+</p>
+
+<p>
+In a healthy project, developers should regulary create issues, work on them and then close them. 
+So the number of open issues should be relatively stable while closed issues increase over time.
+</p>
+  </wicket:panel>
+</html>

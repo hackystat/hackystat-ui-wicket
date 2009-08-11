@@ -23,6 +23,7 @@ import org.hackystat.projectbrowser.page.dailyprojectdata.coupling.CouplingDataM
 import org.hackystat.projectbrowser.page.dailyprojectdata.coverage.CoverageDataModel;
 import org.hackystat.projectbrowser.page.dailyprojectdata.devtime.DevTimeDataModel;
 import org.hackystat.projectbrowser.page.dailyprojectdata.filemetric.FileMetricDataModel;
+import org.hackystat.projectbrowser.page.dailyprojectdata.issue.IssueDataModel;
 import org.hackystat.projectbrowser.page.dailyprojectdata.unittest.UnitTestDataModel;
 import org.hackystat.sensorbase.resource.projects.jaxb.Project;
 import org.hackystat.utilities.tstamp.Tstamp;
@@ -67,7 +68,7 @@ public class DailyProjectDataSession implements Serializable {
   /** The list of analysis choices. */
   private static final List<String> analysisList = 
     Arrays.asList("Build", "Commit", "Coupling", "Coverage", "Complexity", "DevTime", "FileMetric", 
-        "UnitTest");
+        "Issue", "UnitTest");
 
   /** the feedback string. */
   private String feedback = "";
@@ -102,6 +103,8 @@ public class DailyProjectDataSession implements Serializable {
   /** The Commit data model. */
   private CommitDataModel commitDataModel = new CommitDataModel();
 
+  /** The Issue data model. */
+  private IssueDataModel issueDataModel = new IssueDataModel();
 
   /**
    * Initialize this session, including the list of context-sensitive menus.
@@ -437,6 +440,14 @@ public class DailyProjectDataSession implements Serializable {
     return this.commitDataModel;
   }
 
+  /**
+   * Gets the Issue model associated with this session.
+   * @return The Issue model. 
+   */
+  public IssueDataModel getIssueDataModel() {
+    return this.issueDataModel;
+  }
+  
   /**
    * @return the paramErrorMessage
    */

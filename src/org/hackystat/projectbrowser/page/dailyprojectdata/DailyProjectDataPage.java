@@ -15,6 +15,7 @@ import org.hackystat.projectbrowser.page.dailyprojectdata.coverage.CoveragePanel
 import org.hackystat.projectbrowser.page.dailyprojectdata.devtime.DevTimePanel;
 import org.hackystat.projectbrowser.page.dailyprojectdata.filemetric.FileMetricPanel;
 import org.hackystat.projectbrowser.page.dailyprojectdata.inputpanel.DpdInputPanel;
+import org.hackystat.projectbrowser.page.dailyprojectdata.issue.IssuePanel;
 import org.hackystat.projectbrowser.page.dailyprojectdata.unittest.UnitTestPanel;
 
 /**
@@ -66,6 +67,9 @@ public class DailyProjectDataPage extends ProjectBrowserBasePage {
     }
     else if ("Commit".equals(session.getAnalysis())) {
       add(new CommitPanel(dpdDataPanelId));
+    }
+    else if ("Issue".equals(session.getAnalysis())) {
+      add(new IssuePanel(dpdDataPanelId));
     }
     
     BookmarkablePageLink restLink = new BookmarkablePageLink("restLink", DailyProjectDataPage.class,
@@ -131,6 +135,10 @@ public class DailyProjectDataPage extends ProjectBrowserBasePage {
     else if ("Commit".equals(session.getAnalysis())) {
       session.getCommitDataModel().update(); 
       this.replace(new CommitPanel(dpdDataPanelId));
+    }
+    else if ("Issue".equals(session.getAnalysis())) {
+      session.getIssueDataModel().update(); 
+      this.replace(new IssuePanel(dpdDataPanelId));
     }
     /*
     this.replace(new BookmarkablePageLink("restLink", DailyProjectDataPage.class,
