@@ -43,6 +43,7 @@ import org.hackystat.telemetry.service.client.TelemetryClient;
 import org.hackystat.telemetry.service.client.TelemetryClientException;
 import org.hackystat.telemetry.service.resource.chart.jaxb.ParameterDefinition;
 import org.hackystat.telemetry.service.resource.chart.jaxb.TelemetryChartData;
+import org.hackystat.telemetry.service.resource.chart.jaxb.TelemetryChartRef;
 import org.hackystat.utilities.logger.HackystatLogger;
 import org.hackystat.utilities.tstamp.Tstamp;
 import org.hackystat.utilities.uricache.UriCache;
@@ -406,12 +407,32 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
       else {
         getLogger().info("No portfolio definitions found in: " + defDirString);
       }
+      List<TelemetryChartRef> chartRefs = null;
+      try {
+        TelemetryClient telemetryClient = new TelemetryClient(telemetryHost, userEmail, password);
+        chartRefs = telemetryClient.getChartIndex().getTelemetryChartRef();
+      }
+      catch (TelemetryClientException e1) {
+        getLogger().warning("Error retrieving telemetry chartd definitions.");
+      }
       for (File xmlFile : xmlFiles) {
         try {
           getLogger().info("Reading portfolio definitions from: " + xmlFile);
           PortfolioDefinitions def = getDefinitions(new FileInputStream(xmlFile));
           if (def != null) {
-            portfolioDefinitions.getMeasures().getMeasure().addAll(def.getMeasures().getMeasure());
+            List<Measure> measureList = def.getMeasures().getMeasure();
+            if (chartRefs != null) {
+              List<Measure> invalidMeasures = new ArrayList<Measure>();
+              for (Measure measure : measureList) {
+                if (!chartRefs.contains(measure.getName())) {
+                  invalidMeasures.add(measure);
+                  getLogger().warning("Found invalid measure:" + measure.getName() + 
+                      ". Please double check with the Telemetry Chart definitions.");
+                }
+              }
+              measureList.removeAll(invalidMeasures);
+            }
+            portfolioDefinitions.getMeasures().getMeasure().addAll(measureList);
           }
         }
         catch (FileNotFoundException e) {

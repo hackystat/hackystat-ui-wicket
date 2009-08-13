@@ -13,7 +13,7 @@
     <Measure name="MemberChurn" alias="Churn" merge="sum" classifierMethod="StreamTrend" enabled="true">
       <StreamTrendParameters higherBetter="false" lowerThresold="400" higherThresold="900"/>
     </Measure>
-    <Measure name="FileMetric" alias="Size(LOC)" enabled="true">
+    <Measure name="Issue" alias="Issue" enabled="true">
     </Measure>
     <Measure name="MemberDevTime" alias="DevTime" merge="sum" classifierMethod="Participation" enabled="true">
       <ParticipationParameters memberPercentage="50" thresoldValue="0.5" frequencyPercentage="50"/>
@@ -26,6 +26,8 @@
     </Measure>
     <Measure name="MemberUnitTest" alias="Test" merge="sum" classifierMethod="Participation" enabled="true">
       <ParticipationParameters memberPercentage="50" thresoldValue="10" frequencyPercentage="50"/>
+    </Measure>
+    <Measure name="FileMetric" alias="Size(LOC)" enabled="true">
     </Measure>
     <Measure name="CodeIssue" classifierMethod="StreamTrend" enabled="false">
       <StreamTrendParameters higherBetter="false" lowerThresold="5" higherThresold="20"/>
