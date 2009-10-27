@@ -5,13 +5,13 @@
       <StreamTrendParameters higherBetter="true" lowerThresold="40" higherThresold="90"/>
     </Measure>
     <Measure name="CyclomaticComplexity" alias="Complexity" classifierMethod="StreamTrend" enabled="true">
-      <StreamTrendParameters higherBetter="false" lowerThresold="10" higherThresold="20"/>
+      <StreamTrendParameters higherBetter="false" lowerThresold="3" higherThresold="5"/>
     </Measure>
     <Measure name="Coupling" classifierMethod="StreamTrend" enabled="true">
-      <StreamTrendParameters higherBetter="false" lowerThresold="10" higherThresold="20"/>
+      <StreamTrendParameters higherBetter="false" lowerThresold="20" higherThresold="30"/>
     </Measure>
-    <Measure name="MemberChurn" alias="Churn" merge="sum" classifierMethod="StreamTrend" enabled="true">
-      <StreamTrendParameters higherBetter="false" lowerThresold="400" higherThresold="900"/>
+    <Measure name="MemberChurn" alias="Churn" merge="sum" classifierMethod="Participation" enabled="true">
+      <ParticipationParameters memberPercentage="50" thresoldValue="20" frequencyPercentage="50"/>
     </Measure>
     <Measure name="Issue" alias="Issue" enabled="true">
     </Measure>
@@ -22,10 +22,10 @@
       <ParticipationParameters memberPercentage="50" thresoldValue="1" frequencyPercentage="50"/>
     </Measure>
     <Measure name="MemberBuild" alias="Build" merge="sum" classifierMethod="Participation" enabled="true">
-      <ParticipationParameters memberPercentage="50" thresoldValue="3" frequencyPercentage="50"/>
+      <ParticipationParameters memberPercentage="50" thresoldValue="2" frequencyPercentage="50"/>
     </Measure>
     <Measure name="MemberUnitTest" alias="Test" merge="sum" classifierMethod="Participation" enabled="true">
-      <ParticipationParameters memberPercentage="50" thresoldValue="10" frequencyPercentage="50"/>
+      <ParticipationParameters memberPercentage="50" thresoldValue="5" frequencyPercentage="50"/>
     </Measure>
     <Measure name="FileMetric" alias="Size(LOC)" enabled="true">
     </Measure>
