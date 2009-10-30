@@ -60,8 +60,10 @@ public class ProjectBrowserProperties {
   //public static final String SMTP_HOST_KEY =  "projectbrowser.smtp.host";
   /** The test install host key. */
   //public static final String TEST_INSTALL_KEY =  "projectbrowser.test.install";
-  /** true.*/
+  /** True as a string.*/
   private static final String TRUE = "true";
+  /** False as a string.*/
+  private static final String FALSE = "false";
   
   
   /** Where we store the properties. */
@@ -119,7 +121,7 @@ public class ProjectBrowserProperties {
     properties.setProperty(AVAILABLEPAGE_KEY + ".sensordata", TRUE);
     properties.setProperty(AVAILABLEPAGE_KEY + ".dailyprojectdata", TRUE);
     properties.setProperty(AVAILABLEPAGE_KEY + ".telemetry", TRUE);
-    properties.setProperty(AVAILABLEPAGE_KEY + ".trajectory", TRUE);
+    properties.setProperty(AVAILABLEPAGE_KEY + ".trajectory", FALSE);
     properties.setProperty(AVAILABLEPAGE_KEY + ".projects", TRUE);
     properties.setProperty(AVAILABLEPAGE_KEY + ".projectportfolio", TRUE);
     properties.setProperty(BACKGROUND_PROCESS_KEY + ".telemetry", TRUE);
