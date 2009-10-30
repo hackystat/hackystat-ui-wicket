@@ -31,6 +31,8 @@ public class MiniBarChart implements Serializable {
   protected List<Double> streamData;
   /** The list of original streams. */
   protected List<List<Double>> streams = new ArrayList<List<Double>>();
+  /** The granularity of the data. */
+  protected String granularity = "Day";
   /** The index of the last valid value. */
   private int lastValidIndex = -1;
   /** The latest value of the stream. */
@@ -54,8 +56,10 @@ public class MiniBarChart implements Serializable {
   /**
    * @param streams The stream of this chart.
    * @param configuration The configuration of this chart.
+   * @param granularity The granularity of the data.
    */
-  public MiniBarChart(List<TelemetryStream> streams, PortfolioMeasureConfiguration configuration) {
+  public MiniBarChart(List<TelemetryStream> streams, PortfolioMeasureConfiguration configuration, 
+      String granularity) {
     if (streams != null) {
       for (TelemetryStream stream : streams) {
         this.streams.add(getStreamData(stream));

@@ -27,6 +27,8 @@ import org.hackystat.projectbrowser.ProjectBrowserApplication;
 import org.hackystat.projectbrowser.ProjectBrowserProperties;
 import org.hackystat.projectbrowser.ProjectBrowserSession;
 import org.hackystat.projectbrowser.page.loadingprocesspanel.Processable;
+import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.chart.
+StreamDeviationClassifier;
 import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.chart.MiniBarChart;
 import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.chart.StreamClassifier;
 import org.hackystat.projectbrowser.page.projectportfolio.detailspanel.chart.
@@ -86,7 +88,8 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
   public static final List<String> availableClassifiers = Arrays.asList(new String[]{
                                                   "None",
                                                   StreamTrendClassifier.name,
-                                                  StreamParticipationClassifier.name
+                                                  StreamParticipationClassifier.name,
+                                                  StreamDeviationClassifier.name
                                               });
 
   /**
@@ -193,7 +196,7 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
     String classifierMethod = measure.getClassifierMethod();
     if ("StreamTrend".equalsIgnoreCase(classifierMethod)) {
       if (measure.getStreamTrendParameters() == null) {
-        return new StreamTrendClassifier(0, 0, true);
+        return new StreamTrendClassifier(0, 0, true, false);
       }
       Double lowerThreshold = measure.getStreamTrendParameters().getLowerThresold();
       if (lowerThreshold == null) {
@@ -203,15 +206,20 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
       if (higherThreshold == null) {
         higherThreshold = 0.0;
       }
-      Boolean higherBetter = measure.getStreamTrendParameters().isHigherBetter();
-      if (higherBetter) {
-        higherBetter = true;
+      Boolean higherBetter = true;
+      if (measure.getStreamTrendParameters().isSetHigherBetter()) {
+        higherBetter = measure.getStreamTrendParameters().isHigherBetter();
       }
-      return new StreamTrendClassifier(lowerThreshold, higherThreshold, higherBetter);
+      Boolean scaleWithGranularity = false;
+      if (measure.getStreamTrendParameters().isSetScaleWithGranularity()) {
+        scaleWithGranularity = measure.getStreamTrendParameters().isScaleWithGranularity();
+      }
+      return new StreamTrendClassifier(
+          lowerThreshold, higherThreshold, higherBetter, scaleWithGranularity);
     }
     else if ("Participation".equalsIgnoreCase(classifierMethod)) {
       if (measure.getParticipationParameters() == null) {
-        return new StreamParticipationClassifier(50, 0, 50);
+        return new StreamParticipationClassifier(50, 0, 50, true);
       }
       Double memberPercentage = measure.getParticipationParameters().getMemberPercentage();
       if (memberPercentage == null) {
@@ -226,8 +234,35 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
       if (frequencyPercentage == null) {
         frequencyPercentage = 50.0;
       }
+      Boolean scaleWithGranularity = true;
+      if (measure.getParticipationParameters().isSetScaleWithGranularity()) {
+        scaleWithGranularity = measure.getParticipationParameters().isScaleWithGranularity();
+      }
       return new StreamParticipationClassifier(
-          memberPercentage, valueThreshold, frequencyPercentage);
+          memberPercentage, valueThreshold, frequencyPercentage, scaleWithGranularity);
+    }
+    else if ("Deviation".equalsIgnoreCase(classifierMethod)) {
+      if (measure.getDeviationParameters() == null) {
+        return new StreamDeviationClassifier(40, 20, 50, true);
+      }
+      Double moderateDeviation = measure.getDeviationParameters().getModerateDeviation();
+      if (moderateDeviation == null) {
+        moderateDeviation = 40.0;
+      }
+      Double unacceptableDeviation = measure.getDeviationParameters().getUnacceptableDeviation();
+      if (unacceptableDeviation == null) {
+        unacceptableDeviation = 20.0;
+      }
+      Double expectationValue = measure.getDeviationParameters().getExpectationValue();
+      if (expectationValue == null) {
+        expectationValue = 50.0;
+      }
+      Boolean scaleWithGranularity = true;
+      if (measure.getDeviationParameters().isSetScaleWithGranularity()) {
+        scaleWithGranularity = measure.getDeviationParameters().isScaleWithGranularity();
+      }
+      return new StreamDeviationClassifier(
+          moderateDeviation, unacceptableDeviation, expectationValue, scaleWithGranularity);
     }
     return null;
   }
@@ -535,7 +570,8 @@ public class ProjectPortfolioDataModel implements Serializable, Processable {
                   "defintion. Please check your portfolio and telemetry definitions");
             }
           }
-          MiniBarChart chart = new MiniBarChart(chartData.getTelemetryStream(), measure);
+          MiniBarChart chart = 
+            new MiniBarChart(chartData.getTelemetryStream(), measure, this.granularity);
           chart.setTelemetryPageParameters(this.getTelemetryPageParameters(measure, project));
           //chart.setDpdPageParameters(this.getDpdPageParameters(
           //measure, project, chart.getLastValidIndex()));

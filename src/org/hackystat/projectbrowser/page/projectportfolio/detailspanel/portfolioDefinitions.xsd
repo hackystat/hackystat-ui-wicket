@@ -31,6 +31,7 @@
               				<xs:attribute name="higherBetter" type="xs:boolean" />
               				<xs:attribute name="lowerThresold" type="xs:double" />
               				<xs:attribute name="higherThresold" type="xs:double" />
+                      <xs:attribute name="scaleWithGranularity" type="xs:boolean" default="false"/>
               			</xs:complexType>
               		</xs:element>
                   <xs:element name="ParticipationParameters" minOccurs="0">
@@ -38,6 +39,15 @@
                       <xs:attribute name="memberPercentage" type="xs:double" />
                       <xs:attribute name="thresoldValue" type="xs:double" />
                       <xs:attribute name="frequencyPercentage" type="xs:double" />
+                      <xs:attribute name="scaleWithGranularity" type="xs:boolean" default="true"/>
+                    </xs:complexType>
+                  </xs:element>
+                  <xs:element name="DeviationParameters" minOccurs="0">
+                    <xs:complexType>
+                      <xs:attribute name="moderateDeviation" type="xs:double" />
+                      <xs:attribute name="unacceptableDeviation" type="xs:double" />
+                      <xs:attribute name="expectationValue" type="xs:double" />
+                      <xs:attribute name="scaleWithGranularity" type="xs:boolean" default="true"/>
                     </xs:complexType>
                   </xs:element>
               	</xs:sequence>

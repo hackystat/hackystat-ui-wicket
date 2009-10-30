@@ -12,8 +12,10 @@ import org.junit.Test;
  */
 public class TestEnhancedStreamTrendClassifier {
   /** the EnhancedStreamTrendClassifier. */
-  private StreamTrendClassifier streamTrendClassifier = new StreamTrendClassifier(40, 90, true);
+  private StreamTrendClassifier streamTrendClassifier =
+    new StreamTrendClassifier(40, 90, true, true);
   
+  private String testGranularity = "Day";
   /**
    * Test with a increasing stream with acceptable decreasing point.<p>
    * example chart: 
@@ -23,7 +25,7 @@ public class TestEnhancedStreamTrendClassifier {
   @Test
   public void testIncreaseTrend() {
     List<Double> trend = Arrays.asList(new Double[]{55.0, 67.0, 66.5, 78.8, 76.0, 89.0});
-    MiniBarChart chart = new MiniBarChart(null, null);
+    MiniBarChart chart = new MiniBarChart(null, null, testGranularity);
     chart.streamData = trend;
     streamTrendClassifier.setHigherBetter(true);
     assertEquals("", PortfolioCategory.GOOD, streamTrendClassifier.getStreamCategory(chart));
@@ -40,7 +42,7 @@ public class TestEnhancedStreamTrendClassifier {
   @Test
   public void testDecreaseTrend() {
     List<Double> trend = Arrays.asList(new Double[]{89.0, 76.0, 78.8, 66.5, 67.0, 55.0});
-    MiniBarChart chart = new MiniBarChart(null, null);
+    MiniBarChart chart = new MiniBarChart(null, null, testGranularity);
     chart.streamData = trend;
     streamTrendClassifier.setHigherBetter(true);
     assertEquals("", PortfolioCategory.POOR, streamTrendClassifier.getStreamCategory(chart));
@@ -57,7 +59,7 @@ public class TestEnhancedStreamTrendClassifier {
   @Test
   public void testStableTrend() {
     List<Double> trend = Arrays.asList(new Double[]{65.0, 67.0, 66.5, 68.8, 66.0, 69.0});
-    MiniBarChart chart = new MiniBarChart(null, null);
+    MiniBarChart chart = new MiniBarChart(null, null, testGranularity);
     chart.streamData = trend;
     assertEquals("", PortfolioCategory.GOOD, streamTrendClassifier.getStreamCategory(chart));
   }
@@ -71,7 +73,7 @@ public class TestEnhancedStreamTrendClassifier {
   @Test
   public void testUnstableTrend() {
     List<Double> trend = Arrays.asList(new Double[]{67.0, 55.0, 66.5, 89.0, 76.0, 78.8});
-    MiniBarChart chart = new MiniBarChart(null, null);
+    MiniBarChart chart = new MiniBarChart(null, null, testGranularity);
     chart.streamData = trend;
     assertEquals("", PortfolioCategory.AVERAGE, streamTrendClassifier.getStreamCategory(chart));
   }

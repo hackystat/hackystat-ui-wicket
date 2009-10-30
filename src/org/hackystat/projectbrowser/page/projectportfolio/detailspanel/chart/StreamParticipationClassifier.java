@@ -26,17 +26,21 @@ public class StreamParticipationClassifier implements Serializable, StreamClassi
   private double thresholdValue;
   /** The expected percentage of time that has events happened. */
   private double frequencyPercentage;
+  /** If the condition scale with granularity. */
+  private boolean scaleWithGranularity;
 
   /**
    * @param memberPercentage the {@link memberPercentage} to set.
    * @param thresholdValue the {@link thresholdValue} to set.
    * @param frequencyPercentage the {@link frequencyPercentage} to set.
+   * @param scaleWithGranularity the scaleWithGranularity to set.
    */
   public StreamParticipationClassifier(final double memberPercentage, final double thresholdValue, 
-      final double frequencyPercentage) {
+      final double frequencyPercentage, boolean scaleWithGranularity) {
     this.memberPercentage = memberPercentage;
     this.thresholdValue = thresholdValue;
     this.frequencyPercentage = frequencyPercentage;
+    this.scaleWithGranularity = scaleWithGranularity;
   }
   
   /**
@@ -53,16 +57,25 @@ public class StreamParticipationClassifier implements Serializable, StreamClassi
    * @return StreamCategory enumeration. 
    */
   public PortfolioCategory getStreamCategory(MiniBarChart chart) {
+    double thresholdValue = this.thresholdValue;
+    if (this.scaleWithGranularity) {
+      if ("Week".equals(chart.granularity)) {
+        thresholdValue *= 7;
+      }
+      else if ("Month".equals(chart.granularity)) {
+        thresholdValue *= 30;
+      }
+    }
     int activeMember = 0;
     for (List<Double> stream : chart.streams) {
-      if (isTheStreamGood(stream)) {
+      if (isTheStreamGood(stream, thresholdValue)) {
         activeMember++;
       }
     }
     if (activeMember > this.memberPercentage * chart.streams.size() / 100) {
       return PortfolioCategory.GOOD;
     }
-    if (isTheStreamGood(chart.streamData)) {
+    if (isTheStreamGood(chart.streamData, thresholdValue)) {
       return PortfolioCategory.AVERAGE;
     }
     return PortfolioCategory.POOR;
@@ -72,12 +85,13 @@ public class StreamParticipationClassifier implements Serializable, StreamClassi
    * Check if the stream contains more than {@link frequencyPercentage} values that are greater
    * than {@link thresholdValue}.
    * @param stream the given stream
+   * @param thresholdValue the filter threshold.
    * @return true or false.
    */
-  private boolean isTheStreamGood(List<Double> stream) {
+  private boolean isTheStreamGood(List<Double> stream, double thresholdValue) {
     int goodValueCount = 0;
     for (Double value : stream) {
-      if (value >= this.thresholdValue) {
+      if (value >= thresholdValue) {
         goodValueCount++;
       }
     }
@@ -168,6 +182,7 @@ public class StreamParticipationClassifier implements Serializable, StreamClassi
     param.setFrequencyPercentage(frequencyPercentage);
     param.setMemberPercentage(memberPercentage);
     param.setThresoldValue(thresholdValue);
+    param.setScaleWithGranularity(this.scaleWithGranularity);
     measure.setParticipationParameters(param);
   }
 }

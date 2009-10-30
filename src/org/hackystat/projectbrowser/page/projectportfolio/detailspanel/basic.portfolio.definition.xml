@@ -10,8 +10,8 @@
     <Measure name="Coupling" classifierMethod="StreamTrend" enabled="true">
       <StreamTrendParameters higherBetter="false" lowerThresold="20" higherThresold="30"/>
     </Measure>
-    <Measure name="MemberChurn" alias="Churn" merge="sum" classifierMethod="Participation" enabled="true">
-      <ParticipationParameters memberPercentage="50" thresoldValue="20" frequencyPercentage="50"/>
+    <Measure name="MemberChurn" alias="Churn" merge="sum" classifierMethod="Deviation" enabled="true">
+      <DeviationParameters moderateDeviation="50" unacceptableDeviation="20" expectationValue="100"/>
     </Measure>
     <Measure name="Issue" alias="Issue" enabled="true">
     </Measure>

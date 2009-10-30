@@ -34,17 +34,21 @@ public class StreamTrendClassifier implements Serializable, StreamClassifier {
   private double higherThreshold;
   /** The threshold of low value. */
   private double lowerThreshold;
+  /** If the condition scale with granularity. */
+  private boolean scaleWithGranularity;
   
   /**
    * @param lowerThreshold the {@link lowerThreshold} to set.
    * @param higherThreshold the {@link higherThreshold} to set.
    * @param higherBetter the {@link higherBetter} to set.
+   * @param scaleWithGranularity the scaleWithGranularity to set.
    */
   public StreamTrendClassifier(double lowerThreshold, double higherThreshold,
-      boolean higherBetter) {
+      boolean higherBetter, boolean scaleWithGranularity) {
     this.higherBetter = higherBetter;
     this.higherThreshold = higherThreshold;
     this.lowerThreshold = lowerThreshold;
+    this.scaleWithGranularity = scaleWithGranularity;
   }
   
   /**
@@ -225,6 +229,7 @@ public class StreamTrendClassifier implements Serializable, StreamClassifier {
     param.setHigherBetter(higherBetter);
     param.setLowerThresold(lowerThreshold);
     param.setHigherThresold(higherThreshold);
+    param.setScaleWithGranularity(scaleWithGranularity);
     measure.setStreamTrendParameters(param);
   }
 }

@@ -1,5 +1,6 @@
 package org.hackystat.projectbrowser.page.projectportfolio.detailspanel.chart;
 
+import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
@@ -28,6 +29,8 @@ public class StreamParticipationClassifierConfigurationPanel extends Panel {
         new PropertyModel(streamParticipationClassifier, "thresholdValue")));
     add(new TextField("frequencyPercentage", 
         new PropertyModel(streamParticipationClassifier, "frequencyPercentage")));
+    add(new CheckBox("scaleWithGranularity", 
+        new PropertyModel(streamParticipationClassifier, "scaleWithGranularity")));
   }
 
 

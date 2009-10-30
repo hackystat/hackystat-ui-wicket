@@ -29,6 +29,8 @@ public class StreamTrendClassifierConfigurationPanel extends Panel {
         new PropertyModel(streamTrendClassifier, "lowerThreshold")));
     add(new CheckBox("higherBetter", 
         new PropertyModel(streamTrendClassifier, "higherBetter")));
+    add(new CheckBox("scaleWithGranularity", 
+        new PropertyModel(streamTrendClassifier, "scaleWithGranularity")));
   }
 
 }
