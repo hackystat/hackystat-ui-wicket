@@ -52,9 +52,9 @@ public class StreamTrendClassifier implements Serializable, StreamClassifier {
   }
   
   /**
-   * Parse the given MiniBarChart and produce a StreamCategory result.
+   * Parse the given MiniBarChart and produce a PortfolioCategory result.
    * @param chart the input chart
-   * @return StreamCategory enumeration. 
+   * @return PortfolioCategory enumeration. 
    */
   public PortfolioCategory getStreamCategory(MiniBarChart chart) {
     List<Double> stream = chart.streamData;

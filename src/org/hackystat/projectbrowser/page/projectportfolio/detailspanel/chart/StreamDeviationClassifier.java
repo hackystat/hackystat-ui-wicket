@@ -61,7 +61,15 @@ public class StreamDeviationClassifier implements Serializable, StreamClassifier
   }
 
   /**
-   * {@inheritDoc}
+   * Parse the given MiniBarChart and produce a PortfolioCategory result.
+   * Result is determined by the comparison of the standard deviation of the chart to the 
+   * moderateDeviation and unacceptableDeviation. 
+   * Less than moderateDeviation will be GOOD.
+   * Larger than moderateDeviation and less than unacceptableDeviation will be AVERAGE.
+   * Otherwise will be POOR.
+   * @param chart the input chart
+   * @return PortfolioCategory that indicates the health category of the chart: POOR, AVERAGE, GOOD.
+   *         NA will be returned if chart is empty.
    */
   @Override
   public PortfolioCategory getStreamCategory(MiniBarChart chart) {
@@ -69,15 +77,18 @@ public class StreamDeviationClassifier implements Serializable, StreamClassifier
     double unacceptableDeviation = this.unacceptableDeviation;
     if ("Week".equals(chart.granularity)) {
       moderateDeviation *= 7;
+      unacceptableDeviation *= 7;
     }
     else if ("Month".equals(chart.granularity)) {
       moderateDeviation *= 30;
+      unacceptableDeviation *= 30;
     }
     List<Double> streamData = chart.streamData;
     double sum = 0;
     double sumSqt = 0;
     for (int i = 0; i < streamData.size(); i++) {
       if (streamData.get(i).isNaN() || streamData.get(i) < 0) {
+        //remove null points.
         streamData.remove(i);
         i--;
       }
@@ -87,26 +98,30 @@ public class StreamDeviationClassifier implements Serializable, StreamClassifier
         sumSqt += d * d;
       }
     }
-    int size = streamData.size();
-    if (size > 0) {
-      //compute deviation
-      double deviation = (sumSqt - (sum * sum) / size) / size;
-      deviation = Math.sqrt(deviation);
-      if (deviation <= moderateDeviation) {
-        return PortfolioCategory.GOOD;
-      }
-      else if (deviation <= unacceptableDeviation) {
-        return PortfolioCategory.AVERAGE;
-      }
-      else {
-        return PortfolioCategory.POOR;
-      }
+    if (streamData.isEmpty()) {
+      return PortfolioCategory.NA;
     }
-    return PortfolioCategory.NA;
+    // compute standard deviation
+    int size = streamData.size();
+    double deviation = Math.sqrt((sumSqt - (sum * sum) / size) / size);
+    if (deviation < moderateDeviation) {
+      return PortfolioCategory.GOOD;
+    }
+    else if (deviation < unacceptableDeviation) {
+      return PortfolioCategory.AVERAGE;
+    }
+    else {
+      return PortfolioCategory.POOR;
+    }
   }
 
   /**
-   * {@inheritDoc}
+   * Return the category of the given value.
+   * If value is lower than {@link moderateDeviation}, GOOD will be returned.
+   * If value is lower than {@link unacceptableDeviation}, AVERAGE will be returned.
+   * Otherwise, will return POOR.
+   * @param value the given value.
+   * @return a {@link PortfolioCategory} result
    */
   @Override
   public PortfolioCategory getValueCategory(double value) {
