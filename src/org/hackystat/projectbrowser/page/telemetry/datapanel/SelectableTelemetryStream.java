@@ -202,7 +202,7 @@ public class SelectableTelemetryStream implements Serializable {
   public final List<Double> getStreamData() {
     List<Double> streamData = new ArrayList<Double>();
     for (TelemetryPoint point : this.getTelemetryStream().getTelemetryPoint()) {
-      if (point.getValue() == null) {
+      if (point.getValue() == null || String.valueOf(point.getValue()).isEmpty()) {
         streamData.add(-1.0);
       }
       else {
